@@ -38,3 +38,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Backups locales
+*_backup_*/
+
+# Carpeta duplicada
+NaveGoLocal/
