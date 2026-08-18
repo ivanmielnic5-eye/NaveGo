@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "NaveGoLocal",
+    "slug": "NaveGoLocal",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.NaveGoLocal",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "NaveGo requiere acceso a la geolocalización para el tracking de ruta en tiempo real."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9f3467ba-600f-4350-93b6-b913dceabb48"
+      }
+    }
+  }
+}

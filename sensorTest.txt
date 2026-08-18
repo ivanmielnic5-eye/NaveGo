@@ -1,0 +1,29 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Magnetometer, Gyroscope } from 'expo-sensors';
+
+export default function SensorTest() {
+  const [magInfo, setMagInfo] = useState('...');
+  const [gyroInfo, setGyroInfo] = useState('...');
+
+  useEffect(() => {
+    (async () => {
+      const magAvailable = await Magnetometer.isAvailableAsync();
+      const gyroAvailable = await Gyroscope.isAvailableAsync();
+      setMagInfo(`Magnetómetro: ${magAvailable ? 'DISPONIBLE' : 'NO DISPONIBLE'}`);
+      setGyroInfo(`Giroscopio: ${gyroAvailable ? 'DISPONIBLE' : 'NO DISPONIBLE'}`);
+    })();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>{magInfo}</Text>
+      <Text style={styles.text}>{gyroInfo}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' },
+  text: { color: '#00D9FF', fontSize: 18, marginBottom: 10 },
+});
