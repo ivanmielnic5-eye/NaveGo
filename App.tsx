@@ -384,9 +384,10 @@ function AppContent() {
           {referencePoints.length > 1 && (
             <Polyline
               coordinates={referencePoints}
-              strokeWidth={3}
+              strokeWidth={4}
               strokeColor={colors.navigateCyan}
-              lineDashPattern={[10, 6]}
+              lineDashPattern={[12, 8]}
+              zIndex={2}
             />
           )}
           {routePoints.length > 1 && (
@@ -394,6 +395,7 @@ function AppContent() {
               coordinates={routePoints}
               strokeWidth={2}
               strokeColor={colors.success}
+              zIndex={1}
             />
           )}
         </MapView>
@@ -470,9 +472,10 @@ function AppContent() {
           {referencePoints.length > 1 && (
             <Polyline
               coordinates={referencePoints}
-              strokeWidth={3}
+              strokeWidth={4}
               strokeColor={colors.navigateCyan}
-              lineDashPattern={[10, 6]}
+              lineDashPattern={[12, 8]}
+              zIndex={2}
             />
           )}
           {routePoints.length > 1 && (
@@ -480,6 +483,7 @@ function AppContent() {
               coordinates={routePoints}
               strokeWidth={2}
               strokeColor={colors.success}
+              zIndex={1}
             />
           )}
         </MapView>
@@ -741,6 +745,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+
 
 
 
