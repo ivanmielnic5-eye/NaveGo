@@ -1,24 +1,115 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, fonts, glass, spacing, radii } from './theme';
 
-export function CockpitScreen() {
-  const [sog] = useState('5.2');
-  const [cog] = useState('073°');
-  const [distance] = useState('12.84');
-  const [showLearning, setShowLearning] = useState(false);
+type ModuleKey = 'estado' | 'trabajo' | 'evidencia' | 'archivos' | 'accion';
 
-  const systemLights = [
-    { id: 'gnss', label: 'GNSS', color: colors.success },
-    { id: 'server', label: 'Servidor', color: colors.success },
-    { id: 'tunnel', label: 'Túnel', color: colors.warning },
-    { id: 'metro', label: 'Metro', color: colors.success },
-  ];
+const modules: { key: ModuleKey; label: string; icon: string }[] = [
+  { key: 'estado', label: 'Estado', icon: 'pulse' },
+  { key: 'trabajo', label: 'Trabajo', icon: 'flask' },
+  { key: 'evidencia', label: 'Evidencia', icon: 'eye' },
+  { key: 'archivos', label: 'Archivos', icon: 'folder' },
+  { key: 'accion', label: 'Accion', icon: 'mic' },
+];
+
+const systemLights = [
+  { id: 'gnss', label: 'GNSS', color: colors.success },
+  { id: 'server', label: 'Servidor', color: colors.success },
+  { id: 'tunnel', label: 'Túnel', color: colors.warning },
+  { id: 'metro', label: 'Metro', color: colors.success },
+];
+
+export function CockpitScreen() {
+  const [active, setActive] = useState<ModuleKey>('trabajo');
+
+  const renderContent = () => {
+    switch (active) {
+      case 'estado':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="pulse" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Estado del Proyecto</Text>
+              </View>
+              <Text style={styles.cardText}>Estado general: EXPERIMENTAL</Text>
+              <Text style={styles.cardText}>Estable: HUD, SQLite, tracking, scripts.</Text>
+              <Text style={styles.cardText}>En prueba: Course-Up, referencias.</Text>
+              <Text style={styles.cardText}>No verificado: guardado sin WiFi.</Text>
+            </View>
+          </View>
+        );
+      case 'trabajo':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="flask" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Trabajo Actual</Text>
+              </View>
+              <Text style={styles.cardText}>Course-Up / Sincronización mapa ↔ COG</Text>
+              <Text style={styles.cardText}>Estado: EXPERIMENTAL</Text>
+              <Text style={styles.cardText}>Próximo paso: validar en movimiento real.</Text>
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>CONTINUAR</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      case 'evidencia':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="eye" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Evidencia</Text>
+              </View>
+              <Text style={styles.cardText}>IMPLEMENTADO: Course-Up</Text>
+              <Text style={styles.cardText}>PROBADO: en interior</Text>
+              <Text style={styles.cardText}>OBSERVADO: rota según COG</Text>
+              <Text style={styles.cardText}>VALIDADO: no todavía</Text>
+            </View>
+          </View>
+        );
+      case 'archivos':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="folder" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Documentos Vivos</Text>
+              </View>
+              <Text style={styles.cardText}>PROJECT_STATE.md</Text>
+              <Text style={styles.cardText}>DECISIONS.md</Text>
+              <Text style={styles.cardText}>TEST_LOG.md</Text>
+              <Text style={styles.cardText}>CHANGE_LOG.md</Text>
+              <Text style={styles.cardText}>ARCHITECTURE.md</Text>
+            </View>
+          </View>
+        );
+      case 'accion':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="mic" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Acción</Text>
+              </View>
+              <Text style={styles.cardText}>¿Qué querés hacer?</Text>
+              <Text style={styles.cardText}>"Quiero mejorar la orientación..."</Text>
+              <View style={styles.mockInput}>
+                <Text style={styles.mockInputText}>Escribir o dictar intención</Text>
+                <Ionicons name="mic" size={20} color={colors.textSecondary} />
+              </View>
+            </View>
+          </View>
+        );
+    }
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Barra de salud del sistema */}
+    <View style={styles.container}>
       <View style={styles.statusBar}>
         {systemLights.map((light) => (
           <View key={light.id} style={styles.lightItem}>
@@ -28,81 +119,24 @@ export function CockpitScreen() {
         ))}
       </View>
 
-      {/* Título */}
-      <Text style={styles.title}>
-        NAVEGO <Text style={styles.titleAccent}>// COCKPIT</Text>
-      </Text>
+      <Text style={styles.title}>NAVEGO <Text style={styles.titleAccent}>// COCKPIT</Text></Text>
 
-      {/* Métricas principales */}
-      <View style={styles.metricsRow}>
-        <View style={styles.metricBox}>
-          <Text style={styles.metricLabel}>SOG</Text>
-          <Text style={styles.metricValue}>{sog} kn</Text>
-        </View>
-        <View style={styles.metricBox}>
-          <Text style={styles.metricLabel}>COG</Text>
-          <Text style={styles.metricValue}>{cog}</Text>
-        </View>
+      <ScrollView style={styles.contentArea} contentContainerStyle={styles.contentInner}>
+        {renderContent()}
+      </ScrollView>
+
+      <View style={styles.dock}>
+        {modules.map((mod) => {
+          const isActive = active === mod.key;
+          return (
+            <TouchableOpacity key={mod.key} style={styles.dockButton} onPress={() => setActive(mod.key)}>
+              <Ionicons name={mod.icon} size={24} color={isActive ? colors.navigateCyan : colors.textSecondary} />
+              <Text style={[styles.dockLabel, isActive && styles.dockLabelActive]}>{mod.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-      <Text style={styles.distanceText}>Distancia total: {distance} km</Text>
-
-      {/* Plan de Pruebas — Acciones siempre visibles */}
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="information-circle" size={20} color={colors.navigateCyan} />
-          <Text style={styles.cardTitle}>Plan de Pruebas — Course-Up</Text>
-        </View>
-        <Text style={styles.cardText}>1. Salir al exterior con GNSS fijo.</Text>
-        <Text style={styles.cardText}>2. Rotar a landscape y mantener velocidad constante.</Text>
-        <Text style={styles.cardText}>3. Realizar 3–4 giros amplios.</Text>
-        <Text style={styles.cardText}>4. Observar si el mapa rota en tiempo real o con retraso.</Text>
-        <Text style={styles.cardText}>5. Registrar COG, SOG, hora y sensación visual.</Text>
-      </View>
-
-      {/* Botón de Aprendizaje */}
-      <TouchableOpacity style={styles.learningToggle} onPress={() => setShowLearning(!showLearning)}>
-        <Ionicons name="school" size={20} color={colors.navigateCyan} />
-        <Text style={styles.learningToggleText}>Aprendizaje</Text>
-        <Ionicons name={showLearning ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textSecondary} />
-      </TouchableOpacity>
-
-      {/* Tarjetas de Aprendizaje — solo visibles si showLearning es true */}
-      {showLearning && (
-        <>
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Ionicons name="terminal" size={20} color={colors.success} />
-              <Text style={styles.cardTitle}>Terminales — Arranque</Text>
-            </View>
-            <Text style={styles.cardText}>Servidor → Túnel → Metro</Text>
-            <Text style={styles.cardText}>1. node simulate.js</Text>
-            <Text style={styles.cardText}>2. npx localtunnel --port 3000</Text>
-            <Text style={styles.cardText}>3. npx expo start --clear</Text>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Ionicons name="terminal" size={20} color={colors.warning} />
-              <Text style={styles.cardTitle}>Terminales — Cierre</Text>
-            </View>
-            <Text style={styles.cardText}>Metro → Túnel → Servidor</Text>
-            <Text style={styles.cardText}>1. Cerrar Metro con Ctrl + C</Text>
-            <Text style={styles.cardText}>2. Cerrar túnel con Ctrl + C</Text>
-            <Text style={styles.cardText}>3. Cerrar servidor con Ctrl + C</Text>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Ionicons name="git-branch" size={20} color={colors.navigateCyan} />
-              <Text style={styles.cardTitle}>Dependencia entre terminales</Text>
-            </View>
-            <Text style={styles.cardText}>El túnel depende del servidor.</Text>
-            <Text style={styles.cardText}>Metro puede correr solo, pero para sincronizar con PC necesitás servidor y túnel activos.</Text>
-            <Text style={styles.cardText}>Por eso: arrancar de abajo hacia arriba, cerrar de arriba hacia abajo.</Text>
-          </View>
-        </>
-      )}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -112,10 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
-    paddingBottom: spacing.lg,
-  },
-  content: {
-    justifyContent: 'flex-start',
+    paddingBottom: Platform.OS === 'android' ? 16 : spacing.lg,
   },
   statusBar: {
     flexDirection: 'row',
@@ -148,35 +179,14 @@ const styles = StyleSheet.create({
   titleAccent: {
     color: colors.navigateCyan,
   },
-  metricsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  metricBox: {
+  contentArea: {
     flex: 1,
-    backgroundColor: colors.glassControl,
-    borderRadius: radii.md,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
+    marginBottom: spacing.md,
   },
-  metricLabel: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 4,
+  contentInner: {
+    justifyContent: 'flex-start',
   },
-  metricValue: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-  },
-  distanceText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: 'center',
+  section: {
     marginBottom: spacing.md,
   },
   card: {
@@ -205,22 +215,61 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     lineHeight: 18,
   },
-  learningToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(0, 217, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(0, 217, 255, 0.25)',
+  primaryButton: {
+    marginTop: 12,
+    backgroundColor: 'rgba(0, 217, 255, 0.15)',
     borderRadius: radii.pill,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    marginBottom: spacing.md,
+    alignItems: 'center',
   },
-  learningToggleText: {
-    fontSize: 14,
+  primaryButtonText: {
+    color: colors.navigateCyan,
     fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+  },
+  mockInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 10,
+  },
+  mockInputText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    flex: 1,
+  },
+  dock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(5, 25, 42, 0.58)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 217, 255, 0.30)',
+    borderRadius: 22,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
+  dockButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  dockLabel: {
+    fontSize: 9,
+    color: colors.textSecondary,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  dockLabelActive: {
     color: colors.navigateCyan,
   },
 });

@@ -54,5 +54,179 @@ Esto incluye:
 
 \## Ciclo de Trabajo
 
+OBSERVACIÓN HUMANA
+
+↓
+
+INTERPRETACIÓN TÉCNICA
+
+↓
+
+PRIORIZACIÓN
+
+↓
+
+HIPÓTESIS
+
+↓
+
+EXPERIMENTO PEQUEÑO
+
+↓
+
+RESULTADO
+
+↓
+
+DECISIÓN
+
+↓
+
+IMPLEMENTACIÓN
+
+↓
+
+PRUEBA
+
+↓
+
+REGISTRO EN PROJECT\_STATE.md
+
+↓
+
+SIGUIENTE PASO
+
+
+
+
+
+Cada ciclo termina con una versión funcional.
+
+
+
+\---
+
+
+
+\## Filtros de Decisión
+
+
+
+Antes de cualquier intervención, aplicar estos cuatro filtros:
+
+
+
+1\. \*\*Valor:\*\* ¿realmente mejora NaveGo?
+
+2\. \*\*Fricción:\*\* ¿reduce pasos, complejidad o esfuerzo humano?
+
+3\. \*\*Riesgo:\*\* ¿puede romper algo que ya funciona?
+
+4\. \*\*Evidencia:\*\* ¿sabemos que funciona o simplemente creemos que funciona?
+
+
+
+Si una intervención no supera estos filtros, no se realiza.
+
+
+
+\---
+
+
+
+\## Semáforo de Intervención
+
+
+
+\### 🟢 Verde — Bajo riesgo
+
+\- Cambios de texto, márgenes, íconos, tamaños, etiquetas.
+
+\- La IA puede proceder si el archivo está disponible.
+
+
+
+\### 🟡 Amarillo — Riesgo moderado
+
+\- Layout, navegación entre pantallas, estado React, comportamiento del mapa, agregar pantalla, modificar consultas SQLite.
+
+\- Se requiere: diagnóstico → propuesta → implementación → prueba.
+
+
+
+\### 🔴 Rojo — Crítico
+
+\- GNSS, COG/SOG, cálculo de distancia, persistencia de fixes, recuperación de señal, sincronización, orientación.
+
+\- Prohibido hacer múltiples cambios juntos.
+
+\- Trabajar con: hipótesis → experimento controlado → resultado → decisión → implementación.
+
+
+
+\---
+
+
+
+\## Estados de Conocimiento
+
+
+
+No confundir "implementado" con "validado". Usar estas etapas:
+
+
+
+\- \*\*HIPÓTESIS:\*\* idea sin materializar.
+
+\- \*\*IMPLEMENTADO:\*\* código o cambio aplicado.
+
+\- \*\*PROBADO:\*\* se ejecutó una prueba.
+
+\- \*\*OBSERVADO:\*\* se registró un resultado.
+
+\- \*\*VALIDADO:\*\* evidencia suficiente para considerarlo estable.
+
+\- \*\*DESCARTADO:\*\* se descartó por evidencia o decisión.
+
+
+
+\---
+
+
+
+\## Estados del Sistema
+
+
+
+\- \*\*ESTABLE:\*\* funciona, no requiere intervención.
+
+\- \*\*EXPERIMENTAL:\*\* en proceso de aprendizaje.
+
+\- \*\*BLOQUEADO:\*\* hay una dependencia o problema que impide avanzar.
+
+\- \*\*NO VERIFICADO:\*\* no se ha probado; no confundir con "está mal".
+
+
+
+\---
+
+
+
+\## Protección de Decisiones Arquitectónicas
+
+
+
+Una IA no puede cambiar una decisión arquitectónica simplemente porque encuentre una alternativa técnicamente mejor.
+
+
+
+Tiene que marcarla como propuesta.
+
+
+
+\*\*Formato obligatorio:\*\*
+
+
+
 
 

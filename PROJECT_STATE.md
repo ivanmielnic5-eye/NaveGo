@@ -1,12 +1,22 @@
-\# NaveGo — Estado del Proyecto
+\# NaveGo — Project State
 
 
 
-Última actualización: 18 de agosto de 2026
+Updated: 2026-08-19
 
 
 
-\## ESTABLE
+\## Current objective
+
+
+
+Validar sincronización Course-Up en movimiento real y estabilizar guardado de derrotas.
+
+
+
+\## Stable
+
+
 
 \- HUD principal
 
@@ -24,8 +34,6 @@
 
 \- Portrait North-Up
 
-\- Landscape Course-Up
-
 \- Línea de derrota viva (verde continua)
 
 \- Línea de referencia (cian discontinua)
@@ -34,25 +42,79 @@
 
 
 
-\## EN PRUEBA
+\## Experimental
 
-\- Sincronización Course-Up con movimiento real
+
 
 \- Carga de derrota de referencia desde SQLite
 
-
-
-\## PROBLEMAS CONOCIDOS
-
-\- Warning de NavigationBar con edge-to-edge (no crítico)
-
-\- Caminata fantasma en reposo absoluto (pendiente máquina de estados)
-
-\- Rumbo errático sin velocidad fiable
+\- Sincronización Course-Up con movimiento real
 
 
 
-\## NO TOCAR
+\## Blocked
+
+
+
+(Ninguno por ahora)
+
+
+
+\## Not verified
+
+
+
+\- Guardado de derrota sin WiFi (observado intermitente, sin patrón confirmado)
+
+
+
+\## Current hardware
+
+
+
+\- TCL X1 Pro
+
+\- Acelerómetro disponible
+
+\- Sin magnetómetro ni giroscopio dedicados
+
+
+
+\## Active experiments
+
+
+
+\- Course-Up: observar desfase COG ↔ mapa durante giros.
+
+&#x20; Plan en TEST\_LOG.md (cuando exista).
+
+
+
+\## Next recommended action
+
+
+
+Probar guardado de derrota con y sin WiFi para confirmar patrón.
+
+
+
+\## Critical decisions
+
+
+
+\- Portrait = North-Up
+
+\- Landscape = Course-Up
+
+\- Acelerómetro como auxiliar, no como fuente de posición.
+
+\- Ninguna IA puede cambiar decisiones arquitectónicas sin propuesta explícita.
+
+
+
+\## Do not touch
+
+
 
 \- HUD superior
 
@@ -61,10 +123,4 @@
 \- Sincronización estable
 
 \- Lógica de cálculo de distancia
-
-
-
-\## PRÓXIMO EXPERIMENTO
-
-Evaluar estabilidad del Course-Up durante movimiento real, separando hipótesis de latencia, filtrado y umbral de velocidad.
 
