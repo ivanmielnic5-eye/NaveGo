@@ -15,6 +15,7 @@ import { HistoryScreen } from './HistoryScreen';
 import { SessionDetailScreen } from './SessionDetailScreen';
 import { ReferenceDetailScreen } from './ReferenceDetailScreen';
 import { getReferenceRoutePoints } from './db/journal';
+import { CockpitScreen } from './CockpitScreen';
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1d2c4d' }] },
@@ -104,7 +105,7 @@ function AppContent() {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
 
-  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference'>('hud');
+  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference' | 'cockpit'>('hud');
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [referencePoints, setReferencePoints] = useState<{ latitude: number; longitude: number }[]>([]);
@@ -137,7 +138,7 @@ function AppContent() {
   useEffect(() => {
     const sub = Accelerometer.addListener(({ z }) => {
       if (Number.isFinite(z)) {
-        setAccelerometerZ(Math.abs(z));
+        // setAccelerometerZ(Math.abs(z)); // desactivado temporalmente para diagn�stico
       }
     });
 
@@ -196,11 +197,11 @@ function AppContent() {
 
   const navStatus = tracker.navigationStatus;
   const navConfig = {
-    CONFIABLE: { icon: 'checkmark-circle' as const, color: colors.success, label: 'GNSS OK' },
-    DEGRADADO: { icon: 'warning' as const, color: colors.warning, label: 'GNSS DEGRADADO' },
+    CONFIABLE: { icon: 'compass' as const, color: colors.success, label: 'GNSS OK' },
+    DEGRADADO: { icon: 'cloud' as const, color: colors.warning, label: 'GNSS DEGRADADO' },
     NO_CONFIABLE: { icon: 'alert-circle' as const, color: colors.danger, label: 'NAVEGACIÓN NO CONFIABLE' },
-    NO_DISPONIBLE: { icon: 'location-outline' as const, color: colors.textSecondary, label: 'GNSS NO DISPONIBLE' },
-    GNSS_PERDIDO: { icon: 'location-outline' as const, color: colors.warning, label: 'GNSS PERDIDO' },
+    NO_DISPONIBLE: { icon: 'location' as const, color: colors.textSecondary, label: 'GNSS NO DISPONIBLE' },
+    GNSS_PERDIDO: { icon: 'location' as const, color: colors.warning, label: 'GNSS PERDIDO' },
     RECUPERANDO: { icon: 'sync' as const, color: colors.navigateCyan, label: 'RECUPERANDO' },
   }[navStatus] || { icon: 'help-circle' as const, color: colors.textSecondary, label: navStatus };
 
@@ -216,7 +217,7 @@ function AppContent() {
   const accuracyM = tracker.lastFixAccuracy !== null ? tracker.lastFixAccuracy.toFixed(0) : null;
 
   const internetColor = tracker.syncOk === true ? colors.success : tracker.syncOk === false ? colors.warning : colors.textSecondary;
-  const internetIcon = tracker.syncOk === true ? 'cloud-done-outline' : tracker.syncOk === false ? 'cloud-offline-outline' : 'cloud-outline';
+  const internetIcon = tracker.syncOk === true ? 'cloud-done' : tracker.syncOk === false ? 'cloud-offline' : 'cloud';
   const internetLabel = tracker.syncOk === true ? 'INTERNET' : tracker.syncOk === false ? 'SIN INTERNET' : 'INTERNET...';
 
   const phoneIsHorizontal = accelerometerZ > 0.7;
@@ -248,11 +249,11 @@ function AppContent() {
   };
 
   const floatingActions = [
-    { key: 'config', icon: 'settings-outline', label: 'Config' },
-    { key: 'energy', icon: 'flash-outline', label: 'Energía' },
-    { key: 'vessel', icon: 'navigate-outline', label: 'Embarcación' },
-    { key: 'port', icon: 'home-outline', label: 'Puerto' },
-    { key: 'history', icon: 'time-outline', label: 'Historial' },
+    { key: 'config', icon: 'settings' as const, label: 'Config' },
+    { key: 'energy', icon: 'flash' as const, label: 'Energía' },
+    { key: 'vessel', icon: 'navigate' as const, label: 'Embarcación' },
+    { key: 'port', icon: 'home' as const, label: 'Puerto' },
+    { key: 'history', icon: 'time' as const, label: 'Historial' },
   ];
 
   if (permissionState === 'loading') {
@@ -269,7 +270,7 @@ function AppContent() {
     return (
       <SafeAreaView style={styles.loadingContainer}>
         <StatusBar style="light" />
-        <Ionicons name="location-outline" size={48} color={colors.warning} />
+        <Ionicons name="location" size={48} color={colors.warning} />
         <Text style={[styles.loadingText, { color: colors.warning }]}>
           Permiso de ubicación denegado
         </Text>
@@ -325,6 +326,20 @@ function AppContent() {
             setScreen('hud');
           }}
         />
+      </SafeAreaView>
+    );
+  }
+
+  if (screen === 'cockpit') {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <StatusBar style="light" />
+        <View style={styles.cockpitHeader}>
+          <TouchableOpacity onPress={() => setScreen('hud')} style={styles.cockpitBackButton}>
+            <Ionicons name="arrow-back" size={24} color={colors.navigateCyan} />
+          </TouchableOpacity>
+        </View>
+        <CockpitScreen />
       </SafeAreaView>
     );
   }
@@ -409,6 +424,9 @@ function AppContent() {
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>NAVEGO <Text style={styles.headerAccent}>// HUD</Text></Text>
+        <TouchableOpacity onPress={() => setScreen('cockpit')} style={styles.cockpitButton}>
+          <Ionicons name="grid" size={22} color={colors.navigateCyan} />
+        </TouchableOpacity>
       </View>
 
       <View style={[styles.navChip, { borderColor: navConfig.color }]}>
@@ -588,9 +606,9 @@ const styles = StyleSheet.create({
   permissionHint: { fontSize: 13, color: colors.textSecondary, marginTop: 8, textAlign: 'center' },
   header: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 0,
+    marginTop: 2,
     marginBottom: 6,
   },
   headerTitle: {
@@ -599,6 +617,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     letterSpacing: 1.2,
     textAlign: 'center',
+    flex: 1,
   },
   headerAccent: { color: colors.navigateCyan },
   headerStatus: { fontSize: 11, fontWeight: 'bold', letterSpacing: 0.8 },
@@ -710,4 +729,20 @@ const styles = StyleSheet.create({
     left: 12,
     zIndex: 10,
   },
+  cockpitButton: {
+    padding: 8,
+  },
+  cockpitHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cockpitBackButton: {
+    padding: 8,
+  },
 });
+
+
+
+
+

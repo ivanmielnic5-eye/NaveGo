@@ -14,3 +14,4 @@ export interface GPSFix {
   quality: 'GOOD' | 'SUSPECT' | 'REJECTED';
   satellites?: number | null;
 }
+

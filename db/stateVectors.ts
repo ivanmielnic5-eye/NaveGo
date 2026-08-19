@@ -58,3 +58,4 @@ export async function getLatestStateVector(
     evidence_ref: { source: row.evidence_ref_source, id: row.evidence_ref_id },
   };
 }
+

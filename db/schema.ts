@@ -69,3 +69,4 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
     );
   `);
 }
+

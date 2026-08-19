@@ -41,3 +41,4 @@ export function getSignalStatusInfo(state: ConnectionState): SignalStatusInfo {
       return { state, label: '○ ESTADO DESCONOCIDO', color: '#94a3b8' };
   }
 }
+

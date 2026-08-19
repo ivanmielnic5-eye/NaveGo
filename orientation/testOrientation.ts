@@ -64,3 +64,4 @@ export function stopOrientationTest() {
     '[NOC] Orientation Core detenido'
   );
 }
+

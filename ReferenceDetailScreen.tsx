@@ -67,3 +67,7 @@ const styles = StyleSheet.create({
   infoCard: { ...glass.dataPanel },
   infoText: { color: colors.textSecondary, fontSize: 12, marginTop: 4 },
 });
+
+
+
+

@@ -79,3 +79,5 @@ export const initialNavigationState: NavigationState = {
   acceptedFixCount: 0,
   suspectFixCount: 0,
 };
+
+

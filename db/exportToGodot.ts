@@ -40,3 +40,4 @@ export async function exportSessionToGodotJson(
     console.error("[EXPORT_GODOT] Error al exportar la trayectoria:", error);
   }
 }
+

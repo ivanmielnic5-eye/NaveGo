@@ -29,3 +29,4 @@ export interface StateVector {
   evidence_ref: { source: 'gps_fix' | 'event' | 'report'; id: string };
   integrity_hash?: string;
 }
+

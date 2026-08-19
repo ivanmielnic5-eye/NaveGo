@@ -102,3 +102,7 @@ const styles = StyleSheet.create({
   qualityTitle: { ...fonts.label, marginBottom: 8 },
   qualityText: { color: colors.textSecondary, fontSize: 12, marginTop: 4 },
 });
+
+
+
+
