@@ -1,4 +1,6 @@
 # NaveGo Save Script
+Set-Location "C:\Users\ivan\Downloads\_Proyectos\NaveGoLocal"
+
 $fecha = Get-Date -Format "yyyy-MM-dd-HHmm"
 $mensaje = "version $fecha"
 

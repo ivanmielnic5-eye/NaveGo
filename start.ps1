@@ -13,14 +13,14 @@ if ($connection) {
 
 # Levantar servidor local
 Write-Host "Levantando servidor local..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\NaveGoLocal"; node simulate.js'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\_Proyectos\NaveGoLocal"; node simulate.js'
 
 # Levantar túnel
 Write-Host "Levantando túnel..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\NaveGoLocal"; npx localtunnel --port 3000'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\_Proyectos\NaveGoLocal"; npx localtunnel --port 3000'
 
 # Levantar Metro
 Write-Host "Levantando Metro..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\NaveGoLocal"; npx expo start --clear'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\ivan\Downloads\_Proyectos\NaveGoLocal"; npx expo start --clear'
 
 Write-Host "=== NaveGo: Todo en marcha ===" -ForegroundColor Cyan
