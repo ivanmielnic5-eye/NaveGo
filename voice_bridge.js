@@ -8,17 +8,51 @@ const commands = {
   "/backup": "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\backup.ps1\"",
 };
 
-const server = http.createServer((req, res) => {
+const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LOGOS Control</title>
+<style>
+body{background:#030817;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}
+h1{color:#00d9ff;margin-bottom:20px}
+button{width:80%;padding:15px;margin:10px;background:#0A1128;border:1px solid #00d9ff;border-radius:12px;color:#00d9ff;font-size:18px;cursor:pointer}
+button:active{background:#00d9ff;color:#030817}
+#result{margin-top:20px;font-size:14px;color:#8E9BB5;white-space:pre-wrap;text-align:center}
+</style></head><body>
+<h1>LOGOS // CONTROL</h1>
+<button onclick="run('/guardar')">Guardar</button>
+<button onclick="run('/estado')">Estado</button>
+<button onclick="run('/arrancar')">Arrancar</button>
+<button onclick="run('/backup')">Backup</button>
+<div id="result">Listo</div>
+<script>
+async function run(path){
+  document.getElementById('result').textContent='Ejecutando...';
+  try{
+    const res=await fetch(path);
+    const text=await res.text();
+    document.getElementById('result').textContent=text||'OK';
+  }catch(e){
+    document.getElementById('result').textContent='Error: '+e.message;
+  }
+}
+</script>
+</body></html>`;
+
+const server = http.createServer((req,res)=>{
+  if(req.url==="/"){
+    res.writeHead(200,{"Content-Type":"text/html; charset=utf-8"});
+    res.end(html);
+    return;
+  }
   const command = commands[req.url];
-  if (command) {
-    exec(command, (error, stdout, stderr) => {
-      res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+  if(command){
+    exec(command, (error, stdout, stderr)=>{
+      res.writeHead(200,{"Content-Type":"text/plain; charset=utf-8"});
       res.end(stdout || stderr || "Ejecutado");
     });
   } else {
-    res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
-    res.end("LOGOS Voice Bridge activo. Comandos: /guardar /arrancar /estado /backup");
+    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8"});
+    res.end("No encontrado");
   }
 });
 
-server.listen(4000, () => console.log("LOGOS Voice Bridge en http://localhost:4000"));
+server.listen(4000,()=>console.log("LOGOS Voice Bridge en http://localhost:4000"));
