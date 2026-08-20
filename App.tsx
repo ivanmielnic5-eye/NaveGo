@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, memo } from 'react';
+ï»¿import React, { useEffect, useRef, useState, memo } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -138,7 +138,7 @@ function AppContent() {
   useEffect(() => {
     const sub = Accelerometer.addListener(({ z }) => {
       if (Number.isFinite(z)) {
-        // setAccelerometerZ(Math.abs(z)); // desactivado temporalmente para diagnóstico
+        // setAccelerometerZ(Math.abs(z)); // desactivado temporalmente para diagnï¿½stico
       }
     });
 
@@ -339,7 +339,7 @@ function AppContent() {
             <Ionicons name="arrow-back" size={24} color={colors.navigateCyan} />
           </TouchableOpacity>
         </View>
-        <CockpitScreen />
+        <CockpitScreen tracker={tracker} />
       </SafeAreaView>
     );
   }
@@ -745,6 +745,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+
 
 
 

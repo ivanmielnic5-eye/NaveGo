@@ -29,7 +29,34 @@ Actualizado: 2026-08-19
 - Acumulado de aproximadamente 3500 m sin explicacion clara.
 - Guardado intermitente de derrotas, con y sin WiFi.
 
+## Observaciones adicionales
+- En casa, guardo sin internet (modo avion). OK.
+- En casa de la madre, a veces guardo y a veces no.
+- El indicador de internet de la PC no se conecto nunca en casa de la madre.
+- Posible acumulacion de metros entre sesiones.
+
+## Hipotesis separadas
+1. El guardado local es independiente del internet.
+2. El indicador de internet se confunde con el guardado.
+3. La red WiFi de la casa de la madre interfiere.
+4. El guardado intermitente es un problema de sesion, no de red.
+
+## Experimento propuesto
+En casa con WiFi normal: registrar y finalizar derrota.
+En casa en modo avion: registrar y finalizar derrota.
+En casa de la madre con WiFi: registrar y finalizar derrota.
+En cada caso registrar:
+- Dice guardada con exito?
+- Aparece en Historial?
+- Aparece en el mapa?
+- Indicador de internet en verde, ambar o rojo?
+
 ## Siguiente experimento
 - Probar Course-Up en auto a mayor velocidad.
 - Observar fluidez y posible retraso.
 - Registrar COG, SOG y sensacion visual.
+
+## Pendiente futuro
+- Evaluar boton para eliminar sesiones con confirmacion.
+- Revisar acumulacion de metros entre derrotas.
+- Separar correctamente las sesiones en el almacenamiento.
