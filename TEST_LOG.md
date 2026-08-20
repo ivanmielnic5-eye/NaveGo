@@ -60,3 +60,23 @@ En cada caso registrar:
 - Evaluar boton para eliminar sesiones con confirmacion.
 - Revisar acumulacion de metros entre derrotas.
 - Separar correctamente las sesiones en el almacenamiento.
+
+## 2026-08-20 — Prueba piloto de control remoto sin teclado
+
+### Resultado
+- Se creo voice_bridge.js en el proyecto.
+- Se levanto en el puerto 4000.
+- Se probo desde el celular en la misma red Wi-Fi.
+- URL utilizada: http://192.168.1.19:4000/guardar
+- La PC ejecuto save.ps1 correctamente.
+- Se obtuvo mensaje "Version guardada de NaveGo".
+
+### Validacion
+- Funciona el control remoto por red local sin teclado.
+- No se toco NaveGo, tracking, SQLite ni HUD.
+- Queda como apendice piloto para futura integracion con voz.
+
+### Proximos pasos
+- Incorporar mas comandos: arrancar, estado, backup.
+- Integrar con Geminis o asistente de voz.
+- Evaluar seguridad y confirmacion para acciones criticas.
