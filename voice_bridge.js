@@ -1,58 +1,57 @@
 ﻿const http = require("http");
 const { exec } = require("child_process");
+const { URL } = require("url");
+const fs = require("fs");
+
+const TOKEN = "NAVEGO-2026-LOGOS";
 
 const commands = {
-  "/guardar": "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\save.ps1\"",
-  "/arrancar": "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\start.ps1\"",
-  "/estado": "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\estado.ps1\"",
-  "/backup": "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\backup.ps1\"",
+  "/guardar": { script: "save.ps1", wait: true },
+  "/estado": { script: "estado.ps1", wait: true },
+  "/arrancar": { script: "start.ps1", wait: false },
+  "/backup": { script: "backup.ps1", wait: false },
 };
 
-const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LOGOS Control</title>
-<style>
-body{background:#030817;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}
-h1{color:#00d9ff;margin-bottom:20px}
-button{width:80%;padding:15px;margin:10px;background:#0A1128;border:1px solid #00d9ff;border-radius:12px;color:#00d9ff;font-size:18px;cursor:pointer}
-button:active{background:#00d9ff;color:#030817}
-#result{margin-top:20px;font-size:14px;color:#8E9BB5;white-space:pre-wrap;text-align:center}
-</style></head><body>
-<h1>LOGOS // CONTROL</h1>
-<button onclick="run('/guardar')">Guardar</button>
-<button onclick="run('/estado')">Estado</button>
-<button onclick="run('/arrancar')">Arrancar</button>
-<button onclick="run('/backup')">Backup</button>
-<div id="result">Listo</div>
-<script>
-async function run(path){
-  document.getElementById('result').textContent='Ejecutando...';
-  try{
-    const res=await fetch(path);
-    const text=await res.text();
-    document.getElementById('result').textContent=text||'OK';
-  }catch(e){
-    document.getElementById('result').textContent='Error: '+e.message;
+function ejecutar(path, wait, res) {
+  const script = "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Users\\ivan\\Downloads\\_Proyectos\\NaveGoLocal\\" + commands[path].script + "\"";
+  if (wait) {
+    exec(script, (error, stdout, stderr) => {
+      res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end(stdout || stderr || "OK");
+    });
+  } else {
+    exec(script);
+    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Ejecutado en la PC");
   }
 }
-</script>
-</body></html>`;
 
-const server = http.createServer((req,res)=>{
-  if(req.url==="/"){
-    res.writeHead(200,{"Content-Type":"text/html; charset=utf-8"});
+const html = fs.readFileSync(__dirname + "/panel.html", "utf8");
+
+const server = http.createServer((req,res) => {
+  const myUrl = new URL(req.url, "http://localhost");
+  const path = myUrl.pathname;
+  const token = myUrl.searchParams.get("token");
+
+  if (path === "/") {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(html);
     return;
   }
-  const command = commands[req.url];
-  if(command){
-    exec(command, (error, stdout, stderr)=>{
-      res.writeHead(200,{"Content-Type":"text/plain; charset=utf-8"});
-      res.end(stdout || stderr || "Ejecutado");
-    });
+
+  if (token !== TOKEN) {
+    res.writeHead(401, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Token inválido o ausente.");
+    return;
+  }
+
+  const command = commands[path];
+  if (command) {
+    ejecutar(path, command.wait, res);
   } else {
-    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8"});
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("No encontrado");
   }
 });
 
-server.listen(4000,()=>console.log("LOGOS Voice Bridge en http://localhost:4000"));
+server.listen(4000, () => console.log("LOGOS Voice Bridge con token en http://localhost:4000"));
