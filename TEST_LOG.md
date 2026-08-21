@@ -80,3 +80,24 @@ En cada caso registrar:
 - Incorporar mas comandos: arrancar, estado, backup.
 - Integrar con Geminis o asistente de voz.
 - Evaluar seguridad y confirmacion para acciones criticas.
+
+## 2026-08-21 — Blindaje de LOGOS
+
+### Resultado
+- Se implemento token de acceso en voice_bridge.js.
+- Se separo panel.html de voice_bridge.js.
+- Se actualizo save.ps1 para calcular y guardar hash SHA-256.
+- Se genero integrity.json con hashes de scripts criticos.
+- Se probo el panel LOGOS desde el celular con exito.
+- Se confirmo que una peticion sin token es rechazada.
+
+### Validacion
+- El token protege los comandos remotos.
+- La integridad SHA-256 queda registrada en cada guardado.
+- NaveGo no fue tocado.
+
+### Proximos pasos
+- Blindar simulate.js con token.
+- Reducir superficie de red de los servicios locales.
+- Evaluar deshabilitar SMB/NetBIOS en red hostil.
+- Actualizar SECURITY_BASELINE.md con estado implementado.
