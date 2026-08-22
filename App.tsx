@@ -550,25 +550,34 @@ function AppContent() {
 
         <View style={styles.actionsContainer}>
           {!tracker.isTracking ? (
-            <TouchableOpacity style={styles.primaryAction} onPress={handleStart}>
-              <Text style={styles.primaryActionText}>INICIAR DERROTA</Text>
-            </TouchableOpacity>
+            <>
+              <View style={styles.row}>
+                <TouchableOpacity style={styles.primaryAction} onPress={handleStart}>
+                  <Text style={styles.primaryActionText}>{tracker.totalDistance > 0 ? "NUEVA TRAVESÍA" : "SOLTAR AMARRAS"}</Text>
+                </TouchableOpacity>
+                {tracker.totalDistance > 0 && (
+                  <TouchableOpacity style={styles.actionHalf} onPress={handleReset}>
+                    <Text style={[styles.actionButtonText, { color: colors.textSecondary }]}>RESETEAR</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </>
           ) : (
-            <View style={styles.row}>
-              <TouchableOpacity style={[styles.actionHalf, { backgroundColor: tracker.isPaused ? "rgba(53,211,154,0.14)" : "rgba(255,181,46,0.12)" }]} onPress={handleToggleRecord}>
-                <Text style={[styles.actionButtonText, { color: tracker.isPaused ? colors.success : colors.warning }]}>{tracker.isPaused ? "REANUDAR" : "PAUSAR"}</Text>
+            <>
+              <View style={styles.row}>
+                <TouchableOpacity style={[styles.actionHalf, { backgroundColor: tracker.isPaused ? "rgba(53,211,154,0.14)" : "rgba(255,181,46,0.12)" }]} onPress={handleToggleRecord}>
+                  <Text style={[styles.actionButtonText, { color: tracker.isPaused ? colors.success : colors.warning }]}>{tracker.isPaused ? "REANUDAR NAVEGACIÓN" : "AMARRAR"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionHalf} onPress={handleReset}>
+                  <Text style={[styles.actionButtonText, { color: colors.textSecondary }]}>RESETEAR</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={styles.finalizeAction} onPress={handleFinalize}>
+                <Text style={styles.finalizeActionText}>FINALIZAR TRAVESÍA</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionHalf} onPress={handleReset}>
-                <Text style={[styles.actionButtonText, { color: colors.textSecondary }]}>RESETEAR</Text>
-              </TouchableOpacity>
-            </View>
+            </>
           )}
-
-          <TouchableOpacity style={styles.finalizeAction} onPress={handleFinalize}>
-            <Text style={styles.finalizeActionText}>FINALIZAR</Text>
-          </TouchableOpacity>
         </View>
-
         <View style={styles.dockBar}>
           {floatingActions.map((item) => (
             <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === "history") setScreen("history"); }}>

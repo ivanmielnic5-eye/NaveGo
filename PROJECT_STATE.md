@@ -21,7 +21,7 @@ ESTADO, TRABAJO, EVIDENCIA, ARCHIVOS, ACCION.
 - NaveGo es adaptador de prueba, no definición del sistema.
 
 ## Current objective
-Cerrar deuda de persistencia: guardado de sesiones, acumulador, unicidad y scroll.
+Cerrar deuda de persistencia y preparar máquina de estados de sesión.
 
 ## Stable
 - HUD principal
@@ -36,6 +36,7 @@ Cerrar deuda de persistencia: guardado de sesiones, acumulador, unicidad y scrol
 - Integridad SHA-256
 - Panel visual LOGOS
 - Indicador de internet corregido
+- Scroll en HistoryScreen
 
 ## Experimental
 - Course-Up en movimiento real
@@ -53,20 +54,13 @@ Cerrar deuda de persistencia: guardado de sesiones, acumulador, unicidad y scrol
 - TCL X1 Pro
 - Acelerómetro disponible
 - Sin magnetómetro ni giroscopio dedicados
+- Canal de voz USB WO Mic operativo
 
 ## Active experiments
 - Course-Up: observar desfase COG ↔ mapa durante giros.
 
 ## Next recommended action
-Implementar máquina de estados de sesión en código.
-
-## Tareas para mañana
-- Implementar máquina de estados: EN ESPERA, REGISTRANDO, EN PAUSA, FINALIZADA.
-- Botón resetear visible al finalizar.
-- Evitar duplicar referencia si ya existe.
-- Arreglar scroll en HistoryScreen.
-- Revisar acumulación de distancia y reset estricto.
-- Actualizar Cockpit con estado real.
+Implementar instrumento siempre encendido en código.
 
 ## Critical decisions
 - Portrait = North-Up
@@ -75,6 +69,7 @@ Implementar máquina de estados de sesión en código.
 - Acelerómetro como auxiliar, no fuente de posición.
 - Ninguna IA puede cambiar decisiones arquitectónicas sin propuesta explícita.
 - Cockpit universal separado del contexto náutico.
+- NaveGo como instrumento: sensores siempre encendidos, travesía bajo demanda.
 
 ## Do not touch
 - HUD superior

@@ -2,40 +2,40 @@
 
 Actualizado: 2026-08-22
 
-## Objetivo
-Definir el ciclo de vida de una derrota para eliminar ambiguedades entre pausar, finalizar, resetear y continuar.
+## Principio fundamental
+NaveGo es un instrumento, no solo un grabador de travesías.
+Los sensores y el enlace se activan al abrir la app.
+La travesía se activa únicamente al tocar "SOLTAR AMARRAS".
 
-## Estados
-EN_ESPERA: la app esta abierta pero no registra distancia.
-REGISTRANDO: la derrota esta activa y se acumula distancia.
-EN_PAUSA: la derrota esta activa pero no registra distancia.
-FINALIZADA: la derrota fue cerrada y no admite reanudar.
+## Ciclo de instrumento (siempre encendido)
+- GNSS: busca señal y muestra estado real.
+- Túnel/Internet: refleja conexión con la PC.
+- Reloj: corre desde el arranque.
+- Acelerómetro: detecta horizontalidad.
+- Estado del sistema: servidor y app vivos.
 
-## Flujo
-EN_ESPERA
-  -> iniciar -> REGISTRANDO
+## Ciclo de travesía (bajo demanda)
+EN_ESPERA (amarre)
+  → "Soltar amarras" → REGISTRANDO
 REGISTRANDO
-  -> pausar -> EN_PAUSA
-  -> finalizar -> FINALIZADA
+  → "Amarrar" → EN_PAUSA
 EN_PAUSA
-  -> reanudar -> REGISTRANDO
-  -> finalizar -> FINALIZADA
+  → "Reanudar navegación" → REGISTRANDO
+REGISTRANDO o EN_PAUSA
+  → "Finalizar travesía" → FINALIZADA
 FINALIZADA
-  -> resetear -> EN_ESPERA
+  → "Resetear" → EN_ESPERA
 
-## Reglas
-1. Al abrir NaveGo, inicia en EN_ESPERA. No cuenta distancia.
+## Reglas de transición
+1. Al abrir la app, arranca EN_ESPERA con contadores en cero.
 2. Solo se registra distancia en REGISTRANDO.
-3. Pausa no suma distancia. Al reanudar se marca un nuevo segmento.
-4. Finalizar solo es valido si hay sesion activa.
-5. Luego de finalizar, no debe existir boton reanudar.
-6. Resetear borra contadores y deja en EN_ESPERA.
-7. Si ya existe una referencia para la sesion, no se crea otra.
-8. El historial debe tener scroll propio y no quedar oculto bajo Android.
+3. Amarrar congela distancia, no suma.
+4. Finalizar cierra la sesión y elimina "Reanudar".
+5. Resetear limpia y vuelve a EN_ESPERA.
+6. Una sesión solo puede generar una referencia.
 
-## Indicador visual sugerido
-EN_ESPERA: texto neutro, sin acumulador activo.
-REGISTRANDO: punto verde activo.
-EN_PAUSA: punto amarillo.
-FINALIZADA: punto cian y opcion de guardar referencia.
-
+## Lenguaje de controles
+- "Soltar amarras" en lugar de "Iniciar derrota".
+- "Amarrar" en lugar de "Pausar".
+- "Reanudar navegación" en lugar de "Reanudar".
+- "Finalizar travesía" en lugar de "Finalizar".

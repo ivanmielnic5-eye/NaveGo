@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { getAllSessions, createReferenceRouteFromSession, getAllReferenceRoutes } from './db/journal';
 import { colors, fonts, spacing, radii, glass } from './theme';
 
@@ -60,7 +60,7 @@ export function HistoryScreen({
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>‹ Volver</Text>
@@ -103,12 +103,13 @@ export function HistoryScreen({
           </TouchableOpacity>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: spacing.lg },
+  container: { flex: 1, backgroundColor: colors.background },
+  contentContainer: { padding: spacing.lg, paddingBottom: 32 },
   loadingContainer: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: spacing.xl },
   backButton: { paddingVertical: 8, paddingHorizontal: 12 },
@@ -133,8 +134,3 @@ const styles = StyleSheet.create({
   },
   referenceButtonText: { color: colors.navigateCyan, fontSize: 12, fontWeight: 'bold' },
 });
-
-
-
-
-

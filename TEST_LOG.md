@@ -153,3 +153,36 @@ En cada caso registrar:
 
 ### Aplicación
 - Se implementará en la máquina de estados de sesión.
+
+## 2026-08-22 — Habilitación de canal de voz USB
+
+### Resultado
+- Se configuro WO Mic sobre USB debugging en TCL.
+- Windows reconoce WO Mic Device como entrada de audio.
+- Dictado por voz operativo mediante Windows + H.
+- Se elimino el eco y se estabilizo la señal.
+
+### Impacto
+- Habilita el flujo de voz para LOGOS.
+- Permite trabajar sin teclado.
+- Requiere confirmacion para acciones criticas.
+
+### Proximos pasos
+- Integrar voz al campo de intencion del Cockpit.
+- Definir frases de comando seguras.
+- Probar dictado sobre LOGOS en PC.
+
+## 2026-08-22 — Decisión de instrumento siempre encendido
+
+### Descripción
+- Se separó el ciclo de instrumento (siempre activo) del ciclo de travesía (bajo demanda).
+- GNSS, túnel, reloj y sensores deben activarse al abrir la app.
+- Solo al tocar "SOLTAR AMARRAS" se inicia el registro de distancia.
+
+### Impacto
+- Evita distancia fantasma al abrir la app.
+- Permite verificar GNSS e internet antes de navegar.
+- El Cockpit podrá reflejar estado real aunque no haya travesía activa.
+
+### Estado
+Decisión registrada. Pendiente de implementación en useNaveGoTracker.ts y App.tsx.
