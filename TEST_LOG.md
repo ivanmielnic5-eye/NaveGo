@@ -121,3 +121,20 @@ En cada caso registrar:
 - Arreglar scroll en HistoryScreen.
 - Revisar acumulación de distancia y reset estricto.
 - Actualizar Cockpit con estado real.
+
+## 2026-08-22 — Cierre ampliado: tareas para próxima sesión
+
+### Nuevas tareas
+- Auditar App.tsx.bak y decidir conservar, renombrar o eliminar.
+- Diseñar interfaz de PC para control del Cockpit (misma base que panel LOGOS, 4-5 botones, pantalla grande).
+- Implementar lectura automática del estado real de documentos vivos en el Cockpit.
+- Hacer que el Cockpit se actualice automáticamente con cada guardado.
+- Reflejar en Cockpit: fase, semáforo, última actualización, tareas pendientes, estado de servicios.
+
+### Tareas pendientes previas
+- Implementar máquina de estados de sesión en código.
+- Botón resetear visible después de finalizar.
+- Evitar duplicar referencia si ya existe.
+- Arreglar scroll en HistoryScreen.
+- Revisar acumulación de distancia y reset estricto.
+- Actualizar Cockpit con estado real.
