@@ -170,6 +170,7 @@ export function useNaveGoTracker() {
   };
 
   const startTracking = async () => {
+    resetTracking();
     try {
       if (dbRef.current === null) {
         dbRef.current = await SQLite.openDatabaseAsync('navego.db');
@@ -328,6 +329,11 @@ export function useNaveGoTracker() {
   };
 
   const resetTracking = () => {
+    if (sessionIdRef.current && dbRef.current) {
+      dbRef.current.withTransactionSync?.(() => {}) ?? null;
+    }
+    sessionIdRef.current = null;
+    sequenceNoRef.current = 0;
     setRoutePoints([]);
     routePointsRef.current = [];
     setTotalDistance(0);
@@ -338,7 +344,6 @@ export function useNaveGoTracker() {
     smoothedCogRef.current = null;
     setActiveHazards([]);
     lastPointRef.current = null;
-    sequenceNoRef.current = 0;
     lastCogRef.current = 0;
     setLastFixTimestamp(null);
     setLastFixAccuracy(null);
@@ -385,6 +390,11 @@ export function useNaveGoTracker() {
     resetDistance,
   };
 }
+
+
+
+
+
 
 
 
