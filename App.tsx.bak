@@ -218,7 +218,6 @@ function AppContent() {
   const handleToggleRecord = () => tracker.togglePause();
   const handleReset = () => tracker.resetTracking();
   const handleStart = () => {
-    tracker.resetTracking();
     tracker.startTracking().catch((err) => {
       console.warn('[APP] Error al iniciar tracking:', err);
     });
@@ -239,7 +238,6 @@ function AppContent() {
   };
 
   const handleFinalize = () => {
-    tracker.stopTracking();
     Alert.alert(
       'Sistema',
       `Derrota finalizada y guardada exitosamente.\nDistancia: ${Number(tracker.totalDistance).toFixed(1)} m`
@@ -511,14 +509,23 @@ function AppContent() {
                 />
               </View>
 
-              <Text style={[styles.value, { color: colors.navigateCyan }]}>{`${cogDeg}°`}</Text>
+              <Text
+                style={[
+                  styles.value,
+                  { color: colors.navigateCyan },
+                ]}
+              >
+                {`${cogDeg}°`}
+              </Text>
 
               <View style={styles.cogNorthRow}>
                 <Ionicons name="arrow-up" size={10} color={colors.textSecondary} />
                 <Text style={styles.cogNorthText}>N</Text>
               </View>
 
-              <Text style={styles.cogSubLabel}>RUMBO SOBRE FONDO</Text>
+              <Text style={styles.cogSubLabel}>
+                RUMBO SOBRE FONDO
+              </Text>
             </View>
           </View>
         </View>
@@ -533,13 +540,13 @@ function AppContent() {
 
             <View style={styles.statusRowCompact}>
               <View style={[styles.dot, tracker.isPaused ? styles.dotPaused : styles.dotActive]} />
-              <Text style={[styles.recordingText, { color: tracker.isPaused ? colors.warning : colors.navigateCyan }]}>{tracker.isPaused ? "II PAUSADO" : "● GRABANDO"}</Text>
+              <Text style={[styles.recordingText, { color: tracker.isPaused ? colors.warning : colors.navigateCyan }]}>{tracker.isPaused ? 'II PAUSADO' : '● GRABANDO'}</Text>
             </View>
 
             {tracker.activeHazards && tracker.activeHazards.length > 0 && (
               <View style={styles.alertBannerCompact}>
-                <Text style={styles.alertTextCompact}>{tracker.activeHazards[0].confidence === "CONFIRMADO" ? "⚠️" : "◌"} {tracker.activeHazards[0].name} a {Math.round(tracker.activeHazards[0].distance)} m</Text>
-                <Text style={styles.alertSubTextCompact}>{tracker.activeHazards[0].confidence === "CONFIRMADO" ? "CONFIRMADO" : "ÚLTIMA INFORMACIÓN"} · hace {tracker.activeHazards[0].lastReportedAt ? Math.floor((Date.now() - tracker.activeHazards[0].lastReportedAt) / 60000) : 0} min</Text>
+                <Text style={styles.alertTextCompact}>{tracker.activeHazards[0].confidence === 'CONFIRMADO' ? '⚠️' : '◌'} {tracker.activeHazards[0].name} a {Math.round(tracker.activeHazards[0].distance)} m</Text>
+                <Text style={styles.alertSubTextCompact}>{tracker.activeHazards[0].confidence === 'CONFIRMADO' ? 'CONFIRMADO' : 'ÚLTIMA INFORMACIÓN'} · hace {tracker.activeHazards[0].lastReportedAt ? Math.floor((Date.now() - tracker.activeHazards[0].lastReportedAt) / 60000) : 0} min</Text>
               </View>
             )}
 
@@ -548,34 +555,34 @@ function AppContent() {
           </View>
         </View>
 
-        <View style={styles.actionsContainer}>
-          {!tracker.isTracking ? (
-            <TouchableOpacity style={styles.primaryAction} onPress={handleStart}>
-              <Text style={styles.primaryActionText}>INICIAR DERROTA</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.row}>
-              <TouchableOpacity style={[styles.actionHalf, { backgroundColor: tracker.isPaused ? "rgba(53,211,154,0.14)" : "rgba(255,181,46,0.12)" }]} onPress={handleToggleRecord}>
-                <Text style={[styles.actionButtonText, { color: tracker.isPaused ? colors.success : colors.warning }]}>{tracker.isPaused ? "REANUDAR" : "PAUSAR"}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionHalf} onPress={handleReset}>
-                <Text style={[styles.actionButtonText, { color: colors.textSecondary }]}>RESETEAR</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <TouchableOpacity style={styles.finalizeAction} onPress={handleFinalize}>
-            <Text style={styles.finalizeActionText}>FINALIZAR</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.dockBar}>
           {floatingActions.map((item) => (
-            <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === "history") setScreen("history"); }}>
-              <Ionicons name={item.icon} size={22} color={item.key === "history" ? colors.navigateCyan : colors.textSecondary} />
+            <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === 'history') setScreen('history'); }}>
+              <Ionicons name={item.icon} size={22} color={item.key === 'history' ? colors.navigateCyan : colors.textSecondary} />
               <Text style={styles.dockLabel}>{item.label}</Text>
             </TouchableOpacity>
           ))}
+        </View>
+
+        {!tracker.isTracking ? (
+          <TouchableOpacity style={[glass.actionControl, { flex: 1, backgroundColor: 'rgba(53,211,154,0.14)' }]} onPress={handleStart}>
+            <Text style={[styles.actionButtonText, { color: colors.success }]}>INICIAR DERROTA</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.row}>
+            <TouchableOpacity style={[glass.actionControl, { flex: 1, backgroundColor: tracker.isPaused ? 'rgba(53,211,154,0.14)' : 'rgba(255,181,46,0.12)' }]} onPress={handleToggleRecord}>
+              <Text style={[styles.actionButtonText, { color: tracker.isPaused ? colors.success : colors.warning }]}>{tracker.isPaused ? 'REANUDAR' : 'PAUSAR'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[glass.actionControl, { flex: 1 }]} onPress={handleReset}>
+              <Text style={[styles.actionButtonText, { color: colors.textSecondary }]}>RESETEAR</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={styles.finalContainer}>
+          <TouchableOpacity style={[glass.actionControl, { paddingHorizontal: 24, backgroundColor: 'rgba(5,25,42,0.55)', borderColor: colors.borderSubtle }]} onPress={handleFinalize}>
+            <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>FINALIZAR</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -740,13 +747,4 @@ const styles = StyleSheet.create({
   cockpitBackButton: {
     padding: 8,
   },
-  actionsContainer: { marginBottom: 8 },
-  primaryAction: { backgroundColor: colors.glassSuccess, borderWidth: 1, borderColor: colors.success, borderRadius: radii.sm, paddingVertical: 14, alignItems: "center" },
-  primaryActionText: { color: colors.success, fontWeight: "bold", fontSize: 14, letterSpacing: 1 },
-  actionHalf: { flex: 1, borderWidth: 1, borderColor: colors.borderSubtle, borderRadius: radii.sm, paddingVertical: 12, alignItems: "center" },
-  finalizeAction: { borderWidth: 1, borderColor: colors.borderSubtle, borderRadius: radii.sm, paddingVertical: 12, alignItems: "center", marginTop: 8, backgroundColor: "rgba(5,25,42,0.55)" },
-  finalizeActionText: { color: colors.textPrimary, fontWeight: "bold", fontSize: 13, letterSpacing: 0.8 },
 });
-
-
-

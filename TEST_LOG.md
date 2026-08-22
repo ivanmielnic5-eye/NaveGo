@@ -101,3 +101,23 @@ En cada caso registrar:
 - Reducir superficie de red de los servicios locales.
 - Evaluar deshabilitar SMB/NetBIOS en red hostil.
 - Actualizar SECURITY_BASELINE.md con estado implementado.
+
+## 2026-08-22 — Cierre de sesión: avances y pendientes
+
+### Logros
+- Indicador de internet corregido (IP 192.168.1.19).
+- Mojibake corregido en useNaveGoTracker.ts, journal.ts y HistoryScreen.tsx.
+- Token de acceso en LOGOS operativo.
+- Panel visual LOGOS con botones Guardar, Estado, Arrancar y Backup.
+- Integridad SHA-256 en save.ps1, con integrity.json.
+- SECURITY_BASELINE.md actualizado.
+- EXPANSION_TELEMETRY.md creado como requerimiento futuro.
+- Máquina de estados de sesión definida conceptualmente.
+
+### Pendientes para próxima sesión
+- Implementar máquina de estados en código (amarre, registrando, pausa, finalizada).
+- Botón resetear visible después de finalizar.
+- Evitar duplicar referencia si ya existe.
+- Arreglar scroll en HistoryScreen.
+- Revisar acumulación de distancia y reset estricto.
+- Actualizar Cockpit con estado real.
