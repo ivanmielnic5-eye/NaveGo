@@ -1,66 +1,71 @@
 ﻿# NaveGo — Project State
 
-Updated: 2026-08-19
+Updated: 2026-08-21
+
+## Fase actual
+1. Integridad
+
+## Semáforo
+🟡 OBSERVACIÓN
 
 ## Flujo del Cockpit
 ESTADO, TRABAJO, EVIDENCIA, ARCHIVOS, ACCION.
 
 ## Sistema Universal
-- COCKPIT_CORE_SPEC.md: nucleo arquitectonico universal.
-- COCKPIT_UNIVERSAL_IMPLEMENTACION.md: plan de implementacion por fases.
-- COCKPIT_PC_SPEC.md: especificacion visual y funcional para pantalla grande.
-- HUMAN_AI_WORKFLOW.md: flujo conceptual de trabajo humano-IA.
-- NaveGo es adaptador de prueba, no definicion del sistema.
+- COCKPIT_CORE_SPEC.md
+- COCKPIT_UNIVERSAL_IMPLEMENTACION.md
+- COCKPIT_PC_SPEC.md
+- COCKPIT_DATA_CONTRACT.md
+- HUMAN_AI_WORKFLOW.md
+- NaveGo es adaptador de prueba, no definición del sistema.
 
 ## Current objective
-Validar sincronizacion Course-Up en movimiento real y estabilizar guardado de derrotas.
+Cerrar deuda de persistencia: guardado de sesiones, acumulador y unicidad.
 
 ## Stable
 - HUD principal
 - SQLite
 - Registro GPS
-- Sincronizacion con PC (simulate.js)
-- SOG
-- COG
-- Distancia
+- Sincronización con PC (simulate.js)
+- SOG, COG, Distancia
 - Portrait North-Up
-- Línea de derrota viva (verde continua)
-- Línea de referencia (cian discontinua)
+- Línea de derrota viva y referencia
 - Scripts de arranque, guardado y backup
-- Documentos vivos del Cockpit universal
+- Token en LOGOS
+- Integridad SHA-256
 
 ## Experimental
-- Carga de derrota de referencia desde SQLite
-- Sincronizacion Course-Up con movimiento real
-- CockpitScreen con 5 modulos
+- Course-Up en movimiento real
+- CockpitScreen con 5 módulos
 
 ## Blocked
 (Ninguno por ahora)
 
 ## Not verified
-- Guardado de derrota sin WiFi (observado intermitente, sin patron confirmado)
+- Guardado de derrota sin WiFi
+- Expansión de telemetría futura
 
 ## Current hardware
 - TCL X1 Pro
-- Acelerometro disponible
-- Sin magnetometro ni giroscopio dedicados
+- Acelerómetro disponible
+- Sin magnetómetro ni giroscopio dedicados
 
 ## Active experiments
-- Course-Up: observar desfase COG mapa durante giros.
+- Course-Up: observar desfase COG ↔ mapa durante giros.
 
 ## Next recommended action
-Probar guardado de derrota con y sin WiFi para confirmar patron.
+Corregir guardado de sesiones con reset estricto.
 
 ## Critical decisions
 - Portrait = North-Up
 - Landscape = Course-Up
-- Acelerometro como auxiliar, no como fuente de posicion.
-- Ninguna IA puede cambiar decisiones arquitectonicas sin propuesta explicita.
-- Cockpit universal separado del contexto nautico.
+- Acelerómetro como auxiliar, no fuente de posición.
+- Ninguna IA puede cambiar decisiones arquitectónicas sin propuesta explícita.
+- Cockpit universal separado del contexto náutico.
 
 ## Do not touch
 - HUD superior
 - Persistencia GPS
-- Sincronizacion estable
-- Logica de calculo de distancia
-- Nucleo arquitectonico del Cockpit
+- Sincronización estable
+- Lógica de cálculo de distancia
+- Núcleo arquitectónico del Cockpit

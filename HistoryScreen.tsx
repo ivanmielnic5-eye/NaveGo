@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { getAllSessions, createReferenceRouteFromSession, getAllReferenceRoutes } from './db/journal';
 import { colors, fonts, spacing, radii, glass } from './theme';
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   },
   referenceButtonText: { color: colors.navigateCyan, fontSize: 12, fontWeight: 'bold' },
 });
+
 
 
 

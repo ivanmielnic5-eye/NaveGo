@@ -1,4 +1,4 @@
-// db/journal.ts
+﻿// db/journal.ts
 import type { SQLiteDatabase } from 'expo-sqlite';
 import type { GPSFix } from '../types/journal';
 
@@ -152,4 +152,5 @@ export async function getReferenceRoutePoints(
     [routeId]
   );
 }
+
 

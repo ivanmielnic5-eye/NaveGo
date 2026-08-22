@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import * as SQLite from 'expo-sqlite';
 import { startSession, endSession, insertGpsFix } from './db/journal';
@@ -6,7 +6,7 @@ import { initDatabase } from './db/schema';
 import type { GPSFix } from './types/journal';
 
 // ====== CONFIGURACIÓN ======
-const PC_BRIDGE_URL = 'http://192.168.100.20:3000/update-trajectory';
+const PC_BRIDGE_URL = 'http://192.168.1.19:3000/update-trajectory';
 const SYNC_INTERVAL_MS = 10000;
 // ==========================
 
@@ -385,4 +385,6 @@ export function useNaveGoTracker() {
     resetDistance,
   };
 }
+
+
 
