@@ -138,3 +138,18 @@ En cada caso registrar:
 - Arreglar scroll en HistoryScreen.
 - Revisar acumulación de distancia y reset estricto.
 - Actualizar Cockpit con estado real.
+
+## 2026-08-22 — Decisión de lenguaje náutico
+
+### Cambio adoptado
+- "Soltar amarras" reemplaza a "Iniciar derrota".
+- "Amarrar" o "Volver a amarrar" reemplaza a "Pausar".
+- "Reanudar navegación" reemplaza a "Reanudar".
+- "Finalizar travesía" o "Concluir registro" reemplaza a "Finalizar".
+
+### Motivo
+- Evitar connotación negativa de "derrota".
+- Reflejar mejor la pausa física y el reinicio de navegación.
+
+### Aplicación
+- Se implementará en la máquina de estados de sesión.
