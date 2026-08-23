@@ -6,7 +6,8 @@ import { initDatabase } from './db/schema';
 import type { GPSFix } from './types/journal';
 
 // ====== CONFIGURACIÓN ======
-const PC_BRIDGE_URL = 'http://192.168.1.19:3000/update-trajectory';
+const PC_BRIDGE_URL = 'http://192.168.100.20:3000/update-trajectory';
+const HEALTH_URL = 'http://192.168.100.20:3000/health';
 const SYNC_INTERVAL_MS = 10000;
 // ==========================
 
@@ -87,6 +88,9 @@ export function useNaveGoTracker() {
   const lastCogRef = useRef<number>(0);
   const smoothedCogRef = useRef<number | null>(null);
 
+  const instrumentSubRef = useRef<Location.LocationSubscription | null>(null);
+  const instrumentTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371e3;
     const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -121,6 +125,53 @@ export function useNaveGoTracker() {
       setSyncOk(true);
     } catch {
       setSyncOk(false);
+    }
+  };
+
+  const checkHealth = async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      await fetch(HEALTH_URL, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      setSyncOk(true);
+    } catch {
+      setSyncOk(false);
+    }
+  };
+
+  const startInstruments = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setNavigationStatus('NO_DISPONIBLE');
+      return;
+    }
+
+    instrumentSubRef.current = await Location.watchPositionAsync(
+      { accuracy: Location.Accuracy.High, timeInterval: 1000, distanceInterval: 0 },
+      (location) => {
+        const currentTimestamp = location.timestamp || Date.now();
+        const accuracy = location.coords.accuracy ?? 999;
+        setLastFixTimestamp(currentTimestamp);
+        setLastFixAccuracy(accuracy);
+        updateNavigationStatus(currentTimestamp, accuracy);
+      }
+    );
+
+    instrumentTimerRef.current = setInterval(() => {
+      checkHealth();
+    }, SYNC_INTERVAL_MS);
+    checkHealth();
+  };
+
+  const stopInstruments = () => {
+    if (instrumentSubRef.current) {
+      instrumentSubRef.current.remove();
+      instrumentSubRef.current = null;
+    }
+    if (instrumentTimerRef.current) {
+      clearInterval(instrumentTimerRef.current);
+      instrumentTimerRef.current = null;
     }
   };
 
@@ -170,6 +221,7 @@ export function useNaveGoTracker() {
   };
 
   const startTracking = async () => {
+    stopInstruments();
     resetTracking();
     try {
       if (dbRef.current === null) {
@@ -318,6 +370,7 @@ export function useNaveGoTracker() {
     setIsPaused(false);
     isPausedRef.current = false;
     setNavigationStatus('NO_DISPONIBLE');
+    startInstruments();
   };
 
   const togglePause = () => {
@@ -353,7 +406,9 @@ export function useNaveGoTracker() {
   const resetDistance = resetTracking;
 
   useEffect(() => {
+    startInstruments();
     return () => {
+      stopInstruments();
       if (subscriptionRef.current) subscriptionRef.current.remove();
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
       if (dbRef.current && sessionIdRef.current) {
@@ -383,6 +438,7 @@ export function useNaveGoTracker() {
     lastFixTimestamp,
     lastFixAccuracy,
     navigationStatus,
+    startInstruments,
     startTracking,
     stopTracking,
     togglePause,
@@ -390,11 +446,3 @@ export function useNaveGoTracker() {
     resetDistance,
   };
 }
-
-
-
-
-
-
-
-

@@ -23,6 +23,7 @@ export function HistoryScreen({
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [referenceRoutes, setReferenceRoutes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -40,6 +41,15 @@ export function HistoryScreen({
   }, [db]);
 
   const handleCreateReference = async (session: SessionItem) => {
+    if (creating) return;
+
+    const exists = referenceRoutes.some((ref) => ref.source_session_id === session.id);
+    if (exists) {
+      Alert.alert('Referencia ya existe', 'Esta sesión ya fue guardada como referencia.');
+      return;
+    }
+
+    setCreating(true);
     try {
       await createReferenceRouteFromSession(db, session.id, session.title ?? 'Derrota referencia');
       Alert.alert('Derrota creada', 'La sesión fue guardada como derrota de referencia.');
@@ -48,6 +58,8 @@ export function HistoryScreen({
     } catch (err) {
       console.warn('[HISTORY] Error al crear referencia:', err);
       Alert.alert('Error', 'No se pudo crear la derrota de referencia.');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -68,7 +80,6 @@ export function HistoryScreen({
         <Text style={styles.title}>DERROTAS</Text>
       </View>
 
-      {/* REFERENCIAS */}
       <Text style={styles.sectionTitle}>Referencias guardadas</Text>
       {referenceRoutes.length === 0 && (
         <Text style={styles.emptyText}>No hay derrotas de referencia.</Text>
@@ -86,7 +97,6 @@ export function HistoryScreen({
         </TouchableOpacity>
       ))}
 
-      {/* SESIONES */}
       <Text style={styles.sectionTitle}>Sesiones</Text>
       {sessions.map((s) => (
         <View key={s.id} style={styles.sessionRow}>

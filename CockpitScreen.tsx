@@ -19,6 +19,23 @@ export function CockpitScreen({ tracker }: { tracker?: any }) {
 
   const adapterState = tracker ? createNaveGoAdapterState(tracker) : null;
 
+  const getGnssColor = () => {
+    switch (tracker?.navigationStatus) {
+      case 'CONFIABLE': return colors.success;
+      case 'RECUPERANDO':
+      case 'DEGRADADO': return colors.warning;
+      case 'GNSS_PERDIDO':
+      case 'NO_CONFIABLE': return colors.danger;
+      default: return colors.textSecondary;
+    }
+  };
+
+  const getSyncColor = () => {
+    if (tracker?.syncOk === true) return colors.success;
+    if (tracker?.syncOk === false) return colors.danger;
+    return colors.warning;
+  };
+
   const renderContent = () => {
     switch (active) {
       case 'estado':
@@ -118,9 +135,9 @@ export function CockpitScreen({ tracker }: { tracker?: any }) {
   return (
     <View style={styles.container}>
       <View style={styles.statusBar}>
-        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.success }]} /><Text style={styles.lightLabel}>GNSS</Text></View>
-        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.success }]} /><Text style={styles.lightLabel}>Servidor</Text></View>
-        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.warning }]} /><Text style={styles.lightLabel}>Túnel</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getGnssColor() }]} /><Text style={styles.lightLabel}>GNSS</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>PC</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>Sinc</Text></View>
         <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.success }]} /><Text style={styles.lightLabel}>Metro</Text></View>
       </View>
 
