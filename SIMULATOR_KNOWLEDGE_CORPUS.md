@@ -60,3 +60,19 @@ La textura de ruido es solo una herramienta; FastNoiseLite es mas flexible.
 
 ### Estado
 Documentado y listo para implementar en Godot.
+
+## 2026-08-24 — Referencia externa encontrada
+
+### Repositorio
+- Buoyancy in Godot 4 (CBerry22).
+- URL en SIMULATION_REFERENCES.md.
+
+### Hallazgo principal
+- Script water.gd implementa get_height correctamente.
+- Usa wrapf para mantener UV entre 0 y 1.
+- Muestrea textura de ruido con get_pixelv.
+- Sincroniza tiempo con set_shader_parameter.
+
+### Impacto
+- Ya no estamos a ciegas: hay una implementacion real de referencia.
+- Podemos comparar y adaptar a nuestro WaterController.
