@@ -56,3 +56,17 @@ Evita repetir contexto. Cualquier IA debe leerlo antes de proponer o ejecutar ca
 
 ## Meta
 Que cualquier IA (DeepSeek, ChatGPT, Claude, Gemini) entre al simulador con el mismo contexto, sin que el Director tenga que repetir informacion.
+
+## 2026-08-24 — Referencia oficial confirmada
+
+### Repositorio
+- Buoyancy in Godot 4 (CBerry22).
+- Contiene Water.gd, Cube.gd, water.gdshader y main.tscn.
+
+### Aplicacion en NaveGo
+- WaterController debe implementar get_height como Water.gd.
+- boat_controller.gd debe aplicar flotabilidad como Cube.gd.
+- Se debe crear ProbeContainer con 9 sondas.
+
+### Estado
+Documentado y listo para implementar en Godot.

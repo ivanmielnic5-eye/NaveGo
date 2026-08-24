@@ -2,63 +2,42 @@
 
 Actualizado: 2026-08-24
 
-## Proposito
-Documentar la logica exacta para que barcos y objetos floten y reaccionen al oleaje.
-Conectar la fisica de la CPU con el movimiento visual de la GPU.
+## Referencia oficial
+Repositorio: Buoyancy in Godot 4 (CBerry22).
+URL: https://github.com/CBerry22/Buoyancy-in-Godot-4
+
+## Archivos de referencia en el repo
+- Water.gd → sincronizacion CPU/GPU y get_height.
+- Cube.gd → flotabilidad por sondas y drag.
+- water.gdshader → deformacion de olas en GPU.
+- main.tscn → estructura de nodos y posicion de sondas.
 
 ## Estructura de nodos
-RigidBody3D (Barco)
-├── MeshInstance3D (Modelo visual)
-├── CollisionShape3D (Colision)
-└── ProbeContainer (Node)
-    ├── Marker3D (Proa)
-    ├── Marker3D (Centro)
-    ├── Marker3D (Popa)
-    └── ... más sondas según tamaño
+Main (Node3D)
+├── Water (MeshInstance3D) → Water.gd y water.gdshader
+└── Cube (RigidBody3D) → Cube.gd
+    ├── MeshInstance3D
+    ├── CollisionShape3D
+    └── ProbeContainer (Node3D)
+        ├── 9 Marker3D distribuidos
 
 ## Flotabilidad basica
-- Variable float_force para calibrar.
+- depth = water.get_height(p.global_position) - p.global_position.y.
+- Si depth > 0: apply_force(Vector3.UP * float_force * gravity * depth, offset).
 - gravity se obtiene de ProjectSettings.
-- water_height es la altura de la superficie.
-- depth = water_height - global_position.y.
-- Si depth > 0, aplicar apply_central_force(Vector3.UP * float_force * gravity * depth).
 
-## Resistencia del agua (Drag)
-- No modificar linear_velocity en _physics_process.
-- Usar _integrate_forces(state).
-- Si submerged: state.linear_velocity *= (1.0 - linear_drag).
-- Si submerged: state.angular_velocity *= (1.0 - angular_drag).
+## Drag del agua
+- En _integrate_forces:
+  state.linear_velocity *= 1 - water_drag.
+  state.angular_velocity *= 1 - water_angular_drag.
 
-## Sincronizacion GPU-CPU para olas
-- No usar TIME nativo del shader.
-- Acumular wave_time en GDScript.
-- Enviar wave_time al shader con set_shader_parameter.
-- Crear funcion get_height(world_pos) en la CPU.
-- Mapear world_pos a UV y muestrear la misma textura de ruido.
-- Compensar la posicion global del nodo de agua.
+## Sincronizacion GPU-CPU
+- water_time se acumula en CPU y se envia al shader.
+- get_height muestrea la textura de ruido con get_pixelv.
+- Mapeo de posicion mundial a UV usando wrapf.
 
-## Flotabilidad avanzada con sondas multiples
-- Colocar varios Marker3D distribuidos en el casco.
-- Para cada sonda:
-  water_height = get_height(probe.global_position).
-  depth = water_height - probe.global_position.y.
-  force = Vector3.UP * float_force * gravity * depth.
-  apply_force(force, probe.global_position - global_position).
-- Con muchas sondas, float_force debe ser baja (ej. 1.4).
-
-## Calibracion recomendada
-1. Ajustar float_force hasta que flote estable.
-2. Ajustar linear_drag y angular_drag para evitar rebotes.
-3. Probar con agua plana primero.
-4. Despues probar con olas sincronizadas.
-
-## Metricas para Project Adapter (LOGOS)
-- Pitch (cabeceo) y Roll (balanceo).
-- Yaw (guiñada).
-- Fuerzas por sonda.
-- Velocidad angular.
-- Evidencia de estabilidad por escenario.
-
-## Nota
-Sistema preparado para el simulador Godot, no para NaveGo real.
-Esta receta resuelve el desacople entre shader y fisica.
+## Proximos pasos
+- Implementar WaterController basado en Water.gd.
+- Implementar boat_controller.gd basado en Cube.gd.
+- Crear ProbeContainer con 9 sondas.
+- Probar flotabilidad en agua plana y luego con olas.
