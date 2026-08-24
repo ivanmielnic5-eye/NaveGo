@@ -46,3 +46,17 @@ Sirve como fuente de consulta para evaluar, estudiar y decidir.
 La sincronizacion temporal es el punto mas importante.
 Si el shader y la CPU no comparten la misma formula, habra error.
 La textura de ruido es solo una herramienta; FastNoiseLite es mas flexible.
+
+## 2026-08-24 — Receta de flotabilidad Godot
+
+### Nuevo documento
+- GODOT_BUOYANCY_PHYSICS.md: estructura de sondas, flotabilidad, drag y sincronizacion GPU-CPU.
+
+### Conceptos incorporados
+- Multi-probe (sondas multiples) para cuerpos alargados.
+- _integrate_forces para drag seguro.
+- wave_time para sincronizar GPU y CPU.
+- get_height(world_pos) para muestrear la altura real del agua.
+
+### Estado
+Documentado y listo para implementar en Godot.
