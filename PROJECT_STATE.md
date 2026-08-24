@@ -77,3 +77,9 @@ Implementar instrumento siempre encendido en código.
 - Sincronización estable
 - Lógica de cálculo de distancia
 - Núcleo arquitectónico del Cockpit
+
+## Simulador Godot
+- GODOT_AI_BOOTSTRAP.md como entrada oficial para IAs.
+- Estado actual documentado en GODOT_SIMULATOR_SPEC.md y GODOT_TELEMETRY_INTEGRATION.md.
+- Referencia externa: Buoyancy in Godot 4 (CBerry22).
+- Proxima accion: implementar WaterController con get_water_height sincronizado.
