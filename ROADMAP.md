@@ -33,3 +33,25 @@ No pasar a Fase 2 sin cerrar deuda crítica.
 2. Consolidación: PENDIENTE
 3. Expansión: PENDIENTE
 4. Interfaz Lúdica: PENDIENTE
+
+## 2026-08-25 — Visión: Gemelo Digital Activo
+
+### Idea central
+El simulador no es solo visual. Es un gemelo digital que se alimenta de datos reales
+y predice el comportamiento de una embarcación antes de zarpar.
+
+### Aplicaciones futuras
+- Entrenador de maniobras para novatos.
+- Cálculo de ángulos óptimos de ceñida (VMG).
+- Alerta de límites estructurales.
+- Ensayo de emergencias y condiciones hostiles.
+- Asistente de regatas.
+- Caja negra inteligente con evidencia.
+
+### Puente de comunicación
+- TELEMETRY_CONTRACT.md define cómo NaveGo y simulador comparten datos.
+- simulate.js ya es el primer eslabón.
+- Falta unificar el formato de telemetría.
+
+### Próximo paso
+Definir y validar el contrato de telemetría antes de continuar el simulador.

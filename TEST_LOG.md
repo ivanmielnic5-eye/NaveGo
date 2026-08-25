@@ -186,3 +186,22 @@ En cada caso registrar:
 
 ### Estado
 Decisión registrada. Pendiente de implementación en useNaveGoTracker.ts y App.tsx.
+
+## 2026-08-24 — Cierre de sesión Godot: reinicio con base externa limpia
+
+### Problema
+- El proyecto Godot quedó con escenas rotas, scripts eliminados y referencias huérfanas.
+- La escena principal no muestra la embarcación y la cámara quedó perdida.
+- Intentos de reparación por parches no funcionaron.
+
+### Decisión
+- No seguir parcheando la escena actual.
+- Mañana usar como base limpia el repositorio Buoyancy in Godot 4 de CBerry22.
+- Abrir ese proyecto como referencia, probar su escena original y luego copiar su estructura.
+
+### Tareas para próxima sesión
+- Descargar o clonar https://github.com/CBerry22/Buoyancy-in-Godot-4
+- Abrir en Godot y ejecutar la escena de ejemplo.
+- Verificar que la flotabilidad base funciona.
+- Adaptar la estructura limpia a nuestro velero.
+- No tocar NaveGo ni los archivos de la app móvil.
