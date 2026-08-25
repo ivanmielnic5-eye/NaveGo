@@ -26,3 +26,15 @@ URL: https://github.com/CBerry22/Buoyancy-in-Godot-4/commit/e4108e585b9552ed0aee
 
 ## Estado
 Referencia documentada. Pendiente de analizar todos los archivos del repo.
+
+## 2026-08-25 — Water Simulation Godot 4
+
+### Video
+- Crigz Vs Game Dev: "WATER SIMULATION in Godot 4".
+- Técnica: doble búfer, viewport textures, cámara de colisión, depth, Beer, normales, refracción.
+
+### Documento
+- GODOT_WATER_SIM_REFERENCE.md
+
+### Estado
+Guardado como referencia. Pendiente de adaptar al simulador limpio.
