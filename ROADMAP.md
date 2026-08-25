@@ -55,3 +55,15 @@ y predice el comportamiento de una embarcación antes de zarpar.
 
 ### Próximo paso
 Definir y validar el contrato de telemetría antes de continuar el simulador.
+
+## 2026-08-25 — Landscape V2: laboratorio de percepción
+
+### Documento
+- LANDSCAPE_V2_SPEC.md
+
+### Idea central
+Ground Truth nunca se degrada. Solo se degrada la estima/sensores.
+El simulador se convierte en un banco de pruebas reproducible.
+
+### Próximo paso
+Implementar LandscapeV2 → Ground Truth → COG/SOG → validación cardinal.
