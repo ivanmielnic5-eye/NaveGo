@@ -1,0 +1,42 @@
+﻿# NAVEGO STYLE GUIDE — Normas de Estilo y Protocolos
+
+**Fecha de creación:** 2026-09-02
+**Ubicación:** governance/NAVEGO_STYLE_GUIDE.txt
+
+---
+
+## 1. Reglas de Comunicación
+
+- **Explicar siglas** la primera vez que se usan: ej. VM (Virtual Machine).
+- **Enlaces siempre subrayados y clicables.**
+- **Comandos UNO POR UNO** con viñeta de copiar.
+- **No repetir abordajes fallidos** a menos que se hayan agotado todas las opciones.
+- **Priorizar la seguridad:** usar solo enlaces oficiales o verificados.
+
+## 2. Formato de Comandos
+
+- Usar **PowerShell** (no CMD) para comandos avanzados.
+- Si un comando falla, **parar y preguntar** antes de continuar.
+
+## 3. Herramientas Recomendadas
+
+- **Grub2Win:** para reparar el arranque dual (seguro, desde Windows).
+- **Rufus:** para crear USB de arranque.
+- **Boot-Repair:** para reparar GRUB desde Linux (vía USB).
+
+## 4. Protocolo de Actuación
+
+1. Analizar la petición.
+2. Verificar si puedo ejecutarla sin intervención humana.
+3. Si necesito algo, pedirlo de forma clara y concreta.
+4. Si no puedo resolverlo, consultar a ChatGPT/IA local con un prompt estructurado.
+
+## 5. Ubicación de Archivos Clave
+
+- WORKFLOW_MEMORY.md → memoria operacional.
+- SIMULADOR_INVENTORY.md → inventario del simulador.
+- NAVEGO_STYLE_GUIDE.txt → normas de estilo y protocolos.
+
+---
+
+✅ Fin de la guía de estilo.

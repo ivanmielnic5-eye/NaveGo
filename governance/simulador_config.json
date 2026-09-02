@@ -1,0 +1,13 @@
+﻿{
+    "timestamp":  "2026-08-29 22:22:25",
+    "water":  {
+                  "wave_frequency":  0,
+                  "wave_height":  0,
+                  "height":  0
+              },
+    "boat":  {
+                 "buoyancy_center_y":  -0.3,
+                 "mass":  200,
+                 "angular_damping":  0.9
+             }
+}

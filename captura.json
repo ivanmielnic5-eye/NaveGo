@@ -1,0 +1,17 @@
+﻿{
+    "timestamp": "2026-08-29 18:00:00",
+    "cpu": 0,
+    "memoria": {
+        "disponible": 1234,
+        "total": 8192,
+        "porcentaje": 15
+    },
+    "godot": "❌ No",
+    "procesos": [
+        { "nombre": "chrome", "memoria": 400 },
+        { "nombre": "code", "memoria": 300 }
+    ],
+    "archivos_recientes": [
+        { "nombre": "test.txt", "modificado": "17:00" }
+    ]
+}

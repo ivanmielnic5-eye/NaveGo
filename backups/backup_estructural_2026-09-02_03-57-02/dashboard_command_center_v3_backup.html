@@ -1,0 +1,911 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NaveGo — Command Center</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* ============================================================
+           NAVEGO COMMAND CENTER CON MOCKUP MÓVIL
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #05090d;
+            --border: rgba(151,190,208,0.12);
+            --border-hover: rgba(0,217,255,0.28);
+            --text: #f1f6f8;
+            --text-secondary: #a9b8c2;
+            --text-muted: #61727d;
+            --cyan: #00d9ff;
+            --green: #45e68a;
+            --yellow: #ffd166;
+            --red: #ff5c5c;
+            --radius-md: 16px;
+        }
+        body {
+            min-height: 100vh;
+            padding: 28px;
+            background: #05090d;
+            color: var(--text-secondary);
+            font-family: "Segoe UI", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .dashboard {
+            width: 100%;
+            max-width: 1480px;
+            background: rgba(7,16,24,0.78);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 28px;
+            backdrop-filter: blur(18px);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.48);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(151,190,208,0.10);
+        }
+        .header-left { display: flex; align-items: baseline; gap: 18px; }
+        .brand { display: flex; align-items: center; gap: 11px; }
+        .project-title { color: var(--text); font-size: 24px; font-weight: 650; letter-spacing: 1.5px; }
+        .project-sub { color: var(--text-muted); font-size: 12px; font-weight: 500; letter-spacing: 1.8px; text-transform: uppercase; }
+        .header-right { display: flex; align-items: center; gap: 18px; font-size: 12px; }
+        .system-status { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+        .status-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 0 12px currentColor; }
+        .status-dot.green { background: var(--green); color: var(--green); }
+        .status-dot.yellow { background: var(--yellow); color: var(--yellow); }
+        .status-dot.red { background: var(--red); color: var(--red); }
+        #lastUpdate { color: var(--text-muted); }
+        .section-label { margin-bottom: 14px; color: var(--text-muted); font-size: 10px; font-weight: 650; letter-spacing: 2px; text-transform: uppercase; }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+            align-items: stretch;
+        }
+        .module-card {
+            position: relative;
+            min-height: 154px;
+            padding: 20px;
+            background: linear-gradient(145deg, rgba(17,30,39,0.74), rgba(8,17,24,0.81));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-align: left;
+            color: inherit;
+            backdrop-filter: blur(8px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 28px rgba(0,0,0,0.18);
+            transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+        }
+        .module-card:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(145deg, rgba(18,37,49,0.82), rgba(10,22,30,0.9));
+            border-color: var(--border-hover);
+        }
+        .module-card.active {
+            border-color: rgba(0,217,255,0.32);
+            background: linear-gradient(145deg, rgba(0,217,255,0.08), rgba(10,24,33,0.82));
+        }
+        .module-card[data-module="estado"],
+        .module-card[data-module="trabajo"] { grid-column: span 2; min-height: 180px; }
+        .module-card[data-module="evidencia"],
+        .module-card[data-module="archivos"],
+        .module-card[data-module="movil"] { grid-column: span 1; min-height: 170px; }
+        .module-card[data-module="accion"] { grid-column: span 4; min-height: 118px; }
+        .module-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+        .module-name { color: var(--text); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; }
+        .module-indicator { width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(0,217,255,0.55); }
+        .module-indicator.green { background: var(--green); box-shadow: 0 0 10px rgba(69,230,138,0.45); }
+        .module-indicator.yellow { background: var(--yellow); box-shadow: 0 0 10px rgba(255,209,102,0.40); }
+        .module-indicator.red { background: var(--red); box-shadow: 0 0 10px rgba(255,92,92,0.45); }
+        .action-planet {
+            width: 14px; height: 14px; border-radius: 50%; margin-right: 8px;
+            background: radial-gradient(circle at 32% 30%, #ffd39d, #f28b36 50%, #7a3112 100%);
+            box-shadow: 0 0 18px rgba(255,145,59,0.52);
+        }
+        .module-summary { color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
+        .module-meta { position: absolute; left: 20px; bottom: 17px; color: var(--text-muted); font-size: 10px; letter-spacing: 0.7px; }
+        .action-content { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .action-description { max-width: 600px; color: var(--text-secondary); font-size: 13px; line-height: 1.55; }
+        .action-state { display: flex; align-items: center; gap: 9px; color: var(--text-muted); font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase; }
+        .action-state .status-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2a3a4a 0%, #02060a 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
+        }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .detail-label { color: var(--text-muted); font-size: 10px; font-weight: 650; letter-spacing: 2px; text-transform: uppercase; }
+        .detail-context { color: var(--text-muted); font-size: 11px; }
+        .content-panel {
+            min-height: 300px;
+            max-height: 470px;
+            overflow-y: auto;
+            padding: 26px 28px;
+            background: linear-gradient(145deg, rgba(12,25,35,0.76), rgba(7,16,23,0.84));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+        .content-panel h3 { color: var(--cyan); font-size: 14px; font-weight: 600; letter-spacing: 1.3px; padding-bottom: 14px; margin-bottom: 20px; border-bottom: 1px solid rgba(151,190,208,0.10); }
+        .panel-empty { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+        .detail-block { margin-bottom: 22px; }
+        .detail-block:last-child { margin-bottom: 0; }
+        .detail-block-title { margin-bottom: 8px; color: var(--text); font-size: 11px; font-weight: 650; letter-spacing: 1px; text-transform: uppercase; }
+        .detail-block-body { color: var(--text-secondary); font-size: 13px; line-height: 1.7; }
+        .content-panel ul { list-style: none; padding: 0; }
+        .content-panel li { padding: 9px 0; border-bottom: 1px solid rgba(151,190,208,0.055); color: var(--text-secondary); font-size: 13px; }
+        .content-panel li:last-child { border-bottom: none; }
+        .content-panel code { padding: 3px 7px; background: rgba(0,217,255,0.055); border: 1px solid rgba(0,217,255,0.10); border-radius: 6px; color: #bdeef7; font-family: monospace; font-size: 12px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-right: 8px; }
+        .badge.red { background: rgba(255,92,92,0.10); color: var(--red); }
+        .badge.yellow { background: rgba(255,209,102,0.10); color: var(--yellow); }
+        .badge.green { background: rgba(69,230,138,0.10); color: var(--green); }
+        .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+        .action-button { padding: 10px 15px; background: rgba(16,31,42,0.82); border: 1px solid var(--border); border-radius: 9px; color: var(--text-muted); font-size: 11px; font-weight: 600; letter-spacing: 0.4px; cursor: not-allowed; opacity: 0.72; }
+        .action-button.available { color: var(--cyan); border-color: rgba(0,217,255,0.20); cursor: pointer; opacity: 1; transition: background 160ms ease; }
+        .action-button.available:hover { background: rgba(0,217,255,0.08); border-color: rgba(0,217,255,0.38); }
+        .action-note { margin-top: 18px; color: var(--text-muted); font-size: 11px; line-height: 1.6; }
+
+        /* ============================================================
+           ESTILOS PARA EL MOCKUP MÓVIL
+           ============================================================ */
+        .mobile-prototype {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0 8px;
+        }
+        .phone-shell {
+            position: relative;
+            width: min(100%, 360px);
+            aspect-ratio: 9 / 18;
+            background: linear-gradient(180deg, rgba(7,14,20,0.96), rgba(4,10,15,0.98));
+            border: 1px solid rgba(0,217,255,0.18);
+            border-radius: 36px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.03);
+            overflow: hidden;
+        }
+        .phone-shell::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border-radius: 28px;
+            border: 1px solid rgba(0,217,255,0.08);
+            pointer-events: none;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 128px;
+            height: 22px;
+            border-radius: 16px;
+            background: rgba(12,18,23,0.9);
+            border: 1px solid rgba(255,255,255,0.04);
+            z-index: 2;
+        }
+        .phone-screen {
+            position: absolute;
+            inset: 18px 12px 12px;
+            border-radius: 26px;
+            background: radial-gradient(circle at 20% 20%, rgba(0,217,255,0.08), transparent 22%),
+                        linear-gradient(180deg, rgba(5,15,22,0.8), rgba(7,17,23,0.94));
+            padding: 20px 14px 90px;
+            overflow: hidden;
+        }
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        .brand-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--cyan);
+        }
+        .brand-mini svg {
+            width: 16px;
+            height: 16px;
+        }
+        .mobile-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.7px;
+        }
+        .signal-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 10px;
+        }
+        .signal-bars span {
+            display: block;
+            width: 3px;
+            border-radius: 2px;
+            background: rgba(0,217,255,0.9);
+        }
+        .signal-bars span:nth-child(1) { height: 4px; }
+        .signal-bars span:nth-child(2) { height: 6px; }
+        .signal-bars span:nth-child(3) { height: 8px; }
+        .signal-bars span:nth-child(4) { height: 10px; }
+        .mobile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .stat-box {
+            padding: 10px 8px 8px;
+            border-radius: 12px;
+            background: rgba(12,22,29,0.66);
+            border: 1px solid rgba(151,190,208,0.08);
+            text-align: center;
+        }
+        .stat-box .label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 9px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .stat-box strong {
+            display: block;
+            color: var(--text);
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: -0.06em;
+        }
+        .stat-box small {
+            color: var(--text-muted);
+            font-size: 9px;
+        }
+        .mobile-map {
+            position: relative;
+            height: 180px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(5,20,27,0.66), rgba(8,16,22,0.82)),
+                        radial-gradient(circle at 30% 30%, rgba(0,217,255,0.05), transparent 32%);
+            border: 1px solid rgba(151,190,208,0.08);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        .mobile-map::before,
+        .mobile-map::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(0,217,255,0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0,217,255,0.04) 1px, transparent 1px);
+            background-size: 18px 18px;
+            mask-image: radial-gradient(circle at center, black 34%, transparent 100%);
+        }
+        .map-ship {
+            position: absolute;
+            left: 52%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #dffcff, #00d9ff 46%, #0d4f67 100%);
+            box-shadow: 0 0 18px rgba(0,217,255,0.5);
+        }
+        .map-ship::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(0,217,255,0.25);
+            border-radius: 50%;
+        }
+        .alert-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .alert-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(13,25,35,0.7);
+            border: 1px solid rgba(151,190,208,0.08);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+        .alert-card strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+        .alert-pill {
+            min-width: 30px;
+            text-align: center;
+            padding: 4px 7px;
+            border-radius: 999px;
+            background: rgba(0,217,255,0.12);
+            color: var(--cyan);
+            font-size: 10px;
+            border: 1px solid rgba(0,217,255,0.2);
+        }
+        .mobile-dock {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 10px;
+            background: rgba(9,18,25,0.52);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(151,190,208,0.08);
+            border-radius: 16px;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.12);
+        }
+        .dock-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .dock-item.active {
+            color: var(--cyan);
+            border-color: rgba(0,217,255,0.2);
+            background: rgba(0,217,255,0.08);
+        }
+        .dock-item:active {
+            transform: scale(0.88);
+            background: rgba(0,217,255,0.15);
+            border-color: rgba(0,217,255,0.3);
+        }
+
+        @media (max-width: 1050px) {
+            body { padding: 16px; }
+            .dashboard { padding: 22px; }
+            .modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .action-card { grid-column: span 2; }
+        }
+        @media (max-width: 650px) {
+            body { padding: 8px; }
+            .dashboard { padding: 16px; }
+            .header { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .header-left { flex-direction: column; gap: 6px; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .action-card { grid-column: span 1; }
+            .action-content { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <main class="dashboard" id="app">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <div class="brand">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; color:#00d9ff;">
+                        <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+                        <path d="M14 2L14 26M14 2L9 7M14 2L19 7M14 26L9 21M14 26L19 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M14 6L11 10M14 6L17 10M14 22L11 18M14 22L17 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+                        <circle cx="14" cy="14" r="3" stroke="currentColor" stroke-width="1.5" fill="rgba(0,217,255,0.1)"/>
+                        <path d="M14 2L14 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="project-title">NaveGo</span>
+                </div>
+                <span class="project-sub">Command Center</span>
+            </div>
+            <div class="header-right">
+                <div class="system-status">
+                    <span class="status-dot green"></span>
+                    <span>Sistema operativo</span>
+                </div>
+                <span id="lastUpdate">—</span>
+            </div>
+        </header>
+
+        <!-- MÓDULOS -->
+        <div class="section-label">Centro de gobierno</div>
+        <section class="modules-grid" id="modulesGrid">
+            <!-- ESTADO -->
+            <button class="module-card active" data-module="estado" type="button">
+                <div class="module-top">
+                    <span class="module-name">ESTADO</span>
+                    <span class="module-indicator green"></span>
+                </div>
+                <div class="module-summary">Estado actual del ecosistema NaveGo y su contexto operacional.</div>
+                <div class="module-meta">CONTEXTO</div>
+            </button>
+            <!-- TRABAJO -->
+            <button class="module-card" data-module="trabajo" type="button">
+                <div class="module-top">
+                    <span class="module-name">TRABAJO</span>
+                    <span class="module-indicator yellow"></span>
+                </div>
+                <div class="module-summary">Incidentes, tareas pendientes y problemas actualmente abiertos.</div>
+                <div class="module-meta">INCIDENTES</div>
+            </button>
+            <!-- EVIDENCIA -->
+            <button class="module-card" data-module="evidencia" type="button">
+                <div class="module-top">
+                    <span class="module-name">EVIDENCIA</span>
+                    <span class="module-indicator"></span>
+                </div>
+                <div class="module-summary">Reglas aprendidas y conocimiento generado durante el desarrollo.</div>
+                <div class="module-meta">MEMORIA OPERACIONAL</div>
+            </button>
+            <!-- ARCHIVOS -->
+            <button class="module-card" data-module="archivos" type="button">
+                <div class="module-top">
+                    <span class="module-name">ARCHIVOS</span>
+                    <span class="module-indicator"></span>
+                </div>
+                <div class="module-summary">Mapa de los componentes y fuentes de verdad del proyecto.</div>
+                <div class="module-meta">ARQUITECTURA</div>
+            </button>
+            <!-- MÓVIL -->
+            <button class="module-card" data-module="movil" type="button">
+                <div class="module-top">
+                    <span class="module-name">PROTOTIPO</span>
+                    <span class="module-indicator"></span>
+                </div>
+                <div class="module-summary">Lab visual de navegación móvil en modo portrait para testear la experiencia.</div>
+                <div class="module-meta">MÓVIL</div>
+            </button>
+            <!-- ACCIÓN -->
+            <button class="module-card action-card" data-module="accion" type="button">
+                <div class="action-content">
+                    <div>
+                        <div class="module-top" style="justify-content:flex-start; gap:10px;">
+                            <span class="action-planet"></span>
+                            <span class="module-name">ACCIÓN</span>
+                        </div>
+                        <div class="action-description">
+                            Punto de control para iniciar operaciones sobre el sistema.
+                        </div>
+                    </div>
+                    <div class="action-state">
+                        <span class="status-dot"></span>
+                        <span>Esperando comando</span>
+                    </div>
+                </div>
+            </button>
+        </section>
+
+        <!-- PANEL DE DETALLE -->
+        <div class="detail-header">
+            <span class="detail-label">Inspector</span>
+            <span class="detail-context" id="detailContext">contexto operativo</span>
+        </div>
+        <section class="content-panel" id="contentPanel">
+            <h3 id="panelTitle">ESTADO</h3>
+            <div id="panelBody">
+                <p class="panel-empty">Cargando contexto...</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ============================================================
+        // LOGICA DEL COMMAND CENTER
+        // ============================================================
+        const panelTitle = document.getElementById("panelTitle");
+        const panelBody = document.getElementById("panelBody");
+        const lastUpdate = document.getElementById("lastUpdate");
+        const detailContext = document.getElementById("detailContext");
+        const moduleCards = document.querySelectorAll(".module-card");
+        let activeModule = "estado";
+        let rawMarkdown = "";
+
+        async function loadMarkdown() {
+            try {
+                const response = await fetch("../governance/WORKFLOW_MEMORY.md");
+                if (!response.ok) throw new Error("No se pudo cargar WORKFLOW_MEMORY.md");
+                rawMarkdown = await response.text();
+                renderModule(activeModule, rawMarkdown);
+                lastUpdate.textContent = "Actualizado " + new Date().toLocaleTimeString();
+            } catch (error) {
+                panelBody.innerHTML = `<p style="color:#ff5c5c;">⚠️ ${escapeHtml(error.message)}</p><p style="color:#61727d; margin-top:10px;">Verificá que WORKFLOW_MEMORY.md exista en ../governance/ y que el servidor esté ejecutándose.</p>`;
+            }
+        }
+
+        function escapeHtml(value) { return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+        function extractSection(markdown, heading) { const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); const regex = new RegExp(`##\\s*${escaped}([\\s\\S]*?)(?=\\n##\\s|$)`); const match = markdown.match(regex); return match ? match[1].trim() : ""; }
+        function parseIncidents(markdown) {
+            const section = extractSection(markdown, "📋 REGISTRO DE INCIDENTES");
+            if (!section) return [];
+            const lines = section.split("\n");
+            const rows = [];
+            for (const line of lines) {
+                if (line.includes("|") && (line.includes("🔴") || line.includes("🟡") || line.includes("🟢"))) {
+                    const cols = line.split("|").map(c => c.trim());
+                    if (cols.length >= 5) rows.push({ fecha: cols[1] || "", incidente: cols[2] || "", estado: cols[5] || "" });
+                }
+            }
+            return rows;
+        }
+        function textToHtml(text) { if (!text) return `<span class="panel-empty">No hay información disponible.</span>`; return escapeHtml(text).replace(/\n/g, "<br>"); }
+
+        function renderModule(module, markdown) {
+            activeModule = module;
+            moduleCards.forEach(card => { card.classList.toggle("active", card.dataset.module === module); });
+            let title = module.toUpperCase();
+            let body = "";
+            switch (module) {
+                case "estado":
+                    title = "ESTADO";
+                    detailContext.textContent = "contexto operativo";
+                    const posicion = extractSection(markdown, "📍 POSICIÓN ACTUAL");
+                    const ruta = extractSection(markdown, "🗺️ MAPA DE RUTA");
+                    body = `
+                        <div class="detail-block"><div class="detail-block-title">Proyecto</div><div class="detail-block-body">NaveGo</div></div>
+                        <div class="detail-block"><div class="detail-block-title">Posición / contexto</div><div class="detail-block-body">${posicion ? textToHtml(posicion) : "No registrada."}</div></div>
+                        <div class="detail-block"><div class="detail-block-title">Ruta</div><div class="detail-block-body">${ruta ? textToHtml(ruta) : "No registrada."}</div></div>
+                    `;
+                    break;
+                case "trabajo":
+                    title = "TRABAJO";
+                    detailContext.textContent = "incidentes y trabajo pendiente";
+                    const incidents = parseIncidents(markdown);
+                    if (incidents.length === 0) {
+                        body = `<div class="detail-block"><div class="detail-block-body" style="color:#45e68a;">✓ No se encontraron incidentes abiertos en el registro.</div></div>`;
+                    } else {
+                        const items = incidents.map(incident => {
+                            let badgeClass = "green";
+                            if (incident.estado.includes("🔴")) badgeClass = "red";
+                            else if (incident.estado.includes("🟡")) badgeClass = "yellow";
+                            return `<li><span class="badge ${badgeClass}">${escapeHtml(incident.estado)}</span> ${escapeHtml(incident.incidente)} <span style="color:#61727d; font-size:11px; margin-left:6px;">${escapeHtml(incident.fecha)}</span></li>`;
+                        }).join("");
+                        body = `<div class="detail-block"><div class="detail-block-title">Registro de incidentes</div><ul>${items}</ul></div>`;
+                    }
+                    break;
+                case "evidencia":
+                    title = "EVIDENCIA";
+                    detailContext.textContent = "memoria operacional";
+                    const lessons = extractSection(markdown, "🧠 LECCIONES APRENDIDAS");
+                    const rules = extractSection(markdown, "REGLAS APRENDIDAS");
+                    body = `
+                        <div class="detail-block"><div class="detail-block-title">Lecciones aprendidas</div><div class="detail-block-body">${lessons ? textToHtml(lessons) : "No hay lecciones registradas."}</div></div>
+                        <div class="detail-block"><div class="detail-block-title">Reglas operacionales</div><div class="detail-block-body">${rules ? textToHtml(rules) : "No hay reglas registradas."}</div></div>
+                    `;
+                    break;
+                case "archivos":
+                    title = "ARCHIVOS";
+                    detailContext.textContent = "fuentes y arquitectura";
+                    body = `
+                        <div class="detail-block">
+                            <div class="detail-block-title">Fuentes de verdad</div>
+                            <ul>
+                                <li>
+                                    📄
+                                    <a href="../governance/WORKFLOW_MEMORY.md" target="_blank" style="color: #00d9ff; text-decoration: none; border-bottom: 1px dashed rgba(0,217,255,0.3); transition: border-color 0.2s;">
+                                        WORKFLOW_MEMORY.md
+                                    </a>
+                                    <span style="color:#61727d; margin-left:8px;">(Archivo de memoria operacional)</span>
+                                </li>
+                                <li>
+                                    📁
+                                    <a href="../governance/" style="color: #00d9ff; text-decoration: none; border-bottom: 1px dashed rgba(0,217,255,0.3); transition: border-color 0.2s;">
+                                        governance/
+                                    </a>
+                                    <span style="color:#61727d; margin-left:8px;">(Carpeta de gobernanza)</span>
+                                </li>
+                                <li>
+                                    📁
+                                    <a href="../" style="color: #00d9ff; text-decoration: none; border-bottom: 1px dashed rgba(0,217,255,0.3); transition: border-color 0.2s;">
+                                        NaveGoLocal/
+                                    </a>
+                                    <span style="color:#61727d; margin-left:8px;">(Carpeta de la aplicación móvil)</span>
+                                </li>
+                                <li>
+                                    📁
+                                    <a href="../simulador_limpio/" style="color: #00d9ff; text-decoration: none; border-bottom: 1px dashed rgba(0,217,255,0.3); transition: border-color 0.2s;">
+                                        simulador_limpio/
+                                    </a>
+                                    <span style="color:#61727d; margin-left:8px;">(Carpeta del simulador Godot)</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <div class="detail-block-title">Principio de integridad</div>
+                            <div class="detail-block-body" style="color:#00d9ff;">
+                                Ningún archivo debe eliminarse por inferencia. Las decisiones destructivas requieren evidencia.
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case "movil":
+                    title = "PROTOTIPO";
+                    detailContext.textContent = "mockup móvil";
+                    body = `
+                        <div class="mobile-prototype">
+                            <div class="phone-shell">
+                                <div class="phone-notch"></div>
+                                <div class="phone-screen">
+                                    <div class="mobile-header">
+                                        <div class="brand-mini">
+                                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; color:#00d9ff;">
+                                                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+                                                <path d="M14 2L14 26M14 2L9 7M14 2L19 7M14 26L9 21M14 26L19 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                <path d="M14 6L11 10M14 6L17 10M14 22L11 18M14 22L17 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+                                                <circle cx="14" cy="14" r="3" stroke="currentColor" stroke-width="1.5" fill="rgba(0,217,255,0.1)"/>
+                                                <path d="M14 2L14 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                            </svg>
+                                            <span>NaveGo</span>
+                                        </div>
+                                        <div class="mobile-meta">
+                                            <span>9:41</span>
+                                            <div class="signal-bars" aria-label="GPS signal">
+                                                <span></span><span></span><span></span><span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mobile-stats">
+                                        <div class="stat-box"><span class="label">SOG</span><strong>7.4</strong><small>kn</small></div>
+                                        <div class="stat-box"><span class="label">COG</span><strong>082</strong><small>°</small></div>
+                                        <div class="stat-box"><span class="label">GPS</span><strong>OK</strong><small>fix</small></div>
+                                    </div>
+                                    <div class="mobile-map"><div class="map-ship"></div></div>
+                                    <div class="alert-stack">
+                                        <div class="alert-card"><span>Viento</span><strong>12 kn</strong><span class="alert-pill">N</span></div>
+                                        <div class="alert-card"><span>Profundidad</span><strong>24 m</strong><span class="alert-pill">OK</span></div>
+                                        <div class="alert-card"><span>Sistema</span><strong>Estable</strong><span class="alert-pill">SYNC</span></div>
+                                    </div>
+                                    <div class="mobile-dock">
+                                        <a href="/dashboard/dashboard_command_center_v3.html" target="_blank" class="dock-item active" id="dockHome" style="text-decoration:none;">⌂</a>
+                                        <a href="https://www.openstreetmap.org/" target="_blank" class="dock-item" id="dockMap" style="text-decoration:none;">◌</a>
+                                        <button class="dock-item" id="dockAction" style="background:transparent;border:none;font-size:14px;color:var(--text-secondary);">✦</button>
+                                        <button class="dock-item" id="dockSettings" style="background:transparent;border:none;font-size:14px;color:var(--text-secondary);">⚙</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;text-align:center;color:#61727d;font-size:10px;">
+                            ⌂ Inicio &nbsp;|&nbsp; ◌ Mapa &nbsp;|&nbsp; ✦ Acción &nbsp;|&nbsp; ⚙ Ajustes
+                        </div>
+                    `;
+                    // Eventos para los botones del dock
+                    setTimeout(() => {
+                        // Botón Acción (✦)
+                        const actionBtn = document.getElementById('dockAction');
+                        if (actionBtn) {
+                            actionBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const panelBody = document.getElementById('panelBody');
+                                if (panelBody) {
+                                    panelBody.innerHTML = `
+    <div style="padding:16px;background:rgba(0,217,255,0.05);border-radius:12px;border:1px solid rgba(0,217,255,0.1);">
+        <strong style="color:#00d9ff;">⚡ CAPTURA REAL</strong><br>
+        <span style="color:#a9b8c2;">Obteniendo datos del sistema...</span>
+    </div>
+`;
+(async () => {
+    try {
+        const response = await fetch('/captura?t=' + Date.now());
+        if (!response.ok) throw new Error('No se pudo cargar /captura');
+        const data = await response.json();
+        document.getElementById('panelBody').innerHTML = `
+            <div style="padding:16px;background:rgba(0,217,255,0.05);border-radius:12px;border:1px solid rgba(0,217,255,0.1);">
+                <strong style="color:#00d9ff;">⚡ CAPTURA REAL</strong><br>
+                <span style="color:#a9b8c2;">📊 ${data.timestamp}</span><br>
+                <span style="color:#a9b8c2;">💻 CPU: ${data.cpu}%</span><br>
+                <span style="color:#a9b8c2;">🧠 Memoria: ${data.memoria.disponible} MB (${data.memoria.porcentaje}%)</span><br>
+                <span style="color:#a9b8c2;">🎮 Godot: ${data.godot}</span><br>
+                <span style="color:#61727d;font-size:11px;">⚙️ Procesos top: ${data.procesos.map(p => p.nombre).join(', ')}</span>
+            </div>
+        `;
+    } catch (error) {
+        document.getElementById('panelBody').innerHTML = `
+            <div style="padding:16px;background:rgba(255,92,92,0.05);border-radius:12px;border:1px solid rgba(255,92,92,0.1);">
+                <strong style="color:#ff5c5c;">⚠️ Error</strong><br>
+                <span style="color:#a9b8c2;">${error.message}</span><br>
+                <span style="color:#61727d;font-size:11px;">Asegúrate de que el servidor con /captura esté corriendo.</span>
+            </div>
+        `;
+    }
+})();;
+                                    const panelTitle = document.getElementById('panelTitle');
+                                    if (panelTitle) panelTitle.textContent = 'ACCIÓN (mockup)';
+                                }
+                            });
+                        }
+                        // Botón Ajustes (⚙)
+                        const settingsBtn = document.getElementById('dockSettings');
+                        if (settingsBtn) {
+                            settingsBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const panelBody = document.getElementById('panelBody');
+                                if (panelBody) {
+                                    panelBody.innerHTML = `
+                                        <div style="padding:16px;background:rgba(0,217,255,0.05);border-radius:12px;border:1px solid rgba(0,217,255,0.1);">
+                                            <strong style="color:#00d9ff;">⚙ AJUSTES</strong><br>
+                                            <span style="color:#a9b8c2;">Configuración del sistema y preferencias del usuario.</span>
+                                        </div>
+                                    `;
+                                    const panelTitle = document.getElementById('panelTitle');
+                                    if (panelTitle) panelTitle.textContent = 'AJUSTES (mockup)';
+                                }
+                            });
+                        }
+                    }, 100);
+                    break;
+                case "accion":
+                    title = "ACCIÓN";
+                    detailContext.textContent = "control operacional";
+                    body = `
+                        <div class="detail-block">
+                            <div class="detail-block-title">Estado de control</div>
+                            <div class="detail-block-body" id="estadoCaptura">
+                                🟡 Sistema en espera.
+                            </div>
+                        </div>
+                        <div class="detail-block">
+                            <div class="detail-block-title">Comandos disponibles</div>
+                            <div class="action-row">
+                                <button class="action-button available" type="button" id="capturarBtn">▶ Iniciar captura</button>
+                                <button class="action-button available" type="button" id="detenerBtn">⏹ Detener captura</button>
+                                <button class="action-button available" type="button" id="auditarBtn">🔍 Auditar proyecto</button>
+                                <button class="action-button available" type="button" id="reloadButton">↻ Recargar contexto</button>
+                            </div>
+                            <div class="action-note" id="resultadoCaptura">
+                                Haz clic en "Iniciar captura" para comenzar.
+                            </div>
+                        </div>
+                    `;
+                    setTimeout(() => {
+                        const estadoCaptura = document.getElementById('estadoCaptura');
+                        const resultado = document.getElementById('resultadoCaptura');
+                        let capturaActiva = false;
+
+                        async function obtenerCaptura() {
+                            try {
+                                const response = await fetch('/captura?t=' + Date.now());
+                                if (!response.ok) throw new Error('No se pudo cargar /captura');
+                                return await response.json();
+                            } catch (error) {
+                                throw new Error('Error al cargar captura: ' + error.message);
+                            }
+                        }
+
+                        const capturarBtn = document.getElementById('capturarBtn');
+                        const detenerBtn = document.getElementById('detenerBtn');
+
+                        if (capturarBtn) {
+                            capturarBtn.addEventListener('click', async function() {
+                                if (capturaActiva) {
+                                    resultado.innerHTML = '⚠️ La captura ya está activa.';
+                                    return;
+                                }
+                                capturaActiva = true;
+                                estadoCaptura.innerHTML = '🟢 Captura activa (real)';
+                                resultado.innerHTML = '🔄 Obteniendo datos del sistema...';
+
+                                try {
+                                    const data = await obtenerCaptura();
+                                    resultado.innerHTML = `
+                                        <strong>📊 Captura del sistema (${data.timestamp})</strong><br>
+                                        <strong>💻 CPU:</strong> ${data.cpu}%<br>
+                                        <strong>🧠 Memoria:</strong> ${data.memoria.disponible} MB disponibles (${data.memoria.porcentaje}% usado)<br>
+                                        <strong>🎮 Godot:</strong> ${data.godot}<br>
+                                        <br>
+                                        <strong>📁 Archivos modificados hoy:</strong><br>
+                                        <ul style="margin-left:20px;color:#a9b8c2;">
+                                            ${data.archivos_recientes.map(a => `<li>${a.nombre} (${a.modificado})</li>`).join('')}
+                                        </ul>
+                                        <br>
+                                        <strong>⚙️ Procesos top (memoria):</strong><br>
+                                        <ul style="margin-left:20px;color:#a9b8c2;">
+                                            ${data.procesos.map(p => `<li>${p.nombre} (${p.memoria} MB)</li>`).join('')}
+                                        </ul>
+                                        <span style="color:#61727d;font-size:12px;">Actualizado en tiempo real. Presiona "Detener captura" para finalizar.</span>
+                                    `;
+                                } catch (error) {
+                                    resultado.innerHTML = `
+                                        ⚠️ Error: ${error.message}<br>
+                                        <span style="color:#61727d;font-size:12px;">Asegúrate de que el servidor esté corriendo y tenga el endpoint /captura.</span>
+                                    `;
+                                    capturaActiva = false;
+                                    estadoCaptura.innerHTML = '🟡 Sistema en espera.';
+                                }
+                            });
+                        }
+
+                        if (detenerBtn) {
+                            detenerBtn.addEventListener('click', function() {
+                                if (!capturaActiva) {
+                                    resultado.innerHTML = '⚠️ No hay captura activa para detener.';
+                                    return;
+                                }
+                                capturaActiva = false;
+                                estadoCaptura.innerHTML = '🟡 Sistema en espera.';
+                                resultado.innerHTML = `
+                                    <span style="color:#ff9f43;">⏹ Captura detenida.</span><br>
+                                    <span style="color:#61727d;font-size:12px;">Sesión de captura finalizada.</span>
+                                `;
+                            });
+                        }
+
+                        const auditarBtn = document.getElementById('auditarBtn');
+                        if (auditarBtn) {
+                            auditarBtn.addEventListener('click', async function() {
+                                resultado.innerHTML = '⏳ Ejecutando auditoría...';
+                                try {
+                                    const response = await fetch('../auditoria.json?t=' + Date.now());
+                                    if (!response.ok) throw new Error('No se pudo cargar auditoria.json');
+                                    const data = await response.json();
+                                    resultado.innerHTML = `
+                                        <strong>📊 Auditoría completada (${data.fecha})</strong><br>
+                                        📁 Total archivos: ${data.totalArchivos}<br>
+                                        📂 Total carpetas: ${data.totalCarpetas}<br>
+                                        ⚠️ Archivos sospechosos:<br>
+                                        <ul style="margin-left:20px;color:#ffd166;">
+                                            ${data.archivosHuerfanos.map(f => `<li>${f}</li>`).join('')}
+                                        </ul>
+                                        ${data.archivosDuplicados.length > 0 ? `
+                                            <strong>🔄 Archivos duplicados:</strong><br>
+                                            <ul style="margin-left:20px;color:#ff9f43;">
+                                                ${data.archivosDuplicados.map(n => `<li>${n}</li>`).join('')}
+                                            </ul>
+                                        ` : '<p style="color:#45e68a;">✅ No se encontraron duplicados.</p>'}
+                                    `;
+                                } catch (error) {
+                                    resultado.innerHTML = `
+                                        ⚠️ Error al ejecutar auditoría: ${error.message}<br>
+                                        <span style="color:#61727d;font-size:12px;">Asegúrate de que auditoria.json exista.</span>
+                                    `;
+                                }
+                            });
+                        }
+
+                        const reloadButton = document.getElementById('reloadButton');
+                        if (reloadButton) {
+                            reloadButton.addEventListener('click', function() {
+                                location.reload();
+                            });
+                        }
+                    }, 100);
+                    break;
+                default:
+                    title = "MÓDULO NO RECONOCIDO";
+                    detailContext.textContent = "error";
+                    body = `<p class="panel-empty">El módulo solicitado no existe.</p>`;
+            }
+            panelTitle.textContent = title;
+            panelBody.innerHTML = body;
+            const reloadButton = document.getElementById("reloadButton");
+            if (reloadButton) reloadButton.addEventListener("click", loadMarkdown);
+        }
+
+        moduleCards.forEach(card => { card.addEventListener("click", function() { renderModule(this.dataset.module, rawMarkdown); }); });
+        loadMarkdown();
+        setInterval(loadMarkdown, 30000);
+    </script>
+</body>
+</html>
+

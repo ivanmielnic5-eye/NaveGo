@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaveGo — Sala de Máquinas</title>
+    <!-- Cargamos marked.js desde internet -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            background-color: #0a0e17;
+            color: #c8d6e5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4 {
+            color: #00d4ff;
+            border-bottom: 1px solid #1e2a3a;
+            padding-bottom: 8px;
+        }
+        a { color: #00d4ff; }
+        .container {
+            background: #111927;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #1e2a3a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #2a3a4a;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #1a2634;
+            color: #00d4ff;
+        }
+        tr:nth-child(even) { background-color: #141d2b; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #4a5a6a;
+            border-top: 1px solid #1e2a3a;
+            padding-top: 20px;
+        }
+        #content { margin-top: 20px; }
+        #content blockquote {
+            border-left: 4px solid #00d4ff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background: #0d1520;
+            border-radius: 4px;
+        }
+        #content code {
+            background: #0d1520;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #f0e68c;
+        }
+        .reload-btn {
+            background: #1a2a3a;
+            border: 1px solid #2a4a5a;
+            color: #00d4ff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .reload-btn:hover { background: #1e3a4a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚓ NaveGo — Sala de Máquinas</h1>
+        <p style="color: #6a8a9a;">Dashboard de gobernanza y estado del proyecto</p>
+        <hr style="border-color: #1e2a3a;">
+        <button class="reload-btn" onclick="cargarContexto()">⟳ Recargar contexto</button>
+        <div id="content">
+            <p style="color: #6a8a9a;">Cargando tu WORKFLOW_MEMORY.md ...</p>
+        </div>
+        <div class="footer">
+            <p>🔹 Fuente de verdad: <code>WORKFLOW_MEMORY.md</code> &nbsp;|&nbsp; 🕹️ Versión 1.0</p>
+        </div>
+    </div>
+
+    <script>
+        function cargarContexto() {
+            const rutaArchivo = '../governance/WORKFLOW_MEMORY.md';
+            fetch(rutaArchivo)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar el archivo. ¿Existe la ruta?');
+                    }
+                    return response.text();
+                })
+                .then(markdown => {
+                    const html = marked.parse(markdown);
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('content').innerHTML = `
+                        <div style="background: #2a0a0a; padding: 20px; border-radius: 8px; border: 1px solid #5a1a1a;">
+                            <h3 style="color: #ff6b6b;">⚠️ Error al cargar el contexto</h3>
+                            <p>${error.message}</p>
+                            <p><strong>Posibles causas:</strong></p>
+                            <ul>
+                                <li>El archivo <code>WORKFLOW_MEMORY.md</code> no está en la ruta esperada.</li>
+                                <li>Estás abriendo este HTML directamente desde el disco (file://) y el navegador bloquea la lectura local por seguridad.</li>
+                            </ul>
+                            <p><strong>Solución rápida:</strong></p>
+                            <ol>
+                                <li>Asegúrate de que el archivo esté en: <br>
+                                    <code>C:\Users\ivan\Downloads\_Proyectos\NaveGoLocal\governance\WORKFLOW_MEMORY.md</code>
+                                </li>
+                                <li>Si estás en <strong>Edge/Chrome</strong>, prueba a abrir el HTML con un servidor local (ej. con VS Code y la extensión "Live Server").</li>
+                            </ol>
+                        </div>
+                    `;
+                });
+        }
+        window.onload = cargarContexto;
+    </script>
+</body>
+</html>
