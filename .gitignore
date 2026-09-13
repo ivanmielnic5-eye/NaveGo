@@ -1,46 +1,46 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Node
 node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-store/
 
 # Expo
 .expo/
+.expo-shared/
 dist/
-web-build/
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
 
-# Metro
-.metro-health-check*
+# Mapas y backups pesados
+*.osm.pbf
+*.mbtiles
+*.tar.gz
+*.tar
+backup_mapa/
+*.bak
+*.backup
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
+# Sistema
 .DS_Store
-*.pem
+Thumbs.db
+*.log
+*.tmp
+.env
+.env.local
 
-# local env files
-.env*.local
+# Builds
+build/
+.next/
+android/app/build/
+android/build/
+ios/Pods/
+ios/build/
 
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android
-
-# Backups locales
-*_backup_*/
-
-# Carpeta duplicada
-NaveGoLocal/
+# Editor
+.idea/
+*.swp

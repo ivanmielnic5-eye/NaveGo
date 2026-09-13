@@ -1,44 +1,60 @@
-/**
- * Módulo de Parámetros de Conexión y Estado de Señal (GPS / Red)
- * Proyecto: NaveGo / GAIA Tracker
- */
-
-export interface ConnectionParameters {
-  timeoutMs: number;
-  maxAccuracyMeters: number;
-  intervalMs: number;
-  distanceIntervalMeters: number;
-  retryAttempts: number;
+export interface TelemetryData {
+  utc: string;
+  status: string;
+  lat: string;
+  lon: string;
+  sog: string;
+  cog: string;
 }
 
-export const DEFAULT_CONNECTION_PARAMS: ConnectionParameters = {
-  timeoutMs: 15000,          // Tiempo límite de espera de señal GPS
-  maxAccuracyMeters: 20,     // Precisión máxima aceptable en metros
-  intervalMs: 1000,          // Intervalo de muestreo en milisegundos (1s)
-  distanceIntervalMeters: 1, // Distancia mínima de desplazamiento para actualización (1m)
-  retryAttempts: 3,          // Intentos de reconexión ante pérdida de señal
-};
+export function watchTelemetryStream(onData: (data: TelemetryData) => void): () => void {
+  let isRunning = true;
 
-export type ConnectionState = 'CONECTADO' | 'BUSCANDO_SEÑAL' | 'SIN_CONEXION' | 'PAUSADO';
+  const fetchData = async () => {
+    if (!isRunning) return;
+    try {
+      const response = await fetch('http://localhost:8084/log', { cache: 'no-store' });
+      if (!response.ok) return;
+      const text = await response.text();
+      if (!text.includes('$GPRMC')) return;
 
-export interface SignalStatusInfo {
-  state: ConnectionState;
-  label: string;
-  color: string;
+      const parts = text.split('|');
+      const gprmcLine = parts.length > 1 ? parts[1].trim() : text.trim();
+      const tokens = gprmcLine.split(',');
+
+      if (tokens.length >= 9 && tokens[0] === '$GPRMC') {
+        const utcRaw = tokens[1] || '';
+        const utc = utcRaw.length >= 6  
+          ? `${utcRaw.slice(0, 2)}:${utcRaw.slice(2, 4)}:${utcRaw.slice(4, 6)}`  
+          : utcRaw;
+          
+        const status = tokens[2] || '';
+        const latVal = tokens[3] || '';
+        const latNS = tokens[4] || '';
+        const lonVal = tokens[5] || '';
+        const lonEW = tokens[6] || '';
+        const sog = tokens[7] || '';
+        const cog = tokens[8] || '';
+
+        onData({
+          utc,
+          status,
+          lat: latVal ? `${latVal} ${latNS}` : '--',
+          lon: lonVal ? `${lonVal} ${lonEW}` : '--',
+          sog: sog || '--',
+          cog: cog || '--',
+        });
+      }
+    } catch (error) {
+      // Silenciar errores de red transitorios
+    }
+  };
+
+  const interval = setInterval(fetchData, 1000);
+  fetchData();
+
+  return () => {
+    isRunning = false;
+    clearInterval(interval);
+  };
 }
-
-export function getSignalStatusInfo(state: ConnectionState): SignalStatusInfo {
-  switch (state) {
-    case 'CONECTADO':
-      return { state, label: '● GPS CONECTADO (FIJADO)', color: '#059669' };
-    case 'BUSCANDO_SEÑAL':
-      return { state, label: '◐ BUSCANDO SATÉLITES...', color: '#d97706' };
-    case 'SIN_CONEXION':
-      return { state, label: '✕ SIN SEÑAL DE GPS', color: '#be123c' };
-    case 'PAUSADO':
-      return { state, label: 'II RASTREO PAUSADO', color: '#64748b' };
-    default:
-      return { state, label: '○ ESTADO DESCONOCIDO', color: '#94a3b8' };
-  }
-}
-

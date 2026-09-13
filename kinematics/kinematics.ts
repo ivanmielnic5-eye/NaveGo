@@ -70,5 +70,3 @@ export function mpsToKnots(metersPerSecond: number): number {
 export function metersToNauticalMiles(meters: number): number {
   return meters / METERS_PER_NAUTICAL_MILE;
 }
-
-
