@@ -15,7 +15,7 @@ import { HistoryScreen } from './HistoryScreen';
 import { SessionDetailScreen } from './SessionDetailScreen';
 import { ReferenceDetailScreen } from './ReferenceDetailScreen';
 import { getReferenceRoutePoints } from './db/journal';
-import CockpitScreen from './CockpitScreen';
+import { CockpitScreen } from './CockpitScreen';
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1d2c4d' }] },
@@ -334,7 +334,7 @@ function AppContent() {
       <Ionicons name="arrow-back" size={24} color={colors.navigateCyan} />
       </TouchableOpacity>
       </View>
-      <CockpitScreen />
+      <CockpitScreen tracker={tracker} />
       </SafeAreaView>
     );
   }
