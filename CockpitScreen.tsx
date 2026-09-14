@@ -1,188 +1,188 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { watchTelemetryStream, TelemetryData } from './conexion';
+﻿import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, fonts, glass, spacing, radii } from './theme';
+import { createNaveGoAdapterState } from './cockpit/adapters/navego/NaveGoProjectAdapter';
 
-export default function CockpitScreen() {
-  const [data, setData] = useState<TelemetryData | null>(null);
+type ModuleKey = 'estado' | 'trabajo' | 'evidencia' | 'archivos' | 'accion';
 
-  useEffect(() => {
-    const unsubscribe = watchTelemetryStream((telemetry) => {
-      setData(telemetry);
-    });
-    return () => unsubscribe();
-  }, []);
+const modules: { key: ModuleKey; label: string; icon: string }[] = [
+  { key: 'estado', label: 'Estado', icon: 'pulse' },
+  { key: 'trabajo', label: 'Trabajo', icon: 'flask' },
+  { key: 'evidencia', label: 'Evidencia', icon: 'eye' },
+  { key: 'archivos', label: 'Archivos', icon: 'folder' },
+  { key: 'accion', label: 'Accion', icon: 'mic' },
+];
+
+export function CockpitScreen({ tracker }: { tracker?: any }) {
+  const [active, setActive] = useState<ModuleKey>('estado');
+
+  const adapterState = tracker ? createNaveGoAdapterState(tracker) : null;
+
+  const getGnssColor = () => {
+    switch (tracker?.navigationStatus) {
+      case 'CONFIABLE': return colors.success;
+      case 'RECUPERANDO':
+      case 'DEGRADADO': return colors.warning;
+      case 'GNSS_PERDIDO':
+      case 'NO_CONFIABLE': return colors.danger;
+      default: return colors.textSecondary;
+    }
+  };
+
+  const getSyncColor = () => {
+    if (tracker?.syncOk === true) return colors.success;
+    if (tracker?.syncOk === false) return colors.danger;
+    return colors.warning;
+  };
+
+  const renderContent = () => {
+    switch (active) {
+      case 'estado':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="pulse" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Estado del Proyecto</Text>
+              </View>
+              {adapterState ? (
+                <>
+                  <Text style={styles.cardText}>Proyecto: {adapterState.project}</Text>
+                  <Text style={styles.cardText}>Misión: {adapterState.mission}</Text>
+                  <Text style={styles.cardText}>Estado: {adapterState.status}</Text>
+                  <Text style={styles.cardText}>Sesión: {adapterState.session}</Text>
+                  <Text style={styles.cardText}>Última actualización: {adapterState.lastUpdate ?? 'Sin señal'}</Text>
+                  <Text style={styles.cardText}>Salud:</Text>
+                  {adapterState.health.map((h) => (
+                    <Text key={h.name} style={styles.cardText}>  {h.name}: {h.status}</Text>
+                  ))}
+                </>
+              ) : (
+                <Text style={styles.cardText}>Sin datos del tracker.</Text>
+              )}
+            </View>
+          </View>
+        );
+      case 'trabajo':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="flask" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Trabajo Actual</Text>
+              </View>
+              <Text style={styles.cardText}>Course-Up / Sincronización mapa ↔ COG</Text>
+              <Text style={styles.cardText}>Estado: EXPERIMENTAL</Text>
+              <Text style={styles.cardText}>Próximo paso: validar en movimiento real.</Text>
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>CONTINUAR</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      case 'evidencia':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="eye" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Evidencia</Text>
+              </View>
+              <Text style={styles.cardText}>IMPLEMENTADO: Course-Up</Text>
+              <Text style={styles.cardText}>PROBADO: en interior</Text>
+              <Text style={styles.cardText}>OBSERVADO: rota según COG</Text>
+              <Text style={styles.cardText}>VALIDADO: no todavía</Text>
+            </View>
+          </View>
+        );
+      case 'archivos':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="folder" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Documentos Vivos</Text>
+              </View>
+              <Text style={styles.cardText}>PROJECT_STATE.md</Text>
+              <Text style={styles.cardText}>DECISIONS.md</Text>
+              <Text style={styles.cardText}>TEST_LOG.md</Text>
+              <Text style={styles.cardText}>CHANGE_LOG.md</Text>
+              <Text style={styles.cardText}>ARCHITECTURE.md</Text>
+            </View>
+          </View>
+        );
+      case 'accion':
+        return (
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons name="mic" size={20} color={colors.navigateCyan} />
+                <Text style={styles.cardTitle}>Acción</Text>
+              </View>
+              <Text style={styles.cardText}>¿Qué querés hacer?</Text>
+              <Text style={styles.cardText}>"Quiero mejorar la orientación..."</Text>
+              <View style={styles.mockInput}>
+                <Text style={styles.mockInputText}>Escribir o dictar intención</Text>
+                <Ionicons name="mic" size={20} color={colors.textSecondary} />
+              </View>
+            </View>
+          </View>
+        );
+    }
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      {/* Header / Estado del Sistema */}
-      <View style={styles.headerCard}>
-        <View style={styles.headerTop}>
-          <Text style={styles.systemTitle}>NAVEGO // R2-D2 HUD</Text>
-          <View style={[styles.badge, { backgroundColor: data ? '#064e3b' : '#7f1d1d' }]}>
-            <Text style={[styles.badgeText, { color: data ? '#4ade80' : '#f87171' }]}>
-              {data ? '🟢 ENLACE ACTIVO' : '🔴 ESPERANDO DATOS'}
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.subText}>SISTEMA DE TELEMETRÍA GPRMC (1Hz)</Text>
+    <View style={styles.container}>
+      <View style={styles.statusBar}>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getGnssColor() }]} /><Text style={styles.lightLabel}>GNSS</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>PC</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>Sinc</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.success }]} /><Text style={styles.lightLabel}>Metro</Text></View>
       </View>
 
-      {/* Grid Principal de Instrumentos */}
-      <View style={styles.grid}>
-        {/* Tarjeta SOG (Velocidad) */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>SOG (VELOCIDAD)</Text>
-          <Text style={styles.cardValue}>{data ? data.sog : '--'}</Text>
-          <Text style={styles.cardUnit}>NUDOS</Text>
-        </View>
+      <Text style={styles.title}>NAVEGO <Text style={styles.titleAccent}>// COCKPIT</Text></Text>
 
-        {/* Tarjeta COG (Rumbo) */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>COG (RUMBO)</Text>
-          <Text style={styles.cardValue}>{data ? data.cog : '--'}</Text>
-          <Text style={styles.cardUnit}>GRADOS (°)</Text>
-        </View>
-      </View>
+      <ScrollView style={styles.contentArea} contentContainerStyle={styles.contentInner}>
+        {renderContent()}
+      </ScrollView>
 
-      {/* Tarjeta de Posición Geodésica */}
-      <View style={styles.wideCard}>
-        <Text style={styles.cardLabel}>POSICIÓN GPS (LAT / LON)</Text>
-        <View style={styles.coordRow}>
-          <Text style={styles.coordText}>LAT: {data ? data.lat : '---.----'}</Text>
-          <Text style={styles.coordText}>LON: {data ? data.lon : '---.----'}</Text>
-        </View>
+      <View style={styles.dock}>
+        {modules.map((mod) => {
+          const isActive = active === mod.key;
+          return (
+            <TouchableOpacity key={mod.key} style={styles.dockButton} onPress={() => setActive(mod.key)}>
+              <Ionicons name={mod.icon} size={24} color={isActive ? colors.navigateCyan : colors.textSecondary} />
+              <Text style={[styles.dockLabel, isActive && styles.dockLabelActive]}>{mod.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-
-      {/* Tarjeta de Estado y Tiempo UTC */}
-      <View style={styles.wideCard}>
-        <View style={styles.rowBetween}>
-          <View>
-            <Text style={styles.cardLabel}>ESTADO DEL FIX</Text>
-            <Text style={styles.statusVal}>{data ? data.status : 'Desconocido'}</Text>
-          </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <Text style={styles.cardLabel}>TIEMPO UTC</Text>
-            <Text style={styles.utcVal}>{data ? data.utc : '--:--:--'}</Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    padding: 16,
-    backgroundColor: '#0b0f19',
-    flexGrow: 1,
-  },
-  headerCard: {
-    backgroundColor: '#111827',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#1f2937',
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  systemTitle: {
-    color: '#f3f4f6',
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'monospace',
-    letterSpacing: 1,
-  },
-  subText: {
-    color: '#9ca3af',
-    fontSize: 10,
-    fontFamily: 'monospace',
-    letterSpacing: 1.5,
-  },
-  badge: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    fontFamily: 'monospace',
-  },
-  grid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  card: {
-    flex: 1,
-    backgroundColor: '#111827',
-    borderRadius: 12,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#1f2937',
-    alignItems: 'center',
-  },
-  wideCard: {
-    backgroundColor: '#111827',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#1f2937',
-  },
-  cardLabel: {
-    color: '#9ca3af',
-    fontSize: 11,
-    fontFamily: 'monospace',
-    marginBottom: 8,
-    letterSpacing: 1,
-  },
-  cardValue: {
-    color: '#38bdf8',
-    fontSize: 32,
-    fontWeight: '900',
-    fontFamily: 'monospace',
-  },
-  cardUnit: {
-    color: '#64748b',
-    fontSize: 10,
-    fontFamily: 'monospace',
-    marginTop: 4,
-    letterSpacing: 1,
-  },
-  coordRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  coordText: {
-    color: '#e2e8f0',
-    fontSize: 14,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-  },
-  rowBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  statusVal: {
-    color: '#4ade80',
-    fontSize: 13,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
-  utcVal: {
-    color: '#f8fafc',
-    fontSize: 13,
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
+  container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: Platform.OS === 'android' ? 16 : spacing.lg },
+  statusBar: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginBottom: spacing.sm },
+  lightItem: { alignItems: 'center' },
+  lightDot: { width: 10, height: 10, borderRadius: 5, marginBottom: 2 },
+  lightLabel: { fontSize: 8, color: colors.textSecondary, fontWeight: '600' },
+  title: { fontSize: 20, fontWeight: 'bold', color: colors.textPrimary, letterSpacing: 1.5, textAlign: 'center', marginBottom: spacing.md },
+  titleAccent: { color: colors.navigateCyan },
+  contentArea: { flex: 1, marginBottom: spacing.md },
+  contentInner: { justifyContent: 'flex-start' },
+  section: { marginBottom: spacing.md },
+  card: { backgroundColor: 'rgba(5, 25, 42, 0.58)', borderRadius: radii.md, borderWidth: 1, borderColor: colors.glassBorder, padding: spacing.md, marginBottom: spacing.md },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  cardTitle: { fontSize: 14, fontWeight: 'bold', color: colors.textPrimary, flexShrink: 1 },
+  cardText: { fontSize: 12, color: colors.textSecondary, marginBottom: 4, lineHeight: 18 },
+  primaryButton: { marginTop: 12, backgroundColor: 'rgba(0, 217, 255, 0.15)', borderRadius: radii.pill, paddingVertical: 10, paddingHorizontal: 16, alignItems: 'center' },
+  primaryButtonText: { color: colors.navigateCyan, fontWeight: 'bold', fontSize: 12, letterSpacing: 1 },
+  mockInput: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: radii.md, borderWidth: 1, borderColor: colors.glassBorder, paddingHorizontal: 12, paddingVertical: 10, marginTop: 10 },
+  mockInputText: { color: colors.textSecondary, fontSize: 12, flex: 1 },
+  dock: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(5, 25, 42, 0.58)', borderWidth: 1, borderColor: 'rgba(0, 217, 255, 0.30)', borderRadius: 22, paddingVertical: 10, paddingHorizontal: 8 },
+  dockButton: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 4 },
+  dockLabel: { fontSize: 9, color: colors.textSecondary, fontWeight: '600', marginTop: 4 },
+  dockLabelActive: { color: colors.navigateCyan },
 });

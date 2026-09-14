@@ -5,7 +5,7 @@ import { startSession, endSession, insertGpsFix } from './db/journal';
 import { initDatabase } from './db/schema';
 import type { GPSFix } from './types/journal';
 
-const PC_BRIDGE_URL = 'http://192.168.100.20:3000/update-trajectory';
+const PC_BRIDGE_URL = 'http://192.168.100.106:8084/update-trajectory';
 const SYNC_INTERVAL_MS = 10000;
 const GNSS_WATCHDOG_INTERVAL_MS = 1000;
 
@@ -44,12 +44,12 @@ export interface ActiveHazard extends HazardZone {
 }
 
 export type NavigationStatus =
-  | 'CONFIABLE'
-  | 'DEGRADADO'
-  | 'NO_CONFIABLE'
-  | 'NO_DISPONIBLE'
-  | 'GNSS_PERDIDO'
-  | 'RECUPERANDO';
+| 'CONFIABLE'
+| 'DEGRADADO'
+| 'NO_CONFIABLE'
+| 'NO_DISPONIBLE'
+| 'GNSS_PERDIDO'
+| 'RECUPERANDO';
 
 export type SyncState = 'SIN_INTENTAR' | 'SINCRONIZADO' | 'NO_DISPONIBLE' | 'ERROR';
 
@@ -63,14 +63,14 @@ const DEFAULT_HAZARD_ZONES: HazardZone[] = [
     radiusMeters: 50,
     source: 'LOCAL_DEMO',
   },
-  {
-    id: 'h2',
-    name: 'Tronco flotante simulado',
-    lat: -31.6335,
-    lon: -60.7005,
-    radiusMeters: 30,
-    source: 'LOCAL_DEMO',
-  },
+{
+  id: 'h2',
+  name: 'Tronco flotante simulado',
+  lat: -31.6335,
+  lon: -60.7005,
+  radiusMeters: 30,
+  source: 'LOCAL_DEMO',
+},
 ];
 
 export function useNaveGoTracker() {
@@ -107,10 +107,10 @@ export function useNaveGoTracker() {
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) ** 2;
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * (Math.PI / 180)) *
+    Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) ** 2;
     return 2 * R * Math.asin(Math.sqrt(a));
   };
 
@@ -118,10 +118,10 @@ export function useNaveGoTracker() {
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const y = Math.sin(dLon) * Math.cos(lat2 * (Math.PI / 180));
     const x =
-      Math.cos(lat1 * (Math.PI / 180)) * Math.sin(lat2 * (Math.PI / 180)) -
-      Math.sin(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.cos(dLon);
+    Math.cos(lat1 * (Math.PI / 180)) * Math.sin(lat2 * (Math.PI / 180)) -
+    Math.sin(lat1 * (Math.PI / 180)) *
+    Math.cos(lat2 * (Math.PI / 180)) *
+    Math.cos(dLon);
     return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
   };
 
@@ -152,20 +152,20 @@ export function useNaveGoTracker() {
     const now = Date.now();
 
     return DEFAULT_HAZARD_ZONES
-      .map((hazard) => {
-        const distance = calculateDistance(lat, lon, hazard.lat, hazard.lon);
-        const ageSeconds = hazard.lastReportedAt
-          ? Math.max(0, Math.floor((now - hazard.lastReportedAt) / 1000))
-          : undefined;
+    .map((hazard) => {
+      const distance = calculateDistance(lat, lon, hazard.lat, hazard.lon);
+      const ageSeconds = hazard.lastReportedAt
+      ? Math.max(0, Math.floor((now - hazard.lastReportedAt) / 1000))
+      : undefined;
 
-        // La proximidad es evidencia geométrica local; NO equivale a confirmación temporal.
-        const confidence: ActiveHazard['confidence'] = hazard.lastReportedAt
-          ? 'CONFIRMADO'
-          : 'ULTIMA_INFORMACION';
+      // La proximidad es evidencia geométrica local; NO equivale a confirmación temporal.
+      const confidence: ActiveHazard['confidence'] = hazard.lastReportedAt
+      ? 'CONFIRMADO'
+      : 'ULTIMA_INFORMACION';
 
-        return { ...hazard, distance, ageSeconds, confidence };
-      })
-      .filter((hazard) => hazard.distance <= hazard.radiusMeters);
+      return { ...hazard, distance, ageSeconds, confidence };
+    })
+    .filter((hazard) => hazard.distance <= hazard.radiusMeters);
   };
 
   const syncTrajectoryToPC = async (points: Coordinate[]) => {
@@ -179,7 +179,7 @@ export function useNaveGoTracker() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(points),
-        signal: controller.signal,
+                                   signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -292,14 +292,14 @@ export function useNaveGoTracker() {
         updateNavigationStatus(currentTimestamp, accuracy);
 
         const quality: GPSFix['quality'] = accuracy <= 10 ? 'GOOD' : accuracy <= 50 ? 'SUSPECT' : 'REJECTED';
-        if (sessionIdRef.current) {
-          void persistRawFix(location, quality, sessionIdRef.current);
-        }
+    if (sessionIdRef.current) {
+      void persistRawFix(location, quality, sessionIdRef.current);
+    }
 
-        // Un fix de mala calidad queda registrado, pero no contamina la trayectoria navegable.
-        if (accuracy > MAX_ACCURACY_M) return;
+    // Un fix de mala calidad queda registrado, pero no contamina la trayectoria navegable.
+    if (accuracy > MAX_ACCURACY_M) return;
 
-        let distanceIncrement = 0;
+    let distanceIncrement = 0;
         if (lastPointRef.current) {
           distanceIncrement = calculateDistance(
             lastPointRef.current.lat,
@@ -317,8 +317,8 @@ export function useNaveGoTracker() {
           calculatedSog = gpsSpeed;
         } else if (lastPointRef.current) {
           const timeDiffSecs = lastPointRef.current.timestamp
-            ? (currentTimestamp - lastPointRef.current.timestamp) / 1000
-            : 1;
+          ? (currentTimestamp - lastPointRef.current.timestamp) / 1000
+          : 1;
           if (timeDiffSecs > 0 && distanceIncrement > 0) {
             calculatedSog = distanceIncrement / timeDiffSecs;
           }

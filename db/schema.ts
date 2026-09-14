@@ -47,4 +47,25 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
       COMMIT;
     `);
   }
+
+  // ===== NUEVAS TABLAS PARA REFERENCIAS =====
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS reference_routes (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      source_session_id TEXT,
+      distance_m REAL DEFAULT 0,
+      duration_s INTEGER DEFAULT 0,
+      created_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS reference_route_points (
+      route_id TEXT NOT NULL,
+      sequence_no INTEGER NOT NULL,
+      lat REAL NOT NULL,
+      lon REAL NOT NULL,
+      PRIMARY KEY (route_id, sequence_no),
+      FOREIGN KEY (route_id) REFERENCES reference_routes(id) ON DELETE CASCADE
+    );
+  `);
 }

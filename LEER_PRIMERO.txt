@@ -1,0 +1,23 @@
+========================================================
+IMPORTANTE — LEER ANTES DE USAR
+========================================================
+
+Este proyecto es un BACKUP PARCIAL recuperado el 2026-09-13.
+
+El "Cockpit" que aparece en el celular NO es el original.
+Es un HUD placeholder creado el mismo día para verificar
+la conexión PC <-> celular.
+
+El Cockpit original tenía:
+- Estados de puertos (verde / amarillo / rojo)
+- Hipótesis de trabajo
+- Progreso de NaveGo
+- Información centralizada de todos los subsistemas
+
+Ese Cockpit original NO está recuperado todavía.
+
+NO tratar este backup como la versión definitiva del proyecto.
+
+Ver: ~/backups/ESTADO_RECUPERACION.md para el detalle completo.
+
+========================================================

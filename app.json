@@ -6,6 +6,7 @@
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
@@ -16,7 +17,6 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.NaveGoLocal",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
@@ -33,7 +33,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "NaveGo requiere acceso a la geolocalización para el tracking de ruta en tiempo real."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
