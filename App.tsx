@@ -205,9 +205,10 @@ function AppContent() {
   : `hace ${Math.floor(ageSeconds / 60)} min`;
   const accuracyM = tracker.lastFixAccuracy !== null ? tracker.lastFixAccuracy.toFixed(0) : null;
 
-  const internetColor = tracker.syncOk === true ? colors.success : tracker.syncOk === false ? colors.warning : colors.textSecondary;
-  const internetIcon = tracker.syncOk === true ? 'cloud-done' : tracker.syncOk === false ? 'cloud-offline' : 'cloud';
-  const internetLabel = tracker.syncOk === true ? 'INTERNET' : tracker.syncOk === false ? 'SIN INTERNET' : 'INTERNET...';
+  // FIX 1: chip NODO en vez de INTERNET
+  const nodeColor = tracker.syncOk === true ? colors.success : tracker.syncOk === false ? colors.warning : colors.textSecondary;
+  const nodeIcon = tracker.syncOk === true ? 'radio-button-on' : tracker.syncOk === false ? 'radio-button-off' : 'ellipse-outline';
+  const nodeLabel = tracker.syncOk === true ? 'NODO' : tracker.syncOk === false ? 'SIN NODO' : 'NODO...';
 
   const phoneIsHorizontal = accelerometerZ > 0.7;
   const courseUpActive = isLandscape && phoneIsHorizontal && tracker.smoothedCog !== null && Number(tracker.currentSog || 0) > 0.5;
@@ -238,9 +239,9 @@ function AppContent() {
     tracker.stopTracking();
     Alert.alert(
       'Sistema',
-      `Derrota finalizada y guardada exitosamente.\nDistancia: ${Number(tracker.totalDistance).toFixed(1)} m`
+      `Trayecto finalizado y guardado exitosamente.\nDistancia: ${Number(tracker.totalDistance).toFixed(1)} m`
     );
-    console.log('[GAIA] Derrota finalizada y guardada.');
+    console.log('[GAIA] Trayecto finalizado y guardado.');
   };
 
   const floatingActions = [
@@ -392,9 +393,10 @@ function AppContent() {
     {accuracyM !== null && <Text style={styles.navChipAge}>· ± {accuracyM} m</Text>}
     </View>
 
-    <View style={[styles.internetChip, { borderColor: internetColor }]}>
-    <Ionicons name={internetIcon} size={18} color={internetColor} />
-    <Text style={[styles.internetChipText, { color: internetColor }]}>{internetLabel}</Text>
+    {/* FIX 1: chip NODO */}
+    <View style={[styles.internetChip, { borderColor: nodeColor }]}>
+    <Ionicons name={nodeIcon} size={18} color={nodeColor} />
+    <Text style={[styles.internetChipText, { color: nodeColor }]}>{nodeLabel}</Text>
     </View>
 
     <View style={styles.mapWrapper}>
@@ -458,9 +460,10 @@ function AppContent() {
     </View>
     <Text style={styles.distanceSub}>({Number(tracker.totalDistance).toFixed(1)} m)</Text>
 
+    {/* FIX 2: 3 estados de grabación */}
     <View style={styles.statusRowCompact}>
-    <View style={[styles.dot, tracker.isPaused ? styles.dotPaused : styles.dotActive]} />
-    <Text style={[styles.recordingText, { color: tracker.isPaused ? colors.warning : colors.navigateCyan }]}>{tracker.isPaused ? 'II PAUSADO' : '● GRABANDO'}</Text>
+    <View style={[styles.dot, !tracker.isTracking ? styles.dotIdle : tracker.isPaused ? styles.dotPaused : styles.dotActive]} />
+    <Text style={[styles.recordingText, { color: !tracker.isTracking ? colors.textSecondary : tracker.isPaused ? colors.warning : colors.navigateCyan }]}>{!tracker.isTracking ? '○ DETENIDO' : tracker.isPaused ? 'II PAUSADO' : '● GRABANDO'}</Text>
     </View>
 
     {tracker.activeHazards && tracker.activeHazards.length > 0 && (
@@ -470,8 +473,8 @@ function AppContent() {
       </View>
     )}
 
-    {tracker.syncOk === false && <Text style={styles.syncWarning}>Sin conexión con PC</Text>}
-    {tracker.syncOk === true && <Text style={styles.syncOk}>Sincronizado con PC</Text>}
+    {tracker.syncOk === false && <Text style={styles.syncWarning}>Sin conexión con nodo</Text>}
+    {tracker.syncOk === true && <Text style={styles.syncOk}>Sincronizado con nodo</Text>}
     </View>
     </View>
 
@@ -485,9 +488,11 @@ function AppContent() {
     </View>
 
     {!tracker.isTracking ? (
+      <View style={styles.row}>
       <TouchableOpacity style={[glass.actionControl, { flex: 1, backgroundColor: 'rgba(53,211,154,0.14)' }]} onPress={handleStart}>
-      <Text style={[styles.actionButtonText, { color: colors.success }]}>INICIAR DERROTA</Text>
+      <Text style={[styles.actionButtonText, { color: colors.success }]}>INICIAR TRAYECTO</Text>
       </TouchableOpacity>
+      </View>
     ) : (
       <View style={styles.row}>
       <TouchableOpacity style={[glass.actionControl, { flex: 1, backgroundColor: tracker.isPaused ? 'rgba(53,211,154,0.14)' : 'rgba(255,181,46,0.12)' }]} onPress={handleToggleRecord}>
@@ -574,6 +579,7 @@ const styles = StyleSheet.create({
                                  dot: { width: 8, height: 8, borderRadius: 4 },
                                  dotActive: { backgroundColor: colors.navigateCyan },
                                  dotPaused: { backgroundColor: colors.warning },
+                                 dotIdle: { backgroundColor: colors.textSecondary },
                                  recordingText: { fontSize: 10, fontWeight: 'bold', letterSpacing: 0.8 },
                                  alertBannerCompact: { marginTop: 8, padding: 8, borderRadius: 6, borderWidth: 0.5, borderColor: colors.danger, backgroundColor: 'rgba(255, 64, 85, 0.10)' },
                                  alertTextCompact: { color: colors.danger, fontSize: 12, fontWeight: 'bold', textAlign: 'center' },
