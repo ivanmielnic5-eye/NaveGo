@@ -9,8 +9,6 @@ const PC_BRIDGE_URL = 'http://192.168.100.106:8084/update-trajectory';
 const SYNC_INTERVAL_MS = 10000;
 const GNSS_WATCHDOG_INTERVAL_MS = 1000;
 
-// Estos umbrales son para decidir qué fixes alimentan la navegación.
-// La base local conserva también los fixes SUSPECT para no destruir evidencia.
 const MAX_JUMP_DISTANCE_M = 15;
 const MAX_ACCURACY_M = 20;
 const MIN_DISTANCE_DELTA_M = 0.8;
@@ -53,7 +51,6 @@ export type NavigationStatus =
 
 export type SyncState = 'SIN_INTENTAR' | 'SINCRONIZADO' | 'NO_DISPONIBLE' | 'ERROR';
 
-// Datos de demostración/locales. No se presentan como información en tiempo real.
 const DEFAULT_HAZARD_ZONES: HazardZone[] = [
   {
     id: 'h1',
@@ -74,22 +71,29 @@ const DEFAULT_HAZARD_ZONES: HazardZone[] = [
 ];
 
 export function useNaveGoTracker() {
-  const [routePoints, setRoutePoints] = useState<Coordinate[]>([]);
-  const [totalDistance, setTotalDistance] = useState(0);
+  // === Estados de telemetría (siempre vivos) ===
   const [currentSog, setCurrentSog] = useState(0);
   const [currentCog, setCurrentCog] = useState(0);
-  const [isTracking, setIsTracking] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [syncOk, setSyncOk] = useState<boolean | null>(null);
-  const [syncState, setSyncState] = useState<SyncState>('SIN_INTENTAR');
-  const [activeHazards, setActiveHazards] = useState<ActiveHazard[]>([]);
   const [lastFixTimestamp, setLastFixTimestamp] = useState<number | null>(null);
   const [lastFixAccuracy, setLastFixAccuracy] = useState<number | null>(null);
-  const lastFixTimestampRef = useRef<number | null>(null);
-  const lastFixAccuracyRef = useRef<number | null>(null);
   const [navigationStatus, setNavigationStatus] = useState<NavigationStatus>('NO_DISPONIBLE');
+  const [activeHazards, setActiveHazards] = useState<ActiveHazard[]>([]);
+  const [isTelemetryActive, setIsTelemetryActive] = useState(false);
 
+  // === Estados de grabación (controlados por botones) ===
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTracking, setIsTracking] = useState(false); // alias por compat con App.tsx
+  const [isPaused, setIsPaused] = useState(false);
+  const [routePoints, setRoutePoints] = useState<Coordinate[]>([]);
+  const [totalDistance, setTotalDistance] = useState(0);
+
+  // === Estados de sync (con PC) ===
+  const [syncOk, setSyncOk] = useState<boolean | null>(null);
+  const [syncState, setSyncState] = useState<SyncState>('SIN_INTENTAR');
+
+  // === Refs ===
   const isPausedRef = useRef(false);
+  const isRecordingRef = useRef(false);
   const subscriptionRef = useRef<Location.LocationSubscription | null>(null);
   const lastPointRef = useRef<Coordinate | null>(null);
   const routePointsRef = useRef<Coordinate[]>([]);
@@ -101,7 +105,10 @@ export function useNaveGoTracker() {
   const sequenceNoRef = useRef(0);
   const totalDistanceRef = useRef(0);
   const lastCogRef = useRef(0);
+  const lastFixTimestampRef = useRef<number | null>(null);
+  const lastFixAccuracyRef = useRef<number | null>(null);
 
+  // === Helpers ===
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371e3;
     const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -130,9 +137,7 @@ export function useNaveGoTracker() {
       setNavigationStatus('NO_DISPONIBLE');
       return;
     }
-
     const ageMs = Math.max(0, Date.now() - timestamp);
-
     if (ageMs > GNSS_LOST_AFTER_MS) {
       setNavigationStatus('GNSS_PERDIDO');
     } else if (ageMs > GNSS_RECOVERING_AFTER_MS) {
@@ -150,69 +155,18 @@ export function useNaveGoTracker() {
 
   const evaluateHazards = (lat: number, lon: number): ActiveHazard[] => {
     const now = Date.now();
-
     return DEFAULT_HAZARD_ZONES
     .map((hazard) => {
       const distance = calculateDistance(lat, lon, hazard.lat, hazard.lon);
       const ageSeconds = hazard.lastReportedAt
       ? Math.max(0, Math.floor((now - hazard.lastReportedAt) / 1000))
       : undefined;
-
-      // La proximidad es evidencia geométrica local; NO equivale a confirmación temporal.
       const confidence: ActiveHazard['confidence'] = hazard.lastReportedAt
       ? 'CONFIRMADO'
       : 'ULTIMA_INFORMACION';
-
       return { ...hazard, distance, ageSeconds, confidence };
     })
     .filter((hazard) => hazard.distance <= hazard.radiusMeters);
-  };
-
-  const syncTrajectoryToPC = async (points: Coordinate[]) => {
-    if (!points.length) return;
-
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-      const response = await fetch(PC_BRIDGE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(points),
-                                   signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) throw new Error(`PC bridge HTTP ${response.status}`);
-      setSyncOk(true);
-      setSyncState('SINCRONIZADO');
-    } catch {
-      // Esto describe SOLO el enlace con la PC. No cambia navigationStatus.
-      setSyncOk(false);
-      setSyncState('NO_DISPONIBLE');
-    }
-  };
-
-  const scheduleSync = () => {
-    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
-
-    syncTimerRef.current = setTimeout(() => {
-      if (routePointsRef.current.length > 0 && !isPausedRef.current) {
-        void syncTrajectoryToPC(routePointsRef.current);
-      }
-      scheduleSync();
-    }, SYNC_INTERVAL_MS);
-  };
-
-  const startWatchdog = () => {
-    if (watchdogTimerRef.current) clearInterval(watchdogTimerRef.current);
-
-    watchdogTimerRef.current = setInterval(() => {
-      if (!isPausedRef.current) {
-        updateNavigationStatus(lastFixTimestampRef.current, lastFixAccuracyRef.current ?? undefined);
-      }
-    }, GNSS_WATCHDOG_INTERVAL_MS);
   };
 
   const persistRawFix = async (
@@ -221,7 +175,6 @@ export function useNaveGoTracker() {
     sessionId: string,
   ) => {
     if (!dbRef.current) return;
-
     const fix: GPSFix = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       session_id: sessionId,
@@ -236,7 +189,6 @@ export function useNaveGoTracker() {
       quality,
       satellites: 0,
     };
-
     try {
       await insertGpsFix(dbRef.current, fix);
     } catch (error) {
@@ -244,8 +196,197 @@ export function useNaveGoTracker() {
     }
   };
 
+  const syncTrajectoryToPC = async (points: Coordinate[]) => {
+    if (!points.length) return;
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const response = await fetch(PC_BRIDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(points),
+                                   signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      if (!response.ok) throw new Error(`PC bridge HTTP ${response.status}`);
+      setSyncOk(true);
+      setSyncState('SINCRONIZADO');
+    } catch {
+      setSyncOk(false);
+      setSyncState('NO_DISPONIBLE');
+    }
+  };
+
+  const scheduleSync = () => {
+    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+    syncTimerRef.current = setTimeout(() => {
+      if (isRecordingRef.current && routePointsRef.current.length > 0 && !isPausedRef.current) {
+        void syncTrajectoryToPC(routePointsRef.current);
+      }
+      scheduleSync();
+    }, SYNC_INTERVAL_MS);
+  };
+
+  const startWatchdog = () => {
+    if (watchdogTimerRef.current) clearInterval(watchdogTimerRef.current);
+    watchdogTimerRef.current = setInterval(() => {
+      updateNavigationStatus(lastFixTimestampRef.current, lastFixAccuracyRef.current ?? undefined);
+    }, GNSS_WATCHDOG_INTERVAL_MS);
+  };
+
+  // =========================================================================
+  // TELEMETRÍA VIVA — arranca al montar, muere al desmontar.
+  // NO depende de botones.
+  // =========================================================================
+  useEffect(() => {
+    let mounted = true;
+    let localSubscription: Location.LocationSubscription | null = null;
+
+    const initTelemetry = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.error('[TRACKER] Permiso de ubicación denegado');
+          return;
+        }
+        if (!mounted) return;
+
+        setIsTelemetryActive(true);
+        startWatchdog();
+
+        localSubscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 1000,
+            distanceInterval: 0,
+          },
+          (location) => {
+            if (!mounted) return;
+
+            const currentTimestamp = location.timestamp || Date.now();
+            const accuracy = location.coords.accuracy ?? 999;
+            const gpsSpeed = location.coords.speed;
+            const gpsHeading = location.coords.heading;
+
+            // === BLOQUE 1: TELEMETRÍA VIVA (siempre) ===
+            lastFixTimestampRef.current = currentTimestamp;
+            lastFixAccuracyRef.current = accuracy;
+            setLastFixTimestamp(currentTimestamp);
+            setLastFixAccuracy(accuracy);
+            updateNavigationStatus(currentTimestamp, accuracy);
+            setActiveHazards(evaluateHazards(location.coords.latitude, location.coords.longitude));
+
+            let liveSog = 0;
+            if (gpsSpeed !== null && gpsSpeed !== undefined && Number.isFinite(gpsSpeed) && gpsSpeed >= 0) {
+              liveSog = gpsSpeed;
+            }
+            setCurrentSog(liveSog);
+
+            let liveCog = lastCogRef.current;
+            if (gpsHeading !== null && gpsHeading !== undefined && Number.isFinite(gpsHeading) && gpsHeading >= 0) {
+              liveCog = gpsHeading;
+              lastCogRef.current = liveCog;
+            }
+            setCurrentCog(liveCog);
+
+            // === BLOQUE 2: GRABACIÓN (solo si isRecordingRef.current) ===
+            if (!isRecordingRef.current) return;
+            if (isPausedRef.current) return;
+
+            const quality: GPSFix['quality'] = accuracy <= 10 ? 'GOOD' : accuracy <= 50 ? 'SUSPECT' : 'REJECTED';
+
+            if (sessionIdRef.current) {
+              void persistRawFix(location, quality, sessionIdRef.current);
+            }
+
+            if (accuracy > MAX_ACCURACY_M) return;
+
+            let distanceIncrement = 0;
+            if (lastPointRef.current) {
+              distanceIncrement = calculateDistance(
+                lastPointRef.current.lat,
+                lastPointRef.current.lon,
+                location.coords.latitude,
+                location.coords.longitude,
+              );
+            }
+
+            if (distanceIncrement > MAX_JUMP_DISTANCE_M) return;
+            if (distanceIncrement < MIN_DISTANCE_DELTA_M && lastPointRef.current) return;
+
+            let calculatedSog = liveSog;
+            if (calculatedSog === 0 && lastPointRef.current) {
+              const timeDiffSecs = lastPointRef.current.timestamp
+              ? (currentTimestamp - lastPointRef.current.timestamp) / 1000
+              : 1;
+              if (timeDiffSecs > 0 && distanceIncrement > 0) {
+                calculatedSog = distanceIncrement / timeDiffSecs;
+              }
+            }
+
+            let calculatedCog = lastCogRef.current;
+            if (calculatedSog >= MIN_SPEED_FOR_COG_UPDATE && lastPointRef.current) {
+              calculatedCog = calculateHeading(
+                lastPointRef.current.lat,
+                lastPointRef.current.lon,
+                location.coords.latitude,
+                location.coords.longitude,
+              );
+              lastCogRef.current = calculatedCog;
+              setCurrentCog(calculatedCog);
+            }
+
+            const newPoint: Coordinate = {
+              lat: location.coords.latitude,
+              lon: location.coords.longitude,
+              sog: calculatedSog,
+              cog: calculatedCog,
+              timestamp: currentTimestamp,
+            };
+
+            lastPointRef.current = newPoint;
+            routePointsRef.current = [...routePointsRef.current, newPoint];
+            totalDistanceRef.current += distanceIncrement;
+
+            setRoutePoints(routePointsRef.current);
+            setTotalDistance(totalDistanceRef.current);
+          },
+        );
+
+        subscriptionRef.current = localSubscription;
+      } catch (error) {
+        console.warn('[TRACKER] Error al iniciar telemetría:', error);
+      }
+    };
+
+    initTelemetry();
+    scheduleSync();
+
+    return () => {
+      mounted = false;
+      localSubscription?.remove();
+      subscriptionRef.current = null;
+      if (watchdogTimerRef.current) {
+        clearInterval(watchdogTimerRef.current);
+        watchdogTimerRef.current = null;
+      }
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+        syncTimerRef.current = null;
+      }
+      if (dbRef.current && sessionIdRef.current) {
+        void endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current).catch(() => {});
+        sessionIdRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // =========================================================================
+  // GRABACIÓN — abrir/cerrar sesión. NO toca la telemetría.
+  // =========================================================================
   const startTracking = async () => {
-    if (subscriptionRef.current) return;
+    if (isRecordingRef.current) return;
 
     try {
       if (!dbRef.current) {
@@ -255,127 +396,57 @@ export function useNaveGoTracker() {
       const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
       sessionIdRef.current = sessionId;
       sequenceNoRef.current = 0;
+      totalDistanceRef.current = 0;
+      routePointsRef.current = [];
+      lastPointRef.current = null;
+      setRoutePoints([]);
+      setTotalDistance(0);
     } catch (error) {
       console.warn('[DB] Error al abrir/iniciar base local:', error);
     }
 
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      console.error('[TRACKER] Permiso de ubicación denegado');
-      return;
-    }
-
+    isRecordingRef.current = true;
+    setIsRecording(true);
     setIsTracking(true);
     setIsPaused(false);
     isPausedRef.current = false;
     setSyncState('SIN_INTENTAR');
-    startWatchdog();
-
-    subscriptionRef.current = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 1000,
-        distanceInterval: 0,
-      },
-      (location) => {
-        if (isPausedRef.current) return;
-
-        const currentTimestamp = location.timestamp || Date.now();
-        const accuracy = location.coords.accuracy ?? 999;
-        const gpsSpeed = location.coords.speed;
-
-        // La recepción de un fix actualiza la evidencia GNSS aunque sea sospechosa.
-        lastFixTimestampRef.current = currentTimestamp;
-        lastFixAccuracyRef.current = accuracy;
-        setLastFixTimestamp(currentTimestamp);
-        setLastFixAccuracy(accuracy);
-        updateNavigationStatus(currentTimestamp, accuracy);
-
-        const quality: GPSFix['quality'] = accuracy <= 10 ? 'GOOD' : accuracy <= 50 ? 'SUSPECT' : 'REJECTED';
-    if (sessionIdRef.current) {
-      void persistRawFix(location, quality, sessionIdRef.current);
-    }
-
-    // Un fix de mala calidad queda registrado, pero no contamina la trayectoria navegable.
-    if (accuracy > MAX_ACCURACY_M) return;
-
-    let distanceIncrement = 0;
-        if (lastPointRef.current) {
-          distanceIncrement = calculateDistance(
-            lastPointRef.current.lat,
-            lastPointRef.current.lon,
-            location.coords.latitude,
-            location.coords.longitude,
-          );
-        }
-
-        if (distanceIncrement > MAX_JUMP_DISTANCE_M) return;
-        if (distanceIncrement < MIN_DISTANCE_DELTA_M && lastPointRef.current) return;
-
-        let calculatedSog = 0;
-        if (gpsSpeed !== null && gpsSpeed !== undefined && Number.isFinite(gpsSpeed) && gpsSpeed >= 0) {
-          calculatedSog = gpsSpeed;
-        } else if (lastPointRef.current) {
-          const timeDiffSecs = lastPointRef.current.timestamp
-          ? (currentTimestamp - lastPointRef.current.timestamp) / 1000
-          : 1;
-          if (timeDiffSecs > 0 && distanceIncrement > 0) {
-            calculatedSog = distanceIncrement / timeDiffSecs;
-          }
-        }
-
-        let calculatedCog = lastCogRef.current;
-        if (calculatedSog >= MIN_SPEED_FOR_COG_UPDATE && lastPointRef.current) {
-          calculatedCog = calculateHeading(
-            lastPointRef.current.lat,
-            lastPointRef.current.lon,
-            location.coords.latitude,
-            location.coords.longitude,
-          );
-          lastCogRef.current = calculatedCog;
-        }
-
-        const newPoint: Coordinate = {
-          lat: location.coords.latitude,
-          lon: location.coords.longitude,
-          sog: calculatedSog,
-          cog: calculatedCog,
-          timestamp: currentTimestamp,
-        };
-
-        lastPointRef.current = newPoint;
-        routePointsRef.current = [...routePointsRef.current, newPoint];
-        totalDistanceRef.current += distanceIncrement;
-
-        setRoutePoints(routePointsRef.current);
-        setTotalDistance(totalDistanceRef.current);
-        setCurrentSog(calculatedSog);
-        setCurrentCog(calculatedCog);
-        setActiveHazards(evaluateHazards(location.coords.latitude, location.coords.longitude));
-      },
-    );
-
-    scheduleSync();
   };
 
   const stopTracking = () => {
-    subscriptionRef.current?.remove();
-    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
-    if (watchdogTimerRef.current) clearInterval(watchdogTimerRef.current);
-
-    subscriptionRef.current = null;
-    syncTimerRef.current = null;
-    watchdogTimerRef.current = null;
+    isRecordingRef.current = false;
+    setIsRecording(false);
+    setIsTracking(false);
+    setIsPaused(false);
+    isPausedRef.current = false;
 
     if (dbRef.current && sessionIdRef.current) {
       void endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current).catch(() => {});
       sessionIdRef.current = null;
     }
+  };
 
-    setIsTracking(false);
-    setIsPaused(false);
-    isPausedRef.current = false;
-    setNavigationStatus('NO_DISPONIBLE');
+  const resetTracking = async () => {
+    if (dbRef.current && sessionIdRef.current) {
+      await endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current).catch(() => {});
+      sessionIdRef.current = null;
+    }
+
+    setRoutePoints([]);
+    routePointsRef.current = [];
+    setTotalDistance(0);
+    totalDistanceRef.current = 0;
+    lastPointRef.current = null;
+    sequenceNoRef.current = 0;
+
+    if (isRecordingRef.current && dbRef.current) {
+      try {
+        const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
+        sessionIdRef.current = sessionId;
+      } catch (error) {
+        console.warn('[DB] Error al reiniciar sesión:', error);
+      }
+    }
   };
 
   const togglePause = () => {
@@ -385,35 +456,6 @@ export function useNaveGoTracker() {
       return next;
     });
   };
-
-  const resetTracking = () => {
-    setRoutePoints([]);
-    routePointsRef.current = [];
-    setTotalDistance(0);
-    totalDistanceRef.current = 0;
-    setCurrentSog(0);
-    setCurrentCog(0);
-    setActiveHazards([]);
-    lastPointRef.current = null;
-    sequenceNoRef.current = 0;
-    lastCogRef.current = 0;
-    lastFixTimestampRef.current = null;
-    lastFixAccuracyRef.current = null;
-    setLastFixTimestamp(null);
-    setLastFixAccuracy(null);
-    setNavigationStatus('NO_DISPONIBLE');
-  };
-
-  useEffect(() => {
-    return () => {
-      subscriptionRef.current?.remove();
-      if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
-      if (watchdogTimerRef.current) clearInterval(watchdogTimerRef.current);
-      if (dbRef.current && sessionIdRef.current) {
-        void endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current).catch(() => {});
-      }
-    };
-  }, []);
 
   const nav = {
     distanceMeters: totalDistance,
@@ -429,6 +471,8 @@ export function useNaveGoTracker() {
     currentSog,
     currentCog,
     isTracking,
+    isRecording,
+    isTelemetryActive,
     isPaused,
     syncOk,
     syncState,

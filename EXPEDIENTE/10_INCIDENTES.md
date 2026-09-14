@@ -49,3 +49,31 @@ Nombres canónicos:
 - Cockpit Kernel (COCKPIT_CORE_*.md)
 
 Regla: antes de hablar de "el cockpit", especificar cuál de los cuatro.
+
+## Hito 2026-09-14 — Standalone + Autonomía validados
+
+Compilado y probado:
+- APK de producción (release) sin dependencia de Metro.
+- App arranca sin PC, sin WiFi, sin Metro.
+
+Autonomía verificada (modo avión):
+- GNSS OK (±2 m precisión).
+- SOG cambia con movimiento real del celular (0.0 → 2.0 nudos).
+- COG cambia con la orientación (163° → 206°).
+- Distancia acumula correctamente (0.445 km → 0.554 km).
+- Chip "SIN INTERNET" visible, pero todo funciona.
+
+R2-D2 confirmado como anexo:
+- Chip "Sin conexión con PC" sin afectar la operación.
+- El bridge está envuelto en try/catch con timeout 3s.
+- La app no depende del bridge para operar.
+
+El Cockpit Móvil original (restaurado hoy) funciona:
+- 4 luces de estado (GNSS, PC, Sinc, Metro).
+- 5 módulos (Estado, Trabajo, Evidencia, Archivos, Acción).
+
+Pendientes anotados (no bloqueantes):
+- Adapter stub con GNSS hardcodeado como NO_VERIFICADO.
+- ReferenceDetailScreen usa MapView (crashea sin API key).
+- Reset no cierra sesión en SQLite.
+- No existe export/borrar de referencias.
