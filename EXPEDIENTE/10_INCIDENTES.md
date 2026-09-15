@@ -126,3 +126,24 @@ Regla nueva:
 "La sesión activa es sagrada. Ningún error de UI puede destruirla."
 
 Prioridad: CRÍTICA.
+
+## INC-CTX-002 — Hardcode de proyecto en logos-context
+
+Fecha del incidente: 2026-09-15
+Detección: verificación de logs de eventos
+Impacto: el kernel registraba siempre project="NAVEGO" en events.jsonl
+         aunque conceptualmente debía ser multi-proyecto.
+
+Causa raíz:
+- Línea 59 de logos-context tenía "project": "NAVEGO" hardcodeado.
+- No leía project.id desde context.json.
+
+Fix aplicado (2026-09-15):
+- registrar_evento() ahora acepta parámetro project_id.
+- main() lee project_id desde ctx["project"]["id"].
+- Fallback: "UNKNOWN" si el contexto no está disponible.
+
+Backup del archivo original: logos-context.bak_2026-09-15
+
+Estado: RESUELTO
+Lección: aplicar R-18 (source of truth) también al propio kernel.
