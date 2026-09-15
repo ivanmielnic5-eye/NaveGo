@@ -6,16 +6,16 @@ export async function startSession(db: SQLiteDatabase, title?: string): Promise<
   const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   await db.runAsync(
     `INSERT INTO sessions (id, start_time, title, total_distance, status)
-     VALUES (?, ?, ?, 0, 'ACTIVE')`,
-    [sessionId, Date.now(), title ?? 'Sesión NaveGo']
+    VALUES (?, ?, ?, 0, 'ACTIVE')`,
+                    [sessionId, Date.now(), title ?? 'Sesión NaveGo']
   );
   return sessionId;
 }
 
 export async function insertGpsFix(db: SQLiteDatabase, fix: GPSFix): Promise<void> {
   const id = typeof fix.id === 'string' && fix.id.length > 0
-    ? fix.id
-    : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  ? fix.id
+  : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   const sessionId = fix.session_id ?? '';
   const sequenceNo = Number.isFinite(fix.sequence_no) ? Math.floor(fix.sequence_no) : 0;
   const timestamp = Number.isFinite(fix.timestamp) ? Math.floor(fix.timestamp) : Date.now();
@@ -30,13 +30,13 @@ export async function insertGpsFix(db: SQLiteDatabase, fix: GPSFix): Promise<voi
 
   await db.runAsync(
     `INSERT INTO gps_fixes
-      (id, session_id, sequence_no, timestamp, lat_raw, lon_raw, alt,
-       accuracy, speed, heading, quality, satellites)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      id, sessionId, sequenceNo, timestamp, latRaw, lonRaw, alt,
-      accuracy, speed, heading, quality, satellites,
-    ]
+    (id, session_id, sequence_no, timestamp, lat_raw, lon_raw, alt,
+     accuracy, speed, heading, quality, satellites)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                      id, sessionId, sequenceNo, timestamp, latRaw, lonRaw, alt,
+                    accuracy, speed, heading, quality, satellites,
+                    ]
   );
 }
 
@@ -68,15 +68,15 @@ export async function getSessionDetail(db: SQLiteDatabase, sessionId: string): P
 
   const stats = await db.getFirstAsync<any>(
     `SELECT
-      COUNT(*) as total_fixes,
-      SUM(CASE WHEN quality = 'GOOD' THEN 1 ELSE 0 END) as good_fixes,
-      SUM(CASE WHEN quality = 'SUSPECT' THEN 1 ELSE 0 END) as suspect_fixes,
-      SUM(CASE WHEN quality = 'REJECTED' THEN 1 ELSE 0 END) as rejected_fixes,
-      AVG(speed) as avg_speed,
-      MAX(speed) as max_speed
-     FROM gps_fixes
-     WHERE session_id = ?`,
-    [sessionId]
+    COUNT(*) as total_fixes,
+                                            SUM(CASE WHEN quality = 'GOOD' THEN 1 ELSE 0 END) as good_fixes,
+                                            SUM(CASE WHEN quality = 'SUSPECT' THEN 1 ELSE 0 END) as suspect_fixes,
+                                            SUM(CASE WHEN quality = 'REJECTED' THEN 1 ELSE 0 END) as rejected_fixes,
+                                            AVG(speed) as avg_speed,
+                                            MAX(speed) as max_speed
+                                            FROM gps_fixes
+                                            WHERE session_id = ?`,
+                                            [sessionId]
   );
 
   return { ...session, ...stats };
@@ -91,9 +91,9 @@ function calculateDistanceFromCoords(lat1: number, lon1: number, lat2: number, l
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
   const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) ** 2;
+  Math.sin(dLat / 2) ** 2 +
+  Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+  Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
@@ -128,15 +128,15 @@ export async function createReferenceRouteFromSession(
 
   await db.runAsync(
     `INSERT INTO reference_routes (id, name, source_session_id, distance_m, duration_s, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [routeId, name, sessionId, distance, durationS, Date.now()]
+    VALUES (?, ?, ?, ?, ?, ?)`,
+                    [routeId, name, sessionId, distance, durationS, Date.now()]
   );
 
   for (const fix of fixes) {
     await db.runAsync(
       `INSERT INTO reference_route_points (route_id, sequence_no, lat, lon)
-       VALUES (?, ?, ?, ?)`,
-      [routeId, fix.sequence_no, fix.lat_raw, fix.lon_raw]
+      VALUES (?, ?, ?, ?)`,
+                      [routeId, fix.sequence_no, fix.lat_raw, fix.lon_raw]
     );
   }
 
@@ -151,4 +151,15 @@ export async function getReferenceRoutePoints(
     `SELECT lat, lon, sequence_no FROM reference_route_points WHERE route_id = ? ORDER BY sequence_no ASC`,
     [routeId]
   );
+}
+
+export async function deleteReferenceRoute(
+  db: SQLiteDatabase,
+  routeId: string
+): Promise<void> {
+  await db.runAsync(
+    `DELETE FROM reference_routes WHERE id = ?`,
+    [routeId]
+  );
+  // CASCADE borra automáticamente los puntos en reference_route_points
 }

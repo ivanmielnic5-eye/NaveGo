@@ -77,3 +77,52 @@ Pendientes anotados (no bloqueantes):
 - ReferenceDetailScreen usa MapView (crashea sin API key).
 - Reset no cierra sesión en SQLite.
 - No existe export/borrar de referencias.
+
+## INC-005 — Crash al borrar sesión sin referencia (CRÍTICO)
+
+Fecha: 2026-09-14
+Detección: usuario durante viaje en colectivo
+Impacto: Pérdida de la sesión activa al intentar borrar una sesión no-referencia
+
+Síntoma:
+- Usuario toca borrar en una sesión que NO está guardada como referencia.
+- App se cierra inesperadamente.
+- Al reabrir, la sesión activa se perdió (vuelve a cero).
+
+Causa probable:
+- Falta validación antes de delete.
+- Ausencia de try/catch alrededor del delete.
+- Posible violación de foreign key (session_id no existe en reference_routes).
+
+Fix propuesto:
+1. Validar tipo (sesión vs referencia) antes de delete.
+2. Envolver delete en try/catch.
+3. Bloquear delete de la sesión activa.
+
+Prioridad: CRÍTICA. Antes de cualquier otro fix.
+
+## INC-005 — Crash al borrar sesión sin referencia (CRÍTICO)
+
+Fecha: 2026-09-14
+Detección: usuario durante viaje en colectivo
+Impacto: Pérdida de la sesión activa al intentar borrar una sesión no-referencia
+
+Síntoma:
+- Usuario toca borrar en una sesión que NO está guardada como referencia.
+- App se cierra inesperadamente.
+- Al reabrir, la sesión activa se perdió (vuelve a cero).
+
+Causa probable:
+- Falta validación antes de delete.
+- Ausencia de try/catch alrededor del delete.
+- Posible violación de foreign key (session_id no existe en reference_routes).
+
+Fix propuesto:
+1. Validar tipo (sesión vs referencia) antes de delete.
+2. Envolver delete en try/catch.
+3. Bloquear delete de la sesión activa.
+
+Regla nueva:
+"La sesión activa es sagrada. Ningún error de UI puede destruirla."
+
+Prioridad: CRÍTICA.
