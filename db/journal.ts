@@ -163,3 +163,22 @@ export async function deleteReferenceRoute(
   );
   // CASCADE borra automáticamente los puntos en reference_route_points
 }
+
+// ============================================================
+// NUEVO — Fix 2026-09-15: Borrado de sesiones individuales
+// ============================================================
+
+/**
+ * Borra una sesión completa de la base de datos.
+ * Los gps_fixes asociados se borran automáticamente
+ * gracias a la cláusula ON DELETE CASCADE definida en el schema.
+ */
+export async function deleteSession(
+  db: SQLiteDatabase,
+  sessionId: string
+): Promise<void> {
+  await db.runAsync(
+    `DELETE FROM sessions WHERE id = ?`,
+    [sessionId]
+  );
+}
