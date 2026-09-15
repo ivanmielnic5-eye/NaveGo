@@ -1,0 +1,16 @@
+{
+  "id": "NAVEGO",
+  "name": "NaveGo",
+  "type": "navigation",
+  "mission": "Sistema de navegacion autonomo, offline, soberano",
+  "capabilities": [
+    "GPS real",
+    "telemetria en tiempo real",
+    "SQLite local",
+    "funcionamiento offline"
+  ],
+  "concepts": [
+    "GPS", "GNSS", "SOG", "COG",
+    "TRAYECTO", "SESION", "REFERENCIA", "PUNTO"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "SIMULATOR",
+  "name": "NaveGo Simulator",
+  "type": "simulation",
+  "mission": "Laboratorio nautico para validar algoritmos de navegacion antes del hardware real",
+  "capabilities": [
+    "fisica real de barco",
+    "agua con olas",
+    "viento generado",
+    "snapshots de telemetria"
+  ],
+  "concepts": [
+    "Sailboat", "Wind", "Wave", "LandscapeV2",
+    "Capitania", "Scenario", "HeadingWindIntegrator"
+  ]
+}

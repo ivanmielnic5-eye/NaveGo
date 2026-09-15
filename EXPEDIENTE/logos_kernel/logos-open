@@ -1,0 +1,20 @@
+#!/bin/bash
+# LOGOS Open - abre una terminal con un modo específico
+# Uso: logos-open [modo]
+# Modos: trabajo (default), observacion, aprendizaje, navego, simulador, logos
+
+MODO="${1:-trabajo}"
+LOGOS_DIR="$HOME/.logos"
+
+case "$MODO" in
+  trabajo|observacion|aprendizaje|navego|simulador|logos)
+    ;;
+  *)
+    echo "Modo desconocido: $MODO"
+    echo "Modos válidos: trabajo, observacion, aprendizaje, navego, simulador, logos"
+    exit 1
+    ;;
+esac
+
+export LOGOS_MODE="$MODO"
+konsole --hold -e bash -c "export LOGOS_MODE=$MODO; cd ~/navego_recuperado; exec bash" &

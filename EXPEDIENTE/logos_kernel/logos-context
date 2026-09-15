@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+"""
+LOGOS Context Kernel - Tarjeta de contexto.
+Lee ~/.logos/ y muestra el estado al abrir terminal.
+"""
+
+import json
+import os
+import sys
+import subprocess
+from datetime import datetime, timezone
+
+HOME = os.path.expanduser("~")
+LOGOS = os.path.join(HOME, ".logos")
+CONTEXT = os.path.join(LOGOS, "context", "context.json")
+PROTOCOLS = os.path.join(LOGOS, "core", "protocol", "protocols.json")
+EVENTS = os.path.join(LOGOS, "events", "events.jsonl")
+SESSIONS = os.path.join(LOGOS, "sessions")
+
+NIVEL = 1
+for arg in sys.argv[1:]:
+    if arg.startswith("--level="):
+        try:
+            NIVEL = int(arg.split("=")[1])
+        except ValueError:
+            pass
+    elif arg == "--full":
+        NIVEL = 3
+    elif arg == "--raw":
+        NIVEL = 4
+
+
+def cargar_json(path):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def comando(cmd):
+    try:
+        return subprocess.check_output(cmd, shell=True, text=True,
+                                        stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return "?"
+
+
+def ahora_iso():
+    return datetime.now(timezone.utc).astimezone().isoformat()
+
+
+def registrar_evento(tipo, detalle=""):
+    try:
+        evento = {
+            "event_id": f"EVT-{int(datetime.now().timestamp()*1000)}",
+            "timestamp": ahora_iso(),
+            "type": tipo,
+            "project": "NAVEGO",
+            "actor": "system",
+            "detail": detalle,
+        }
+        with open(EVENTS, "a") as f:
+            f.write(json.dumps(evento, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
+def recursos():
+    ram = comando("free -h | awk '/^Mem:/ {print $7\" libres de \"$2}'")
+    disco = comando("df -h ~ | awk 'NR==2 {print $4\" libres de \"$2}'")
+    cpu = comando("top -bn1 | grep 'Cpu(s)' | awk '{print $2}' | head -1")
+    if not cpu or cpu == "?":
+        cpu = "?"
+    else:
+        cpu = cpu + "%"
+    return {"ram": ram or "?", "disco": disco or "?", "cpu": cpu}
+
+
+def nodos():
+    ollama = comando("pgrep -x ollama >/dev/null && echo activo || echo apagado")
+    celular_raw = comando("adb devices 2>/dev/null | grep -c 'device$'")
+    try:
+        celular = int(celular_raw) if celular_raw.isdigit() else 0
+    except Exception:
+        celular = 0
+    puertos = []
+    for p in [8084, 8080, 8081]:
+        abierto = comando(f"ss -tln 2>/dev/null | grep -q ':{p} ' && echo 1 || echo 0")
+        if abierto == "1":
+            puertos.append(p)
+    return {"ollama": ollama, "celular": celular, "puertos": puertos}
+
+
+def banner_nivel_0(ctx):
+    pid = ctx.get("project", {}).get("id", "?")
+    print(f"LOGOS :: {pid} :: {ahora_iso()}")
+
+
+def tarjeta_operacional(ctx, proto):
+    ahora = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
+    print()
+    print("┌──────────────────────────────────────────────────────────────────┐")
+    print(f"│ LOGOS CONTEXT KERNEL                          [{ahora}]   │")
+    print("├──────────────────────────────────────────────────────────────────┤")
+    p = ctx.get("project", {})
+    m = ctx.get("mission", {})
+    w = ctx.get("work", {})
+    s = ctx.get("state", {})
+    print(f"│ Proyecto : {p.get('name','?'):<54}│")
+    print(f"│ Tipo     : {p.get('type','?'):<54}│")
+    print(f"│ Fase     : {m.get('phase','?'):<54}│")
+    print(f"│ Estado   : {s.get('status','?'):<54}│")
+    print(f"│ Riesgo   : {s.get('risk','?'):<54}│")
+    print("├──────────────────────────────────────────────────────────────────┤")
+    print(f"│ Hipotesis  : {w.get('hypothesis','?'):<52}│")
+    print(f"│ Prox paso  : {w.get('next_step','?'):<52}│")
+    print(f"│ Ult. dec.  : {w.get('last_decision','?'):<52}│")
+    print("├──────────────────────────────────────────────────────────────────┤")
+    inc = ctx.get("incidents", {})
+    print(f"│ Incidentes abiertos : {inc.get('open', 0):<43}│")
+    cons = ctx.get("constraints", {}).get("active", [])
+    print(f"│ Constraints activas : {len(cons):<43}│")
+    unk = ctx.get("unknowns", [])
+    print(f"│ Incognitas          : {len(unk):<43}│")
+    print("├──────────────────────────────────────────────────────────────────┤")
+    if proto:
+        pm = proto.get("meta", {})
+        print(f"│ Protocolo : {pm.get('name','?'):<54}│")
+        print(f"│ Version   : {pm.get('version','?'):<54}│")
+    print(f"│ Contexto  : READ-ONLY                                            │")
+    print("└──────────────────────────────────────────────────────────────────┘")
+    print("  Para detalle: logos-context --full")
+    print()
+
+
+def contexto_tecnico(ctx, proto):
+    print()
+    print("─── RECURSOS ───")
+    r = recursos()
+    print(f"  RAM   : {r['ram']}")
+    print(f"  Disco : {r['disco']}")
+    print(f"  CPU   : {r['cpu']}")
+    print()
+    print("─── NODOS ───")
+    n = nodos()
+    print(f"  Ollama  : {n['ollama']}")
+    print(f"  Celular : {n['celular']} dispositivo(s)")
+    print(f"  Puertos : {n['puertos'] if n['puertos'] else 'ninguno'}")
+    print()
+    print("─── CONSTRAINTS ACTIVAS ───")
+    for c in ctx.get("constraints", {}).get("active", []):
+        print(f"  - {c}")
+    print()
+    print("─── INCÓGNITAS DECLARADAS ───")
+    for u in ctx.get("unknowns", []):
+        print(f"  - {u}")
+    print()
+
+
+def expediente_completo(ctx, proto):
+    print()
+    print("─── INCIDENTES RECIENTES ───")
+    for inc in ctx.get("incidents", {}).get("recent", []):
+        print(f"  {inc.get('id','?')} : {inc.get('title','?')} [{inc.get('status','?')}]")
+    print()
+    print("─── CAPACIDADES ───")
+    for k, v in ctx.get("capabilities", {}).items():
+        print(f"  {k} : {v}")
+    print()
+    print("─── DOCUMENTOS CLAVE ───")
+    for d in ctx.get("sources", {}).get("docs_key", []):
+        print(f"  - {d}")
+    print()
+    if proto:
+        print("─── PROTOCOLO (reglas de hierro) ───")
+        for r in proto.get("reglas_de_hierro", []):
+            print(f"  {r['id']} : {r['texto']}")
+        print()
+
+
+def evidencia_cruda(ctx, proto):
+    print()
+    print("─── CONTEXT.JSON ───")
+    print(json.dumps(ctx, indent=2, ensure_ascii=False))
+    print()
+    print("─── PROTOCOLS.JSON ───")
+    print(json.dumps(proto, indent=2, ensure_ascii=False))
+    print()
+
+
+def main():
+    os.makedirs(SESSIONS, exist_ok=True)
+
+    ctx = cargar_json(CONTEXT)
+    proto = cargar_json(PROTOCOLS)
+
+    if ctx is None:
+        print("LOGOS: context.json no encontrado. Ejecutar setup.")
+        return
+
+    if NIVEL == 0:
+        banner_nivel_0(ctx)
+    elif NIVEL == 1:
+        tarjeta_operacional(ctx, proto)
+    elif NIVEL == 2:
+        tarjeta_operacional(ctx, proto)
+        contexto_tecnico(ctx, proto)
+    elif NIVEL == 3:
+        tarjeta_operacional(ctx, proto)
+        contexto_tecnico(ctx, proto)
+        expediente_completo(ctx, proto)
+    elif NIVEL >= 4:
+        tarjeta_operacional(ctx, proto)
+        contexto_tecnico(ctx, proto)
+        expediente_completo(ctx, proto)
+        evidencia_cruda(ctx, proto)
+
+    registrar_evento("TERMINAL_ABIERTA", f"nivel={NIVEL}")
+
+
+if __name__ == "__main__":
+    main()

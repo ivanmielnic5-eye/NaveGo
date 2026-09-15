@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "name": "MULTI-IA",
+    "version": "0.1",
+    "updated_at": "2026-09-15T05:00:00-03:00"
+  },
+  "reglas_de_hierro": [
+    {"id": "R-01", "texto": "Una hipotesis principal por iteracion"},
+    {"id": "R-02", "texto": "Una decision por consulta"},
+    {"id": "R-03", "texto": "Roles funcionales, no jerarquicos"},
+    {"id": "R-04", "texto": "Ninguna accion exitosa sin evidencia"},
+    {"id": "R-05", "texto": "exit code 0 no es exito funcional"},
+    {"id": "R-06", "texto": "UNKNOWN no es FAILED"},
+    {"id": "R-07", "texto": "No modificar sin autorizacion explicita"},
+    {"id": "R-08", "texto": "Separar hipotesis de decision"},
+    {"id": "R-09", "texto": "Ninguna IA cierra una rama que ella misma propuso"},
+    {"id": "R-10", "texto": "NO REGRESION: hipotesis descartada no vuelve sin evidencia nueva"},
+    {"id": "R-11", "texto": "STOP: 3 fallos equivalentes bloquean la estrategia"},
+    {"id": "R-12", "texto": "EVIDENCIA NUEVA: repetir un comando no cuenta"},
+    {"id": "R-13", "texto": "CONSTRAINT LOCK: las restricciones del usuario son estado"},
+    {"id": "R-14", "texto": "OBJECTIVE CHECK: si el estado no cambia, parar"},
+    {"id": "R-15", "texto": "Ninguna IA modifica el kernel sin pasar por el expediente"},
+    {"id": "R-16", "texto": "CONTEXTO NO ES AUTORIDAD: el contexto describe, no autoriza"},
+    {"id": "R-17", "texto": "NO AUTOESCRITURA: una IA no convierte propuesta en decision"},
+    {"id": "R-18", "texto": "SOURCE OF TRUTH: toda afirmacion critica se rastrea a su fuente"},
+    {"id": "R-19", "texto": "INCERTIDUMBRE EXPLICITA: lo desconocido queda marcado como desconocido"},
+    {"id": "R-20", "texto": "CONTEXTO INMUTABLE POR SESION: cambios producen nuevo snapshot"}
+  ],
+  "semaforo": {
+    "verde": "texto, margenes, iconos, etiquetas",
+    "amarillo": "layout, navegacion, estado React, SQLite",
+    "rojo": "GNSS, COG/SOG, distancia, persistencia, sync"
+  },
+  "estados_conocimiento": [
+    "HIPOTESIS",
+    "IMPLEMENTADO",
+    "PROBADO",
+    "OBSERVADO",
+    "VALIDADO",
+    "DESCARTADO"
+  ],
+  "clasificacion_afirmaciones": [
+    "TRUSTED",
+    "OBSERVED",
+    "DERIVED",
+    "PROPOSED",
+    "UNVERIFIED"
+  ],
+  "roles": {
+    "humano": "Director Funcional: observa, decide, prueba, describe",
+    "ia": "Director Tecnico: interpreta, diagnostica, propone, implementa, documenta"
+  },
+  "contexto": {
+    "read_only": true,
+    "autoridad": "El contexto informa. Las decisiones se toman aparte.",
+    "actor_no_es_authority": true
+  }
+}

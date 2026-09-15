@@ -1,0 +1,16 @@
+{
+  "id": "LOGOS",
+  "name": "LOGOS",
+  "type": "meta-system",
+  "mission": "Constelacion de apps soberanas que comparten estructuras de memoria, evidencia y aprendizaje",
+  "capabilities": [
+    "compartir infraestructura semantica",
+    "preservar incertidumbre",
+    "coordinar IAs",
+    "distinguir evidencia de opinion"
+  ],
+  "concepts": [
+    "project", "mission", "state", "work", "evidence",
+    "constraints", "protocol", "events", "sessions"
+  ]
+}
