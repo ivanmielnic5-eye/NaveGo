@@ -138,7 +138,7 @@ export function CockpitScreen({ tracker }: { tracker?: any }) {
         <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getGnssColor() }]} /><Text style={styles.lightLabel}>GNSS</Text></View>
         <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>PC</Text></View>
         <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: getSyncColor() }]} /><Text style={styles.lightLabel}>Sinc</Text></View>
-        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: colors.success }]} /><Text style={styles.lightLabel}>Metro</Text></View>
+        <View style={styles.lightItem}><View style={[styles.lightDot, { backgroundColor: __DEV__ ? colors.success : colors.textSecondary }]} /><Text style={styles.lightLabel}>Metro</Text></View>
       </View>
 
       <Text style={styles.title}>NAVEGO <Text style={styles.titleAccent}>// COCKPIT</Text></Text>

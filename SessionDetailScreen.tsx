@@ -66,16 +66,16 @@ export function SessionDetailScreen({ sessionId, onBack }: { sessionId: string; 
     </Text>
     </View>
     <View style={styles.statCard}>
-    <Text style={styles.statLabel}>FIXES</Text>
+    <Text style={styles.statLabel}>PUNTOS</Text>
     <Text style={styles.statValue}>{detail.total_fixes ?? 0}</Text>
     </View>
     </View>
 
     <View style={styles.qualityCard}>
     <Text style={styles.qualityTitle}>CALIDAD DE EVIDENCIA</Text>
-    <Text style={styles.qualityText}>GOOD: {detail.good_fixes ?? 0}</Text>
-    <Text style={styles.qualityText}>SUSPECT: {detail.suspect_fixes ?? 0}</Text>
-    <Text style={styles.qualityText}>REJECTED: {detail.rejected_fixes ?? 0}</Text>
+    <Text style={styles.qualityText}>BUENOS: {detail.good_fixes ?? 0}</Text>
+    <Text style={styles.qualityText}>SOSPECHOSOS: {detail.suspect_fixes ?? 0}</Text>
+    <Text style={styles.qualityText}>RECHAZADOS: {detail.rejected_fixes ?? 0}</Text>
     </View>
     </View>
   );

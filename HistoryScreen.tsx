@@ -51,13 +51,13 @@ export function HistoryScreen({
 
     setCreating(true);
     try {
-      await createReferenceRouteFromSession(db, session.id, session.title ?? 'Derrota referencia');
-      Alert.alert('Derrota creada', 'La sesión fue guardada como derrota de referencia.');
+      await createReferenceRouteFromSession(db, session.id, session.title ?? 'Trayecto de referencia');
+      Alert.alert('Trayecto creado', 'La sesión fue guardada como trayecto de referencia.');
       const refs = await getAllReferenceRoutes(db);
       setReferenceRoutes(refs);
     } catch (err) {
       console.warn('[HISTORY] Error al crear referencia:', err);
-      Alert.alert('Error', 'No se pudo crear la derrota de referencia.');
+      Alert.alert('Error', 'No se pudo crear el trayecto de referencia.');
     } finally {
       setCreating(false);
     }
@@ -77,12 +77,12 @@ export function HistoryScreen({
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backText}>‹ Volver</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>DERROTAS</Text>
+        <Text style={styles.title}>TRAYECTOS</Text>
       </View>
 
       <Text style={styles.sectionTitle}>Referencias guardadas</Text>
       {referenceRoutes.length === 0 && (
-        <Text style={styles.emptyText}>No hay derrotas de referencia.</Text>
+        <Text style={styles.emptyText}>No hay trayectos de referencia.</Text>
       )}
       {referenceRoutes.map((ref) => (
         <TouchableOpacity
