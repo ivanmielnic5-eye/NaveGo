@@ -175,3 +175,131 @@ tamaño archivos, integridad post-interrupción.
 DESIGN: propuesta emitida.
 DECISIÓN: ABIERTA.
 IMPLEMENT: no autorizado todavía.
+
+## Fase 5 — CRITIQUE del DESIGN (Claude)
+
+### Objeciones contra B
+
+- 1.1 Sincronización entre archivos no resuelta: PELIGROSO (sin incógnita asignada).
+- 1.2 Atomicidad cruzada inexistente: MEJORABLE.
+- 1.3 Distribución sin unidad atómica: PELIGROSO (sin incógnita asignada).
+- 1.4 Versionado independiente: ventaja incompleta sin contrato de compatibilidad.
+
+### Ventaja de A subestimada
+
+La atomicidad transaccional nativa de un solo archivo resuelve 1.1 y 1.2
+sin ingeniería adicional. También resuelve 1.3 por construcción.
+
+### Arquitecturas D no consideradas
+
+- D1: A, pero con el proceso de regeneración corregido
+  (extraer navigation_features antes, reinsentar después).
+- D2: B, pero empaquetado como unidad
+  (directorio + manifest.json con region_id y checksums).
+
+### Sobre el experimento D-01
+
+Insuficiente. No prueba:
+- Desincronización entre archivos (1.1).
+- Si la herramienta real destruye tablas extra (asumido, no verificado).
+- Acceso concurrente (MapLibre leyendo + sync escribiendo).
+- En dispositivo real de gama media.
+
+### Supuestos a verificar
+
+- "Herramientas no conservan tablas extra": SUPUESTO. Verificable barato.
+- "B reduce radio de fallo": cierto para corrupción aislada, NO para
+  inconsistencia cruzada.
+- "A y B pueden tener rendimiento similar": NO EXISTE en el DESIGN.
+  Claude lo marcó por R-18. Error del prompt de auditoría.
+
+### Riesgo de B no mencionado
+
+Foreign keys de SQLite no funcionan entre archivos separados, ni
+con ATTACH DATABASE. Las relaciones entre navigation.sqlite y
+render.mbtiles quedan sin garantía a nivel de base de datos.
+
+### Recomendación de Claude
+
+Antes de correr D-01, cerrar U-consulta: ¿la herramienta real de
+generación de tiles destruye tablas extra o no?
+Es lo más barato de responder y sostiene toda la justificación de B.
+
+## Fase 6 — Test experimental: tippecanoe vs tablas extra
+
+Fecha: 2026-09-16
+Objetivo: verificar el supuesto del DESIGN "herramientas de reempaquetado
+pueden no conservar tablas extra".
+
+Procedimiento:
+1. Generar test.mbtiles con tippecanoe (1 feature, zoom 10-8).
+2. Agregar tabla navigation_features (waypoint-1).
+3. Verificar ANTES: tabla presente.
+4. Regenerar test.mbtiles con tippecanoe --force.
+5. Verificar DESPUÉS.
+
+Resultado:
+- ANTES: tabla presente con waypoint-1.
+- DESPUÉS: "no such table: navigation_features".
+
+Conclusión:
+tippecanoe DESTRUYE las tablas extra al regenerar con --force.
+
+Impacto:
+- El supuesto central del DESIGN queda CONFIRMADO POR EVIDENCIA.
+- A (archivo híbrido) queda comprometida si el workflow de regeneración
+  usa tippecanoe.
+- B (dos archivos) gana peso como arquitectura por defecto.
+
+Pendiente:
+- Probar D1 (A con proceso corregido: extraer tabla, regenerar, reinsertar).
+- Probar A vs B en dispositivo real (TCL T610P).
+
+Estado: evidencia obtenida. Decisión sigue abierta hasta probar D1.
+
+## Fase 7 — Test D1: arquitectura A con proceso corregido
+
+Fecha: 2026-09-16
+Objetivo: verificar si A es viable si corregimos el proceso de regeneración.
+
+Procedimiento:
+1. Generar MBTiles con tippecanoe.
+2. Agregar tabla navigation_features (waypoint-1).
+3. Extraer tabla: sqlite3 .dump navigation_features > nav_dump.sql
+4. Regenerar MBTiles con tippecanoe --force.
+5. Reinsertar: sqlite3 test.mbtiles < nav_dump.sql
+6. Verificar.
+
+Resultado:
+- ANTES: tabla presente con waypoint-1.
+- DESPUÉS de regenerar+reinsertar: tabla presente con waypoint-1. ✅
+
+Conclusión:
+D1 FUNCIONA. A es viable con proceso corregido.
+El problema no era de formato, era de proceso.
+
+Impacto en la decisión A vs B:
+- A ya NO está descartada.
+- A requiere proceso especial (dump/reload antes de cada regeneración).
+- B no requiere ese proceso, pero gestiona dos archivos.
+
+Estado:
+- A y B son técnicamente viables.
+- La decisión ya NO es técnica.
+- La decisión es de MANTENIMIENTO y RIESGO OPERACIONAL.
+
+Comparación para decisión humana:
+
+| Criterio | A (híbrido) | B (dos archivos) |
+|----------|-------------|------------------|
+| Archivos por región | 1 | 2 |
+| Requiere dump/reload en cada regeneración | SÍ | NO |
+| Riesgo de olvidar dump/reload | MEDIO | NINGUNO |
+| Atomicidad transaccional | SÍ | NO (cruzada) |
+| Sincronización de versiones | N/A | Requiere mecanismo |
+| Distribución | 1 archivo | 2 archivos + manifiesto |
+| Simplicidad de pipeline | Compleja (D1) | Simple |
+
+Pendiente:
+- Probar A y B en TCL T610P real (RAM/CPU/latencia).
+- Decidir según criterios de mantenimiento.
