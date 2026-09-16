@@ -147,3 +147,32 @@ Backup del archivo original: logos-context.bak_2026-09-15
 
 Estado: RESUELTO
 Lección: aplicar R-18 (source of truth) también al propio kernel.
+
+## H-02 — DSH (DeepSeek Harness) configurado con Ollama local
+
+Fecha: 2026-09-15
+Perfil: headless
+Archivo editado: ~/.dsh/profiles/headless/cordis.patch.yml
+
+Configuración aplicada:
+- agent-default-model: provider=deepseek-official, model=qwen2.5-coder:7b
+- llm-deepseek: baseURL=http://localhost:11434/v1 (Ollama local)
+- apiKeyEnv=DEEPSEEK_API_KEY (valor "ollama", no validado)
+- thinking=disabled (qwen2.5-coder no soporta modo thinking)
+- reasoningEffort=off
+
+Variable de entorno para la ejecución:
+DEEPSEEK_API_KEY=ollama DSH_HOME="$HOME/.dsh"
+
+Evidencia de funcionamiento:
+- El pipeline DSH ↔ Ollama responde correctamente.
+- El modelo emite tool calls en JSON válido (todo_write, set_sandbox_permissions).
+- DSH parsea y procesa los tool calls correctamente.
+
+Observaciones:
+- qwen2.5-coder:7b es un agente por defecto: planifica antes de responder.
+- Esto es comportamiento esperado, no un error.
+- Modelos de visión (qwen3-vl:8b) saturan la máquina (5 GB RAM + swap).
+- Preferir qwen2.5-coder:7b para tareas de código/agente.
+
+Estado: FUNCIONAL. Integración DSH + Ollama verificada.
