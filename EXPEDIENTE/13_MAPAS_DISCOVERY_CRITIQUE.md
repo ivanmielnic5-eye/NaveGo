@@ -120,3 +120,58 @@ Experimento mínimo: MapLibre RN + expo-sqlite sobre el mismo archivo.
 Cerrar U-08b.
 
 Estado: U-08 PARCIALMENTE CONFIRMADO. DECISIÓN ABIERTA.
+
+## Fase 4 — DESIGN (GPT-4)
+
+Pregunta: ¿Arquitectura un archivo híbrido (A) o dos archivos SQLite (B)?
+
+### Análisis A (MBTiles híbrido)
+- Técnicamente posible (spec MBTiles 1.3).
+- Elegante: una región = un archivo.
+- Riesgo: acopla ciclos de vida (tiles estáticos + navegación dinámica).
+- Riesgo: herramientas de reempaquetado pueden no conservar tablas extra.
+- NO demostrado: MapLibre + expo-sqlite sobre el mismo archivo.
+
+### Análisis B (dos archivos SQLite)
+- Separación limpia: render.mbtiles + navigation.sqlite.
+- Ciclos de vida independientes.
+- Actualizar mapa no toca datos de usuario.
+- Pruebas independientes por subsistema.
+- Coste: gestionar dos artefactos por región.
+
+### Opción C (GeoPackage)
+- Contenedor más expresivo.
+- Integración directa con MapLibre RN no demostrada.
+
+### Recomendación provisional (NO decisión)
+B como candidato principal para prototipo.
+
+Razón: reduce radio de fallo, desacopla ciclos de vida, permite verificar
+cada subsistema independientemente (coherente con protocolo LOGOS).
+
+### Incógnitas declaradas (U-08a a U-08f)
+- U-08a: ¿MapLibre RN tolera MBTiles híbrido?
+- U-08b: ¿MapLibre + expo-sqlite operan sobre el mismo archivo?
+- U-08c: ¿Herramientas de generación conservan tablas adicionales?
+- U-08d: ¿Impacto real de A vs B en RAM/CPU?
+- U-08e: ¿Recuperación después de escritura interrumpida?
+- U-08f: ¿Coste operativo de mantener dos archivos?
+
+### Experimento mínimo propuesto (D-01)
+1. Crear test-region/ con render.mbtiles + navigation.sqlite
+2. MapLibre abre render.mbtiles
+3. expo-sqlite abre navigation.sqlite
+4. Insertar waypoint/hazard/restriction sin afectar render
+5. Actualizar render.mbtiles sin tocar navigation.sqlite
+6. Escritura abortada de navigation.sqlite → verificar recuperación
+7. Repetir con A (test-hybrid.mbtiles)
+
+### Métricas a registrar
+Tiempo apertura, RAM pico, CPU, tiempo consulta, tiempo render,
+tiempo zoom, tiempo pan, tiempo escritura, tiempo recuperación,
+tamaño archivos, integridad post-interrupción.
+
+### Estado
+DESIGN: propuesta emitida.
+DECISIÓN: ABIERTA.
+IMPLEMENT: no autorizado todavía.
