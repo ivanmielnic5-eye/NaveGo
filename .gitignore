@@ -44,3 +44,8 @@ ios/build/
 # Editor
 .idea/
 *.swp
+
+# Mapas y datos pesados (extra)
+*.pmtiles
+*.geojson
+.geojson
