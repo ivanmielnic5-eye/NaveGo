@@ -49,3 +49,27 @@ ios/build/
 *.pmtiles
 *.geojson
 .geojson
+
+# Backups locales (contienen APKs pesados)
+backups/
+_backups/
+
+# Archivos temporales de test
+*.bak
+*.bak_*
+*.working_u09
+*.SANTAFE_FUNCIONANDO
+tmp_osm/
+test_maplibre/
+test_parse/
+
+# APKs
+*.apk
+*.aab
+
+# iOS (por ahora no lo usamos)
+ios/
+
+# Cache
+.expo/
+node_modules/.cache/

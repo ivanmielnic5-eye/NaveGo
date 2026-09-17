@@ -12,3 +12,24 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
+
+# ─── MapLibre Native ───
+-keep class org.maplibre.android.** { *; }
+-keep interface org.maplibre.android.** { *; }
+-keep enum org.maplibre.android.** { *; }
+-dontwarn org.maplibre.android.**
+-dontwarn com.mapbox.**
+
+# MapLibre usa reflexión en FontUtils
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# Nitro Modules (HttpServer)
+-keep class com.margelo.nitro.** { *; }
+-dontwarn com.margelo.nitro.**
+-keep class com.nitro.** { *; }
+-dontwarn com.nitro.**
+
+# TurboModules
+-keep class com.facebook.react.turbomodule.** { *; }

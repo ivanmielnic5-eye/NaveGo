@@ -1,22 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Map, Camera, type CameraRef } from '@maplibre/maplibre-react-native';
+import { Map, Camera, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
+import * as Location from 'expo-location';
 import { HttpServer } from 'react-native-nitro-http-server';
 
 const DIR = FileSystem.documentDirectory + 'maptest/';
-const DB_NAME = 'render_big.mbtiles';
+const DB_NAME = 'santa_fe.mbtiles';
 const DB_PATH = DIR + DB_NAME;
 const PUERTO = 8080;
-const SOURCE_LAYER = 'tucuman';
-const CENTER: [number, number] = [-65.2, -26.8];
-const ZOOM = 10;
+const SOURCE_LAYER = 'santa_fe';
+const CENTER_DEFAULT: [number, number] = [-60.7, -31.63];
+const ZOOM = 14;
 
 export default function MapaLocal() {
   const [uri, setUri] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const cameraRef = useRef<CameraRef>(null);
 
   useEffect(() => {
@@ -25,10 +27,10 @@ export default function MapaLocal() {
 
     (async () => {
       try {
-        console.error('[ML] 1. Iniciando');
+        console.error('[ML] Iniciando');
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
 
-        const asset = Asset.fromModule(require('../assets/maptest/render_big.mbtiles'));
+        const asset = Asset.fromModule(require('../assets/maptest/santa_fe.mbtiles'));
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('asset.localUri null');
 
@@ -36,19 +38,16 @@ export default function MapaLocal() {
         if (!info.exists) {
           await FileSystem.copyAsync({ from: asset.localUri, to: DB_PATH });
         }
-        console.error('[ML] 2. Archivo OK');
+        console.error('[ML] Archivo OK');
 
         db = await SQLite.openDatabaseAsync(DB_NAME, undefined, DIR);
-        console.error('[ML] 3. SQLite OK');
+        console.error('[ML] SQLite OK');
 
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
           const path = (request && request.path) ? request.path : '';
           const m = path.match(/^\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
-          if (!m) {
-            console.error('[REQ] no-match', path);
-            return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'not found' };
-          }
+          if (!m) return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'nf' };
           const z = Number(m[1]);
           const x = Number(m[2]);
           const y = Number(m[3]);
@@ -57,24 +56,28 @@ export default function MapaLocal() {
             'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
             [z, x, yTms]
           );
-          if (!row || !row.tile_data) {
-            console.error('[REQ MISS]', z, x, y);
-            return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'no tile' };
-          }
-          console.error('[REQ OK]', z, x, y, 'size', row.tile_data.byteLength);
-          const ab = row.tile_data.buffer.slice(
-            row.tile_data.byteOffset,
-            row.tile_data.byteOffset + row.tile_data.byteLength
-          );
+          if (!row || !row.tile_data) return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'no tile' };
+          const ab = row.tile_data.buffer.slice(row.tile_data.byteOffset, row.tile_data.byteOffset + row.tile_data.byteLength);
           return {
             statusCode: 200,
-            headers: { 'Content-Type': 'application/x-protobuf' },
+            headers: { 'Content-Type': 'application/x-protobuf', 'Content-Encoding': 'gzip' },
             body: ab,
           };
         });
-        console.error('[ML] 4. Server en', PUERTO);
+        console.error('[ML] Server en', PUERTO);
 
         setUri(`http://127.0.0.1:${PUERTO}/{z}/{x}/{y}.pbf`);
+
+        // ─── UBICACIÓN ───
+        console.error('[LOC] Pidiendo permiso');
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        console.error('[LOC] Permiso:', status);
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          const coords: [number, number] = [loc.coords.longitude, loc.coords.latitude];
+          console.error('[LOC] Posición:', coords);
+          setUserPos(coords);
+        }
       } catch (e: any) {
         console.error('[ML ERROR]', e?.message ?? String(e));
         setError(e?.message ?? String(e));
@@ -87,63 +90,32 @@ export default function MapaLocal() {
     };
   }, []);
 
-  // Después de montar el mapa, forzar la cámara con el ref del <Camera>
   useEffect(() => {
     if (!uri) return;
     const timers = [1500, 3000, 5000].map((ms) =>
       setTimeout(() => {
         try {
           if (cameraRef.current?.jumpTo) {
-            cameraRef.current.jumpTo({ center: CENTER, zoom: ZOOM });
-            console.error('[CAM] jumpTo OK', ms);
+            const target = userPos ?? CENTER_DEFAULT;
+            cameraRef.current.jumpTo({ center: target, zoom: ZOOM });
           }
-        } catch (e: any) {
-          console.error('[CAM ERROR]', e?.message);
-        }
+        } catch (e) {}
       }, ms)
     );
     return () => timers.forEach(clearTimeout);
-  }, [uri]);
+  }, [uri, userPos]);
 
   if (error) return <View style={s.c}><Text style={s.t}>ERROR: {error}</Text></View>;
   if (!uri) return <View style={s.c}><Text style={s.t}>Cargando...</Text></View>;
 
   const style = {
     version: 8,
-    sources: {
-      local: {
-        type: 'vector',
-        tiles: [uri],
-        minzoom: 8,
-        maxzoom: 14,
-      },
-    },
+    sources: { local: { type: 'vector', tiles: [uri], minzoom: 8, maxzoom: 14 } },
     layers: [
-      { id: 'background', type: 'background', paint: { 'background-color': '#e8e0d8' } },
-      {
-        id: 'agua',
-        type: 'fill',
-        source: 'local',
-        'source-layer': SOURCE_LAYER,
-        filter: ['==', ['geometry-type'], 'Polygon'],
-        paint: { 'fill-color': '#a5c8e0' },
-      },
-      {
-        id: 'edificios',
-        type: 'fill',
-        source: 'local',
-        'source-layer': SOURCE_LAYER,
-        filter: ['==', ['geometry-type'], 'Polygon'],
-        paint: { 'fill-color': '#c8b8a0', 'fill-opacity': 0.5 },
-      },
-      {
-        id: 'lineas',
-        type: 'line',
-        source: 'local',
-        'source-layer': SOURCE_LAYER,
-        filter: ['==', ['geometry-type'], 'LineString'],
-        paint: { 'line-color': '#556677', 'line-width': 1 },
-      },
+      { id: 'background', type: 'background', paint: { 'background-color': '#f5efe6' } },
+      { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
+      { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
+      { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
     ],
   };
 
@@ -152,17 +124,18 @@ export default function MapaLocal() {
       <Map style={s.m} mapStyle={JSON.stringify(style)}>
         <Camera
           ref={cameraRef}
-          initialViewState={{ center: CENTER, zoom: ZOOM }}
+          initialViewState={{ center: userPos ?? CENTER_DEFAULT, zoom: ZOOM }}
           minZoom={8}
-          maxZoom={14}
+          maxZoom={16}
         />
+        <UserLocation visible={true} />
       </Map>
     </View>
   );
 }
 
 const s = StyleSheet.create({
-  c: { flex: 1, backgroundColor: '#000' },
-  m: { flex: 1 },
+  c: { flex: 1, width: '100%', height: '100%', backgroundColor: '#000' },
+  m: { flex: 1, width: '100%', height: '100%' },
   t: { color: '#fff', fontSize: 16, textAlign: 'center', marginTop: 100 },
 });
