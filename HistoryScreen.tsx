@@ -101,6 +101,24 @@ export function HistoryScreen({
     const plural = isSession
       ? (count === 1 ? 'trayecto' : 'trayectos')
       : (count === 1 ? 'referencia' : 'referencias');
+
+    // Contar cuántas están EN CURSO
+    const activeCount = isSession
+      ? sessions.filter((s) => selectedIds.has(s.id) && s.status === 'ACTIVE').length
+      : 0;
+
+    if (activeCount > 0) {
+      Alert.alert(
+        'Atención',
+        'Estás por borrar ' + activeCount + ' trayecto(s) EN CURSO. Esto significa que la sesión no fue finalizada correctamente. ¿Confirmás el borrado?',
+        [
+          { text: 'CANCELAR', style: 'cancel' },
+          { text: 'BORRAR IGUAL', style: 'destructive', onPress: () => doDelete(isSession, count, plural) },
+        ]
+      );
+      return;
+    }
+
     Alert.alert(
       'Borrar ' + plural,
       'Se van a borrar ' + count + ' ' + plural + '. Esta accion no se puede deshacer.',
@@ -109,23 +127,25 @@ export function HistoryScreen({
         {
           text: 'BORRAR',
           style: 'destructive',
-          onPress: async () => {
-            try {
-              for (const id of selectedIds) {
-                if (isSession) await deleteSession(db, id);
-                else await deleteReferenceRoute(db, id);
-              }
-              await reload();
-              cancelSelection();
-              Alert.alert('Listo', 'Se borraron ' + count + ' ' + plural + '.');
-            } catch (err) {
-              console.warn('[TRAYECTOS] Error al borrar:', err);
-              Alert.alert('Error', 'No se pudieron borrar todos los elementos.');
-            }
-          },
+          onPress: () => doDelete(isSession, count, plural),
         },
       ]
     );
+  };
+
+  const doDelete = async (isSession: boolean, count: number, plural: string) => {
+    try {
+      for (const id of selectedIds) {
+        if (isSession) await deleteSession(db, id);
+        else await deleteReferenceRoute(db, id);
+      }
+      await reload();
+      cancelSelection();
+      Alert.alert('Listo', 'Se borraron ' + count + ' ' + plural + '.');
+    } catch (err) {
+      console.warn('[TRAYECTOS] Error al borrar:', err);
+      Alert.alert('Error', 'No se pudieron borrar todos los elementos.');
+    }
   };
 
   if (loading) {
@@ -185,10 +205,9 @@ export function HistoryScreen({
                 style={styles.sessionInfo}
                 onPress={() => {
                   if (selectionMode) return toggleSelection(s.id, 'session');
-                  if (isActive) return;
                   onSelect(s.id, 'session');
                 }}
-                onLongPress={() => { if (!isActive) startSelection(s.id, 'session'); }}
+                onLongPress={() => startSelection(s.id, 'session')}
               >
                 <View style={styles.rowBetween}>
                   <Text style={styles.sessionTitle}>{s.title ?? 'Trayecto NaveGo'}</Text>
