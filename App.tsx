@@ -363,7 +363,7 @@ function AppContent() {
         </TouchableOpacity>
       )}
 
-      <View style={styles.landscapeOrientationBadge}>
+      <View style={[glass.statusChip, styles.landscapeOrientationBadge]}>
       <OrientationIndicator
       isCourseUp={courseUpActive}
       cog={tracker.smoothedCog ?? null}
@@ -661,7 +661,6 @@ const styles = StyleSheet.create({
                                    position: 'absolute',
                                    top: 60,
                                    left: 12,
-                                   zIndex: 10,
                                  },
                                  cockpitButton: {
                                    padding: 8,
