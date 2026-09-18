@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { getReferenceRoutePoints, deleteReferenceRoute } from './db/journal';
 import { colors, fonts, spacing, radii, glass } from './theme';
+import { MapaOffline } from './components/MapaOffline';
 
 export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; onBack: () => void }) {
   const db = useSQLiteContext();
   const [points, setPoints] = useState<{ lat: number; lon: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     (async () => {
@@ -57,6 +59,13 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
   const firstPoint = points[0];
   const lastPoint = points[points.length - 1];
 
+  const centerPoint: [number, number] | undefined = firstPoint
+    ? [
+        points.reduce((sum, p) => sum + p.lon, 0) / points.length,
+        points.reduce((sum, p) => sum + p.lat, 0) / points.length,
+      ]
+    : undefined;
+
   return (
     <View style={styles.container}>
     <View style={styles.header}>
@@ -66,12 +75,29 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
     <Text style={styles.title}>TRAYECTO DE REFERENCIA</Text>
     </View>
 
-    <View style={styles.mapPlaceholder}>
-    <Ionicons name="map-outline" size={48} color={colors.navigateCyan} />
-    <Text style={styles.placeholderTitle}>MAPA PENDIENTE</Text>
-    <Text style={styles.placeholderSub}>
-    {points.length} puntos cargados
-    </Text>
+    <View style={styles.mapWrapper}>
+    <MapaOffline
+      ref={mapRef}
+      trackPoints={[]}
+      referencePoints={points.map((p) => ({ latitude: p.lat, longitude: p.lon }))}
+      userPos={null}
+      showUserLocation={false}
+      initialCenter={centerPoint}
+      initialZoom={15}
+    />
+    <View style={styles.mapBadge}>
+      <Text style={styles.mapBadgeText}>{points.length} puntos</Text>
+    </View>
+    <TouchableOpacity
+      style={styles.centerButton}
+      onPress={() => {
+        if (mapRef.current?.centerOn && centerPoint) {
+          mapRef.current.centerOn({ latitude: centerPoint[1], longitude: centerPoint[0] }, 15);
+        }
+      }}
+    >
+      <Text style={styles.centerButtonText}>CENTRAR</Text>
+    </TouchableOpacity>
     </View>
 
     <View style={styles.infoCard}>
@@ -101,13 +127,11 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
       </View>
     )}
 
-    <TouchableOpacity
-    style={styles.deleteButton}
-    onPress={handleDelete}
-    >
-    <Ionicons name="trash" size={16} color={colors.danger} />
-    <Text style={styles.deleteButtonText}>BORRAR REFERENCIA</Text>
+    <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+      <Ionicons name="trash" size={16} color={colors.danger} />
+      <Text style={styles.deleteButtonText}>BORRAR REFERENCIA</Text>
     </TouchableOpacity>
+
     </View>
     </View>
   );
@@ -120,6 +144,48 @@ const styles = StyleSheet.create({
   backButton: { paddingVertical: 8, paddingHorizontal: 12 },
   backText: { color: colors.navigateCyan, fontSize: 16, fontWeight: 'bold' },
   title: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, letterSpacing: 1.2 },
+  mapWrapper: {
+    height: 260,
+    borderRadius: radii.md,
+    overflow: 'hidden',
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  mapBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(5, 25, 42, 0.75)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  mapBadgeText: {
+    color: colors.navigateCyan,
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  centerButton: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: 'rgba(5, 25, 42, 0.75)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  centerButtonText: {
+    color: colors.navigateCyan,
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
   mapPlaceholder: {
     height: 200,
     borderRadius: radii.md,
