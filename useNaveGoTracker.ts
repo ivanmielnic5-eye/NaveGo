@@ -79,6 +79,7 @@ export function useNaveGoTracker() {
   const [navigationStatus, setNavigationStatus] = useState<NavigationStatus>('NO_DISPONIBLE');
   const [activeHazards, setActiveHazards] = useState<ActiveHazard[]>([]);
   const [isTelemetryActive, setIsTelemetryActive] = useState(false);
+  const [livePosition, setLivePosition] = useState<{ lat: number; lon: number } | null>(null);
 
   // === Estados de grabación (controlados por botones) ===
   const [isRecording, setIsRecording] = useState(false);
@@ -275,6 +276,7 @@ export function useNaveGoTracker() {
             setLastFixAccuracy(accuracy);
             updateNavigationStatus(currentTimestamp, accuracy);
             setActiveHazards(evaluateHazards(location.coords.latitude, location.coords.longitude));
+            setLivePosition({ lat: location.coords.latitude, lon: location.coords.longitude });
 
             let liveSog = 0;
             if (gpsSpeed !== null && gpsSpeed !== undefined && Number.isFinite(gpsSpeed) && gpsSpeed >= 0) {
@@ -393,6 +395,20 @@ export function useNaveGoTracker() {
         dbRef.current = await SQLite.openDatabaseAsync('navego.db');
         await initDatabase(dbRef.current);
       }
+      // Cerrar sesiones huérfanas que quedaron ACTIVE de sesiones anteriores
+      try {
+        const orphans = await dbRef.current.getAllAsync<{ id: string; total_distance: number | null }>(
+          "SELECT id, total_distance FROM sessions WHERE status = 'ACTIVE'"
+        );
+        for (const o of orphans) {
+          await endSession(dbRef.current, o.id, o.total_distance ?? 0);
+        }
+        if (orphans.length > 0) {
+          console.log('[TRACKER] Cerradas ' + orphans.length + ' sesiones huérfanas');
+        }
+      } catch (e) {
+        console.warn('[TRACKER] Error cerrando huérfanas:', e);
+      }
       const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
       sessionIdRef.current = sessionId;
       sequenceNoRef.current = 0;
@@ -413,7 +429,7 @@ export function useNaveGoTracker() {
     setSyncState('SIN_INTENTAR');
   };
 
-  const stopTracking = () => {
+  const stopTracking = async () => {
     isRecordingRef.current = false;
     setIsRecording(false);
     setIsTracking(false);
@@ -421,7 +437,12 @@ export function useNaveGoTracker() {
     isPausedRef.current = false;
 
     if (dbRef.current && sessionIdRef.current) {
-      void endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current).catch(() => {});
+      try {
+        await endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current);
+        console.log('[TRACKER] Sesion cerrada OK');
+      } catch (e) {
+        console.warn('[TRACKER] endSession fallo:', e);
+      }
       sessionIdRef.current = null;
     }
   };
@@ -473,6 +494,7 @@ export function useNaveGoTracker() {
     isTracking,
     isRecording,
     isTelemetryActive,
+    livePosition,
     isPaused,
     syncOk,
     syncState,
