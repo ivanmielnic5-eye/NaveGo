@@ -145,7 +145,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
 
   return (
     <View style={containerStyle}>
-      <Map style={StyleSheet.absoluteFill as any} mapStyle={JSON.stringify(style)} logoEnabled={false} attributionEnabled={false}>
+      <Map style={StyleSheet.absoluteFill as any} mapStyle={JSON.stringify(style)} logoEnabled={false} attributionEnabled={false} compassPosition={{ top: 60, right: 12 }}>
         <Camera
           ref={cameraRef}
           initialViewState={{ center: initialCenter ?? CENTER_DEFAULT, zoom: initialZoom ?? 16 }}
