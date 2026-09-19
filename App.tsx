@@ -357,11 +357,9 @@ function AppContent() {
       absolute
     />
 
-      {lastPoint && (
-        <TouchableOpacity style={[glass.mapControl, styles.landscapeCenterButton]} onPress={handleCenterMap}>
-        <Text style={styles.centerButtonText}>CENTRAR</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity style={[glass.mapControl, styles.landscapeCenterButton]} onPress={handleCenterMap}>
+      <Text style={styles.centerButtonText}>CENTRAR</Text>
+      </TouchableOpacity>
 
       <View style={[glass.statusChip, styles.landscapeOrientationBadge]}>
       <OrientationIndicator
@@ -409,7 +407,7 @@ function AppContent() {
             userPos={livePos ?? lastPoint}
             absolute
           />
-    {lastPoint && <TouchableOpacity style={[glass.mapControl, styles.centerButton]} onPress={handleCenterMap}><Text style={styles.centerButtonText}>CENTRAR</Text></TouchableOpacity>}
+    <TouchableOpacity style={[glass.mapControl, styles.centerButton]} onPress={handleCenterMap}><Text style={styles.centerButtonText}>CENTRAR</Text></TouchableOpacity>
     </View>
 
     <View style={glass.substrate}>

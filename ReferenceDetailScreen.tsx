@@ -46,7 +46,7 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
     : undefined;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isLandscape && styles.containerLandscape]}>
     <View style={styles.header}>
     <TouchableOpacity onPress={onBack} style={styles.backButton}>
     <Text style={styles.backText}>‹ Volver</Text>
@@ -79,7 +79,7 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
     </TouchableOpacity>
     </View>
 
-    <View style={styles.infoCard}>
+    <View style={[styles.infoCard, isLandscape && styles.infoCardLandscape]}>
     <View style={styles.infoRow}>
     <Ionicons name="location" size={16} color={colors.navigateCyan} />
     <Text style={styles.infoLabel}>Puntos:</Text>
@@ -121,6 +121,15 @@ const styles = StyleSheet.create({
   mapWrapperLandscape: {
     height: undefined,
     flex: 1,
+    marginBottom: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  containerLandscape: {
+    padding: 0,
+  },
+  infoCardLandscape: {
+    display: 'none',
   },
   mapWrapper: {
     height: 380,

@@ -152,7 +152,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         attributionEnabled={true}
         compassEnabled={true}
         compassViewPosition={1}
-        compassViewMargins={{ x: 12, y: 120 }}
+        compassViewMargins={{ x: 12, y: 180 }}
       >
         <Camera
           ref={cameraRef}
