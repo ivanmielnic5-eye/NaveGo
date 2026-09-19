@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   mapWrapper: { height: 190, borderRadius: radii.md, overflow: 'hidden', marginBottom: 8, borderWidth: 1, borderColor: colors.glassBorderStrong },
   map: { ...StyleSheet.absoluteFillObject },
   mapLoading: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(3, 7, 23, 0.7)' },
-                                 centerButton: { position: 'absolute', top: 50, right: 8 },
+                                 centerButton: { position: 'absolute', bottom: 12, left: 12 },
                                  centerButtonText: { color: colors.navigateCyan, fontWeight: 'bold', fontSize: 10 },
                                  actionButtonText: { fontSize: 13, fontWeight: 'bold', letterSpacing: 0.8 },
                                  row: { flexDirection: 'row', gap: 10, marginBottom: 8 },
