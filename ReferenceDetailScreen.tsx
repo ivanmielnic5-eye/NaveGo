@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { getReferenceRoutePoints } from './db/journal';
@@ -11,6 +11,8 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
   const [points, setPoints] = useState<{ lat: number; lon: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<any>(null);
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   useEffect(() => {
     (async () => {
@@ -52,7 +54,7 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
     <Text style={styles.title}>TRAYECTO DE REFERENCIA</Text>
     </View>
 
-    <View style={styles.mapWrapper}>
+    <View style={[styles.mapWrapper, isLandscape && styles.mapWrapperLandscape]}>
     <MapaOffline
       ref={mapRef}
       trackPoints={[]}
@@ -116,6 +118,10 @@ const styles = StyleSheet.create({
   backButton: { paddingVertical: 8, paddingHorizontal: 12 },
   backText: { color: colors.navigateCyan, fontSize: 16, fontWeight: 'bold' },
   title: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, letterSpacing: 1.2 },
+  mapWrapperLandscape: {
+    height: undefined,
+    flex: 1,
+  },
   mapWrapper: {
     height: 380,
     borderRadius: radii.md,
