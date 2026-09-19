@@ -152,7 +152,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         attributionEnabled={false}
         compassEnabled={true}
         compassViewPosition={1}
-        compassViewMargins={{ x: 12, y: 70 }}
+        compassViewMargins={{ x: 12, y: 60 }}
       >
         <Camera
           ref={cameraRef}
@@ -162,10 +162,29 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         />
         {showUserLocation && <UserLocation visible={true} />}
       </Map>
+      {/* Overlays para tapar logo MapLibre (abajo-izq) y attribution (abajo-der) */}
+      <View pointerEvents="none" style={styles.overlayBottomLeft} />
+      <View pointerEvents="none" style={styles.overlayBottomRight} />
     </View>
   );
 });
 
 const styles = StyleSheet.create({
   container: { flex: 1, overflow: 'hidden', backgroundColor: '#f5efe6' },
+  overlayBottomLeft: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: 130,
+    height: 30,
+    backgroundColor: '#f5efe6',
+  },
+  overlayBottomRight: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+    backgroundColor: '#f5efe6',
+  },
 });

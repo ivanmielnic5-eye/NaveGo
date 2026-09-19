@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   backText: { color: colors.navigateCyan, fontSize: 16, fontWeight: 'bold' },
   title: { fontSize: 18, fontWeight: 'bold', color: colors.textPrimary, letterSpacing: 1.2 },
   mapWrapper: {
-    height: 260,
+    height: 380,
     borderRadius: radii.md,
     overflow: 'hidden',
     marginBottom: spacing.lg,

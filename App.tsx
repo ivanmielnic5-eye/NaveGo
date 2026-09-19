@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
                                    marginBottom: Platform.OS === 'android' ? 18 : 10,
                                  },
                                  landscapeContainer: { flex: 1, backgroundColor: colors.background },
-                                 landscapeCenterButton: { position: 'absolute', top: 60, right: 12 },
+                                 landscapeCenterButton: { position: 'absolute', bottom: 60, left: 12 },
                                  landscapeGpsBadge: { position: 'absolute', bottom: 60, right: 12 },
                                  orientationIndicator: {
                                    flexDirection: 'row',
