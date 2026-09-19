@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
-import { getReferenceRoutePoints, deleteReferenceRoute } from './db/journal';
+import { getReferenceRoutePoints } from './db/journal';
 import { colors, fonts, spacing, radii, glass } from './theme';
 import { MapaOffline } from './components/MapaOffline';
 
@@ -24,29 +24,6 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
       }
     })();
   }, [db, routeId]);
-
-  const handleDelete = () => {
-    Alert.alert(
-      'Borrar referencia',
-      'Esta acción no se puede deshacer. ¿Confirmás el borrado?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Borrar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteReferenceRoute(db, routeId);
-              onBack();
-            } catch (err) {
-              console.warn('[REFERENCE] Error al borrar:', err);
-              Alert.alert('Error', 'No se pudo borrar la referencia.');
-            }
-          },
-        },
-      ]
-    );
-  };
 
   if (loading) {
     return (
@@ -127,11 +104,6 @@ export function ReferenceDetailScreen({ routeId, onBack }: { routeId: string; on
       </View>
     )}
 
-    <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-      <Ionicons name="trash" size={16} color={colors.danger} />
-      <Text style={styles.deleteButtonText}>BORRAR REFERENCIA</Text>
-    </TouchableOpacity>
-
     </View>
     </View>
   );
@@ -154,8 +126,8 @@ const styles = StyleSheet.create({
   },
   mapBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    bottom: 12,
+    right: 12,
     backgroundColor: 'rgba(5, 25, 42, 0.75)',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -225,23 +197,5 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 12,
     fontFamily: 'monospace',
-  },
-  deleteButton: {
-    marginTop: 16,
-    backgroundColor: 'rgba(255, 64, 85, 0.15)',
-                                 borderRadius: radii.sm,
-                                 paddingVertical: 12,
-                                 alignItems: 'center',
-                                 justifyContent: 'center',
-                                 flexDirection: 'row',
-                                 gap: 8,
-                                 borderWidth: 1,
-                                 borderColor: colors.danger,
-  },
-  deleteButtonText: {
-    color: colors.danger,
-    fontSize: 12,
-    fontWeight: 'bold',
-    letterSpacing: 1,
   },
 });
