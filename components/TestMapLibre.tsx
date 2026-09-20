@@ -31,14 +31,12 @@ const ASSETS = {
   hibrido: require('../assets/maptest/test_hibrido.mbtiles'),
   render: require('../assets/maptest/render.mbtiles'),
   navigation: require('../assets/maptest/navigation.sqlite'),
-  renderBig: require('../assets/maptest/render_big.mbtiles'),
 };
 
 const TESTS = [
   { key: 'hibrido', nombre: 'Hibrido', archivo: 'test_hibrido.mbtiles', asset: ASSETS.hibrido },
   { key: 'render', nombre: 'Render', archivo: 'render.mbtiles', asset: ASSETS.render },
   { key: 'navigation', nombre: 'Navigation', archivo: 'navigation.sqlite', asset: ASSETS.navigation },
-  { key: 'renderBig', nombre: 'Render Big', archivo: 'render_big.mbtiles', asset: ASSETS.renderBig },
 ] as const;
 
 function nowMs(): number {
