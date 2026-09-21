@@ -314,8 +314,13 @@ export function useNaveGoTracker() {
               );
             }
 
-            if (distanceIncrement > MAX_JUMP_DISTANCE_M) return;
-            if (distanceIncrement < MIN_DISTANCE_DELTA_M && lastPointRef.current) return;
+            // FASE 1: gap de GPS. Reiniciar track sin contar la distancia del gap.
+            let isGapRestart = false;
+            if (distanceIncrement > MAX_JUMP_DISTANCE_M) {
+              isGapRestart = true;
+              distanceIncrement = 0;
+            }
+            if (!isGapRestart && distanceIncrement < MIN_DISTANCE_DELTA_M && lastPointRef.current) return;
 
             let calculatedSog = liveSog;
             if (calculatedSog === 0 && lastPointRef.current) {
