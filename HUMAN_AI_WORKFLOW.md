@@ -13,6 +13,8 @@ El flujo es: ESTADO, luego TRABAJO, luego EVIDENCIA, luego ARCHIVOS, luego ACCIO
 4. NO VERIFICADO NO ES ERROR. Es información pendiente.
 5. EL HUMANO DECIDE, LA IA EJECUTA. La IA puede analizar, diagnosticar, proponer, escribir, implementar, documentar. Las decisiones importantes permanecen bajo control humano.
 
+6. CONVENCION DE COMANDOS EN CHAT. Todo bloque de codigo que la IA presenta con boton "copiar" es para pegar en la terminal y ejecutar. Los fragmentos que NO se deben ejecutar (ejemplos, comparaciones, referencias visuales) se presentan SIN boton de copiado. Regla de oro: si tiene boton, se pega; si no tiene boton, es para leer.
+
 ## Estados del sistema
 - ESTABLE
 - EXPERIMENTAL
