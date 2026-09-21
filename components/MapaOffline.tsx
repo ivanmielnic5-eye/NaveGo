@@ -59,18 +59,18 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     (async () => {
       try {
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
-        console.error('[ML] 1. dir ok');
+        console.log('[ML] 1. dir ok');
         const asset = Asset.fromModule(require('../assets/maptest/santa_fe.mbtiles'));
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('asset.localUri null');
-        console.error('[ML] 2. asset ok:', asset.localUri);
+        console.log('[ML] 2. asset ok:', asset.localUri);
         const info = await FileSystem.getInfoAsync(DB_PATH);
         if (!info.exists) {
           await FileSystem.copyAsync({ from: asset.localUri, to: DB_PATH });
         }
-        console.error('[ML] 3. copy ok, abriendo SQLite');
+        console.log('[ML] 3. copy ok, abriendo SQLite');
         db = await SQLite.openDatabaseAsync(DB_NAME, undefined, DIR);
-        console.error('[ML] 4. SQLite abierto');
+        console.log('[ML] 4. SQLite abierto');
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
           const path = (request && request.path) ? request.path : '';
@@ -88,7 +88,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           const ab = row.tile_data.buffer.slice(row.tile_data.byteOffset, row.tile_data.byteOffset + row.tile_data.byteLength);
           return { statusCode: 200, headers: { 'Content-Type': 'application/x-protobuf', 'Content-Encoding': 'gzip' }, body: ab };
         });
-        console.error('[ML] 5. server OK');
+        console.log('[ML] 5. server OK');
         setUri(`http://127.0.0.1:${PUERTO}/{z}/{x}/{y}.pbf`);
       } catch (e: any) {
         console.error('[ML ERROR]', e?.message ?? String(e));

@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useRef, useState, memo } from 'react';
+import { LogBox } from 'react-native';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';

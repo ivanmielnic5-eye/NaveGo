@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
+import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import { startSession, endSession, insertGpsFix } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes } from './db/journal';
 import { initDatabase } from './db/schema';
 import type { GPSFix } from './types/journal';
 
@@ -477,6 +478,29 @@ export function useNaveGoTracker() {
       return next;
     });
   };
+
+  // FASE 1: al volver al primer plano, releer los puntos desde SQLite
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', async (nextState) => {
+      if (nextState !== 'active') return;
+      if (!sessionIdRef.current) return;
+      if (!dbRef.current) return;
+      try {
+        const fixes = await getSessionFixes(dbRef.current, sessionIdRef.current);
+        const pts = fixes
+          .map((f) => ({ lat: f.lat_raw, lon: f.lon_raw }))
+          .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+        routePointsRef.current = pts;
+        setRoutePoints(pts);
+        if (pts.length > 0) {
+          lastPointRef.current = pts[pts.length - 1];
+        }
+      } catch (e) {
+        console.warn('[TRACKER] Error releyendo fixes:', e);
+      }
+    });
+    return () => sub.remove();
+  }, []);
 
   const nav = {
     distanceMeters: totalDistance,

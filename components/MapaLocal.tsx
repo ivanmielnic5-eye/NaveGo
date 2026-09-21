@@ -27,7 +27,7 @@ export default function MapaLocal() {
 
     (async () => {
       try {
-        console.error('[ML] Iniciando');
+        console.log('[ML] Iniciando');
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
 
         const asset = Asset.fromModule(require('../assets/maptest/santa_fe.mbtiles'));
@@ -38,10 +38,10 @@ export default function MapaLocal() {
         if (!info.exists) {
           await FileSystem.copyAsync({ from: asset.localUri, to: DB_PATH });
         }
-        console.error('[ML] Archivo OK');
+        console.log('[ML] Archivo OK');
 
         db = await SQLite.openDatabaseAsync(DB_NAME, undefined, DIR);
-        console.error('[ML] SQLite OK');
+        console.log('[ML] SQLite OK');
 
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
@@ -64,7 +64,7 @@ export default function MapaLocal() {
             body: ab,
           };
         });
-        console.error('[ML] Server en', PUERTO);
+        console.log('[ML] Server en', PUERTO);
 
         setUri(`http://127.0.0.1:${PUERTO}/{z}/{x}/{y}.pbf`);
 
