@@ -92,7 +92,9 @@ if not pending_items:
 # 2. context_revision
 hashes = [full_sha(expand(sources[t]['path'])) for t in ['state','profile','protocol','decisions']]
 hashes.append(full_sha(MANIFEST))
-ctx_rev = hashlib.sha256(''.join(hashes).encode()).hexdigest()[:8]
+ctx_hash = hashlib.sha256(''.join(hashes).encode()).hexdigest()[:8]
+ctx_fecha = datetime.date.today().isoformat()
+ctx_rev = f"{ctx_hash} @ {ctx_fecha}"
 
 # 3. Procedencia
 try:
