@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""Wrapper de arranque para DSH.
+Uso: logos-dsh PROYECTO "tarea" [--force-warning] [--dry-run]"""
+import json, os, sys, subprocess, datetime
+
+REPO = os.getcwd()
+GATE = os.path.join(REPO, '.logos/bin/logos-gate')
+MEM = os.path.join(REPO, '.logos/bin/logos-mem')
+CAPSULA_MD = os.path.join(REPO, 'capsula-de-memoria.md')
+DSH = 'dsh'
+
+args = [a for a in sys.argv[1:] if not a.startswith('--')]
+flags = [a for a in sys.argv[1:] if a.startswith('--')]
+FORCE_WARNING = '--force-warning' in flags
+DRY_RUN = '--dry-run' in flags
+
+if len(args) < 2:
+    print("ERROR: uso: logos-dsh PROYECTO \"tarea\" [--force-warning] [--dry-run]")
+    sys.exit(5)
+PROYECTO = args[0]
+TAREA = ' '.join(args[1:])
+
+print(f"=== logos-dsh v1.0.0 — {PROYECTO} ===")
+print()
+
+# Paso 0: Gate
+print("--- Paso 0: Context Gate ---")
+r = subprocess.run([GATE, PROYECTO, '--json'], capture_output=True, text=True)
+try:
+    gate_result = json.loads(r.stdout)
+except Exception:
+    print(f"ERROR: no pude parsear salida del Gate.")
+    print(r.stdout)
+    sys.exit(5)
+
+status = gate_result.get('status')
+ctx_rev = gate_result.get('context_revision', '?')
+print(f"Gate status: {status}")
+print(f"context_revision: {ctx_rev}")
+
+if status == 'BLOCKED':
+    print()
+    print("ABORT: Gate BLOCKED. DSH no se ejecuta.")
+    for rsn in gate_result.get('reasons', []):
+        print(f"  Razon: {rsn}")
+    sys.exit(2)
+
+if status == 'WARNING' and not FORCE_WARNING:
+    print()
+    print("ABORT: Gate WARNING. Falta --force-warning para continuar.")
+    for w in gate_result.get('warnings', []):
+        print(f"  Aviso: {w}")
+    sys.exit(3)
+
+if status == 'WARNING' and FORCE_WARNING:
+    print("AVISO: WARNING forzado por --force-warning.")
+
+print()
+
+# Paso 1: Cápsula
+print("--- Paso 1: Cápsula de Memoria ---")
+r = subprocess.run([MEM, PROYECTO], capture_output=True, text=True)
+if r.returncode != 0:
+    print("ABORT: logos-mem falló.")
+    print(r.stdout)
+    print(r.stderr)
+    sys.exit(4)
+print(f"OK. Cápsula en: {CAPSULA_MD}")
+
+# Leer cápsula
+try:
+    with open(CAPSULA_MD) as f:
+        capsula = f.read()
+except Exception as e:
+    print(f"ABORT: no pude leer la cápsula: {e}")
+    sys.exit(4)
+
+# Paso 2: Construir prompt
+prompt = (
+    "[CONTEXTO - Capsula de Memoria]\n"
+    + capsula
+    + "\n\n[TAREA]\n"
+    + TAREA
+    + "\n\n[REGLA]\n"
+    + "Trabaja respetando el contexto anterior. Si algo no está en el "
+    + "contexto, declaralo como incertidumbre en lugar de inventarlo."
+)
+
+print()
+print(f"--- Prompt construido ({len(prompt)} chars) ---")
+
+if DRY_RUN:
+    print()
+    print("DRY-RUN: no se llama a DSH. Prompt listo.")
+    print(f"context_revision: {ctx_rev}")
+    sys.exit(0)
+
+# Paso 3: Ejecutar DSH
+print()
+print("--- Paso 3: Ejecutando DSH (headless) ---")
+r = subprocess.run([DSH, '--profile', 'headless', prompt],
+                   capture_output=True, text=True)
+print("--- Salida de DSH ---")
+if r.stdout:
+    print(r.stdout)
+if r.stderr:
+    print("[stderr]")
+    print(r.stderr)
+print("--- Fin de salida DSH ---")
+
+# Paso 4: Reportar
+print()
+print("--- Paso 4: Reporte ---")
+print(f"Gate status:     {status}")
+print(f"context_revision: {ctx_rev}")
+print(f"DSH exit code:   {r.returncode}")
+
+# Chequear si hay cambios sin commitear
+gs = subprocess.run(['git', 'status', '--short'], capture_output=True, text=True)
+if gs.stdout.strip():
+    print()
+    print("Hay cambios sin commitear en el repo:")
+    print(gs.stdout)
+    print("Revisar antes de aceptar.")
+else:
+    print("Repo limpio (sin cambios).")
+
+sys.exit(r.returncode)
