@@ -1,0 +1,237 @@
+#!/usr/bin/env python3
+"""Generador de Capsula de Memoria. Uso: logos-mem [PROYECTO]"""
+import json, os, sys, subprocess, hashlib, datetime
+
+REPO = os.getcwd()
+MANIFEST = os.path.join(REPO, '.logos/MANIFEST.json')
+VALIDATOR = os.path.join(REPO, '.logos/bin/validate-manifest')
+
+def expand(p):
+    if p.startswith('~'):
+        return os.path.expanduser(p)
+    if not os.path.isabs(p):
+        return os.path.join(REPO, p)
+    return p
+
+def full_sha(path):
+    with open(path, 'rb') as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+print("=== logos-mem v1.0.0 ===")
+if len(sys.argv) < 2:
+    print("ERROR: falta el nombre del proyecto. Uso: logos-mem [PROYECTO]")
+    sys.exit(1)
+PROYECTO = sys.argv[1]
+
+# 0. Preflight
+if not os.path.exists(MANIFEST):
+    print("BLOCKED: MANIFEST no existe.")
+    sys.exit(2)
+
+print("--- Preflight: validador del MANIFEST ---")
+r = subprocess.run([VALIDATOR], capture_output=True, text=True)
+print(r.stdout)
+if r.returncode == 2:
+    print("BLOCKED: validador dice BLOCKED. Abortando.")
+    sys.exit(2)
+warning_flag = (r.returncode == 1)
+
+with open(MANIFEST) as f:
+    m = json.load(f)
+
+if m.get('project') != PROYECTO:
+    print(f"BLOCKED: MANIFEST declara proyecto '{m.get('project')}', se pidio '{PROYECTO}'.")
+    sys.exit(2)
+
+sources = {s['type']: s for s in m['sources']}
+
+# 1. Leer fuentes
+print("--- Leyendo fuentes autoritativas ---")
+def load_json(t):
+    with open(expand(sources[t]['path'])) as f:
+        return json.load(f)
+
+state = load_json('state')
+profile = load_json('profile')
+protocol = load_json('protocol')
+
+with open(expand(sources['decisions']['path'])) as f:
+    decisions_md = f.read()
+
+active_hyps = []
+hyp_dir = expand(sources['hypotheses']['path'])
+if os.path.isdir(hyp_dir):
+    for fname in sorted(os.listdir(hyp_dir)):
+        if fname.endswith('.json') and 'TEMPLATE' not in fname:
+            try:
+                with open(os.path.join(hyp_dir, fname)) as f:
+                    h = json.load(f)
+                if h.get('estado') == 'EN_CURSO':
+                    active_hyps.append(h)
+            except Exception as e:
+                print(f"  WARN: no pude leer {fname}: {e}")
+
+pending_items = []
+with open(expand(sources['pending']['path'])) as f:
+    for line in f:
+        line = line.strip()
+        if line.startswith('- ') or line.startswith('* '):
+            pending_items.append(line[2:])
+            if len(pending_items) >= 5:
+                break
+
+# 2. context_revision
+hashes = [full_sha(expand(sources[t]['path'])) for t in ['state','profile','protocol','decisions']]
+hashes.append(full_sha(MANIFEST))
+ctx_rev = hashlib.sha256(''.join(hashes).encode()).hexdigest()[:8]
+
+# 3. Procedencia
+try:
+    git_commit = subprocess.run(['git','rev-parse','--short','HEAD'],
+                                 capture_output=True, text=True, cwd=REPO).stdout.strip() or None
+except Exception:
+    git_commit = None
+
+now = datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+manifest_version = m['manifest_version']
+
+# 4. Generar markdown
+md = []
+md.append(f"# Capsula de Memoria — {m['project']}")
+md.append("")
+md.append("## Procedencia")
+md.append(f"- generated_at: {now}")
+md.append(f"- project: {m['project']}")
+md.append(f"- context_revision: {ctx_rev}")
+md.append(f"- git_commit: {git_commit or '(no disponible)'}")
+md.append(f"- manifest_version: {manifest_version}")
+md.append("- generated_by: logos-mem v1.0.0")
+md.append("")
+
+md.append("## Identidad del proyecto")
+md.append(f"- id: {profile.get('id','?')}")
+md.append(f"- name: {profile.get('name','?')}")
+md.append(f"- type: {profile.get('type','?')}")
+md.append(f"- mission: {profile.get('mission','?')}")
+caps = profile.get('capabilities', [])
+if caps:
+    md.append(f"- capabilities: {', '.join(caps)}")
+md.append("")
+
+md.append("## Estado actual")
+st = state.get('state', {})
+ms = state.get('mission', {})
+w = state.get('work', {})
+md.append(f"- status: {st.get('status','?')}")
+md.append(f"- risk: {st.get('risk','?')}")
+md.append(f"- phase: {ms.get('phase','?')}")
+md.append(f"- last_decision: {w.get('last_decision','?')}")
+md.append("")
+
+md.append("## Trabajo activo")
+md.append(f"- hypothesis_id: {w.get('hypothesis_id','?')}")
+md.append(f"- hypothesis: {w.get('hypothesis','?')}")
+md.append(f"- next_step: {w.get('next_step','?')}")
+md.append("")
+
+md.append("## Hipotesis activas (EN_CURSO)")
+if active_hyps:
+    for h in active_hyps:
+        md.append(f"- {h.get('id','?')}: {h.get('hipotesis','?')}")
+else:
+    md.append("- (ninguna)")
+md.append("")
+
+md.append("## Decisiones pendientes (primeros 5)")
+if pending_items:
+    for p in pending_items:
+        md.append(f"- {p}")
+else:
+    md.append("- (ninguna)")
+md.append("")
+
+md.append("## Restricciones operativas")
+constraints = state.get('constraints', {}).get('active', [])
+for c in constraints:
+    md.append(f"- {c}")
+md.append("")
+md.append("Semaforo de riesgo:")
+for k, v in protocol.get('semaforo', {}).items():
+    md.append(f"- {k}: {v}")
+md.append("")
+
+md.append("## Reglas criticas")
+reglas_clave = [
+    "No modificar main.",
+    "No modificar tests para ocultar fallos.",
+    "No salir del scope autorizado.",
+    "No instalar dependencias sin autorizacion.",
+    "Ante conflicto entre spec/test/codigo: STOP.",
+    "Ante incertidumbre arquitectonica: STOP.",
+    "No afirmar exito sin evidencia.",
+]
+for reg in reglas_clave:
+    md.append(f"- {reg}")
+md.append("")
+md.append("Protocolo completo: ~/.logos/core/protocol/protocols.json")
+md.append("")
+
+md.append("## Fuentes de verdad declaradas")
+for s in m['sources']:
+    if s.get('authority'):
+        md.append(f"- {s['type']}: {s['path']}")
+md.append("")
+
+md.append("## Advertencias")
+if warning_flag:
+    md.append("- Validador reporto WARNING (ver salida completa del validador).")
+else:
+    md.append("- (ninguna)")
+md.append("")
+
+markdown = '\n'.join(md)
+
+# 5. Tamano
+size = len(markdown.encode('utf-8'))
+if size > 12 * 1024:
+    print(f"ABORT: capsula pesa {size} bytes ({size/1024:.1f} KB), supera 12 KB.")
+    sys.exit(3)
+
+# 6. Escribir salida
+out_md = os.path.join(REPO, 'capsula-de-memoria.md')
+out_json = os.path.join(REPO, 'capsula-de-memoria.json')
+
+with open(out_md, 'w') as f:
+    f.write(markdown)
+
+meta = {
+    "metadata": {
+        "generated_at": now,
+        "project": m['project'],
+        "context_revision": ctx_rev,
+        "git_commit": git_commit,
+        "manifest_version": manifest_version,
+        "generated_by": "logos-mem v1.0.0"
+    },
+    "sections": {
+        "identity": profile,
+        "state": st,
+        "active_work": w,
+        "hypotheses": active_hyps,
+        "pending": pending_items,
+        "constraints": constraints,
+        "critical_rules": reglas_clave,
+        "sources_index": [{'type': s['type'], 'path': s['path']}
+                          for s in m['sources'] if s.get('authority')]
+    },
+    "warnings": ["Validador reporto WARNING"] if warning_flag else []
+}
+
+with open(out_json, 'w') as f:
+    json.dump(meta, f, indent=2, ensure_ascii=False)
+
+print(f"OK: capsula generada.")
+print(f"  capsula-de-memoria.md   ({size} bytes, {size/1024:.1f} KB)")
+print(f"  capsula-de-memoria.json")
+print(f"  context_revision: {ctx_rev}")
+print(f"  git_commit: {git_commit or '(no disponible)'}")

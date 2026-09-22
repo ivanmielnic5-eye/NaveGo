@@ -78,3 +78,7 @@ node_modules/.cache/
 # Backups de archivos
 *.bak*
 *.bak_*
+
+# Capsula de Memoria (DERIVADA, se regenera con logos-mem)
+capsula-de-memoria.md
+capsula-de-memoria.json
