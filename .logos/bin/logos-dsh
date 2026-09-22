@@ -13,6 +13,18 @@ args = [a for a in sys.argv[1:] if not a.startswith('--')]
 flags = [a for a in sys.argv[1:] if a.startswith('--')]
 FORCE_WARNING = '--force-warning' in flags
 DRY_RUN = '--dry-run' in flags
+FRONTERA = None
+for f in flags:
+    if f.startswith('--frontera='):
+        FRONTERA = f.split('=', 1)[1]
+if FRONTERA is None:
+    # Default: el sandbox del proyecto
+    FRONTERA = 'sandbox_corredor/'
+# Normalizar: rutas relativas al REPO
+if not FRONTERA.startswith('/'):
+    FRONTERA_ABS = os.path.join(REPO, FRONTERA)
+else:
+    FRONTERA_ABS = FRONTERA
 
 if len(args) < 2:
     print("ERROR: uso: logos-dsh PROYECTO \"tarea\" [--force-warning] [--dry-run]")
@@ -135,6 +147,38 @@ except Exception:
 # Snapshot de hashes de gobernanza antes
 gober_antes = hash_gobernanza()
 
+# Snapshot ampliado: archivos del repo fuera de la frontera autorizada
+# (para detectar escrituras de DSH fuera del sandbox)
+def snapshot_fuera_de_frontera():
+    """Lista archivos del repo NO dentro de la frontera autorizada,
+    con su mtime+size. Solo versionados/untracked relevantes."""
+    result = {}
+    for root, dirs, files in os.walk(REPO):
+        # Saltar dirs pesados o irrelevantes
+        dirs[:] = [d for d in dirs if d not in (
+            'node_modules', '.git', 'backups', '_backups',
+            'android', 'ios', 'test_maplibre', 'test_parse',
+            'assets', 'out_mision_b'
+        )]
+        # Saltar si estamos dentro de la frontera autorizada
+        if os.path.abspath(root).startswith(os.path.abspath(FRONTERA_ABS)):
+            continue
+        for fn in files:
+            # Saltar extensiones enormes
+            if fn.endswith(('.apk', '.aab', '.pbf', '.mbtiles', '.geojson')):
+                continue
+            full = os.path.join(root, fn)
+            try:
+                st = os.stat(full)
+                rel = os.path.relpath(full, REPO)
+                result[rel] = (int(st.st_mtime), st.st_size)
+            except Exception:
+                pass
+    return result
+
+snap_repo_antes = snapshot_fuera_de_frontera()
+print(f"--- Snapshot: {len(snap_repo_antes)} archivos fuera de la frontera ---")
+
 # Paso 3: Ejecutar DSH
 print()
 print("--- Paso 3: Ejecutando DSH (headless) ---")
@@ -170,6 +214,41 @@ if head_antes != head_despues:
     print(f"    ANTES: {head_antes}")
     print(f"    AHORA: {head_despues}")
     print("    El wrapper NO autoriza commits. Revisar y revertir si es necesario.")
+
+# Verificacion ampliada: archivos fuera de la frontera autorizada
+snap_repo_despues = snapshot_fuera_de_frontera()
+creados = [k for k in snap_repo_despues if k not in snap_repo_antes]
+borrados = [k for k in snap_repo_antes if k not in snap_repo_despues]
+modificados = [k for k in snap_repo_despues
+               if k in snap_repo_antes and snap_repo_despues[k] != snap_repo_antes[k]]
+
+if creados or borrados or modificados:
+    print()
+    print("!!! ALERTA: hubo cambios fuera de la frontera autorizada.")
+    print(f"    Frontera: {FRONTERA}")
+    if creados:
+        print(f"    Archivos CREADOS fuera de frontera ({len(creados)}):")
+        for k in creados[:10]:
+            print(f"      + {k}")
+        if len(creados) > 10:
+            print(f"      ... y {len(creados)-10} mas")
+    if modificados:
+        print(f"    Archivos MODIFICADOS fuera de frontera ({len(modificados)}):")
+        for k in modificados[:10]:
+            print(f"      ~ {k}")
+        if len(modificados) > 10:
+            print(f"      ... y {len(modificados)-10} mas")
+    if borrados:
+        print(f"    Archivos BORRADOS fuera de frontera ({len(borrados)}):")
+        for k in borrados[:10]:
+            print(f"      - {k}")
+        if len(borrados) > 10:
+            print(f"      ... y {len(borrados)-10} mas")
+    print()
+    print("    Para revisar cambios:  cd REPO && git status")
+    print("    Para revertir versionados: git checkout -- <archivo>")
+    print("    Para eliminar untracked creados: rm <archivo>")
+    print("    NO se revierte automaticamente. Decision humana.")
 
 # Paso 4: Reportar
 print()
