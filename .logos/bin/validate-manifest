@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Validador del MANIFEST de LOGOS. Uso: validate-manifest [ruta-manifest]"""
+import json, os, sys
+
+MANIFEST = sys.argv[1] if len(sys.argv) > 1 else '.logos/MANIFEST.json'
+
+def expand(p):
+    return os.path.expanduser(p) if p.startswith('~') else p
+
+def err(msg): print(f"  BLOCKED: {msg}")
+def warn(msg): print(f"  WARNING: {msg}")
+def ok(msg): print(f"  OK: {msg}")
+
+print(f"=== Validando: {MANIFEST} ===")
+if not os.path.exists(MANIFEST):
+    print("BLOCKED: MANIFEST no existe.")
+    sys.exit(2)
+
+try:
+    with open(MANIFEST) as f:
+        m = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"BLOCKED: JSON mal formado: {e}")
+    sys.exit(2)
+
+blocked = []
+warnings = []
+
+# Campos globales obligatorios
+for field in ['schema_version', 'manifest_version', 'project', 'fail_closed', 'required', 'sources']:
+    if field not in m:
+        blocked.append(f"Falta campo global: {field}")
+if blocked:
+    for b in blocked: err(b)
+    print("\nRESULTADO: BLOCKED")
+    sys.exit(2)
+
+ok(f"Proyecto: {m['project']}")
+ok(f"Fuentes declaradas: {len(m['sources'])}")
+
+# Validar cada fuente
+required_source_fields = ['type', 'path', 'authority', 'role', 'validation_policy']
+for s in m['sources']:
+    t = s.get('type', '?')
+    for f in required_source_fields:
+        if f not in s:
+            blocked.append(f"Fuente '{t}': falta campo '{f}'")
+    p = expand(s.get('path', ''))
+    if not os.path.exists(p):
+        blocked.append(f"Fuente '{t}': path no existe: {s.get('path')}")
+
+# Unicidad de autoridad por tipo singleton
+aut_por_tipo = {}
+for s in m['sources']:
+    if s.get('authority') and s.get('role') == 'singleton':
+        aut_por_tipo.setdefault(s['type'], []).append(s)
+for t, lst in aut_por_tipo.items():
+    if len(lst) > 1:
+        blocked.append(f"Tipo singleton '{t}': {len(lst)} fuentes con authority:true (debe ser 1)")
+
+# Tipos requeridos tienen autoridad
+for req in m.get('required', []):
+    if req not in aut_por_tipo:
+        blocked.append(f"Tipo requerido '{req}': sin fuente autoritativa")
+
+# Warnings: opcionales sin autoridad
+for opt in m.get('optional', []):
+    if opt not in aut_por_tipo:
+        warnings.append(f"Tipo opcional '{opt}': sin fuente autoritativa")
+
+# Reporte
+print()
+for w in warnings: warn(w)
+if not blocked and not warnings:
+    ok("Todas las validaciones pasaron.")
+print()
+if blocked:
+    for b in blocked: err(b)
+    print("\nRESULTADO: BLOCKED")
+    sys.exit(2)
+elif warnings:
+    print("RESULTADO: WARNING")
+    sys.exit(1)
+else:
+    print("RESULTADO: READY")
+    sys.exit(0)
