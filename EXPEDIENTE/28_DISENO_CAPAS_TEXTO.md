@@ -261,3 +261,177 @@ La decision final es del Director.
 
 ---
 Fin del diseño.
+
+---
+
+## AJUSTE — Hallazgos de la verificacion previa
+
+La verificacion previa (tiles z10 y z12 de Rosario) revelo:
+
+### place NO sirve como fuente
+
+'place=city' y 'place=town' NO estan en los MBTiles.
+Solo hay: neighbourhood, suburb, region, islet, island.
+
+-> La Capa 1 no puede usar 'place'. Se rediseña con admin_level.
+
+### admin_level SI sirve
+
+Valores observados en tiles reales:
+- admin_level=4  -> provincia (Rio Parana)
+- admin_level=5  -> departamento (Departamento San Lorenzo)
+- admin_level=6  -> aglomerado (Gran Rosario)
+- admin_level=7  -> municipio grande (Municipio de Funes)
+- admin_level=8  -> municipio chico (Ybarlucea)
+- admin_level=9  -> barrio/parque (Quinta Natacha)
+- admin_level=10 -> barrio chico (Lago Sereno)
+- admin_level=11 -> sub-barrio (Barrio del Golf)
+
+### amenity SI sirve
+
+Valores observados:
+- fuel, hospital, clinic, pharmacy, police, cafe, restaurant,
+  fast_food, bank, parking, toilets, marketplace, bicycle_parking,
+  motorcycle_parking, ice_cream, weighbridge, clock
+
+-> La Capa 3 va tal cual estaba disenada.
+
+### Decision del Director sobre barrios
+
+Decision tomada: SI mostrar barrios (admin_level 9, 10, 11).
+Con minzoom: 12 (aparecen solo a nivel calle).
+
+---
+
+## Diseno REVISADO de la Capa 1 — Municipios y barrios
+
+Se divide en DOS sub-capas, con zoom distinto:
+
+### Capa 1a — Municipios y aglomerados (siempre visible)
+
+  {
+    id: 'municipios',
+    type: 'symbol',
+    source: 'local',
+    'source-layer': SOURCE_LAYER,
+    filter: ['all',
+      ['has', 'admin_level'],
+      ['in', ['get', 'admin_level'],
+        ['literal', ['5','6','7','8']]],
+      ['has', 'name']
+    ],
+    layout: {
+      'text-field': ['coalesce', ['get','name:es'], ['get','name']],
+      'text-size': ['case',
+        ['==', ['get','admin_level'], '5'], 15,
+        ['==', ['get','admin_level'], '6'], 14,
+        ['==', ['get','admin_level'], '7'], 13,
+        11
+      ],
+      'text-anchor': 'center',
+      'text-font': ['Open Sans Bold'],
+    },
+    paint: {
+      'text-color': '#1a1a1a',
+      'text-halo-color': '#ffffff',
+      'text-halo-width': 2,
+    }
+  }
+
+Notas:
+- Administrativo provincial (5), aglomerado (6), municipio (7, 8).
+- Tamano escalona por nivel.
+- Visible en todos los zooms.
+
+### Capa 1b — Barrios (zoom alto)
+
+  {
+    id: 'barrios',
+    type: 'symbol',
+    source: 'local',
+    'source-layer': SOURCE_LAYER,
+    minzoom: 12,
+    filter: ['all',
+      ['has', 'admin_level'],
+      ['in', ['get', 'admin_level'],
+        ['literal', ['9','10','11']]],
+      ['has', 'name']
+    ],
+    layout: {
+      'text-field': ['coalesce', ['get','name:es'], ['get','name']],
+      'text-size': 10,
+      'text-anchor': 'center',
+      'text-font': ['Open Sans Regular'],
+    },
+    paint: {
+      'text-color': '#404040',
+      'text-halo-color': '#ffffff',
+      'text-halo-width': 1.5,
+    }
+  }
+
+Notas:
+- Solo aparece a zoom 12+ (nivel calle).
+- Texto mas chico, color gris oscuro.
+- Menos prominente que los municipios.
+
+---
+
+## Orden final de las capas
+
+Array 'layers' de MapLibre, de abajo hacia arriba:
+
+  1. background
+  2. agua
+  3. edificios
+  4. lineas
+  5. municipios      (nuevo — siempre visible)
+  6. barrios         (nuevo — z12+)
+  7. rutas           (nuevo — siempre visible)
+  8. servicios       (nuevo — z12+)
+  9. trackRefLine
+  10. trackActivoLine
+
+Motivo: los tracks (rojo/azul) quedan SIEMPRE arriba.
+Las capas de texto van antes que los tracks.
+
+---
+
+## Decisiones aplicadas al diseno revisado
+
+- D-1: RESUELTO — Se usa admin_level, no place.
+- D-2: RESUELTO — amenity existe, capa 3 va tal cual.
+- D-3: RESUELTO — Tamano escalona por tipo.
+- D-4 (nuevo, del Director): Barrios SI. Capa 1b con minzoom 12.
+
+---
+
+## Plan de implementacion (post-aprobacion)
+
+Total: 4 capas symbol (municipios, barrios, rutas, servicios).
+
+1. DSH prepara los 2 archivos refactorizados (Mision A).
+2. Humano aplica (mismo metodo que Fase 1 de mapas).
+3. Recompilar.
+4. Verificar visualmente en el celu: nombres aparecen.
+5. Si sale bien: commit.
+
+---
+
+## Preguntas revisadas para GPT-4
+
+P-1: La division en municipios + barrios es correcta, o conviene
+     una sola capa con zoom variable?
+P-2: El tamano del texto es adecuado para TCL T610P (gama media)?
+P-3: La prioridad y el orden de las capas es correcta?
+P-4: Falta alguna capa util (por ejemplo, aeropuertos, puertos)?
+P-5: Hay sobrearquitectura en agregar 4 capas ahora?
+P-6: Hay alguna optimizacion de performance para gama baja
+     (muchas features de texto a zoom alto)?
+P-7: El uso de name:es antes que name es correcto?
+P-8: Hay algun riesgo de que el texto invada el track rojo?
+
+La decision final es del Director.
+
+---
+Fin del diseno revisado.
