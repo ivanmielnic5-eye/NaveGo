@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""TEST-CONTEXT-01: regresion del incidente del 21 sep 2026.
+Verifica que el Gate bloquee correctamente en escenarios adversos."""
+import json, os, shutil, subprocess, sys, tempfile, datetime
+
+REPO = os.getcwd()
+GATE = os.path.join(REPO, '.logos/bin/logos-gate')
+MANIFEST_ORIG = os.path.join(REPO, '.logos/MANIFEST.json')
+
+def run_gate(manifest_path):
+    """Corre el Gate apuntando a un manifest temporal."""
+    # Copia temporal del manifest
+    tmp_manifest = manifest_path
+    env = os.environ.copy()
+    # El Gate siempre lee .logos/MANIFEST.json; lo sustituimos
+    backup = MANIFEST_ORIG + '.test_bak'
+    shutil.copy2(MANIFEST_ORIG, backup)
+    try:
+        if tmp_manifest != MANIFEST_ORIG:
+            shutil.copy2(tmp_manifest, MANIFEST_ORIG)
+        r = subprocess.run([GATE, 'NAVEGO', '--json'],
+                           capture_output=True, text=True)
+        try:
+            data = json.loads(r.stdout)
+        except Exception:
+            data = {"status": "PARSE_ERROR", "raw": r.stdout}
+        return r.returncode, data
+    finally:
+        shutil.copy2(backup, MANIFEST_ORIG)
+        os.remove(backup)
+
+results = []
+def check(name, expected_status, got_status):
+    ok = (expected_status == got_status)
+    results.append((name, expected_status, got_status, ok))
+    print(f"  {'[PASS]' if ok else '[FAIL]'} {name}: esperado={expected_status} obtenido={got_status}")
+
+print("=== TEST-CONTEXT-01 ===")
+print()
+
+# CASO 1: Todo OK -> READY
+print("Caso 1: sistema coherente -> READY")
+code, data = run_gate(MANIFEST_ORIG)
+check("Caso 1 (todo OK)", "READY", data.get('status'))
+
+# CASO 2: Fuente requerida faltante (rompemos el path de 'state')
+print("Caso 2: fuente required ausente -> BLOCKED")
+with open(MANIFEST_ORIG) as f:
+    m = json.load(f)
+for s in m['sources']:
+    if s['type'] == 'state':
+        s['path'] = '~/.logos/NO_EXISTE_context.json'
+        break
+tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+json.dump(m, tmp)
+tmp.close()
+code, data = run_gate(tmp.name)
+check("Caso 2 (required ausente)", "BLOCKED", data.get('status'))
+os.unlink(tmp.name)
+
+# CASO 3: Autoridad duplicada (dos state con authority:true)
+print("Caso 3: autoridad duplicada -> BLOCKED")
+with open(MANIFEST_ORIG) as f:
+    m = json.load(f)
+# Duplicamos la entrada de state
+state_entry = next(s for s in m['sources'] if s['type'] == 'state')
+m['sources'].append(dict(state_entry))
+tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+json.dump(m, tmp)
+tmp.close()
+code, data = run_gate(tmp.name)
+check("Caso 3 (autoridad dup)", "BLOCKED", data.get('status'))
+os.unlink(tmp.name)
+
+# CASO 4: Contradiccion de identidad (context.json dice LOGOS)
+print("Caso 4: contradiccion de identidad -> BLOCKED")
+# Guardamos el context actual, lo reemplazamos temporalmente
+ctx_orig = os.path.expanduser('~/.logos/projects/NAVEGO/context.json')
+with open(ctx_orig) as f:
+    ctx_backup = f.read()
+try:
+    with open(ctx_orig) as f:
+        ctx = json.load(f)
+    ctx['project']['id'] = 'LOGOS'
+    with open(ctx_orig, 'w') as f:
+        json.dump(ctx, f)
+    code, data = run_gate(MANIFEST_ORIG)
+    check("Caso 4 (project mismatch)", "BLOCKED", data.get('status'))
+finally:
+    with open(ctx_orig, 'w') as f:
+        f.write(ctx_backup)
+
+# CASO 5: Recuperacion (tras caso 4, restauramos y volvemos a READY)
+print("Caso 5: recuperacion tras fix -> READY")
+code, data = run_gate(MANIFEST_ORIG)
+check("Caso 5 (recuperacion)", "READY", data.get('status'))
+
+# Resumen
+print()
+total = len(results)
+pasados = sum(1 for _,_,_,ok in results if ok)
+print(f"Resultado: {pasados}/{total} pasados.")
+if pasados == total:
+    print("TEST-CONTEXT-01: OK")
+    sys.exit(0)
+else:
+    print("TEST-CONTEXT-01: FALLARON ALGUNOS CASOS")
+    sys.exit(1)
