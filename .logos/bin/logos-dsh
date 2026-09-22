@@ -20,7 +20,7 @@ if len(args) < 2:
 PROYECTO = args[0]
 TAREA = ' '.join(args[1:])
 
-print(f"=== logos-dsh v1.0.0 — {PROYECTO} ===")
+print(f"=== logos-dsh v1.1.0 — {PROYECTO} ===")
 print()
 
 # Paso 0: Gate
@@ -82,8 +82,15 @@ prompt = (
     + "\n\n[TAREA]\n"
     + TAREA
     + "\n\n[REGLA]\n"
-    + "Trabaja respetando el contexto anterior. Si algo no está en el "
-    + "contexto, declaralo como incertidumbre en lugar de inventarlo."
+    + "Trabaja respetando el contexto anterior. Si algo no esta en el "
+    + "contexto, declaralo como incertidumbre en lugar de inventarlo.\n"
+    + "\n[RESTRICCIONES OPERATIVAS]\n"
+    + "- NO ejecutes 'git commit'. El commit lo hace el humano tras revision.\n"
+    + "- NO modifiques archivos en .logos/ (gobernanza del sistema).\n"
+    + "- NO modifiques AGENTS.md ni START_HERE.md.\n"
+    + "- NO modifiques tests para ocultar fallos.\n"
+    + "- Ante conflicto entre spec/test/codigo: DETENETE y reporta.\n"
+    + "- Ante incertidumbre arquitectonica: DETENETE y reporta."
 )
 
 print()
@@ -94,6 +101,39 @@ if DRY_RUN:
     print("DRY-RUN: no se llama a DSH. Prompt listo.")
     print(f"context_revision: {ctx_rev}")
     sys.exit(0)
+
+# Control-plane integrity: snapshot antes de DSH
+GOBERNANZA_PATHS = [
+    '.logos/MANIFEST.json',
+    'AGENTS.md',
+    'START_HERE.md',
+    '.logos/core/protocol/protocols.json',
+]
+def hash_gobernanza():
+    import hashlib
+    hashes = {}
+    for p in GOBERNANZA_PATHS:
+        full = os.path.join(REPO, p) if not p.startswith('/') else p
+        if not p.startswith('.logos/core'):
+            full = os.path.join(REPO, p)
+        else:
+            full = os.path.expanduser('~/' + p)
+        if os.path.exists(full):
+            with open(full, 'rb') as f:
+                hashes[p] = hashlib.sha256(f.read()).hexdigest()[:12]
+        else:
+            hashes[p] = '(ausente)'
+    return hashes
+
+# Snapshot de commits antes
+try:
+    head_antes = subprocess.run(['git','rev-parse','HEAD'],
+                                 capture_output=True, text=True, cwd=REPO).stdout.strip()
+except Exception:
+    head_antes = None
+
+# Snapshot de hashes de gobernanza antes
+gober_antes = hash_gobernanza()
 
 # Paso 3: Ejecutar DSH
 print()
@@ -107,6 +147,29 @@ if r.stderr:
     print("[stderr]")
     print(r.stderr)
 print("--- Fin de salida DSH ---")
+
+# Control-plane integrity: verificar despues de DSH
+gober_despues = hash_gobernanza()
+cambios_gober = [k for k in gober_antes if gober_antes[k] != gober_despues[k]]
+if cambios_gober:
+    print()
+    print("!!! ALERTA: DSH modifico archivos de gobernanza (no autorizado).")
+    for k in cambios_gober:
+        print(f"    {k}: {gober_antes[k]} -> {gober_despues[k]}")
+    print("    Esto viola control-plane integrity. Revisar antes de aceptar cambios.")
+
+# Verificar commits nuevos
+try:
+    head_despues = subprocess.run(['git','rev-parse','HEAD'],
+                                   capture_output=True, text=True, cwd=REPO).stdout.strip()
+except Exception:
+    head_despues = None
+if head_antes != head_despues:
+    print()
+    print("!!! ALERTA: DSH creo commits (no autorizado).")
+    print(f"    ANTES: {head_antes}")
+    print(f"    AHORA: {head_despues}")
+    print("    El wrapper NO autoriza commits. Revisar y revertir si es necesario.")
 
 # Paso 4: Reportar
 print()
