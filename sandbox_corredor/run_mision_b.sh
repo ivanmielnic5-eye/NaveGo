@@ -111,7 +111,7 @@ log "Paso 4: tippecanoe -> $MBTILES"
 tippecanoe \
     -o "$MBTILES" \
     -Z8 -z14 \
-    -L corredor \
+    -l corredor \
     -n "Corredor Santa Fe - CABA (RN9)" \
     --drop-densest-as-needed \
     --extend-zooms-if-still-dropping \

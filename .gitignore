@@ -82,3 +82,9 @@ node_modules/.cache/
 # Capsula de Memoria (DERIVADA, se regenera con logos-mem)
 capsula-de-memoria.md
 capsula-de-memoria.json
+
+# --- Sandbox corredor: intermedios pesados (no versionar) ---
+sandbox_corredor/out_mision_b/
+*.geojsonseq
+*.mbtiles
+*.osm.pbf

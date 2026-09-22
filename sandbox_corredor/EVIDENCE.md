@@ -597,3 +597,16 @@ a MBTiles.
 **Queda una sola decisión humana** (envelope de latitud, §8 del informe).
 
 **La IA no ejecuta.** El paquete queda listo para autorización.
+
+---
+
+## Actualizacion — Mision B ejecutada (2026-09-22 18:23)
+
+Estado: EXITOSA.
+
+Ejecutado por bash sandbox_corredor/run_mision_b.sh.
+Todos los pasos completados. MBTiles final: 100 MB, 43394 tiles.
+Ver MISIÓN_B_RESULTADO.md para detalle completo.
+
+Error encontrado y corregido durante ejecucion: flag -L vs -l en
+tippecanoe 2.79. Documentado como leccion.
