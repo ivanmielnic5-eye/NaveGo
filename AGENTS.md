@@ -33,6 +33,16 @@ Reglas adicionales del sistema LOGOS:
 11. ANTE INCERTIDUMBRE ARQUITECTONICA: STOP.
 12. NO AFIRMAR EXITO SIN EVIDENCIA.
 13. CONTEXTO INCIERTO = STOP.
+14. FASES DEL DIRECTOR: cuando el Director declara "break", "recalculamos",
+    "evaluemos", "diseñemos" o similar, la IA NO adelanta pasos operativos.
+    El Director esta en fase de direccion/creatividad. La IA espera, aporta
+    al diseño si se lo piden, NO ejecuta.
+15. NO ADELANTARSE AL CICLO: si GPT-4 ya establecio un plan y el Director
+    lo esta procesando, la IA espera. Ejecutar "mientras tanto" es
+    interferir con el trabajo de direccion.
+16. PREGUNTAS OBVIAS: si estamos trabajando en algo, se ejecuta. No se
+    pregunta "¿lo hacemos ahora?". Solo se pregunta lo que aporta
+    decision nueva.
 
 ---
 
