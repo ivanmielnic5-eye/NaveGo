@@ -72,13 +72,22 @@ if os.path.isdir(hyp_dir):
                 print(f"  WARN: no pude leer {fname}: {e}")
 
 pending_items = []
-with open(expand(sources['pending']['path'])) as f:
+pending_full_path = sources['pending']['path']
+with open(expand(pending_full_path)) as f:
     for line in f:
         line = line.strip()
-        if line.startswith('- ') or line.startswith('* '):
-            pending_items.append(line[2:])
-            if len(pending_items) >= 5:
+        # Solo lineas con marcador explicito de accion
+        matched = False
+        for prefix in ['- Accion:', '* Accion:', '- Acción:', '* Acción:']:
+            if line.startswith(prefix):
+                pending_items.append(line[len(prefix):].strip())
+                matched = True
                 break
+        if len(pending_items) >= 5:
+            break
+
+if not pending_items:
+    pending_items = [f'(sin acciones pendientes marcadas; archivo completo: {pending_full_path})']
 
 # 2. context_revision
 hashes = [full_sha(expand(sources[t]['path'])) for t in ['state','profile','protocol','decisions']]
@@ -142,7 +151,7 @@ else:
     md.append("- (ninguna)")
 md.append("")
 
-md.append("## Decisiones pendientes (primeros 5)")
+md.append("## Acciones pendientes detectadas")
 if pending_items:
     for p in pending_items:
         md.append(f"- {p}")
