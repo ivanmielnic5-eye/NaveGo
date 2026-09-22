@@ -5,7 +5,7 @@
   "updated_at": "2026-09-22T12:03:27-03:00",
   "fail_closed": true,
   "required": ["state", "profile", "protocol", "decisions"],
-  "optional": ["hypotheses", "pending", "session_spec", "spec_capsule", "glossary", "evidence", "architecture", "workflow", "incidents", "multi_ia_protocol", "framework_decision", "decision_maps", "decision_manifest", "decision_gate", "historical_sessions", "historical_state", "historical_sync"],
+  "optional": ["hypotheses", "pending", "session_spec", "spec_capsule", "glossary", "evidence", "architecture", "workflow", "incidents", "multi_ia_protocol", "framework_decision", "decision_maps", "decision_manifest", "decision_gate"],
   "sources": [
     {"type": "state", "path": "~/.logos/context/context.json", "authority": true, "role": "singleton", "description": "Estado operativo actual del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty", "freshness"]},
     {"type": "profile", "path": "~/.logos/projects/NAVEGO/profile.json", "authority": true, "role": "singleton", "description": "Identidad y mision del proyecto NAVEGO.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},

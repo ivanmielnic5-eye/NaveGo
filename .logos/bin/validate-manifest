@@ -49,23 +49,29 @@ for s in m['sources']:
     if not os.path.exists(p):
         blocked.append(f"Fuente '{t}': path no existe: {s.get('path')}")
 
-# Unicidad de autoridad por tipo singleton
-aut_por_tipo = {}
+# Autoridad por tipo, separando singletons (unicidad estricta) de collections
+singletons = {}
+collections = set()
 for s in m['sources']:
-    if s.get('authority') and s.get('role') == 'singleton':
-        aut_por_tipo.setdefault(s['type'], []).append(s)
-for t, lst in aut_por_tipo.items():
+    if s.get('authority'):
+        if s.get('role') == 'singleton':
+            singletons.setdefault(s['type'], []).append(s)
+        elif s.get('role') == 'collection':
+            collections.add(s['type'])
+for t, lst in singletons.items():
     if len(lst) > 1:
         blocked.append(f"Tipo singleton '{t}': {len(lst)} fuentes con authority:true (debe ser 1)")
 
+tipos_con_autoridad = set(singletons.keys()) | collections
+
 # Tipos requeridos tienen autoridad
 for req in m.get('required', []):
-    if req not in aut_por_tipo:
+    if req not in tipos_con_autoridad:
         blocked.append(f"Tipo requerido '{req}': sin fuente autoritativa")
 
-# Warnings: opcionales sin autoridad
+# Warnings: tipos opcionales sin fuente autoritativa
 for opt in m.get('optional', []):
-    if opt not in aut_por_tipo:
+    if opt not in tipos_con_autoridad:
         warnings.append(f"Tipo opcional '{opt}': sin fuente autoritativa")
 
 # Reporte
