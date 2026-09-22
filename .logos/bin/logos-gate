@@ -59,6 +59,33 @@ elif r.returncode == 1:
 else:
     checks['manifest'] = 'OK'
 
+# 1b. Chequeos estructurales reexpuestos
+if checks['manifest'] == 'BLOCKED':
+    checks['required'] = 'SKIP'
+    checks['authority'] = 'SKIP'
+else:
+    tipos_req = m.get('required', [])
+    tipos_aut = set()
+    for s in m['sources']:
+        if s.get('authority'):
+            tipos_aut.add(s['type'])
+    faltantes = [t for t in tipos_req if t not in tipos_aut]
+    if faltantes:
+        checks['required'] = f'BLOCKED (falta: {",".join(faltantes)})'
+        reasons.append(f'missing_required:{",".join(faltantes)}')
+    else:
+        checks['required'] = 'OK'
+    sing = {}
+    for s in m['sources']:
+        if s.get('authority') and s.get('role') == 'singleton':
+            sing.setdefault(s['type'], []).append(s)
+    dups = [t for t, l in sing.items() if len(l) > 1]
+    if dups:
+        checks['authority'] = f'BLOCKED (dup: {",".join(dups)})'
+        reasons.append(f'duplicate_authority:{",".join(dups)}')
+    else:
+        checks['authority'] = 'OK'
+
 # 2. Chequeos de coherencia
 # CR-01: project_identity
 if checks['manifest'] == 'BLOCKED':
