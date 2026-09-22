@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.0.0",
+  "project": "NAVEGO",
+  "task": "Caracterizar PBF Argentina y proponer candidatos de corredor",
+  "generated_at": "2026-09-22",
+  "produced_by": "IA (agente)",
+  "authority": "La IA propone. El Director Ivan decide. Ningun candidato se declara mejor.",
+  "travel_mode": "AUTO (ruta terrestre) - NO navegacion acuatica",
+  "origin": {
+    "name": "Santa Fe Capital",
+    "lat": -31.6107,
+    "lon": -60.6973
+  },
+  "destination": {
+    "name": "Buenos Aires (CABA)",
+    "lat": -34.6037,
+    "lon": -58.3816
+  },
+  "straight_line_distance_km": 396.6,
+
+  "data_source_status": {
+    "file": "~/cockpit/argentina-latest.osm.pbf",
+    "size_bytes": 257252921,
+    "sha256": "0a979a3da11d64ab871b177ca322e200fe9785c8741bbff8c09a985e689686e4",
+    "readable": false,
+    "truncated": true,
+    "missing_tail_bytes": 9409,
+    "readable_bytes": 257238148,
+    "readable_pct": 99.9943,
+    "nodes_present": 49912000,
+    "ways_present": 0,
+    "relations_present": 0,
+    "verdict": "NO APTO para cartografia vial: sin ways ni relations",
+    "evidence_type": "OBSERVADO"
+  },
+  "reference_data_source": {
+    "file": "~/cockpit/backup_mapa/argentina-260901.osm.pbf",
+    "size_bytes": 428645479,
+    "sha256_prefix": "d43f9af1a293f822",
+    "readable": true,
+    "truncated": false,
+    "nodes": 59348185,
+    "ways": 5900717,
+    "relations": 88563,
+    "same_snapshot_as_target": true,
+    "same_snapshot_basis": "header bbox, replication_timestamp y replication_sequence_number identicos",
+    "evidence_type": "OBSERVADO"
+  },
+
+  "geometry_constants": {
+    "km_per_deg_lat_at_midlat": 110.906,
+    "km_per_deg_lon_at_midlat": 93.339,
+    "mid_lat_used": -33.107,
+    "note": "Convertidos a latitud media del eje SF-CABA"
+  },
+
+  "candidates": [
+    {
+      "id": "C1_ajustado_20km",
+      "name": "Corredor ajustado - semiancho 20 km",
+      "bbox": {
+        "min_lon": -60.915343,
+        "min_lat": -34.784032,
+        "max_lon": -58.163557,
+        "max_lat": -31.430368
+      },
+      "corridor_width_km": 40,
+      "half_width_km": 20,
+      "span_deg": { "lon": 2.7518, "lat": 3.3537 },
+      "approx_area_km2": 95500,
+      "geographic_description": "Franja estrecha a lo largo del eje Santa Fe - Rosario - San Nicolas - Zarate - CABA. Incluye el valle del Parana inmediato y el norte del conurbano bonaerense. Predomina area rural pampeana y corredores urbanos.",
+      "national_routes_included_expected": ["RN9", "RN8 (parcial)"],
+      "provincial_routes_included_expected": ["no verificadas"],
+      "primary_route_proposed": "RN9",
+      "alternative_routes_proposed": ["RN8 (acceso alternativo parcial)"],
+      "alternatives_adequacy": "INSUFICIENTE - RN11 probablemente queda fuera del recorte en el tramo sur (Rosario-Zarate)",
+      "assumptions": [
+        "La traza real de RN9 se mantiene dentro de 20 km del eje recto SF-CABA",
+        "El eje recto es una aproximacion valida del corredor vial"
+      ],
+      "uncertainty_level": "MEDIA-ALTA",
+      "uncertainty_reasons": [
+        "No se midio la traza real de RN9 (ways ausentes en el PBF objetivo)",
+        "La separacion RN9/RN11 no fue medida"
+      ],
+      "pros": ["Menor area y menor volumen de datos", "Prueba mas rapida de generar y validar"],
+      "cons": ["Sin plan B dentro del mapa si RN9 se corta", "No sirve para probar alternativas"],
+      "evidence_type": "PROPUESTA (geometria derivada de coordenadas documentadas)"
+    },
+    {
+      "id": "C2_medio_50km",
+      "name": "Corredor medio - semiancho 50 km",
+      "bbox": {
+        "min_lon": -61.242408,
+        "min_lat": -35.054531,
+        "max_lon": -57.836492,
+        "max_lat": -31.159869
+      },
+      "corridor_width_km": 100,
+      "half_width_km": 50,
+      "span_deg": { "lon": 3.4059, "lat": 3.8947 },
+      "approx_area_km2": 137300,
+      "geographic_description": "Franja que contiene el eje RN9 completo mas la llanura pampeana intermedia y la franja costera del Parana. Incluye Rosario, San Nicolas, Pergamino, San Pedro, Zarate y el norte del AMBA.",
+      "national_routes_included_expected": ["RN9", "RN11", "RN8 (parcial)", "RN33 (borde oeste)", "RN34 (borde oeste)", "RN19 (borde noroeste)"],
+      "provincial_routes_included_expected": ["no verificadas"],
+      "primary_route_proposed": "RN9",
+      "alternative_routes_proposed": ["RN11 (alternativa primaria)", "RN8 (acceso alternativo a Buenos Aires)"],
+      "alternatives_adequacy": "ADECUADA - es el minimo semiancho que mantiene RN11 como alternativa real dentro del recorte",
+      "assumptions": [
+        "La separacion entre RN9 y RN11 en el tramo sur es del orden de 40-60 km",
+        "RN11 conecta fisicamente con RN9 en los extremos del corredor",
+        "El eje recto aproxima razonablemente el corredor"
+      ],
+      "uncertainty_level": "MEDIA",
+      "uncertainty_reasons": [
+        "Separacion RN9/RN11 estimada por coordenadas de ciudades, NO medida sobre trazas",
+        "No se verifico conectividad fisica entre RN9 y RN11"
+      ],
+      "pros": [
+        "Mantiene RN11 como plan B real",
+        "Cubre todas las localidades relevantes del viaje",
+        "Tamano aun manejable para una prueba"
+      ],
+      "cons": ["Incluye area rural pampeana con datos poco utiles", "Mayor volumen que C1"],
+      "is_hypothesis_lead": true,
+      "evidence_type": "PROPUESTA (geometria derivada de coordenadas documentadas)"
+    },
+    {
+      "id": "C3_amplio_90km",
+      "name": "Corredor amplio - semiancho 90 km",
+      "bbox": {
+        "min_lon": -61.678494,
+        "min_lat": -35.415195,
+        "max_lon": -57.400406,
+        "max_lat": -30.799205
+      },
+      "corridor_width_km": 180,
+      "half_width_km": 90,
+      "span_deg": { "lon": 4.2781, "lat": 4.6160 },
+      "approx_area_km2": 204400,
+      "geographic_description": "Franja amplia que abarca el centro-norte de la provincia de Buenos Aires, el sur de Santa Fe y el borde de Cordoba. Incluye desvios largos hacia el oeste.",
+      "national_routes_included_expected": ["RN9", "RN11", "RN8", "RN33", "RN34", "RN19"],
+      "provincial_routes_included_expected": ["no verificadas"],
+      "primary_route_proposed": "RN9",
+      "alternative_routes_proposed": ["RN11", "RN8", "RN33 -> RN8 (desvio largo)", "RN19 -> RN34 (desvio largo oeste)"],
+      "alternatives_adequacy": "MAXIMA - tolera cortes severos, pero con alto costo de tamano",
+      "assumptions": [
+        "Se tolera incluir areas y ciudades fuera del viaje",
+        "El presupuesto de tamano permite un recorte amplio"
+      ],
+      "uncertainty_level": "MEDIA-BAJA en cobertura, ALTA en utilidad",
+      "uncertainty_reasons": [
+        "No se midio el costo real en tamano del area extra",
+        "No se sabe si el dato adicional aporta valor a la prueba"
+      ],
+      "pros": ["Maxima tolerancia a cortes de ruta", "Cubre todos los desvios largos"],
+      "cons": ["Mayor tamano y ruido", "Incluye ciudades ajenas al viaje", "Prueba mas lenta"],
+      "evidence_type": "PROPUESTA (geometria derivada de coordenadas documentadas)"
+    }
+  ],
+
+  "route_roles_clarification": {
+    "note": "IMPORTANTE: no todas las rutas de la lista de la consigna son alternativas directas SF->CABA.",
+    "RN9": "EJE PRINCIPAL del viaje",
+    "RN11": "ALTERNATIVA DIRECTA (paralela por el este, via San Pedro)",
+    "RN8": "ALTERNATIVA PARCIAL / acceso alternativo a Buenos Aires",
+    "RN33": "ALIMENTADOR / desvio largo hacia el oeste (NO es eje SF->CABA)",
+    "RN34": "EJE NORTE-SUR del oeste (NO sirve para SF->CABA)",
+    "RN19": "ALIMENTADOR desde Cordoba (NO es eje SF->CABA)"
+  },
+
+  "tags_relevant_for_auto_navigation": {
+    "priority_high_road_network": [
+      { "tag": "highway", "values": ["motorway", "motorway_link"], "reason": "Autopistas, eje principal" },
+      { "tag": "highway", "values": ["trunk", "trunk_link"], "reason": "Rutas nacionales de primer orden" },
+      { "tag": "highway", "values": ["primary", "primary_link"], "reason": "Rutas nacionales/provinciales" },
+      { "tag": "highway", "values": ["secondary", "secondary_link"], "reason": "Red de conexion y desvios" },
+      { "tag": "highway", "values": ["tertiary"], "reason": "Conectividad local" },
+      { "tag": "name/ref", "values": ["*"], "reason": "Etiquetas visibles en el mapa" },
+      { "tag": "oneway", "values": ["yes", "-1", "no"], "reason": "Sentido de circulacion" },
+      { "tag": "maxspeed", "values": ["*"], "reason": "Limites para ETA" },
+      { "tag": "bridge/tunnel", "values": ["yes"], "reason": "Pasos criticos" },
+      { "tag": "surface", "values": ["*"], "reason": "Pavimento vs tierra" }
+    ],
+    "priority_medium_pois": [
+      { "tag": "place", "values": ["city", "town", "village"], "reason": "Localidades y referencia de ruteo" },
+      { "tag": "amenity", "values": ["fuel"], "reason": "Estaciones de servicio - critico en ruta" },
+      { "tag": "amenity/healthcare", "values": ["hospital"], "reason": "Hospitales - seguridad" },
+      { "tag": "amenity", "values": ["police"], "reason": "Seguridad" },
+      { "tag": "amenity", "values": ["restaurant", "fast_food"], "reason": "Paradas" },
+      { "tag": "highway", "values": ["rest_area", "services"], "reason": "Areas de descanso" },
+      { "tag": "shop", "values": ["supermarket"], "reason": "Abastecimiento" },
+      { "tag": "tourism", "values": ["hotel", "motel"], "reason": "Pernocte" }
+    ],
+    "excluded_for_this_test": [
+      { "tag": "building", "reason": "Volumen enorme, poco valor para navegacion de ruta" },
+      { "tag": "landuse", "reason": "Ruido visual y de tamano" },
+      { "tag": "waterway (menor)", "reason": "No esencial para auto" },
+      { "tag": "boundary (administrativo)", "reason": "No necesario para prueba de corredor" },
+      { "tag": "natural=tree, mobiliario", "reason": "Ruido" },
+      { "tag": "datos de transporte publico", "reason": "Fuera de scope (viaje en auto)" }
+    ]
+  },
+
+  "risks": [
+    { "id": "R1", "risk": "PBF objetivo sin ways ni relations", "severity": "BLOQUEANTE", "status": "CONFIRMADO" },
+    { "id": "R2", "risk": "PBF objetivo con solo 84.1% de los nodos", "severity": "BLOQUEANTE", "status": "CONFIRMADO" },
+    { "id": "R3", "risk": "santa-fe.osm.pbf invalido (blob header corrupto)", "severity": "MEDIO", "status": "CONFIRMADO" },
+    { "id": "R4", "risk": "corredor.geojson vacio", "severity": "BAJO", "status": "CONFIRMADO" },
+    { "id": "R5", "risk": "No se verifico cobertura vial del backup integro", "severity": "ALTO", "status": "NO VERIFICADO" }
+  ],
+
+  "human_decisions_required": [
+    "Aceptar que el PBF objetivo es inservible y usar el backup argentina-260901.osm.pbf",
+    "Decidir si se re-descarga argentina-latest.osm.pbf (requiere red, prohibido en esta tarea)",
+    "Elegir semiancho: 20, 50 o 90 km",
+    "Elegir eje principal: RN9 o RN11",
+    "Definir prioridad: tiempo vs previsibilidad",
+    "Definir zooms y presupuesto de tamano",
+    "Validar el backup integro con osmium fileinfo -e antes de usarlo"
+  ],
+
+  "not_executed": [
+    "osmium extract",
+    "osmium tags-filter",
+    "tippecanoe",
+    "generacion de MBTiles",
+    "modificacion del PBF original",
+    "instalacion de paquetes",
+    "cambios de configuracion/servicios/firewall",
+    "git commit",
+    "operaciones de red",
+    "acceso o revelacion de secretos"
+  ]
+}

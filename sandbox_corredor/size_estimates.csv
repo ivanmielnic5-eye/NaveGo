@@ -1,0 +1,54 @@
+candidate_id,estimated_size_mb,minimum_estimate_mb,maximum_estimate_mb,basis,assumptions,uncertainty
+C1_ajustado_20km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"No hay evidencia suficiente para estimar el tamano de MBTiles. El unico dato observado es el tamano del PBF de Argentina integro (428.645.479 bytes) y la geometria del bbox (~95.500 km2 = 3.43% del area de Argentina continental). La estimacion por proporcion de area NO es valida para corredores.","Para que una estimacion fuera valida harian falta: (a) densidad real de datos OSM en el corredor, (b) set de tags exacto a filtrar, (c) zooms min/max definitivos, (d) parametros de simplificacion, (e) numero de capas. Ninguno de estos esta fijado. Ademas el PBF objetivo esta truncado y no permite medir densidad vial.","ALTA - la proporcion de area es un limite inferior muy pobre porque la densidad de datos OSM en el corredor pampeano es mucho mayor que el promedio nacional (que incluye Patagonia y alta montana casi vacias). Ademas MBTiles comprime distinto que PBF y depende fuertemente del zoom maximo. Estimar seria inventar."
+C2_medio_50km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"Idem C1. Geometria ~137.300 km2 = 4.94% del area de Argentina continental. No hay medicion de densidad de datos OSM en el corredor.","Idem C1. Se agrega una incertidumbre propia: el semiancho de 50 km fue elegido para incluir RN11, lo que incorpora mas area rural pampeana de baja densidad, pero tambien mas ciudades (Rosario, San Nicolas, Zarate) de alta densidad. El efecto neto sobre el tamano no es calculable sin datos.","ALTA - mismo motivo que C1. No se puede descomponer el aporte de area rural vs urbana sin medir."
+C3_amplio_90km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"Idem C1. Geometria ~204.400 km2 = 7.35% del area de Argentina continental.","Idem C1.","ALTA - mismo motivo que C1."
+
+# =============================================================================
+# NOTA METODOLOGICA (lineas comentadas, NO son filas de datos)
+# =============================================================================
+# Por que NO se estimo:
+#
+# 1. El PBF objetivo esta TRUNCADO (sin ways ni relations). No se puede medir
+#    la densidad real de datos viales del corredor. Cualquier numero seria
+#    inventado, lo que viola la regla "no inventar datos que no tengo".
+#
+# 2. No estan fijados los parametros que determinan el tamano del MBTiles:
+#      - set de tags a filtrar
+#      - zoom minimo y maximo
+#      - tolerancia de simplificacion
+#      - numero de capas
+#      - estrategia de drop-densest
+#    Sin ellos, el tamano puede variar en ordenes de magnitud.
+#
+# 3. La estimacion por proporcion de area es INVALIDA para corredores:
+#    la densidad de datos OSM no es uniforme. El corredor Santa Fe-CABA
+#    atraviesa la region mas poblada y mejor mapeada de Argentina, mientras
+#    que el promedio nacional incluye Patagonia y alta montana casi vacias.
+#    Usar el promedio nacional SUBESTIMA fuertemente.
+#
+# 4. MBTiles y PBF no comprimen igual. Un MBTiles vectorial con varios zooms
+#    puede pesar mas o menos que el PBF de origen segun los parametros.
+#
+# DATOS OBSERVADOS (para trazabilidad, no son estimaciones):
+#   - PBF Argentina integro (backup): 428.645.479 bytes
+#       nodes=59.348.185  ways=5.900.717  relations=88.563
+#   - PBF objetivo truncado: 257.252.921 bytes, SOLO nodos (49.912.000)
+#   - Relacion medida: 5.15 bytes/nodo (incluye overhead de blobs)
+#   - Area candidatos: C1=95.500 km2  C2=137.300 km2  C3=204.400 km2
+#   - Area Argentina continental (referencia): 2.780.400 km2
+#   - Proporcion de area: C1=3.43%  C2=4.94%  C3=7.35%
+#
+# LIMITE INFERIOR ILUSTRATIVO (NO usar como estimacion):
+#   Solo a titulo de orden de magnitud, y sabiendo que subestima:
+#     C1: 3.43% x 428.645.479 = ~14.7 MB (PBF-equivalente)
+#     C2: 4.94% x 428.645.479 = ~21.2 MB (PBF-equivalente)
+#     C3: 7.35% x 428.645.479 = ~31.5 MB (PBF-equivalente)
+#   Estos valores son el PISO teorico por area, NO el tamano esperado del
+#   MBTiles. Se incluyen solo para que un humano tenga una referencia, y
+#   NO deben usarse para decidir.
+#
+# COMO OBTENER UNA ESTIMACION REAL (etapa posterior, previa autorizacion):
+#   1. Validar el backup integro con: osmium fileinfo -e
+#   2. Extraer el corredor y MEDIR su tamano PBF real.
+#   3. Correr tippecanoe con los parametros elegidos y MEDIR el MBTiles.
+#   4. Reemplazar esta tabla con los valores medidos.
