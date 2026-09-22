@@ -7,7 +7,7 @@
   "required": ["state", "profile", "protocol", "decisions"],
   "optional": ["hypotheses", "pending", "session_spec", "spec_capsule", "glossary", "evidence", "architecture", "workflow", "incidents", "multi_ia_protocol", "framework_decision", "decision_maps", "decision_manifest", "decision_gate"],
   "sources": [
-    {"type": "state", "path": "~/.logos/context/context.json", "authority": true, "role": "singleton", "description": "Estado operativo actual del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty", "freshness"]},
+    {"type": "state", "path": "~/.logos/projects/NAVEGO/context.json", "authority": true, "role": "singleton", "description": "Estado operativo actual del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty", "freshness"]},
     {"type": "profile", "path": "~/.logos/projects/NAVEGO/profile.json", "authority": true, "role": "singleton", "description": "Identidad y mision del proyecto NAVEGO.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
     {"type": "protocol", "path": "~/.logos/core/protocol/protocols.json", "authority": true, "role": "singleton", "description": "Reglas vigentes R-01 a R-20 y semaforo de riesgo.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
     {"type": "decisions", "path": "EXPEDIENTE/01_DECISIONES.md", "authority": true, "role": "singleton", "description": "Decisiones arquitectonicas generales de LOGOS.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
