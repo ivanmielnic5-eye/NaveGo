@@ -1,3 +1,13 @@
+# HISTORICAL — NO AUTORITATIVO
+
+Este documento fue migrado a:
+  EXPEDIENTE/18_ESPEC_CICLO_SESIONES.md
+
+Contenido oficial: ver el archivo migrado.
+Este archivo se conserva solo por trazabilidad historica.
+
+---
+
 ﻿# CICLO DE SESIONES — NaveGo
 
 Actualizado: 2026-08-22
