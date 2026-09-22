@@ -4,33 +4,316 @@
   "project": "NAVEGO",
   "updated_at": "2026-09-22T12:03:27-03:00",
   "fail_closed": true,
-  "required": ["state", "profile", "protocol", "decisions"],
-  "optional": ["hypotheses", "pending", "session_spec", "spec_capsule", "glossary", "evidence", "architecture", "workflow", "incidents", "multi_ia_protocol", "framework_decision", "decision_maps", "decision_manifest", "decision_gate"],
+  "required": [
+    "state",
+    "profile",
+    "protocol",
+    "decisions"
+  ],
+  "optional": [
+    "hypotheses",
+    "pending",
+    "session_spec",
+    "spec_capsule",
+    "glossary",
+    "evidence",
+    "architecture",
+    "workflow",
+    "incidents",
+    "multi_ia_protocol",
+    "framework_decision",
+    "decision_maps",
+    "decision_manifest",
+    "decision_gate"
+  ],
   "sources": [
-    {"type": "state", "path": "~/.logos/projects/NAVEGO/context.json", "authority": true, "role": "singleton", "description": "Estado operativo actual del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty", "freshness"]},
-    {"type": "profile", "path": "~/.logos/projects/NAVEGO/profile.json", "authority": true, "role": "singleton", "description": "Identidad y mision del proyecto NAVEGO.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "protocol", "path": "~/.logos/core/protocol/protocols.json", "authority": true, "role": "singleton", "description": "Reglas vigentes R-01 a R-20 y semaforo de riesgo.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "decisions", "path": "EXPEDIENTE/01_DECISIONES.md", "authority": true, "role": "singleton", "description": "Decisiones arquitectonicas generales de LOGOS.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "decision_manifest", "path": "EXPEDIENTE/19_DECISION_MANIFEST_V3_CAPSULA.md", "authority": true, "role": "singleton", "description": "Decision cerrada del contrato MANIFEST v3 + Capsula + Gate.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "decision_gate", "path": "EXPEDIENTE/20_ESPEC_GATE_ESTADOS.md", "authority": true, "role": "singleton", "description": "Especificacion operacional de estados READY/WARNING/BLOCKED del Context Gate.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "session_spec", "path": "EXPEDIENTE/18_ESPEC_CICLO_SESIONES.md", "authority": true, "role": "singleton", "description": "Especificacion del ciclo de sesiones (migrada de SESIONES.md).", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "spec_capsule", "path": "EXPEDIENTE/17_DECISION_CAPSULA_MEMORIA.md", "authority": true, "role": "singleton", "description": "Especificacion de la Capsula de Memoria.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "hypotheses", "path": "~/.logos/hypotheses/", "authority": true, "role": "collection", "description": "Hipotesis activas y descartadas del sistema.", "generated_by": "manual", "validation_policy": ["exists", "readable"]},
-    {"type": "pending", "path": "~/.logos/PENDIENTES_NAVEGO.md", "authority": true, "role": "singleton", "description": "Pendientes operativos de NAVEGO.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "glossary", "path": "EXPEDIENTE/07_GLOSARIO.md", "authority": true, "role": "singleton", "description": "Glosario de terminos del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "evidence", "path": "EXPEDIENTE/05_EVIDENCIA/", "authority": true, "role": "collection", "description": "Evidencia operativa organizada por sesion.", "generated_by": "manual", "validation_policy": ["exists", "readable"]},
-    {"type": "architecture", "path": "EXPEDIENTE/02_ARQUITECTURA.md", "authority": true, "role": "singleton", "description": "Documento de arquitectura del proyecto.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "workflow", "path": "EXPEDIENTE/03_WORKFLOW.md", "authority": true, "role": "singleton", "description": "Workflow consolidado y auto-observacion.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "incidents", "path": "EXPEDIENTE/10_INCIDENTES.md", "authority": true, "role": "singleton", "description": "Registro de incidentes y reglas derivadas.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "multi_ia_protocol", "path": "EXPEDIENTE/09_PROTOCOLO_MULTI_IA.md", "authority": true, "role": "singleton", "description": "Protocolo de colaboracion entre multiples IA.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "framework_decision", "path": "EXPEDIENTE/14_FRAMEWORK_DECISION.md", "authority": true, "role": "singleton", "description": "Framework LOGOS de decision arquitectonica (auditado).", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "decision_maps", "path": "EXPEDIENTE/15_DECISION_MAPAS.md", "authority": true, "role": "singleton", "description": "Decision en curso sobre arquitectura de mapas.", "generated_by": "manual", "validation_policy": ["exists", "readable", "nonempty"]},
-    {"type": "historical_sessions", "path": "SESIONES.md", "authority": false, "role": "singleton", "description": "Historico: ciclo de sesiones original (migrado a EXPEDIENTE/18).", "generated_by": "manual", "validation_policy": ["exists"]},
-    {"type": "historical_state", "path": "ESTADO.md", "authority": false, "role": "singleton", "description": "Historico: estado del proyecto de agosto 2026, pendiente de migrar.", "generated_by": "manual", "validation_policy": ["exists"]},
-    {"type": "historical_sync", "path": "SYNC_BRIEF.md", "authority": false, "role": "singleton", "description": "Historico: brief de sincronizacion de agosto 2026, pendiente de migrar.", "generated_by": "manual", "validation_policy": ["exists"]}
+    {
+      "type": "state",
+      "path": "~/.logos/projects/NAVEGO/context.json",
+      "authority": true,
+      "role": "singleton",
+      "description": "Estado operativo actual del proyecto.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty",
+        "freshness"
+      ],
+      "last_human_review": "2026-09-22",
+      "reviewed_against_commit": "816e82d"
+    },
+    {
+      "type": "profile",
+      "path": "~/.logos/projects/NAVEGO/profile.json",
+      "authority": true,
+      "role": "singleton",
+      "description": "Identidad y mision del proyecto NAVEGO.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-09-22",
+      "reviewed_against_commit": "816e82d"
+    },
+    {
+      "type": "protocol",
+      "path": "~/.logos/core/protocol/protocols.json",
+      "authority": true,
+      "role": "singleton",
+      "description": "Reglas vigentes R-01 a R-20 y semaforo de riesgo.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-09-22",
+      "reviewed_against_commit": "816e82d"
+    },
+    {
+      "type": "decisions",
+      "path": "EXPEDIENTE/01_DECISIONES.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Decisiones arquitectonicas generales de LOGOS.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-09-22",
+      "reviewed_against_commit": "816e82d"
+    },
+    {
+      "type": "decision_manifest",
+      "path": "EXPEDIENTE/19_DECISION_MANIFEST_V3_CAPSULA.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Decision cerrada del contrato MANIFEST v3 + Capsula + Gate.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "decision_gate",
+      "path": "EXPEDIENTE/20_ESPEC_GATE_ESTADOS.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Especificacion operacional de estados READY/WARNING/BLOCKED del Context Gate.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "session_spec",
+      "path": "EXPEDIENTE/18_ESPEC_CICLO_SESIONES.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Especificacion del ciclo de sesiones (migrada de SESIONES.md).",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "spec_capsule",
+      "path": "EXPEDIENTE/17_DECISION_CAPSULA_MEMORIA.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Especificacion de la Capsula de Memoria.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "hypotheses",
+      "path": "~/.logos/hypotheses/",
+      "authority": true,
+      "role": "collection",
+      "description": "Hipotesis activas y descartadas del sistema.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable"
+      ]
+    },
+    {
+      "type": "pending",
+      "path": "~/.logos/PENDIENTES_NAVEGO.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Pendientes operativos de NAVEGO.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-09-22",
+      "reviewed_against_commit": "816e82d"
+    },
+    {
+      "type": "glossary",
+      "path": "EXPEDIENTE/07_GLOSARIO.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Glosario de terminos del proyecto.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "evidence",
+      "path": "EXPEDIENTE/05_EVIDENCIA/",
+      "authority": true,
+      "role": "collection",
+      "description": "Evidencia operativa organizada por sesion.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable"
+      ]
+    },
+    {
+      "type": "architecture",
+      "path": "EXPEDIENTE/02_ARQUITECTURA.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Documento de arquitectura del proyecto.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "workflow",
+      "path": "EXPEDIENTE/03_WORKFLOW.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Workflow consolidado y auto-observacion.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "incidents",
+      "path": "EXPEDIENTE/10_INCIDENTES.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Registro de incidentes y reglas derivadas.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "multi_ia_protocol",
+      "path": "EXPEDIENTE/09_PROTOCOLO_MULTI_IA.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Protocolo de colaboracion entre multiples IA.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "framework_decision",
+      "path": "EXPEDIENTE/14_FRAMEWORK_DECISION.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Framework LOGOS de decision arquitectonica (auditado).",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "decision_maps",
+      "path": "EXPEDIENTE/15_DECISION_MAPAS.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Decision en curso sobre arquitectura de mapas.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ]
+    },
+    {
+      "type": "historical_sessions",
+      "path": "SESIONES.md",
+      "authority": false,
+      "role": "singleton",
+      "description": "Historico: ciclo de sesiones original (migrado a EXPEDIENTE/18).",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists"
+      ]
+    },
+    {
+      "type": "historical_state",
+      "path": "ESTADO.md",
+      "authority": false,
+      "role": "singleton",
+      "description": "Historico: estado del proyecto de agosto 2026, pendiente de migrar.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists"
+      ]
+    },
+    {
+      "type": "historical_sync",
+      "path": "SYNC_BRIEF.md",
+      "authority": false,
+      "role": "singleton",
+      "description": "Historico: brief de sincronizacion de agosto 2026, pendiente de migrar.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists"
+      ]
+    }
   ],
   "consistency_rules": [
-    {"id": "CR-01", "description": "context.json.project debe coincidir con profile.json.id", "check": "project_identity"},
-    {"id": "CR-02", "description": "Debe existir exactamente una fuente authority:true por tipo singleton", "check": "authority_uniqueness"}
+    {
+      "id": "CR-01",
+      "description": "context.json.project debe coincidir con profile.json.id",
+      "check": "project_identity"
+    },
+    {
+      "id": "CR-02",
+      "description": "Debe existir exactamente una fuente authority:true por tipo singleton",
+      "check": "authority_uniqueness"
+    }
   ]
 }
