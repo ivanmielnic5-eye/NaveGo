@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""Context Gate. Uso: logos-gate [PROYECTO] [--json]"""
+import json, os, sys, subprocess, hashlib, datetime
+
+REPO = os.getcwd()
+MANIFEST = os.path.join(REPO, '.logos/MANIFEST.json')
+VALIDATOR = os.path.join(REPO, '.logos/bin/validate-manifest')
+
+def expand(p):
+    if p.startswith('~'):
+        return os.path.expanduser(p)
+    if not os.path.isabs(p):
+        return os.path.join(REPO, p)
+    return p
+
+args = [a for a in sys.argv[1:] if not a.startswith('--')]
+flags = [a for a in sys.argv[1:] if a.startswith('--')]
+JSON_OUT = '--json' in flags
+PROYECTO_CLI = args[0] if args else None
+
+# 0. Precondicion
+if not os.path.exists(MANIFEST):
+    result = {
+        "status": "BLOCKED",
+        "project": PROYECTO_CLI or "(desconocido)",
+        "checks": {"manifest": "MISSING"},
+        "reasons": ["manifest_missing"],
+        "warnings": [],
+        "evaluated_at": datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+    }
+    if JSON_OUT:
+        print(json.dumps(result, indent=2))
+    else:
+        print("=== LOGOS GATE ===")
+        print(f"Manifest:         MISSING")
+        print()
+        print("STATUS: BLOCKED")
+        print("  Razon: MANIFEST no existe.")
+    sys.exit(2)
+
+with open(MANIFEST) as f:
+    m = json.load(f)
+
+PROYECTO = PROYECTO_CLI or m.get('project', '?')
+sources = {s['type']: s for s in m['sources']}
+
+checks = {}
+reasons = []
+warnings = []
+
+# 1. Validacion estructural
+r = subprocess.run([VALIDATOR, MANIFEST], capture_output=True, text=True)
+if r.returncode == 2:
+    checks['manifest'] = 'BLOCKED'
+    reasons.append('validator_blocked')
+elif r.returncode == 1:
+    checks['manifest'] = 'WARNING'
+    warnings.append('validator_warning')
+else:
+    checks['manifest'] = 'OK'
+
+# 2. Chequeos de coherencia
+# CR-01: project_identity
+if checks['manifest'] == 'BLOCKED':
+    checks['project_identity'] = 'SKIP'
+else:
+    try:
+        with open(expand(sources['state']['path'])) as f:
+            state = json.load(f)
+        with open(expand(sources['profile']['path'])) as f:
+            profile = json.load(f)
+        ctx_project = state.get('project', {}).get('id')
+        prof_id = profile.get('id')
+        if ctx_project == prof_id:
+            checks['project_identity'] = 'OK'
+        else:
+            checks['project_identity'] = 'BLOCKED'
+            reasons.append(f'conflict:project_identity (state:{ctx_project} != profile:{prof_id})')
+    except Exception as e:
+        checks['project_identity'] = 'BLOCKED'
+        reasons.append(f'project_identity_error:{e}')
+
+# 3. Frescura (informativo)
+if checks['manifest'] != 'BLOCKED':
+    try:
+        state_path = expand(sources['state']['path'])
+        mtime = datetime.datetime.fromtimestamp(os.path.getmtime(state_path))
+        age_days = (datetime.datetime.now() - mtime).days
+        if age_days > 7:
+            checks['freshness'] = f'WARNING (state {age_days} dias)'
+            warnings.append(f'stale:state ({age_days} dias)')
+        else:
+            checks['freshness'] = 'OK'
+    except Exception as e:
+        checks['freshness'] = 'UNKNOWN'
+
+# 4. Status final
+if any(v == 'BLOCKED' for v in checks.values()) or reasons:
+    status = 'BLOCKED'
+    exit_code = 2
+elif warnings:
+    status = 'WARNING'
+    exit_code = 1
+else:
+    status = 'READY'
+    exit_code = 0
+
+# context_revision (opcional, informativo)
+ctx_rev = None
+try:
+    hashes = []
+    for t in ['state','profile','protocol','decisions']:
+        with open(expand(sources[t]['path']), 'rb') as f:
+            hashes.append(hashlib.sha256(f.read()).hexdigest())
+    with open(MANIFEST, 'rb') as f:
+        hashes.append(hashlib.sha256(f.read()).hexdigest())
+    ctx_rev = f"{hashlib.sha256(''.join(hashes).encode()).hexdigest()[:8]} @ {datetime.date.today().isoformat()}"
+except Exception:
+    pass
+
+result = {
+    "status": status,
+    "project": PROYECTO,
+    "checks": checks,
+    "reasons": reasons,
+    "warnings": warnings,
+    "context_revision": ctx_rev,
+    "evaluated_at": datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+}
+
+if JSON_OUT:
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+else:
+    print(f"=== LOGOS GATE — {PROYECTO} ===")
+    labels = {
+        'manifest': 'Manifest',
+        'required': 'Required',
+        'authority': 'Authority',
+        'project_identity': 'Project identity',
+        'freshness': 'Freshness'
+    }
+    for k, label in labels.items():
+        v = checks.get(k, '-')
+        print(f"{label:<18}{v}")
+    print()
+    print(f"STATUS: {status}")
+    if reasons:
+        for rsn in reasons:
+            print(f"  Razon: {rsn}")
+    if warnings:
+        for w in warnings:
+            print(f"  Aviso: {w}")
+
+sys.exit(exit_code)
