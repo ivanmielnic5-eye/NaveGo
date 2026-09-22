@@ -1,0 +1,47 @@
+{
+  "bbox": {
+    "min_lon": -61.5439126,
+    "min_lat": -34.7892201,
+    "max_lon": -57.8418874,
+    "max_lat": -31.4390329
+  },
+  "params": {
+    "semiwidth_km": 50.0,
+    "margin_north_km": 20.0,
+    "margin_south_km": 20.0,
+    "km_per_deg_lat": 111.32
+  },
+  "anchors": {
+    "santa_fe": {
+      "lon": -60.7019561,
+      "lat": -31.6186951,
+      "osm_node": 198423933,
+      "source": "place=city, population=404910"
+    },
+    "caba": {
+      "lon": -58.3887904,
+      "lat": -34.6095579,
+      "osm_node": 81590481,
+      "source": "place=city, official_name=CABA"
+    }
+  },
+  "axis": {
+    "lon_west": -60.997,
+    "lon_east": -58.3888,
+    "lat_max": -31.6186951,
+    "lat_min": -34.6095579
+  },
+  "derived": {
+    "semiwidth_deg_lon": 0.5469126,
+    "margin_north_deg_lat": 0.1796622,
+    "margin_south_deg_lat": 0.1796622,
+    "lat_span_deg": 3.350187,
+    "lon_span_deg": 3.702025,
+    "lat_mid": -33.114126,
+    "approx_area_km2": 128731.0
+  },
+  "verification": {
+    "santa_fe_inside": true,
+    "caba_inside": true
+  }
+}

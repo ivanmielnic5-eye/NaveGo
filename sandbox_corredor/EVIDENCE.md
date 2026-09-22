@@ -379,3 +379,221 @@ del mismo snapshot, cuya validez para el corredor **no fue verificada** en detal
 
 **La IA no decide.** Se proponen candidatos, hipótesis y comandos; la selección
 y la decisión sobre el archivo a usar corresponden al Director Ivan.
+
+---
+---
+
+# MISIÓN A — CORREDOR SANTA FE → CABA (2026-09-22)
+
+> Esta sección se **anexa** al registro anterior. La sección previa documenta
+> la misión que descubrió que `argentina-latest.osm.pbf` estaba truncado.
+> Aquí se documenta la misión que preparó el corredor usando el backup.
+
+**Fuente autorizada:** `~/cockpit/backup_mapa/argentina-260901.osm.pbf`
+**Modo:** solo lectura. Sin extract, sin tags-filter con salida, sin tippecanoe.
+**Escritura:** exclusivamente en `~/navego_recuperado/sandbox_corredor/`.
+
+---
+
+## M1. Comandos de lectura ejecutados
+
+### M1.1 Verificación de identidad e integridad
+
+```bash
+# Tamaño, inodo, timestamps (sin modificar)
+stat ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+
+# Hash SHA256 completo (428 MB)
+sha256sum ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+# -> d43f9af1a293f822fb23da570d7cb44d022b1943e73c79fcd6b87b190b5c504f
+
+# Header: bbox declarado, generator, timestamps
+osmium fileinfo ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+
+# Escaneo completo: nodos, ways, relations, bbox de datos
+osmium fileinfo -e ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+```
+
+### M1.2 Inspección de contenido
+
+```bash
+# Ways con ref RN9 (lectura a stdout, sin archivo)
+osmium cat --object-type=way -f opl ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+
+# Nodos concretos (para validar el lector propio)
+osmium cat --object-type=node -f opl ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+
+# Nodos con place=city (anclas Santa Fe y CABA)
+osmium cat --object-type=node -f opl ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+```
+
+### M1.3 Validación de expresiones de filtro (SIN escribir salida)
+
+```bash
+# tags-count es solo lectura: valida la sintaxis de las expresiones
+osmium tags-count --expressions=corridor_tags.txt \
+  --min-count=1 ~/cockpit/backup_mapa/argentina-260901.osm.pbf
+# -> exit 0, stderr vacío. 5282 líneas de conteo. Sintaxis OK.
+```
+
+### M1.4 Análisis propio (Python, solo lectura)
+
+```bash
+python3 analyze_highways.py       # conteo de highway=* por tipo, RN9/RN11/RN8
+python3 analyze_rn9_geometry.py   # geometría de RN9/RN11/RN8
+python3 corridor_axis.py          # eje real AP01+RN9 Santa Fe->CABA
+python3 bbox_final.py             # cálculo del bbox definitivo
+```
+
+### M1.5 Referencias locales medidas
+
+```bash
+stat ~/navego_recuperado/assets/maptest/santa_fe.mbtiles
+# -> 121,0 MB
+
+python3 -c "sqlite3 ..."   # metadatos, tiles y bytes por zoom del mbtiles
+
+stat ~/navego_recuperado/test_maplibre/grandes/tmp_osm/santa_fe.geojson
+# -> 330.297.963 bytes = 315,0 MB
+```
+
+---
+
+## M2. Hallazgos
+
+### M2.1 El backup es válido y utilizable
+
+| Objeto | Cantidad |
+|---|---|
+| Nodos | 59.348.185 |
+| **Ways** | **5.900.717** |
+| **Relations** | **88.563** |
+
+Contraste con el truncado: 49.912.000 nodos, **0 ways, 0 relations**.
+El backup tiene estructura completa → sirve para cartografía vial.
+
+### M2.2 Cobertura confirmada
+
+Ambos bounding boxes (header y datos) cubren el rango requerido
+`lon ∈ [−61,5, −58,0]`, `lat ∈ [−34,9, −31,3]`.
+
+### M2.3 Rutas presentes
+
+| Ruta | Ways | Bbox medido |
+|---|---:|---|
+| RN9 | 1.952 | `[-61.4894, -34.5446, -58.4953, -32.8295]` |
+| RN11 | 1.059 | `[-60.9817, -32.8734, -60.3117, -30.0137]` |
+| RN8 | 744 | `[-64.0000, -34.4712, -58.6798, -33.1780]` |
+
+Las tres están presentes con `highway=motorway`/`trunk`.
+
+### M2.4 El tramo Santa Fe → Rosario NO es `ref=RN9`
+
+Es **`ref=AP01`** (Autopista Brigadier General Estanislao López).
+Un filtro por `ref=RN9` perdería ese tramo. **Hallazgo que cambia el diseño
+del filtrado**: el corredor debe definirse por bbox, no por ref.
+
+### M2.5 `ref=RN1V09` es ambiguo
+
+Aparece en dos regiones distintas del país (Córdoba ≈ −64,18/−31,42 y
+Santa Fe/Rosario ≈ −61,59/−32,78). No es un identificador unívoco.
+
+### M2.6 Medición de densidad en el corredor
+
+| Métrica | Valor |
+|---|---|
+| Nodos en el bbox | **7.718.144** (13,00 % del total nacional) |
+| Highways en el bbox | **385.728** |
+
+### M2.7 Referencia real de conversión GeoJSON → MBTiles
+
+```
+santa_fe.geojson  315,0 MB  ->  santa_fe.mbtiles  121,0 MB
+ratio = 0,384
+```
+
+Comando exacto recuperado de los metadatos del MBTiles:
+
+```
+tippecanoe -o santa_fe.mbtiles -Z8 -z14 --drop-densest-as-needed \
+           --extend-zooms-if-still-dropping --force santa_fe.geojson
+```
+
+### M2.8 Verificación cruzada del bbox
+
+El `bounds` de la referencia es `[-65.5186, -34.7893, -58.2532, -22.1491]`.
+Su `min_lat = −34,7893` coincide con nuestro `min_lat` calculado
+`−34,7892`. Dos cálculos independientes convergen → método validado.
+
+---
+
+## M3. ERROR PROPIO DETECTADO Y CORREGIDO (auditoría)
+
+**Qué pasó:** se escribió un lector PBF propio (`lib_pbf.py`) porque no hay
+`pyosmium` ni `protobuf` instalados y no se permite instalar paquetes.
+
+**Síntoma:** el lector reportaba el conteo total de nodos correcto
+(59.348.185) pero **IDs y coordenadas incorrectos**. P.ej. devolvía el
+primer nodo como `n6` cuando `osmium` devuelve `n3`.
+
+**Causa raíz:** en `DenseNodes`, los campos `id` (1), `lat` (8) y `lon` (9)
+son `sint64` **delta-encoded con zigzag**, NO varints planos.
+El conteo no se veía afectado (por eso pasaba desapercibido), pero **toda
+la geometría estaba mal**.
+
+**Detección:** comparación directa contra `osmium cat --object-type=node`.
+El desajuste `n6` vs `n3` fue la señal.
+
+**Corrección:** aplicar zigzag `(x >> 1) ^ -(x & 1)` antes de acumular.
+
+**Validación post-corrección:**
+
+```
+lector : ids [3, 204806, 29375382, 29375391]
+osmium : n3, n204806, n29375382
+coords : n3 x-58.4899904 y-34.8140938  (idénticas a osmium)
+```
+
+**Impacto:** todos los números del informe provienen del lector ya
+corregido. Se documenta por la regla del proyecto
+**"evidencia antes que certeza"**.
+
+---
+
+## M4. Contradicciones reportadas (no resueltas por la IA)
+
+| # | Contradicción | Estado |
+|---|---|---|
+| C-1 | Envelope del enunciado (`min_lat<=-34.9`, `max_lat>=-31.3`) vs márgenes de 20 km decididos | **Escalado al Director** — `CORRIDOR_FINAL.md` §8 |
+| C-2 | `ref=RN1V09` en dos lugares distintos | Reportado; se descarta como filtro |
+| C-3 | Tramo SF→Rosario es `AP01`, no `RN9` | Reportado; cambia el diseño del filtro |
+| C-4 | Bbox de datos (+7,25 lat) ≠ bbox de header (−21,73 lat) | Reportado; no afecta el recorte |
+
+---
+
+## M5. Restricciones respetadas
+
+- No se ejecutó `osmium extract`
+- No se ejecutó `osmium tags-filter` con salida a archivo
+- No se ejecutó `tippecanoe`
+- No se generó ningún MBTiles
+- No se modificó el PBF original (hash idéntico antes y después)
+- No se instalaron paquetes
+- No se descargó de internet
+- No se tocó configuración, servicios, firewall ni systemd
+- No se hizo `git commit`
+- No se escribió fuera de `sandbox_corredor/`
+- No se accedió a secretos, API keys ni credenciales
+
+---
+
+## M6. Conclusión de la evidencia (misión A)
+
+El backup `argentina-260901.osm.pbf` está **íntegro y verificado**. Cubre el
+corredor Santa Fe → CABA. Se midió la geometría real del eje, se calculó el
+bbox, se validaron los comandos y se midió una referencia real de conversión
+a MBTiles.
+
+**Queda una sola decisión humana** (envelope de latitud, §8 del informe).
+
+**La IA no ejecuta.** El paquete queda listo para autorización.

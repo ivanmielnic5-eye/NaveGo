@@ -1,0 +1,316 @@
+{
+  "n_ways": 5900717,
+  "n_relations": 88563,
+  "highway_counts": {
+    "residential": 576148,
+    "service": 265244,
+    "unclassified": 174245,
+    "footway": 124900,
+    "track": 122199,
+    "tertiary": 72889,
+    "secondary": 64075,
+    "living_street": 45354,
+    "path": 36142,
+    "primary": 31913,
+    "trunk": 21598,
+    "construction": 7747,
+    "steps": 5780,
+    "pedestrian": 5766,
+    "trunk_link": 5609,
+    "motorway": 5210,
+    "motorway_link": 4938,
+    "primary_link": 3473,
+    "proposed": 3380,
+    "cycleway": 3107,
+    "secondary_link": 2900,
+    "raceway": 1462,
+    "tertiary_link": 1373,
+    "corridor": 915,
+    "platform": 658,
+    "services": 268,
+    "bridleway": 266,
+    "road": 126,
+    "busway": 99,
+    "rest_area": 80,
+    "ladder": 46,
+    "escape": 20,
+    "traffic_island": 19,
+    "bus_stop": 11,
+    "disused": 10,
+    "elevator": 9,
+    "dummy": 5,
+    "crossing": 3,
+    "bus_bay": 2,
+    "emergency_bay": 2,
+    "razed": 1,
+    "Charata": 1,
+    "stairs": 1,
+    "pathriver_passage": 1,
+    "passing_place": 1
+  },
+  "n_highway_total": 1587996,
+  "n_nodes_corridor": 0,
+  "rn9_count": 1952,
+  "rn11_count": 1059,
+  "rn8_count": 744,
+  "rn9_sample": [
+    {
+      "id": 10585611,
+      "tags": {
+        "alt_name": "Ruta Nacional 9",
+        "highway": "motorway",
+        "lanes": "2",
+        "maxheight": "4.5",
+        "maxspeed": "120",
+        "name": "Autopista Juan José Valle",
+        "name:etymology:wikidata": "Q3393964",
+        "official_name": "Autopista Teniente General Juan José Valle",
+        "old_name": "Autopista Teniente General Pedro Aramburu",
+        "oneway": "yes",
+        "parking:left": "no",
+        "parking:left:restriction": "no_stopping",
+        "parking:right": "no",
+        "parking:right:restriction": "no_parking",
+        "ref": "RN9",
+        "short_name": "Juan José Valle",
+        "source:name": "http://infoleg.mecon.gov.ar/infolegInternet/anexos/225000-229999/225220/norma.htm",
+        "source:ref": "http://forum.openstreetmap.org/viewtopic.php?id=31749",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 18943970,
+      "tags": {
+        "alt_name": "Autopista Panamericana",
+        "hgv:lanes": "no|no|no|no|yes|yes",
+        "highway": "motorway",
+        "lanes": "6",
+        "lit": "yes",
+        "maxheight": "4.10",
+        "maxspeed": "130",
+        "maxspeed:lanes": "130|120|120|110|100|90",
+        "minspeed": "60",
+        "name": "Acceso Norte",
+        "official_name": "Autopista Ingeniero Pascual Palazzo",
+        "oneway": "yes",
+        "ref": "RN9",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 23109559,
+      "tags": {
+        "highway": "primary",
+        "lanes": "2",
+        "maxspeed": "60",
+        "name": "Avenida Juan B. Justo",
+        "old_ref": "RN9",
+        "oneway": "yes",
+        "ref": "RN9",
+        "reg": "RN9",
+        "reg_ref": "RN1V09",
+        "surface": "paved"
+      }
+    },
+    {
+      "id": 23295824,
+      "tags": {
+        "bicycle": "no",
+        "bridge": "viaduct",
+        "change:lanes": "yes|yes",
+        "foot": "no",
+        "highway": "motorway",
+        "horse": "no",
+        "lanes": "2",
+        "layer": "1",
+        "loc_ref": "AU9",
+        "maxspeed": "80",
+        "motor_vehicle": "yes",
+        "motorroad": "yes",
+        "name": "Autopista Córdoba - Villa María",
+        "oneway": "yes",
+        "overtaking": "forward",
+        "ref": "RN9",
+        "reg_name": "Autopista Córdoba - Rosario",
+        "shoulder:both": "no",
+        "source:ref": "http://forum.openstreetmap.org/viewtopic.php?id=31749",
+        "surface": "paved",
+        "width": "7.3"
+      }
+    },
+    {
+      "id": 23694496,
+      "tags": {
+        "highway": "trunk",
+        "name": "Ruta Nacional 9",
+        "oneway": "yes",
+        "ref": "RN9",
+        "surface": "paved"
+      }
+    }
+  ],
+  "rn11_sample": [
+    {
+      "id": 23110199,
+      "tags": {
+        "alt_name": "Ruta Nacional 11 Juan de Garay",
+        "bicycle": "use_sidepath",
+        "hgv": "discouraged",
+        "highway": "primary",
+        "lanes": "2",
+        "name": "Avenida Perón",
+        "network": "AR:national",
+        "ref": "RN11",
+        "short_name": "Perón",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 23110405,
+      "tags": {
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Ruta Nacional 11 Juan de Garay",
+        "network": "AR:national",
+        "oneway": "no",
+        "ref": "RN11",
+        "surface": "paved"
+      }
+    },
+    {
+      "id": 23697668,
+      "tags": {
+        "highway": "trunk",
+        "name": "Ruta Nacional 11 Juan de Garay",
+        "network": "AR:national",
+        "oneway": "yes",
+        "ref": "RN11",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 23697771,
+      "tags": {
+        "highway": "trunk",
+        "name": "Ruta Nacional 11 Juan de Garay",
+        "network": "AR:national",
+        "ref": "RN11",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 36334518,
+      "tags": {
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Avenida de la Democracia",
+        "network": "AR:national",
+        "oneway": "yes",
+        "ref": "RN11",
+        "surface": "asphalt"
+      }
+    }
+  ],
+  "rn8_sample": [
+    {
+      "id": 23032020,
+      "tags": {
+        "highway": "motorway",
+        "lanes": "3",
+        "maxspeed": "130",
+        "name": "Acceso Norte Ramal Pilar",
+        "oneway": "yes",
+        "ref": "RN8",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 23108878,
+      "tags": {
+        "embankment": "yes",
+        "highway": "motorway",
+        "lanes": "3",
+        "maxspeed": "130",
+        "name": "Acceso Norte Ramal Pilar",
+        "oneway": "yes",
+        "ref": "RN8",
+        "surface": "asphalt"
+      }
+    },
+    {
+      "id": 23167133,
+      "tags": {
+        "highway": "motorway",
+        "lanes": "3",
+        "name": "Acceso Norte Ramal Pilar",
+        "oneway": "yes",
+        "ref": "RN8",
+        "surface": "paved"
+      }
+    },
+    {
+      "id": 23167136,
+      "tags": {
+        "highway": "motorway",
+        "lanes": "3",
+        "name": "Acceso Norte Ramal Pilar",
+        "oneway": "yes",
+        "ref": "RN8",
+        "surface": "paved"
+      }
+    },
+    {
+      "id": 28375450,
+      "tags": {
+        "highway": "motorway",
+        "name": "Ruta Nacional 8",
+        "oneway": "yes",
+        "ref": "RN8",
+        "surface": "paved"
+      }
+    }
+  ],
+  "top_refs": {
+    "RN40": 3167,
+    "RN9": 1952,
+    "RN3": 1773,
+    "RP1": 1761,
+    "RP11": 1692,
+    "RN12": 1509,
+    "RP7": 1439,
+    "RP2": 1435,
+    "RP4": 1337,
+    "RP6": 1284,
+    "RP14": 1209,
+    "RN7": 1165,
+    "RP5": 1117,
+    "RN14": 1097,
+    "RN11": 1059,
+    "RN38": 952,
+    "RP13": 879,
+    "RN34": 867,
+    "RP23": 814,
+    "RP10": 809,
+    "RP20": 773,
+    "RP8": 772,
+    "RN1V09": 765,
+    "RN8": 743,
+    "RP21": 712,
+    "RP24": 691,
+    "RN22": 684,
+    "RP3": 678,
+    "RP9": 666,
+    "RP12": 652,
+    "RP15": 643,
+    "RP17": 603,
+    "RN33": 588,
+    "RN19": 581,
+    "RP27": 576,
+    "RP36": 506,
+    "RN36": 502,
+    "RP46": 495,
+    "RP60": 468,
+    "RP28": 463
+  },
+  "elapsed_s": 23.7
+}

@@ -1,0 +1,43 @@
+# --- RED VIAL (todos los tipos, necesarios para render y ruteo) ---
+w/highway
+# --- JERARQUIA DE RUTAS (para etiquetas tipo "RN9") ---
+w/ref
+r/route=road
+r/type=route
+# --- LUGARES Y POBLADOS ---
+n/place
+n/place=city
+n/place=town
+n/place=village
+n/place=hamlet
+# --- SERVICIOS PARA VIAJE ---
+n/amenity=fuel
+n/amenity=hospital
+n/amenity=clinic
+n/amenity=pharmacy
+n/amenity=police
+n/amenity=restaurant
+n/amenity=cafe
+n/amenity=fast_food
+n/amenity=toilets
+n/amenity=parking
+n/amenity=rest_area
+# --- ALOJAMIENTO ---
+n/tourism=hotel
+n/tourism=motel
+n/tourism=camp_site
+# --- TRANSPORTE ---
+n/highway=bus_stop
+n/railway=station
+# --- LIMITES ADMINISTRATIVOS ---
+r/boundary=administrative
+# --- AGUA ---
+w/waterway=river
+w/waterway=stream
+w/waterway=canal
+w/natural=water
+# --- PEAJES Y BARRERAS ---
+n/barrier=toll_booth
+w/barrier=toll_booth
+n/highway=motorway_junction
+n/highway=traffic_signals

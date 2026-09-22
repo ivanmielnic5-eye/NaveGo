@@ -1,54 +1,36 @@
-candidate_id,estimated_size_mb,minimum_estimate_mb,maximum_estimate_mb,basis,assumptions,uncertainty
-C1_ajustado_20km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"No hay evidencia suficiente para estimar el tamano de MBTiles. El unico dato observado es el tamano del PBF de Argentina integro (428.645.479 bytes) y la geometria del bbox (~95.500 km2 = 3.43% del area de Argentina continental). La estimacion por proporcion de area NO es valida para corredores.","Para que una estimacion fuera valida harian falta: (a) densidad real de datos OSM en el corredor, (b) set de tags exacto a filtrar, (c) zooms min/max definitivos, (d) parametros de simplificacion, (e) numero de capas. Ninguno de estos esta fijado. Ademas el PBF objetivo esta truncado y no permite medir densidad vial.","ALTA - la proporcion de area es un limite inferior muy pobre porque la densidad de datos OSM en el corredor pampeano es mucho mayor que el promedio nacional (que incluye Patagonia y alta montana casi vacias). Ademas MBTiles comprime distinto que PBF y depende fuertemente del zoom maximo. Estimar seria inventar."
-C2_medio_50km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"Idem C1. Geometria ~137.300 km2 = 4.94% del area de Argentina continental. No hay medicion de densidad de datos OSM en el corredor.","Idem C1. Se agrega una incertidumbre propia: el semiancho de 50 km fue elegido para incluir RN11, lo que incorpora mas area rural pampeana de baja densidad, pero tambien mas ciudades (Rosario, San Nicolas, Zarate) de alta densidad. El efecto neto sobre el tamano no es calculable sin datos.","ALTA - mismo motivo que C1. No se puede descomponer el aporte de area rural vs urbana sin medir."
-C3_amplio_90km,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,UNABLE_TO_ESTIMATE_RELIABLY,"Idem C1. Geometria ~204.400 km2 = 7.35% del area de Argentina continental.","Idem C1.","ALTA - mismo motivo que C1."
-
+stage,artifact,estimate_mb,min_mb,max_mb,basis,evidence,uncertainty
+0_backup_verificado,argentina-260901.osm.pbf (fuente),428.6,428.6,428.6,"OBSERVADO: stat + sha256sum","size=428645479 bytes, sha256=d43f9af1...b5c504f verificado OK","NULA - dato duro"
+1_extract,corredor_sf_caba.osm.pbf,70,53,90,"EXTRAPOLACION medida: 13.00% de los nodos del pais caen en el bbox","nodos_en_bbox=7718144 de 59348185 (13.00% medido). PBF=428.6MB. Piso por nodos=55.7MB. Ponderado nodos/ways=69.3MB.","MEDIA - el corredor es la zona MAS densa del pais; los ways pesan mas por objeto que los nodos. Se adopta 70MB como punto medio y 53-90 como rango."
+1b_extract_simple,corredor_sf_caba_simple.osm.pbf,45,35,60,"EXTRAPOLACION desde paso 1 con estrategia 'simple'","La estrategia simple NO arrastra nodos fuera del bbox. Reduccion tipica 30-40% en corredores borde-densos.","ALTA - no medido; depende de cuantos nodos compartidos queden fuera."
+2_filtered,corredor_sf_caba_filtrado.osm.pbf,25,15,40,"INFERENCIA desde paso 1 aplicando el set de tags","El extract completo trae buildings/landuse/natural/power/addr:*. En el PBF nacional: highway=1774836 de 5900717 ways (30.1%). building NO esta en el filtro.","MEDIA-ALTA - la reduccion real depende de cuanta masa de datos no-vial haya en el corredor (Rosario y AMBA tienen muchisimos buildings)."
+3_geojson,corredor_sf_caba.geojson,180,120,300,"INFERENCIA: factor PBF->GeoJSON + referencia santa_fe","REFERENCIA MEDIDA: santa_fe.geojson=315.0MB. El GeoJSON es texto sin comprimir; factor tipico PBF->GeoJSON 6-10x sobre el filtrado.","ALTA - el factor texto/comprimido varia con la densidad de tags. geojsonseq evita el pico de memoria pero no el tamano."
+4_mbtiles,corredor_sf_caba.mbtiles,60,40,110,"EXTRAPOLACION desde referencia REAL santa_fe.mbtiles","REFERENCIA MEDIDA: santa_fe.mbtiles=121.0MB (z8-14) desde santa_fe.geojson=315.0MB. Ratio observado mbtiles/geojson=0.384. Por area el corredor es 12.9% de la referencia, pero MUCHO mas denso por km2 en Rosario/AMBA.","ALTA - es el paso con mas variables libres: tags finales, zooms, simplificacion, drop-densest."
+REF_santa_fe_geojson,santa_fe.geojson (referencia),315.0,315.0,315.0,"OBSERVADO: stat","size=330297963 bytes. 1149012 features (500987 Point, 496578 LineString, 151447 MultiPolygon). bbox=[-65.5186,-34.7893,-58.2532,-22.1491]","NULA - dato duro"
+REF_santa_fe_mbtiles,santa_fe.mbtiles (referencia),121.0,121.0,121.0,"OBSERVADO: stat + sqlite","size=121.0MB (tiles=107832822 bytes). z8-14. tippecanoe v2.79.0 -Z8 -z14 --drop-densest-as-needed --extend-zooms-if-still-dropping","NULA - dato duro"
 # =============================================================================
-# NOTA METODOLOGICA (lineas comentadas, NO son filas de datos)
+# NOTA METODOLOGICA
 # =============================================================================
-# Por que NO se estimo:
+# DIFERENCIA CON LA MISION ANTERIOR:
+#   La mision previa dejo TODO como UNABLE_TO_ESTIMATE_RELIABLY porque el PBF
+#   disponible estaba TRUNCADO (0 ways) y no permitia medir densidad. En esta
+#   mision el backup fue VALIDADO y se pudo MEDIR directamente:
+#     - nodos dentro del bbox: 7.718.144 (13.00% del total nacional)
+#     - highways dentro del bbox: 385.728
+#     - referencia real santa_fe: 315.0 MB geojson -> 121.0 MB mbtiles
+#   Con eso, las estimaciones pasan de imposibles a EXTRAPOLADAS con base.
 #
-# 1. El PBF objetivo esta TRUNCADO (sin ways ni relations). No se puede medir
-#    la densidad real de datos viales del corredor. Cualquier numero seria
-#    inventado, lo que viola la regla "no inventar datos que no tengo".
+# JERARQUIA DE EVIDENCIA (de mas fuerte a mas debil):
+#   1. OBSERVADO   - medido en esta mision (hash, conteos, tamanos de referencia)
+#   2. EXTRAPOLADO - derivado de un dato observado con un factor explicito
+#   3. INFERIDO    - derivado de conocimiento general, sin medicion local
 #
-# 2. No estan fijados los parametros que determinan el tamano del MBTiles:
-#      - set de tags a filtrar
-#      - zoom minimo y maximo
-#      - tolerancia de simplificacion
-#      - numero de capas
-#      - estrategia de drop-densest
-#    Sin ellos, el tamano puede variar en ordenes de magnitud.
+# EL PASO 4 (MBTiles) SIGUE SIENDO EL MAS INCIERTO. Su tamano depende de
+# decisiones que el Director todavia no tomo:
+#   - set final de tags
+#   - zoom maximo (z14 vs z15 vs z16)
+#   - simplificacion / drop-densest
+#   - una capa vs varias capas
+# El rango 40-110 MB refleja esa incertidumbre. NO es un dato.
 #
-# 3. La estimacion por proporcion de area es INVALIDA para corredores:
-#    la densidad de datos OSM no es uniforme. El corredor Santa Fe-CABA
-#    atraviesa la region mas poblada y mejor mapeada de Argentina, mientras
-#    que el promedio nacional incluye Patagonia y alta montana casi vacias.
-#    Usar el promedio nacional SUBESTIMA fuertemente.
-#
-# 4. MBTiles y PBF no comprimen igual. Un MBTiles vectorial con varios zooms
-#    puede pesar mas o menos que el PBF de origen segun los parametros.
-#
-# DATOS OBSERVADOS (para trazabilidad, no son estimaciones):
-#   - PBF Argentina integro (backup): 428.645.479 bytes
-#       nodes=59.348.185  ways=5.900.717  relations=88.563
-#   - PBF objetivo truncado: 257.252.921 bytes, SOLO nodos (49.912.000)
-#   - Relacion medida: 5.15 bytes/nodo (incluye overhead de blobs)
-#   - Area candidatos: C1=95.500 km2  C2=137.300 km2  C3=204.400 km2
-#   - Area Argentina continental (referencia): 2.780.400 km2
-#   - Proporcion de area: C1=3.43%  C2=4.94%  C3=7.35%
-#
-# LIMITE INFERIOR ILUSTRATIVO (NO usar como estimacion):
-#   Solo a titulo de orden de magnitud, y sabiendo que subestima:
-#     C1: 3.43% x 428.645.479 = ~14.7 MB (PBF-equivalente)
-#     C2: 4.94% x 428.645.479 = ~21.2 MB (PBF-equivalente)
-#     C3: 7.35% x 428.645.479 = ~31.5 MB (PBF-equivalente)
-#   Estos valores son el PISO teorico por area, NO el tamano esperado del
-#   MBTiles. Se incluyen solo para que un humano tenga una referencia, y
-#   NO deben usarse para decidir.
-#
-# COMO OBTENER UNA ESTIMACION REAL (etapa posterior, previa autorizacion):
-#   1. Validar el backup integro con: osmium fileinfo -e
-#   2. Extraer el corredor y MEDIR su tamano PBF real.
-#   3. Correr tippecanoe con los parametros elegidos y MEDIR el MBTiles.
-#   4. Reemplazar esta tabla con los valores medidos.
+# COMO CONVERTIR ESTO EN DATO DURO (mision B):
+#   Ejecutar el paso, medir con 'stat', reemplazar la fila.

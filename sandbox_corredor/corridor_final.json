@@ -1,0 +1,197 @@
+{
+  "task_id": "CORREDOR-SF-CABA-MISION-A",
+  "generated_at": "2026-09-22",
+  "mission": "A - preparacion (NO ejecucion)",
+  "source": {
+    "path": "/home/ivan/cockpit/backup_mapa/argentina-260901.osm.pbf",
+    "sha256_expected": "d43f9af1a293f822fb23da570d7cb44d022b1943e73c79fcd6b87b190b5c504f",
+    "sha256_observed": "d43f9af1a293f822fb23da570d7cb44d022b1943e73c79fcd6b87b190b5c504f",
+    "hash_match": true,
+    "size_bytes": 428645479,
+    "size_mb_dec": 428.6,
+    "size_mib": 408.8,
+    "header_bbox": [-73.614525, -55.682956, -53.63534, -21.725753],
+    "data_bbox": [-79.3652783, -61.1276558, -41.4427772, 7.2535178],
+    "generator": "osmium/1.16.0",
+    "timestamp": "2026-09-01T20:20:50Z",
+    "replication_sequence": 4900,
+    "replication_base_url": "https://download.geofabrik.de/south-america/argentina-updates",
+    "n_nodes": 59348185,
+    "n_ways": 5900717,
+    "n_relations": 88563,
+    "has_ways": true,
+    "has_relations": true,
+    "verified_against": "osmium fileinfo -e",
+    "reader_validation": "lector Python propio reproduce exactamente nodos/ways/relations y coordenadas de osmium"
+  },
+  "rejected_source": {
+    "path": "/home/ivan/cockpit/argentina-latest.osm.pbf",
+    "sha256": "0a979a3da11d64ab871b177ca322e200fe9785c8741bbff8c09a985e689686e4",
+    "size_bytes": 257252921,
+    "status": "TRUNCADO - 0 ways, 0 relations. NO USAR."
+  },
+  "bbox": {
+    "min_lon": -61.5439126,
+    "min_lat": -34.7892201,
+    "max_lon": -57.8418874,
+    "max_lat": -31.4390329,
+    "crs": "WGS84 (EPSG:4326)"
+  },
+  "bbox_alternative_if_strict_envelope": {
+    "min_lon": -61.5439126,
+    "min_lat": -34.9,
+    "max_lon": -57.8418874,
+    "max_lat": -31.3,
+    "note": "Version expandida para cumplir el ENVELOPE LITERAL del enunciado (min_lat<=-34.9, max_lat>=-31.3). Requiere decision humana: el Director fijo margenes de 20 km, que producen el bbox principal. El envelope del enunciado implica ~32-35 km de margen."
+  },
+  "parameters": {
+    "axis": "RN9 Santa Fe -> Rosario -> San Nicolas -> Zarate -> CABA",
+    "semiwidth_km": 50,
+    "margin_north_km": 20,
+    "margin_south_km": 20,
+    "km_per_deg_lat": 111.32,
+    "lon_scaling": "111.32 * cos(lat)"
+  },
+  "anchors_observed": {
+    "santa_fe": {"lon": -60.7019561, "lat": -31.6186951, "osm_node": 198423933},
+    "caba": {"lon": -58.3887904, "lat": -34.6095579, "osm_node": 81590481},
+    "rosario": {"lon": -60.65, "lat": -32.95, "source": "referencia aproximada"},
+    "san_nicolas": {"lon": -60.226, "lat": -33.334, "source": "referencia aproximada"},
+    "zarate": {"lon": -59.028, "lat": -34.098, "source": "referencia aproximada"}
+  },
+  "measured_axis_geometry": {
+    "note": "Medido del PBF, no asumido. El eje real NO es una recta.",
+    "AP01_santa_fe_rosario": {
+      "lat_range": [-32.8850, -31.6223],
+      "lon_range": [-60.9970, -60.7105],
+      "n_points": 1518,
+      "ref": "AP01",
+      "name": "Autopista Brigadier General Estanislao Lopez",
+      "highway": "motorway"
+    },
+    "RN9_rosario_caba": {
+      "lat_range": [-34.5446, -33.0],
+      "lon_range": [-60.5871, -58.4953],
+      "n_points": 3642,
+      "ref": "RN9",
+      "highway": "motorway"
+    },
+    "RN9_cordoba_branch_excluded": {
+      "lat_range": [-33.0, -29.0286],
+      "lon_range": [-64.1762, -61.1774],
+      "note": "Rama de RN9 hacia Cordoba. FUERA del corredor litoral. Incluida parcialmente en el bbox por el semiancho de 50 km cerca de Rosario."
+    }
+  },
+  "routes_included": {
+    "RN9": {
+      "present": true,
+      "n_ways_total": 1952,
+      "highway_types": {"motorway": 791, "trunk": 44, "trunk_link": 4},
+      "role": "eje principal",
+      "bbox_in_corridor": [-61.4893687, -34.5445782, -58.4952923, -32.8295173]
+    },
+    "RN11": {
+      "present": true,
+      "n_ways_total": 1059,
+      "role": "desvio alternativo",
+      "contained_in_bbox": false,
+      "reason_partial": "RN11 es larga (recorre todo el litoral). Solo interesa el tramo dentro del corredor. Su extremo norte (lat -30.01) queda fuera del bbox (max_lat -31.44), lo cual es correcto: el corredor solo necesita RN11 como alternativa en el tramo SF-CABA.",
+      "bbox_measured": [-60.981695, -32.8734137, -60.3116922, -30.013748]
+    },
+    "RN8": {
+      "present": true,
+      "n_ways_total": 744,
+      "role": "acceso alternativo al AMBA",
+      "contained_in_bbox": false,
+      "reason_partial": "El tramo util de RN8 (Acceso Norte Ramal Pilar -> AMBA) SI cae dentro del bbox. Su extremo oeste (lon -64.0, Cordoba/San Luis) queda fuera, correctamente.",
+      "bbox_measured": [-63.9996829, -34.4711892, -58.6797986, -33.1780413]
+    }
+  },
+  "highway_counts_pbf_total": {
+    "total_highway": 1587996,
+    "motorway": 5210,
+    "trunk": 21598,
+    "primary": 31913,
+    "secondary": 64075,
+    "tertiary": 72889,
+    "unclassified": 174245,
+    "residential": 576148,
+    "service": 265244,
+    "track": 122199,
+    "motorway_link": 4938,
+    "trunk_link": 5609,
+    "primary_link": 3473,
+    "secondary_link": 2900,
+    "tertiary_link": 1373,
+    "living_street": 45354,
+    "pedestrian": 5766,
+    "footway": 124900,
+    "path": 36142,
+    "cycleway": 3107,
+    "steps": 5780
+  },
+  "highway_counts_in_bbox": {
+    "total": 385728,
+    "residential": 143332,
+    "service": 66249,
+    "footway": 48115,
+    "unclassified": 24036,
+    "living_street": 20777,
+    "tertiary": 19507,
+    "secondary": 19192,
+    "primary": 9333,
+    "track": 8928,
+    "motorway": 3335,
+    "trunk": 3311,
+    "motorway_link": 3111
+  },
+  "counts_in_bbox": {
+    "n_nodes": 7718144,
+    "nodes_pct_of_national": 13.0,
+    "n_highways": 385728
+  },
+  "derived": {
+    "lat_span_deg": 3.350187,
+    "lon_span_deg": 3.702025,
+    "approx_area_km2": 128731,
+    "semiwidth_deg_lon": 0.5469126,
+    "margin_north_deg_lat": 0.1796622,
+    "margin_south_deg_lat": 0.1796622
+  },
+  "reference_mbtiles": {
+    "path": "/home/ivan/navego_recuperado/assets/maptest/santa_fe.mbtiles",
+    "size_mb": 121.0,
+    "tiles_bytes": 107832822,
+    "minzoom": 8,
+    "maxzoom": 14,
+    "bounds": [-65.518615, -34.789264, -58.253220, -22.149058],
+    "format": "pbf",
+    "type": "overlay",
+    "generator": "tippecanoe v2.79.0",
+    "generator_options": "tippecanoe -o santa_fe.mbtiles -Z8 -z14 --drop-densest-as-needed --extend-zooms-if-still-dropping --force santa_fe.geojson",
+    "tiles_per_zoom": {"8": 44, "9": 109, "10": 298, "11": 894, "12": 2896, "13": 10028, "14": 36527},
+    "bytes_per_zoom": {"8": 2147692, "9": 3040363, "10": 4487599, "11": 6786501, "12": 13140848, "13": 26121827, "14": 52107992}
+  },
+  "reference_geojson": {
+    "path": "/home/ivan/navego_recuperado/test_maplibre/grandes/tmp_osm/santa_fe.geojson",
+    "size_bytes": 330297963,
+    "size_mb": 315.0,
+    "n_features": 1149012,
+    "geometry_types": {"Point": 500987, "LineString": 496578, "MultiPolygon": 151447},
+    "bbox": [-65.5186, -34.7893, -58.2532, -22.1491],
+    "ratio_mbtiles_over_geojson": 0.384
+  },
+  "tools": {
+    "osmium": "1.19.0",
+    "libosmium": "2.23.1",
+    "tippecanoe": "2.79.0",
+    "python": "3.14.7"
+  },
+  "uncertainties": [
+    "El envelope literal del enunciado (min_lat<=-34.9, max_lat>=-31.3) NO coincide con margenes de 20 km. Diferencia ~12-15 km. Requiere decision humana.",
+    "El ref RN1V09 aparece en DOS lugares de Argentina (Cordoba y Santa Fe/Rosario). No sirve como filtro unico.",
+    "El tramo Santa Fe-Rosario esta tagged ref=AP01 (no RN9) en el PBF. Un filtro solo-por-ref=RN9 pierde ese tramo.",
+    "La estimacion de MBTiles depende de tags filtrados, zooms y simplificacion, aun no fijados por el Director.",
+    "No se midio el geojson real del corredor (requiere ejecutar extract, prohibido en mision A)."
+  ]
+}

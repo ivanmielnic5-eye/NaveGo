@@ -1,0 +1,44 @@
+File:
+  Name: /home/ivan/cockpit/backup_mapa/argentina-260901.osm.pbf
+  Format: PBF
+  Compression: none
+  Size: 428645479
+Header:
+  Bounding boxes:
+    (-73.614525,-55.682956,-53.63534,-21.725753)
+  With history: no
+  Options:
+    generator=osmium/1.16.0
+    osmosis_replication_base_url=https://download.geofabrik.de/south-america/argentina-updates
+    osmosis_replication_sequence_number=4900
+    osmosis_replication_timestamp=2026-09-01T20:20:50Z
+    pbf_dense_nodes=true
+    pbf_optional_feature_0=Sort.Type_then_ID
+    sorting=Type_then_ID
+    timestamp=2026-09-01T20:20:50Z
+Data:
+  Bounding box: (-79.3652783,-61.1276558,-41.4427772,7.2535178)
+  Timestamps:
+    First: 2007-07-25T00:47:29Z
+    Last: 2026-09-01T20:20:32Z
+  Objects ordered (by type and id): yes
+  Multiple versions of same object: no
+  CRC32: not calculated (use --crc/-c to enable)
+  Number of changesets: 0
+  Number of nodes: 59348185
+  Number of ways: 5900717
+  Number of relations: 88563
+  Smallest changeset ID: 0
+  Smallest node ID: 3
+  Smallest way ID: 4624762
+  Smallest relation ID: 9121
+  Largest changeset ID: 0
+  Largest node ID: 14140895929
+  Largest way ID: 1554334467
+  Largest relation ID: 21311053
+  Number of buffers: 84942 (avg 769 objects per buffer)
+  Sum of buffer sizes: 5310136816 (5.064 GB)
+  Sum of buffer capacities: 5577048064 (5.318 GB, 95% full)
+Metadata:
+  All objects have following metadata attributes: version+timestamp
+  Some objects have following metadata attributes: version+timestamp
