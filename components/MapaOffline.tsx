@@ -5,13 +5,18 @@ import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
 import { HttpServer } from 'react-native-nitro-http-server';
+import { getMapaActivo, PUERTO } from '../config/mapas';
 
 const DIR = FileSystem.documentDirectory + 'maptest/';
-const DB_NAME = 'santa_fe.mbtiles';
+
+// Descriptor del mapa activo (Fase 1). Reemplaza los hardcodes de santa_fe.
+const mapa = getMapaActivo();
+const DB_NAME = mapa.archivo;
 const DB_PATH = DIR + DB_NAME;
-const PUERTO = 8080;
-const SOURCE_LAYER = 'santa_fe';
-const CENTER_DEFAULT: [number, number] = [-60.7, -31.63];
+const SOURCE_LAYER = mapa.sourceLayer;
+const CENTER_DEFAULT: [number, number] = mapa.center;
+const MINZOOM = mapa.minzoom;
+const MAXZOOM = mapa.maxzoom;
 
 type Punto = { latitude: number; longitude: number };
 
@@ -60,7 +65,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       try {
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
         console.log('[ML] 1. dir ok');
-        const asset = Asset.fromModule(require('../assets/maptest/santa_fe.mbtiles'));
+        const asset = Asset.fromModule(mapa.asset);
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('asset.localUri null');
         console.log('[ML] 2. asset ok:', asset.localUri);
@@ -74,11 +79,11 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
           const path = (request && request.path) ? request.path : '';
-          const m = path.match(/^\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
+          const m = path.match(/^\/([^\/]+)\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
           if (!m) return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'nf' };
-          const z = Number(m[1]);
-          const x = Number(m[2]);
-          const y = Number(m[3]);
+          const z = Number(m[2]);
+          const x = Number(m[3]);
+          const y = Number(m[4]);
           const yTms = (1 << z) - 1 - y;
           const row = await db!.getFirstAsync<{ tile_data: Uint8Array }>(
             'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
@@ -89,7 +94,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           return { statusCode: 200, headers: { 'Content-Type': 'application/x-protobuf', 'Content-Encoding': 'gzip' }, body: ab };
         });
         console.log('[ML] 5. server OK');
-        setUri(`http://127.0.0.1:${PUERTO}/{z}/{x}/{y}.pbf`);
+        setUri(`http://127.0.0.1:${PUERTO}/${mapa.id}/{z}/{x}/{y}.pbf`);
       } catch (e: any) {
         console.error('[ML ERROR]', e?.message ?? String(e));
         setError(e?.message ?? String(e));
@@ -129,7 +134,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
   const refGeoJSON = referencePoints.length > 1 ? aGeoJSON(referencePoints) : null;
 
   const sources: any = {
-    local: { type: 'vector', tiles: [uri], minzoom: 8, maxzoom: 14 },
+    local: { type: 'vector', tiles: [uri], minzoom: MINZOOM, maxzoom: MAXZOOM },
   };
   if (activeGeoJSON) sources.trackActivo = { type: 'geojson', data: activeGeoJSON };
   if (refGeoJSON) sources.trackRef = { type: 'geojson', data: refGeoJSON };

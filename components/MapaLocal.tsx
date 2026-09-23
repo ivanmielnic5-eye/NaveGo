@@ -6,13 +6,18 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
 import * as Location from 'expo-location';
 import { HttpServer } from 'react-native-nitro-http-server';
+import { getMapaActivo, PUERTO } from '../config/mapas';
 
 const DIR = FileSystem.documentDirectory + 'maptest/';
-const DB_NAME = 'santa_fe.mbtiles';
+
+// Descriptor del mapa activo (Fase 1). Reemplaza los hardcodes de santa_fe.
+const mapa = getMapaActivo();
+const DB_NAME = mapa.archivo;
 const DB_PATH = DIR + DB_NAME;
-const PUERTO = 8080;
-const SOURCE_LAYER = 'santa_fe';
-const CENTER_DEFAULT: [number, number] = [-60.7, -31.63];
+const SOURCE_LAYER = mapa.sourceLayer;
+const CENTER_DEFAULT: [number, number] = mapa.center;
+const MINZOOM = mapa.minzoom;
+const MAXZOOM = mapa.maxzoom;
 const ZOOM = 14;
 
 export default function MapaLocal() {
@@ -30,7 +35,7 @@ export default function MapaLocal() {
         console.log('[ML] Iniciando');
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
 
-        const asset = Asset.fromModule(require('../assets/maptest/santa_fe.mbtiles'));
+        const asset = Asset.fromModule(mapa.asset);
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('asset.localUri null');
 
@@ -46,11 +51,11 @@ export default function MapaLocal() {
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
           const path = (request && request.path) ? request.path : '';
-          const m = path.match(/^\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
+          const m = path.match(/^\/([^\/]+)\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
           if (!m) return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'nf' };
-          const z = Number(m[1]);
-          const x = Number(m[2]);
-          const y = Number(m[3]);
+          const z = Number(m[2]);
+          const x = Number(m[3]);
+          const y = Number(m[4]);
           const yTms = (1 << z) - 1 - y;
           const row = await db!.getFirstAsync<{ tile_data: Uint8Array }>(
             'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
@@ -66,7 +71,7 @@ export default function MapaLocal() {
         });
         console.log('[ML] Server en', PUERTO);
 
-        setUri(`http://127.0.0.1:${PUERTO}/{z}/{x}/{y}.pbf`);
+        setUri(`http://127.0.0.1:${PUERTO}/${mapa.id}/{z}/{x}/{y}.pbf`);
 
         // ─── UBICACIÓN ───
         console.error('[LOC] Pidiendo permiso');
@@ -110,7 +115,7 @@ export default function MapaLocal() {
 
   const style = {
     version: 8,
-    sources: { local: { type: 'vector', tiles: [uri], minzoom: 8, maxzoom: 14 } },
+    sources: { local: { type: 'vector', tiles: [uri], minzoom: MINZOOM, maxzoom: MAXZOOM } },
     layers: [
       { id: 'background', type: 'background', paint: { 'background-color': '#f5efe6' } },
       { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
