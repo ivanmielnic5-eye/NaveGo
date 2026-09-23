@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://navego.app/schemas/map_region_package.json",
+  "title": "NaveGo Map Region Package Manifest",
+  "type": "object",
+  "required": [
+    "package_format", "version", "tile_addressable", "deduplication_strategy",
+    "id", "display_name", "type", "coverage", "tiles", "metadata", "dependencies"
+  ],
+  "properties": {
+    "package_format": { "const": "navego_map_region_package" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "tile_addressable": { "type": "boolean" },
+    "deduplication_strategy": {
+      "enum": ["none_v1_future_tile_hash", "tile_hash_v1"]
+    },
+    "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "display_name": { "type": "string", "minLength": 1 },
+    "type": { "enum": ["corridor", "province", "region", "national", "base"] },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "geometry_type", "source", "source_route",
+        "buffer_meters", "crs_used_for_buffer", "bbox_wgs84"
+      ],
+      "properties": {
+        "geometry_type": { "enum": ["polygon", "multipolygon", "bbox"] },
+        "source": {
+          "enum": ["osm_waterway_buffer", "manual_polygon", "admin_boundary", "custom"]
+        },
+        "source_route": { "type": "string" },
+        "buffer_meters": { "type": "number", "minimum": 0 },
+        "crs_used_for_buffer": { "type": "string" },
+        "bbox_wgs84": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "number" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tiles": {
+      "type": "object",
+      "required": ["file", "format", "vector_layers", "minzoom", "maxzoom"],
+      "properties": {
+        "file": { "type": "string" },
+        "format": { "enum": ["mbtiles", "pmtiles", "directory"] },
+        "vector_layers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "minzoom": { "type": "integer", "minimum": 0, "maximum": 22 },
+        "maxzoom": { "type": "integer", "minimum": 0, "maximum": 22 }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "size_bytes", "checksum_sha256", "source_revision",
+        "generated_at", "generator"
+      ],
+      "properties": {
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "checksum_sha256": {
+          "type": "string",
+          "pattern": "^$|^[a-f0-9]{64}$"
+        },
+        "source_revision": { "type": "string" },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "generator": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "object",
+      "required": ["base_packages", "optional_overlays"],
+      "properties": {
+        "base_packages": { "type": "array", "items": { "type": "string" } },
+        "optional_overlays": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

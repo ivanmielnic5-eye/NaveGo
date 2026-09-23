@@ -1,0 +1,42 @@
+{
+  "package_format": "navego_map_region_package",
+  "version": "1.0.0",
+  "tile_addressable": true,
+  "deduplication_strategy": "none_v1_future_tile_hash",
+  "id": "corredor_sf_caba",
+  "display_name": "Corredor Santa Fe — CABA",
+  "type": "corridor",
+  "coverage": {
+    "geometry_type": "polygon",
+    "source": "osm_waterway_buffer",
+    "source_route": "osm_waterway_river_canal_buffer",
+    "buffer_meters": 25000,
+    "crs_used_for_buffer": "EPSG:32720",
+    "bbox_wgs84": [
+      -61.095695,
+      -34.96897,
+      -57.94138,
+      -31.216923
+    ]
+  },
+  "tiles": {
+    "file": "corredor_sf_caba.mbtiles",
+    "format": "mbtiles",
+    "vector_layers": [
+      "corredor_relevante"
+    ],
+    "minzoom": 5,
+    "maxzoom": 14
+  },
+  "metadata": {
+    "size_bytes": 63455232,
+    "checksum_sha256": "fd3254ef807e3d8f9ab3a445e471489759b582a4cbbe4136b80b1d3046edb4ed",
+    "source_revision": "osm_2026-09-23",
+    "generated_at": "2026-09-23T00:00:00Z",
+    "generator": "tippecanoe_navego_pipeline_v1"
+  },
+  "dependencies": {
+    "base_packages": [],
+    "optional_overlays": []
+  }
+}
