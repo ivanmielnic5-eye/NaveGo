@@ -201,19 +201,14 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
   if (refGeoJSON) sources.trackRef = { type: 'geojson', data: refGeoJSON };
 
   // Orden de capas (de abajo hacia arriba):
-  // background, agua, edificios, lineas, provincias, municipios, barrios,
-  // rutas, servicios, trackRefLine, trackActivoLine.
+  // background, agua, edificios, lineas, municipios, barrios, rutas,
+  // servicios, trackRefLine, trackActivoLine.
   // Los tracks quedan SIEMPRE arriba de los textos.
   const layers: any[] = [
     { id: 'background', type: 'background', paint: { 'background-color': '#f5efe6' } },
     { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
     { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
     { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
-    {
-      id: 'provincias', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER,
-      filter: ['all', ['==', ['get', 'admin_level'], '4'], ['==', ['get', 'boundary'], 'administrative'], ['has', 'name']],
-      paint: { 'line-color': '#5a6a7a', 'line-width': 2, 'line-opacity': 0.85 },
-    },
     {
       id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER,
       filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name']],
@@ -280,7 +275,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         <Camera
           ref={cameraRef}
           initialViewState={{ center: initialCenter ?? CENTER_DEFAULT, zoom: initialZoom ?? 16 }}
-          minZoom={4}
+          minZoom={8}
           maxZoom={22}
         />
         {showUserLocation && <UserLocation visible={true} />}

@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { Map, Camera, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
+import * as Location from 'expo-location';
 import { HttpServer } from 'react-native-nitro-http-server';
 import { atob } from 'react-native-nitro-buffer';
 import { getMapaActivo, PUERTO } from '../config/mapas';
@@ -31,29 +32,7 @@ const SOURCE_LAYER = mapa.sourceLayer;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
-
-type Punto = { latitude: number; longitude: number };
-
-interface Props {
-  trackPoints: Punto[];
-  referencePoints: Punto[];
-  userPos: Punto | null;
-  absolute?: boolean;
-  initialCenter?: [number, number];
-  initialZoom?: number;
-  showUserLocation?: boolean;
-}
-
-function aGeoJSON(puntos: Punto[]) {
-  return {
-    type: 'Feature' as const,
-    properties: {},
-    geometry: {
-      type: 'LineString' as const,
-      coordinates: puntos.map((p) => [p.longitude, p.latitude]),
-    },
-  };
-}
+const ZOOM = 14;
 
 // Copia un asset de glyphs al filesystem del dispositivo si falta.
 // Idempotente: si el archivo ya existe, no vuelve a copiar.
@@ -67,57 +46,48 @@ async function copiarFuente(modulo: any, subcarpeta: string, archivo: string) {
   await FileSystem.copyAsync({ from: asset.localUri, to: destino });
 }
 
-export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
-  { trackPoints, referencePoints, userPos, absolute, initialCenter, initialZoom, showUserLocation = true },
-  ref
-) {
+export default function MapaLocal() {
   const [uri, setUri] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const cameraRef = useRef<CameraRef>(null);
-  const yaCentroRef = useRef(false);
-
-  useImperativeHandle(ref, () => ({
-    centerOn: (punto: Punto, zoom: number = 16) => {
-      try {
-        cameraRef.current?.jumpTo({ center: [punto.longitude, punto.latitude], zoom });
-      } catch (e) {}
-    },
-  }));
 
   useEffect(() => {
     let server: any = null;
     let db: SQLite.SQLiteDatabase | null = null;
+
     (async () => {
       try {
+        console.log('[ML] Iniciando');
         await FileSystem.makeDirectoryAsync(DIR, { intermediates: true }).catch(() => {});
-        console.log('[ML] 1. dir ok');
+
         const asset = Asset.fromModule(mapa.asset);
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('asset.localUri null');
-        console.log('[ML] 2. asset ok:', asset.localUri);
+
         const info = await FileSystem.getInfoAsync(DB_PATH);
         if (!info.exists) {
           await FileSystem.copyAsync({ from: asset.localUri, to: DB_PATH });
         }
-        console.log('[ML] 3. copy ok, abriendo SQLite');
-        db = await SQLite.openDatabaseAsync(DB_NAME, undefined, DIR);
-        console.log('[ML] 4. SQLite abierto');
+        console.log('[ML] Archivo OK');
 
-        // ─── 5. GLYPHS: copiar las 4 fuentes al filesystem ───
+        db = await SQLite.openDatabaseAsync(DB_NAME, undefined, DIR);
+        console.log('[ML] SQLite OK');
+
+        // ─── GLYPHS: copiar las 4 fuentes al filesystem ───
         await FileSystem.makeDirectoryAsync(FONTS_DIR + 'open-sans-regular/', { intermediates: true }).catch(() => {});
         await FileSystem.makeDirectoryAsync(FONTS_DIR + 'open-sans-bold/', { intermediates: true }).catch(() => {});
         await copiarFuente(FONT_OS_REGULAR_0, 'open-sans-regular', '0-255.pbf');
         await copiarFuente(FONT_OS_REGULAR_1, 'open-sans-regular', '256-511.pbf');
         await copiarFuente(FONT_OS_BOLD_0, 'open-sans-bold', '0-255.pbf');
         await copiarFuente(FONT_OS_BOLD_1, 'open-sans-bold', '256-511.pbf');
-        console.log('[ML] 6. fuentes OK');
+        console.log('[ML] fuentes OK');
 
         server = new HttpServer();
         await server.start(PUERTO, async (request: any) => {
           const path = (request && request.path) ? request.path : '';
 
           // ─── RUTA DE GLYPHS (debe ir ANTES del regex de tiles) ───
-          // Formato: /fonts/{fontstack}/{range}.pbf
           const fontMatch = path.match(/^\/fonts\/([^\/]+)\/(\d+-\d+)\.pbf$/);
           if (fontMatch) {
             const fontstack = decodeURIComponent(fontMatch[1]);
@@ -152,15 +122,32 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           );
           if (!row || !row.tile_data) return { statusCode: 404, headers: { 'Content-Type': 'text/plain' }, body: 'no tile' };
           const ab = row.tile_data.buffer.slice(row.tile_data.byteOffset, row.tile_data.byteOffset + row.tile_data.byteLength);
-          return { statusCode: 200, headers: { 'Content-Type': 'application/x-protobuf', 'Content-Encoding': 'gzip' }, body: ab };
+          return {
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/x-protobuf', 'Content-Encoding': 'gzip' },
+            body: ab,
+          };
         });
-        console.log('[ML] 7. server OK');
+        console.log('[ML] Server en', PUERTO);
+
         setUri(`http://127.0.0.1:${PUERTO}/${mapa.id}/{z}/{x}/{y}.pbf`);
+
+        // ─── UBICACIÓN ───
+        console.error('[LOC] Pidiendo permiso');
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        console.error('[LOC] Permiso:', status);
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          const coords: [number, number] = [loc.coords.longitude, loc.coords.latitude];
+          console.error('[LOC] Posición:', coords);
+          setUserPos(coords);
+        }
       } catch (e: any) {
         console.error('[ML ERROR]', e?.message ?? String(e));
         setError(e?.message ?? String(e));
       }
     })();
+
     return () => {
       if (server) server.stop().catch(() => {});
       if (db) db.closeAsync().catch(() => {});
@@ -168,52 +155,32 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
   }, []);
 
   useEffect(() => {
-    if (!userPos || !cameraRef.current?.jumpTo) return;
-    if (!yaCentroRef.current) {
-      try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude], zoom: 16 }); } catch (e) {}
-      yaCentroRef.current = true;
-    }
-  }, [userPos]);
+    if (!uri) return;
+    const timers = [1500, 3000, 5000].map((ms) =>
+      setTimeout(() => {
+        try {
+          if (cameraRef.current?.jumpTo) {
+            const target = userPos ?? CENTER_DEFAULT;
+            cameraRef.current.jumpTo({ center: target, zoom: ZOOM });
+          }
+        } catch (e) {}
+      }, ms)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [uri, userPos]);
 
-
-  // FIX: recentrar cuando initialCenter llegue después del montaje (reference detail)
-  useEffect(() => {
-    if (!initialCenter || !cameraRef.current?.jumpTo) return;
-    if (!yaCentroRef.current) {
-      try { cameraRef.current.jumpTo({ center: initialCenter, zoom: initialZoom ?? 15 }); } catch (e) {}
-      yaCentroRef.current = true;
-    }
-  }, [initialCenter]);
-
-  const containerStyle = absolute
-    ? [styles.container, StyleSheet.absoluteFill as any]
-    : styles.container;
-
-  if (error || !uri) return <View style={containerStyle} />;
-
-  const activeGeoJSON = trackPoints.length > 1 ? aGeoJSON(trackPoints) : null;
-  const refGeoJSON = referencePoints.length > 1 ? aGeoJSON(referencePoints) : null;
-
-  const sources: any = {
-    local: { type: 'vector', tiles: [uri], minzoom: MINZOOM, maxzoom: MAXZOOM },
-  };
-  if (activeGeoJSON) sources.trackActivo = { type: 'geojson', data: activeGeoJSON };
-  if (refGeoJSON) sources.trackRef = { type: 'geojson', data: refGeoJSON };
+  if (error) return <View style={s.c}><Text style={s.t}>ERROR: {error}</Text></View>;
+  if (!uri) return <View style={s.c}><Text style={s.t}>Cargando...</Text></View>;
 
   // Orden de capas (de abajo hacia arriba):
-  // background, agua, edificios, lineas, provincias, municipios, barrios,
-  // rutas, servicios, trackRefLine, trackActivoLine.
+  // background, agua, edificios, lineas, municipios, barrios, rutas,
+  // servicios, trackRefLine, trackActivoLine.
   // Los tracks quedan SIEMPRE arriba de los textos.
   const layers: any[] = [
     { id: 'background', type: 'background', paint: { 'background-color': '#f5efe6' } },
     { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
     { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
     { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
-    {
-      id: 'provincias', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER,
-      filter: ['all', ['==', ['get', 'admin_level'], '4'], ['==', ['get', 'boundary'], 'administrative'], ['has', 'name']],
-      paint: { 'line-color': '#5a6a7a', 'line-width': 2, 'line-opacity': 0.85 },
-    },
     {
       id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER,
       filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name']],
@@ -260,35 +227,31 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       paint: { 'text-color': '#b80000', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
     },
   ];
-  if (refGeoJSON) {
-    layers.push({ id: 'trackRefLine', type: 'line', source: 'trackRef', paint: { 'line-color': '#00D9FF', 'line-width': 2, 'line-dasharray': [2, 2] } });
-  }
-  if (activeGeoJSON) {
-    layers.push({ id: 'trackActivoLine', type: 'line', source: 'trackActivo', paint: { 'line-color': '#FF4055', 'line-width': 3 } });
-  }
 
   const style = {
     version: 8,
     glyphs: 'http://127.0.0.1:8080/fonts/{fontstack}/{range}.pbf',
-    sources,
+    sources: { local: { type: 'vector', tiles: [uri], minzoom: MINZOOM, maxzoom: MAXZOOM } },
     layers,
   };
 
   return (
-    <View style={containerStyle}>
-      <Map style={StyleSheet.absoluteFill as any} mapStyle={JSON.stringify(style)} logo={false} attribution={false} compassPosition={{ top: 60, right: 12 }}>
+    <View style={s.c}>
+      <Map style={s.m} mapStyle={JSON.stringify(style)}>
         <Camera
           ref={cameraRef}
-          initialViewState={{ center: initialCenter ?? CENTER_DEFAULT, zoom: initialZoom ?? 16 }}
-          minZoom={4}
-          maxZoom={22}
+          initialViewState={{ center: userPos ?? CENTER_DEFAULT, zoom: ZOOM }}
+          minZoom={8}
+          maxZoom={16}
         />
-        {showUserLocation && <UserLocation visible={true} />}
+        <UserLocation visible={true} />
       </Map>
     </View>
   );
-});
+}
 
-const styles = StyleSheet.create({
-  container: { flex: 1, overflow: 'hidden', backgroundColor: '#f5efe6' },
+const s = StyleSheet.create({
+  c: { flex: 1, width: '100%', height: '100%', backgroundColor: '#000' },
+  m: { flex: 1, width: '100%', height: '100%' },
+  t: { color: '#fff', fontSize: 16, textAlign: 'center', marginTop: 100 },
 });

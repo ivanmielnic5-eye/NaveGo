@@ -48,19 +48,19 @@ const CATALOGO: Record<string, MapDescriptor> = {
   corredor_sf_caba: {
     id: 'corredor_sf_caba',
     nombre: 'Corredor Santa Fe - CABA (RN9)',
-    archivo: 'corredor_sf_caba_z5.mbtiles',
+    archivo: 'corredor_sf_caba.mbtiles',
     sourceLayer: 'corredor',
     center: [-60.65, -32.95], // D-1 = (b) Rosario, punto medio
-    minzoom: 5,
+    minzoom: 8,
     maxzoom: 14,
     version: '2026-09-22',
-    asset: require('../assets/maptest/corredor_sf_caba_z5.mbtiles'),
+    asset: require('../assets/maptest/corredor_sf_caba.mbtiles'),
   },
 };
 
 // Estado del mapa activo (Claude C-5): estado de runtime, no constante.
 // D-2 = (a): arranca en santa_fe para no alterar el comportamiento actual.
-let mapaActivoId = 'corredor_sf_caba';
+let mapaActivoId = 'santa_fe';
 
 export function getMapaActivo(): MapDescriptor {
   const m = CATALOGO[mapaActivoId];
