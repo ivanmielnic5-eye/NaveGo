@@ -30,7 +30,6 @@ const DB_PATH = DIR + DB_NAME;
 const SOURCE_LAYER = mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN = (mapa as any).sourceLayerAdmin || mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN_PAIS = (mapa as any).sourceLayerAdminPais || mapa.sourceLayer;
-const SOURCE_LAYER_ADMIN_PAIS_LABELS = (mapa as any).sourceLayerAdminPaisLabels || mapa.sourceLayer;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -225,17 +224,18 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       paint: { 'line-color': '#b0a090', 'line-width': 0.8, 'line-opacity': 0.6 },
     },
     {
-      id: 'pais_provincias_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS_LABELS,
-      filter: ['all', ['==', ['get', 'admin_level'], '4'], ['has', 'name']],
-      minzoom: 4,
+      id: 'pais_provincias_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      filter: ['all', ['==', ['get', 'kind'], 'nivel_4'], ['has', 'name']],
+      minzoom: 5,
       layout: {
         'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 4, 10, 6, 14, 8, 18],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 5, 11, 6, 14, 8, 18],
         'text-font': ['OpenSansBold'],
-        'text-letter-spacing': 0.1,
+        'text-letter-spacing': 0.15,
         'text-max-width': 6,
         'text-allow-overlap': false,
-        'text-padding': 40,
+        'text-padding': 20,
+        'text-variable-anchor': ['center', 'top', 'bottom'],
       },
       paint: { 'text-color': '#3a2a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
     },
@@ -249,7 +249,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     },
     {
       id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN,
-      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name']],
+      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name'], ['!', ['in', 'Límite', ['get', 'name']]]],
       layout: {
         'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
         'text-size': ['case', ['==', ['get', 'admin_level'], '5'], 15, ['==', ['get', 'admin_level'], '6'], 14, ['==', ['get', 'admin_level'], '7'], 13, 11],
@@ -260,7 +260,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     },
     {
       id: 'barrios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN, minzoom: 12,
-      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['9', '10', '11']]], ['has', 'name']],
+      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['9', '10', '11']]], ['has', 'name'], ['!', ['in', 'Límite', ['get', 'name']]]],
       layout: {
         'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
         'text-size': 10,
