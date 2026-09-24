@@ -33,6 +33,9 @@ const SOURCE_LAYER_ADMIN_PAIS = (mapa as any).sourceLayerAdminPais || mapa.sourc
 const SOURCE_LAYER_ADMIN_PAIS_LABEL = (mapa as any).sourceLayerAdminPaisLabels || SOURCE_LAYER_ADMIN_PAIS;
 const SOURCE_LAYER_ADMIN_LABEL = (mapa as any).sourceLayerAdminLabel || SOURCE_LAYER_ADMIN;
 const SOURCE_LAYER_ADMIN_LABEL_SUB = (mapa as any).sourceLayerAdminLabelSub || SOURCE_LAYER_ADMIN;
+const SOURCE_LAYER_NAUTICAL = (mapa as any).sourceLayerNautical || SOURCE_LAYER;
+const SOURCE_LAYER_SEAMARK = (mapa as any).sourceLayerSeamark || SOURCE_LAYER;
+const SOURCE_LAYER_WATER = (mapa as any).sourceLayerWater || SOURCE_LAYER;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -242,7 +245,24 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       },
       paint: { 'text-color': '#3a2a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
     },
-    { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
+    {
+      id: 'water_fill', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER_WATER,
+      filter: ['==', ['geometry-type'], 'Polygon'],
+      minzoom: 5,
+      paint: {
+        'fill-color': ['match', ['coalesce', ['get', 'kind'], ''], 'natural_wetland', '#b8c8c0', '#a8c8e0'],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.6, 10, 0.75, 14, 0.85]
+      },
+    },
+    {
+      id: 'waterway_line', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER_WATER,
+      filter: ['==', ['geometry-type'], 'LineString'],
+      minzoom: 5,
+      paint: {
+        'line-color': '#5a8aaa',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.6, 10, 1.5, 14, 2.2]
+      },
+    },
     { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
     { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
     {
@@ -314,6 +334,70 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         'text-font': ['OpenSansRegular'],
       },
       paint: { 'text-color': '#b80000', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+    },
+    {
+      id: 'nautical_points', type: 'circle', source: 'local', 'source-layer': SOURCE_LAYER_NAUTICAL,
+      minzoom: 8,
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 3, 10, 3.5, 14, 5],
+        'circle-color': ['match', ['coalesce', ['get', 'kind'], ''],
+          'man_made_lighthouse', '#ffcc33',
+          'marina', '#00c8ff', 'harbour', '#00c8ff', 'ferry_terminal', '#00c8ff',
+          'man_made_pier', '#7ec8e0', 'man_made_quay', '#7ec8e0', 'man_made_breakwater', '#7ec8e0',
+          'waterway_dock', '#7ec8e0',
+          'slipway', '#a8d8e8', 'mooring', '#a8d8e8',
+          '#a8c8e0'],
+        'circle-stroke-color': '#1a2a3a', 'circle-stroke-width': 1, 'circle-opacity': 0.95
+      },
+    },
+    {
+      id: 'nautical_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_NAUTICAL,
+      minzoom: 10, filter: ['has', 'name'],
+      layout: {
+        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 10, 9, 12, 10, 14, 11],
+        'text-variable-anchor': ['top', 'right', 'bottom', 'left'],
+        'text-offset': [0, 0.8],
+        'text-font': ['OpenSansRegular'],
+        'text-allow-overlap': false,
+        'symbol-sort-key': ['match', ['get', 'kind'], 'harbour', 10, 'ferry_terminal', 15, 'marina', 20, 'man_made_lighthouse', 25, 'man_made_quay', 30, 'man_made_pier', 30, 'waterway_dock', 35, 'slipway', 40, 'mooring', 50, 100],
+      },
+      paint: { 'text-color': '#0a4a6a', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+    },
+    {
+      id: 'seamark_areas', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER_SEAMARK,
+      minzoom: 9,
+      filter: ['all', ['==', ['geometry-type'], 'Polygon'], ['match', ['get', 'seamark:type'], ['restricted_area', 'anchorage', 'anchor_berth'], true, false]],
+      paint: { 'fill-color': '#ffb52e', 'fill-opacity': 0.08 },
+    },
+    {
+      id: 'seamark_points', type: 'circle', source: 'local', 'source-layer': SOURCE_LAYER_SEAMARK,
+      minzoom: 9,
+      filter: ['==', ['geometry-type'], 'Point'],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2.5, 11, 3.2, 14, 4],
+        'circle-color': ['case',
+          ['match', ['get', 'seamark:type'], ['buoy_isolated_danger', 'beacon_isolated_danger', 'wreck', 'obstruction', 'rock'], true, false], '#ff4055',
+          ['all', ['match', ['get', 'seamark:type'], ['buoy_lateral', 'beacon_lateral'], true, false], ['==', ['get', 'seamark:buoy_lateral:colour'], 'red']], '#ff4055',
+          ['all', ['match', ['get', 'seamark:type'], ['buoy_lateral', 'beacon_lateral'], true, false], ['==', ['get', 'seamark:buoy_lateral:colour'], 'green']], '#35d39a',
+          ['match', ['get', 'seamark:type'], ['buoy_special_purpose', 'beacon_special_purpose'], true, false], '#ffcc33',
+          ['match', ['get', 'seamark:type'], ['buoy_cardinal', 'beacon_cardinal', 'buoy_safe_water', 'beacon_safe_water'], true, false], '#d8e4e8',
+          '#ffb52e'],
+        'circle-stroke-color': '#1a0c0c', 'circle-stroke-width': 1, 'circle-opacity': 0.95
+      },
+    },
+    {
+      id: 'seamark_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_SEAMARK,
+      minzoom: 12, filter: ['has', 'name'],
+      layout: {
+        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
+        'text-size': 9,
+        'text-variable-anchor': ['top', 'right', 'bottom', 'left'],
+        'text-offset': [0, 0.7],
+        'text-font': ['OpenSansRegular'],
+        'text-allow-overlap': false,
+      },
+      paint: { 'text-color': '#6a3a0a', 'text-halo-color': '#ffffff', 'text-halo-width': 1.2 },
     },
   ];
   if (refGeoJSON) {
