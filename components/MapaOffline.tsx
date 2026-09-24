@@ -404,7 +404,14 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           true, false]
       ],
       layout: {
-        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
+        'text-field': ['case',
+          ['all',
+            ['match', ['get', 'seamark:type'], ['buoy_isolated_danger', 'beacon_isolated_danger', 'wreck'], true, false],
+            ['in', '(', ['coalesce', ['get', 'name'], '']]
+          ],
+          'Peligro',
+          ['coalesce', ['get', 'name:es'], ['get', 'name']]
+        ],
         'text-size': ['interpolate', ['linear'], ['zoom'], 11, 9, 13, 10, 14, 11],
         'text-variable-anchor': ['top', 'right', 'bottom', 'left'],
         'text-offset': [0, 0.7],
