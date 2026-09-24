@@ -382,6 +382,11 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           ['all', ['match', ['get', 'seamark:type'], ['buoy_lateral', 'beacon_lateral'], true, false], ['==', ['get', 'seamark:buoy_lateral:colour'], 'green']], '#35d39a',
           ['match', ['get', 'seamark:type'], ['buoy_special_purpose', 'beacon_special_purpose'], true, false], '#ffcc33',
           ['match', ['get', 'seamark:type'], ['buoy_cardinal', 'beacon_cardinal', 'buoy_safe_water', 'beacon_safe_water'], true, false], '#d8e4e8',
+          ['match', ['get', 'seamark:type'], ['light_major', 'light_minor'], true, false], '#ffdd55',
+          ['match', ['get', 'seamark:type'], ['berth', 'harbour_basin'], true, false], '#00c8ff',
+          ['match', ['get', 'seamark:type'], ['small_craft_facility'], true, false], '#7ec8e0',
+          ['match', ['get', 'seamark:type'], ['distance_mark'], true, false], '#ffb52e',
+          ['match', ['get', 'seamark:type'], ['recommended_track', 'fairway'], true, false], '#e8c88a',
           '#ffb52e'],
         'circle-stroke-color': '#1a0c0c', 'circle-stroke-width': 1, 'circle-opacity': 0.95
       },
