@@ -24,6 +24,7 @@ export type MapDescriptor = {
   archivo: string; // nombre del mbtiles
   sourceLayer: string;
   sourceLayerAdmin?: string;
+  sourceLayerAdminPais?: string;
   center: [number, number];
   minzoom: number;
   maxzoom: number;
@@ -52,6 +53,7 @@ const CATALOGO: Record<string, MapDescriptor> = {
     archivo: 'corredor_sf_caba_z5.mbtiles',
     sourceLayer: 'corredor',
     sourceLayerAdmin: 'admin',
+    sourceLayerAdminPais: 'admin_pais',
     center: [-60.65, -32.95], // D-1 = (b) Rosario, punto medio
     minzoom: 5,
     maxzoom: 14,

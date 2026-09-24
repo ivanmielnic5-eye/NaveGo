@@ -29,6 +29,7 @@ const DB_NAME = mapa.archivo;
 const DB_PATH = DIR + DB_NAME;
 const SOURCE_LAYER = mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN = (mapa as any).sourceLayerAdmin || mapa.sourceLayer;
+const SOURCE_LAYER_ADMIN_PAIS = (mapa as any).sourceLayerAdminPais || mapa.sourceLayer;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -207,6 +208,35 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
   // Los tracks quedan SIEMPRE arriba de los textos.
   const layers: any[] = [
     { id: 'background', type: 'background', paint: { 'background-color': '#f5efe6' } },
+    {
+      id: 'pais_fill', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      filter: ['==', ['get', 'admin_level'], '2'],
+      paint: { 'fill-color': '#e8dfd0', 'fill-opacity': 0.4 },
+    },
+    {
+      id: 'pais_border', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      filter: ['==', ['get', 'admin_level'], '2'],
+      paint: { 'line-color': '#8a7a6a', 'line-width': 1.5, 'line-opacity': 0.7 },
+    },
+    {
+      id: 'pais_provincias_border', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      filter: ['==', ['get', 'admin_level'], '4'],
+      paint: { 'line-color': '#b0a090', 'line-width': 0.8, 'line-opacity': 0.6 },
+    },
+    {
+      id: 'pais_provincias_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      filter: ['all', ['==', ['get', 'admin_level'], '4'], ['has', 'name']],
+      minzoom: 4,
+      layout: {
+        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 4, 10, 6, 14, 8, 18],
+        'text-font': ['OpenSansBold'],
+        'text-letter-spacing': 0.1,
+        'text-max-width': 6,
+        'text-allow-overlap': false,
+      },
+      paint: { 'text-color': '#3a2a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
+    },
     { id: 'agua', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#a8c8e0' } },
     { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
     { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
