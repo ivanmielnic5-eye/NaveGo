@@ -234,6 +234,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
         'text-letter-spacing': 0.1,
         'text-max-width': 6,
         'text-allow-overlap': false,
+        'text-padding': 40,
       },
       paint: { 'text-color': '#3a2a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
     },
