@@ -26,6 +26,8 @@ export type MapDescriptor = {
   sourceLayerAdmin?: string;
   sourceLayerAdminPais?: string;
   sourceLayerAdminPaisLabels?: string;
+  sourceLayerAdminLabel?: string;
+  sourceLayerAdminLabelSub?: string;
   center: [number, number];
   minzoom: number;
   maxzoom: number;
@@ -56,6 +58,8 @@ const CATALOGO: Record<string, MapDescriptor> = {
     sourceLayerAdmin: 'admin',
     sourceLayerAdminPais: 'admin_pais',
     sourceLayerAdminPaisLabels: 'admin_pais_label',
+    sourceLayerAdminLabel: 'admin_label',
+    sourceLayerAdminLabelSub: 'admin_label_sub',
     center: [-60.65, -32.95], // D-1 = (b) Rosario, punto medio
     minzoom: 5,
     maxzoom: 14,

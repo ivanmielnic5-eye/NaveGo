@@ -31,6 +31,8 @@ const SOURCE_LAYER = mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN = (mapa as any).sourceLayerAdmin || mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN_PAIS = (mapa as any).sourceLayerAdminPais || mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN_PAIS_LABEL = (mapa as any).sourceLayerAdminPaisLabels || SOURCE_LAYER_ADMIN_PAIS;
+const SOURCE_LAYER_ADMIN_LABEL = (mapa as any).sourceLayerAdminLabel || SOURCE_LAYER_ADMIN;
+const SOURCE_LAYER_ADMIN_LABEL_SUB = (mapa as any).sourceLayerAdminLabelSub || SOURCE_LAYER_ADMIN;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -249,24 +251,44 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       paint: { 'line-color': '#5a6a7a', 'line-width': 2, 'line-opacity': 0.85 },
     },
     {
-      id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN,
-      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name'], ['!', ['in', 'Límite', ['get', 'name']]]],
+      id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_LABEL,
+      filter: ['all', ['has', 'label_kind'], ['in', ['get', 'label_kind'], ['literal', ['nivel_7', 'nivel_8']]], ['has', 'name']],
+      minzoom: 8,
       layout: {
-        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
-        'text-size': ['case', ['==', ['get', 'admin_level'], '5'], 15, ['==', ['get', 'admin_level'], '6'], 14, ['==', ['get', 'admin_level'], '7'], 13, 11],
+        'text-field': ['coalesce', ['get', 'label_text'], ['get', 'name']],
+        'text-size': ['case', ['==', ['get', 'label_kind'], 'nivel_7'], 13, 11],
         'text-anchor': 'center',
         'text-font': ['OpenSansBold'],
+        'symbol-sort-key': ['get', 'label_priority'],
+        'text-allow-overlap': false,
       },
       paint: { 'text-color': '#1a1a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
     },
     {
-      id: 'barrios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN, minzoom: 12,
-      filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['9', '10', '11']]], ['has', 'name'], ['!', ['in', 'Límite', ['get', 'name']]]],
+      id: 'sub_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_LABEL_SUB,
+      filter: ['all', ['has', 'label_kind'], ['in', ['get', 'label_kind'], ['literal', ['nivel_5', 'nivel_6']]], ['has', 'name']],
+      minzoom: 6,
+      maxzoom: 9,
       layout: {
-        'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
+        'text-field': ['coalesce', ['get', 'label_text'], ['get', 'name']],
+        'text-size': ['case', ['==', ['get', 'label_kind'], 'nivel_5'], 12, 11],
+        'text-anchor': 'center',
+        'text-font': ['OpenSansRegular'],
+        'symbol-sort-key': ['get', 'label_priority'],
+        'text-allow-overlap': false,
+      },
+      paint: { 'text-color': '#5a5a5a', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+    },
+    {
+      id: 'barrios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_LABEL, minzoom: 12,
+      filter: ['all', ['has', 'label_kind'], ['in', ['get', 'label_kind'], ['literal', ['nivel_9', 'nivel_10', 'nivel_11']]], ['has', 'name']],
+      layout: {
+        'text-field': ['coalesce', ['get', 'label_text'], ['get', 'name']],
         'text-size': 10,
         'text-anchor': 'center',
         'text-font': ['OpenSansRegular'],
+        'symbol-sort-key': ['get', 'label_priority'],
+        'text-allow-overlap': false,
       },
       paint: { 'text-color': '#404040', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
     },
@@ -284,7 +306,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     },
     {
       id: 'servicios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER, minzoom: 12,
-      filter: ['all', ['has', 'amenity'], ['has', 'name'], ['in', ['get', 'amenity'], ['literal', ['fuel', 'hospital', 'clinic', 'pharmacy']]]],
+      filter: ['all', ['has', 'amenity'], ['has', 'name'], ['in', ['get', 'amenity'], ['literal', ['fuel', 'hospital', 'clinic', 'police']]]],
       layout: {
         'text-field': ['get', 'name'],
         'text-size': 10,
