@@ -30,6 +30,7 @@ const DB_PATH = DIR + DB_NAME;
 const SOURCE_LAYER = mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN = (mapa as any).sourceLayerAdmin || mapa.sourceLayer;
 const SOURCE_LAYER_ADMIN_PAIS = (mapa as any).sourceLayerAdminPais || mapa.sourceLayer;
+const SOURCE_LAYER_ADMIN_PAIS_LABEL = (mapa as any).sourceLayerAdminPaisLabels || SOURCE_LAYER_ADMIN_PAIS;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -224,7 +225,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       paint: { 'line-color': '#b0a090', 'line-width': 0.8, 'line-opacity': 0.6 },
     },
     {
-      id: 'pais_provincias_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS,
+      id: 'pais_provincias_labels', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN_PAIS_LABEL,
       filter: ['all', ['==', ['get', 'kind'], 'nivel_4'], ['has', 'name']],
       minzoom: 5,
       layout: {

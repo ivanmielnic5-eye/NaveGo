@@ -55,7 +55,7 @@ const CATALOGO: Record<string, MapDescriptor> = {
     sourceLayer: 'corredor',
     sourceLayerAdmin: 'admin',
     sourceLayerAdminPais: 'admin_pais',
-    sourceLayerAdminPaisLabels: 'admin_pais_labels',
+    sourceLayerAdminPaisLabels: 'admin_pais_label',
     center: [-60.65, -32.95], // D-1 = (b) Rosario, punto medio
     minzoom: 5,
     maxzoom: 14,
