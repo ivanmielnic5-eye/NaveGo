@@ -23,6 +23,7 @@ export type MapDescriptor = {
   nombre: string;
   archivo: string; // nombre del mbtiles
   sourceLayer: string;
+  sourceLayerAdmin?: string;
   center: [number, number];
   minzoom: number;
   maxzoom: number;
@@ -50,6 +51,7 @@ const CATALOGO: Record<string, MapDescriptor> = {
     nombre: 'Corredor Santa Fe - CABA (RN9)',
     archivo: 'corredor_sf_caba_z5.mbtiles',
     sourceLayer: 'corredor',
+    sourceLayerAdmin: 'admin',
     center: [-60.65, -32.95], // D-1 = (b) Rosario, punto medio
     minzoom: 5,
     maxzoom: 14,

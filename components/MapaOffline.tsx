@@ -28,6 +28,7 @@ const mapa = getMapaActivo();
 const DB_NAME = mapa.archivo;
 const DB_PATH = DIR + DB_NAME;
 const SOURCE_LAYER = mapa.sourceLayer;
+const SOURCE_LAYER_ADMIN = (mapa as any).sourceLayerAdmin || mapa.sourceLayer;
 const CENTER_DEFAULT: [number, number] = mapa.center;
 const MINZOOM = mapa.minzoom;
 const MAXZOOM = mapa.maxzoom;
@@ -210,12 +211,12 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     { id: 'edificios', type: 'fill', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'fill-color': '#d8c8b0', 'fill-opacity': 0.6 } },
     { id: 'lineas', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER, paint: { 'line-color': '#7a8a9a', 'line-width': 1 } },
     {
-      id: 'provincias', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER,
+      id: 'provincias', type: 'line', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN,
       filter: ['all', ['==', ['get', 'admin_level'], '4'], ['==', ['get', 'boundary'], 'administrative'], ['has', 'name']],
       paint: { 'line-color': '#5a6a7a', 'line-width': 2, 'line-opacity': 0.85 },
     },
     {
-      id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER,
+      id: 'municipios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN,
       filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['5', '6', '7', '8']]], ['has', 'name']],
       layout: {
         'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
@@ -226,7 +227,7 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
       paint: { 'text-color': '#1a1a1a', 'text-halo-color': '#ffffff', 'text-halo-width': 2 },
     },
     {
-      id: 'barrios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER, minzoom: 12,
+      id: 'barrios', type: 'symbol', source: 'local', 'source-layer': SOURCE_LAYER_ADMIN, minzoom: 12,
       filter: ['all', ['has', 'admin_level'], ['in', ['get', 'admin_level'], ['literal', ['9', '10', '11']]], ['has', 'name']],
       layout: {
         'text-field': ['coalesce', ['get', 'name:es'], ['get', 'name']],
