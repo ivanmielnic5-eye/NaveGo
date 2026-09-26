@@ -1,0 +1,20 @@
+{
+  "id": "D-2026-0005",
+  "titulo": "Verificacion post-migracion",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "La transaccion exclusiva garantiza atomicidad (todo o nada), pero no garantiza que los cambios aplicados sean los esperados. Una migracion podria commitear sin haber agregado las columnas correctas o sin haber creado la tabla nueva.",
+  "decision": "Despues del commit de la migracion, el sistema verifica explicitamente: user_version coincide con la version esperada, existen las columnas agregadas, existen las tablas nuevas, existen los indices requeridos. Si alguna verificacion falla, se lanza error claro.",
+  "consecuencias": [
+    "Un fallo silencioso en la migracion se detecta en el primer arranque",
+    "El error queda registrado en el log con detalle especifico",
+    "El costo es despreciable (4 consultas PRAGMA al terminar la migracion)"
+  ],
+  "criterio_revision": "Si la verificacion se vuelve costosa por algun motivo operativo especifico.",
+  "fuentes_verificadas": [
+    "Patron de migraciones versionadas en proyectos open-source (eyrie y similares)",
+    "Documentacion SQLite PRAGMA table_info"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

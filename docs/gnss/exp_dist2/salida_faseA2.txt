@@ -1,0 +1,31 @@
+=== FASE A2: ERROR RELATIVO (%) TRAZA x sigma_speed (media 5 semillas) ===
+sigma_pos=1.5 m fijo. A=polilinea, B=speed*dt rect, B*=trapezoidal, C=combinado (B* si v>=1kn, A si v<1kn)
+
+trayectoria    ss(m/s)    ref_m       A%       B%      B*%       C%     |A|%     |B|%     |C|%
+T1_recta          0.05   693.22    49.65     0.05    -0.14     8.51    49.65     0.05     8.51
+T1_recta          0.10   693.22    49.65     0.10    -0.09     8.49    49.65     0.10     8.49
+T1_recta          0.20   693.22    49.65     0.21     0.02     8.42    49.65     0.21     8.42
+T1_recta          0.50   693.22    49.65     0.55     0.35     7.24    49.65     0.55     7.24
+
+T4_lenta          0.05   151.50   425.67    -0.02    -0.20   218.37   425.67     0.13   218.37
+T4_lenta          0.10   151.50   425.67    -0.02    -0.21   221.14   425.67     0.25   221.14
+T4_lenta          0.20   151.50   425.67     0.04    -0.16   225.75   425.67     0.48   225.75
+T4_lenta          0.50   151.50   425.67     8.93     8.67   230.65   425.67     8.93   230.65
+
+T5_variable       0.05   487.05    93.98     0.06    -0.15    34.78    93.98     0.06    34.78
+T5_variable       0.10   487.05    93.98     0.12    -0.09    35.14    93.98     0.12    35.14
+T5_variable       0.20   487.05    93.98     0.35     0.13    35.14    93.98     0.35    35.14
+T5_variable       0.50   487.05    93.98     1.80     1.56    33.31    93.98     1.80    33.31
+
+=== VERIFICACION DE HIPOTESIS (criterios fijados) ===
+
+H1 (T1_recta, ss=0.2, |B|<10% en 4/5): ok=5/5 bad=0/5 errores=[0.466, 0.245, 0.12, 0.05, 0.163] -> CONFIRMADA
+
+H2 (T4_lenta, ss=0.2, |B|>|A| en >=3/5): B peor en 0/5 |B|=[1.1, 0.22, 0.18, 0.42, 0.5] |A|=[418.41, 457.59, 417.66, 422.62, 412.07] -> REFUTADA
+
+H3 (T5_variable, max|C| < max|A| y < max|B| por celda): cumple en 0/4 celdas -> REFUTADA
+    ss=0.05  max|A|=  102.91  max|B|=    0.16  max|C|=   36.77
+    ss=0.10  max|A|=  102.91  max|B|=    0.33  max|C|=   37.78
+    ss=0.20  max|A|=  102.91  max|B|=    0.73  max|C|=   37.63
+    ss=0.50  max|A|=  102.91  max|B|=    2.44  max|C|=   36.63
+

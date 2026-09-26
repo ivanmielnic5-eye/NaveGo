@@ -1,0 +1,20 @@
+{
+  "id": "D-2026-0006",
+  "titulo": "Version efectiva de expo-sqlite: 16.0.10",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "Durante la sesion de migracion v1 a v2 se asumio que NaveGo usaba expo-sqlite 19.0.24 por asociacion con Expo SDK 54. La verificacion real en el output de Gradle mostro que la version efectiva es 16.0.10.",
+  "decision": "La version efectiva de expo-sqlite instalada en NaveGo es 16.0.10. No debe asumirse otra version por asociacion con Expo SDK 54 ni con documentacion generica. Cualquier cambio de version requiere volver a verificar comportamiento de migraciones y transacciones antes de modificar este contrato.",
+  "consecuencias": [
+    "Cualquier documento o comentario que mencione otra version debe corregirse",
+    "Al actualizar expo-sqlite, se revisa primero si la API de transacciones cambio",
+    "Los prompts a otras IAs deben incluir la version real, no la asumida"
+  ],
+  "criterio_revision": "Cuando se actualice expo-sqlite a una version distinta.",
+  "fuentes_verificadas": [
+    "Output de Gradle del build del 2026-09-25",
+    "package.json del proyecto"
+  ],
+  "reversible": false,
+  "autor": "director"
+}

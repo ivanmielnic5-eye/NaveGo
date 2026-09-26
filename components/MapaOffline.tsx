@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Map, Camera, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
+import { View, StyleSheet, Animated } from 'react-native';
+import { Map, Camera, Marker, type CameraRef } from '@maplibre/maplibre-react-native';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
@@ -50,6 +50,9 @@ interface Props {
   initialCenter?: [number, number];
   initialZoom?: number;
   showUserLocation?: boolean;
+  gapActive?: boolean;
+  gapMarkers?: Array<{startLat:number;startLon:number;endLat:number;endLon:number;durationMs:number}>;
+  autoFollow?: boolean;
 }
 
 function aGeoJSON(puntos: Punto[]) {
@@ -76,13 +79,28 @@ async function copiarFuente(modulo: any, subcarpeta: string, archivo: string) {
 }
 
 export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
-  { trackPoints, referencePoints, userPos, absolute, initialCenter, initialZoom, showUserLocation = true },
+  { trackPoints, referencePoints, userPos, absolute, initialCenter, initialZoom, showUserLocation = true, gapActive = false, gapMarkers = [], autoFollow = false },
   ref
 ) {
   const [uri, setUri] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const cameraRef = useRef<CameraRef>(null);
   const yaCentroRef = useRef(false);
+  const [blinkOn, setBlinkOn] = useState(true);
+
+  useEffect(() => {
+    if (!gapActive) {
+      setBlinkOn(true);
+      return;
+    }
+    const interval = setInterval(() => {
+      setBlinkOn((v) => !v);
+    }, 500);
+    return () => {
+      clearInterval(interval);
+      setBlinkOn(true);
+    };
+  }, [gapActive]);
 
   useImperativeHandle(ref, () => ({
     centerOn: (punto: Punto, zoom: number = 16) => {
@@ -177,11 +195,21 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
 
   useEffect(() => {
     if (!userPos || !cameraRef.current?.jumpTo) return;
-    if (!yaCentroRef.current) {
+    if (autoFollow) {
+      if (!yaCentroRef.current) {
+        // Primera centrada: zoom 16
+        try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude], zoom: 16 }); } catch (e) {}
+        yaCentroRef.current = true;
+      } else {
+        // Seguimiento continuo: solo cambia el centro, respeta el zoom del usuario
+        try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude] }); } catch (e) {}
+      }
+    } else if (!yaCentroRef.current) {
+      // Vista de referencia: centra una sola vez y queda estatica
       try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude], zoom: 16 }); } catch (e) {}
       yaCentroRef.current = true;
     }
-  }, [userPos]);
+  }, [userPos, autoFollow]);
 
 
   // FIX: recentrar cuando initialCenter llegue después del montaje (reference detail)
@@ -206,6 +234,22 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
     local: { type: 'vector', tiles: [uri], minzoom: MINZOOM, maxzoom: MAXZOOM },
   };
   if (activeGeoJSON) sources.trackActivo = { type: 'geojson', data: activeGeoJSON };
+  if (gapMarkers.length > 0) {
+    sources.gapArc = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: gapMarkers.map((g, idx) => ({
+          type: 'Feature' as const,
+          properties: { idx, durationS: Math.round(g.durationMs / 1000) },
+          geometry: {
+            type: 'LineString' as const,
+            coordinates: [[g.startLon, g.startLat], [g.endLon, g.endLat]],
+          },
+        })),
+      },
+    };
+  }
   if (refGeoJSON) sources.trackRef = { type: 'geojson', data: refGeoJSON };
 
   // Orden de capas (de abajo hacia arriba):
@@ -442,8 +486,31 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
   if (refGeoJSON) {
     layers.push({ id: 'trackRefLine', type: 'line', source: 'trackRef', paint: { 'line-color': '#00D9FF', 'line-width': 2, 'line-dasharray': [2, 2] } });
   }
-  if (activeGeoJSON) {
+  if (activeGeoJSON && !gapActive) {
     layers.push({ id: 'trackActivoLine', type: 'line', source: 'trackActivo', paint: { 'line-color': '#FF4055', 'line-width': 3 } });
+  }
+  if (gapMarkers.length > 0) {
+    // Capa inferior: borde negro continuo
+    layers.push({
+      id: 'gapArcBorder',
+      type: 'line',
+      source: 'gapArc',
+      paint: {
+        'line-color': '#000000',
+        'line-width': 4,
+      },
+    });
+    // Capa superior: línea amarilla punteada
+    layers.push({
+      id: 'gapArcLine',
+      type: 'line',
+      source: 'gapArc',
+      paint: {
+        'line-color': '#FFCC00',
+        'line-width': 2,
+        'line-dasharray': [3, 3],
+      },
+    });
   }
 
   const style = {
@@ -462,7 +529,39 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
           minZoom={4}
           maxZoom={22}
         />
-        {showUserLocation && <UserLocation visible={true} />}
+        {showUserLocation && userPos && (
+          <Marker lngLat={[userPos.longitude, userPos.latitude]}>
+            <Animated.View
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: gapActive ? '#FFCC00' : '#0A84FF',
+                borderWidth: 3,
+                borderColor: '#000000',
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.4,
+                shadowRadius: 3,
+                elevation: 6,
+                opacity: blinkOn ? 1 : 0.2,
+              }}
+            >
+              <View
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: 7,
+                  backgroundColor: gapActive ? '#FFCC00' : '#0A84FF',
+                  borderWidth: 2,
+                  borderColor: '#FFFFFF',
+                }}
+              />
+            </Animated.View>
+          </Marker>
+        )}
       </Map>
     </View>
   );

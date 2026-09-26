@@ -1,0 +1,26 @@
+{
+  "gap_corto_10s_30m": {
+    "gt_path": "/home/ivan/navego_recuperado/docs/gnss/exp_gaps_avance/tray_gap_corto_10s_30m.jsonl",
+    "gap_start_s": 110,
+    "gap_duration_s": 10,
+    "advance_during_gap_m": 30.0,
+    "speed_ms": 3.0,
+    "total_real_m": 717.0
+  },
+  "gap_medio_30s_100m": {
+    "gt_path": "/home/ivan/navego_recuperado/docs/gnss/exp_gaps_avance/tray_gap_medio_30s_100m.jsonl",
+    "gap_start_s": 110,
+    "gap_duration_s": 30,
+    "advance_during_gap_m": 100.0,
+    "speed_ms": 3.3333333333333335,
+    "total_real_m": 796.666667
+  },
+  "gap_largo_60s_200m": {
+    "gt_path": "/home/ivan/navego_recuperado/docs/gnss/exp_gaps_avance/tray_gap_largo_60s_200m.jsonl",
+    "gap_start_s": 110,
+    "gap_duration_s": 60,
+    "advance_during_gap_m": 200.0,
+    "speed_ms": 3.3333333333333335,
+    "total_real_m": 796.666667
+  }
+}

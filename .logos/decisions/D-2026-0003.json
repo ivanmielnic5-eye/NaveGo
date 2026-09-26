@@ -1,0 +1,21 @@
+{
+  "id": "D-2026-0003",
+  "titulo": "Track observado != track estimado",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "La continuidad visual es util para el operador, pero no debe contaminar el track historico. Es un error comun reconstruir el track y guardarlo como si fuera real, porque despues nadie recuerda que era estimacion.",
+  "decision": "El track historico observado se compone exclusivamente de GpsFix aceptados, agrupados en segmentos separados por GapEvent. Cualquier reconstruccion visual (DR, LIDR u otro) es efimera: se calcula en el momento de renderizar y no modifica gps_fixes.",
+  "consecuencias": [
+    "El track observado se dibuja solido",
+    "La reconstruccion estimada se dibuja punteada o con estilo distinto",
+    "La reconstruccion no se persiste y no adquiere rango de evidencia",
+    "Si en el futuro se decide persistirla, requiere una decision explicita nueva"
+  ],
+  "criterio_revision": "Si LIDR se valida experimentalmente con el simulador Godot y se decide persistirla para algun caso de uso especifico.",
+  "fuentes_verificadas": [
+    "Estandar ECDIS de track historico vs posicion estimada",
+    "Paper Dewhirst et al. sobre drift-corrected dead reckoning (referencia metodologica)"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

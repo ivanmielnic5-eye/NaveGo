@@ -1,0 +1,21 @@
+{
+  "id": "D-2026-0007",
+  "titulo": "Un solo escritor por worktree",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "El 20/09 se produjo un incidente cuando dos chats tocaron el mismo App.tsx sin coordinacion y generaron commits destructivos (EXPEDIENTE/31). El sistema no tenia mecanismo para detectar dos escritores simultaneos sobre el mismo checkout.",
+  "decision": "Solo puede haber un escritor activo por worktree a la vez. Multiples agentes pueden existir en paralelo (chats, DSH, IAs externas), pero nunca escribiendo sobre el mismo checkout. El lock se declara explicitamente y se libera al cerrar sesion o al detectar inactividad.",
+  "consecuencias": [
+    "Antes de escribir, un agente verifica el lock del worktree",
+    "Si otro agente tiene el lock, el segundo espera o reporta",
+    "Un humano puede forzar la liberacion manual",
+    "El incidente del 20/09 queda prevenido por mecanica, no por vigilancia humana"
+  ],
+  "criterio_revision": "Si el lockfile agrega mas friccion que valor, o si el Director encuentra que la mecanica es demasiado estricta para su forma de trabajar.",
+  "fuentes_verificadas": [
+    "EXPEDIENTE/31_INFORME_INCIDENTE_CONTINUIDAD.md",
+    "Propuesta de gobernanza GPT-4, hilo perdido 2026-09-24"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

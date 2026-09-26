@@ -1,0 +1,22 @@
+{
+  "id": "D-2026-0001",
+  "titulo": "Estimacion != evidencia observada",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "La app pierde senal GNSS bajo puentes, arboles o interferencia. La tentacion natural es 'rellenar' el track con posiciones estimadas para que se vea continuo. Eso mezcla datos inventados con datos observados y rompe la confiabilidad del registro.",
+  "decision": "NaveGo nunca convierte una estimacion de posicion en evidencia observada. GpsFix representa exclusivamente una observacion aceptada del proveedor GNSS. EstimatedPosition representa posiciones calculadas (DR u otro metodo). Las estimaciones no se persisten en gps_fixes ni adquieren semantica de observacion real.",
+  "consecuencias": [
+    "gps_fixes solo contiene fixes reales",
+    "EstimatedPosition se calcula al vuelo cuando hace falta",
+    "El render distingue visualmente lo observado de lo estimado",
+    "La distancia confirmada no incluye tramos sin observacion"
+  ],
+  "criterio_revision": "Solo si surge evidencia de que la distincion es impracticable en algun escenario real, con caso concreto documentado.",
+  "fuentes_verificadas": [
+    "Documentacion IHO sobre posicion DR vs posicion estimada",
+    "Manuales ECDIS (estandar marina)",
+    "Documentacion expo-sqlite sobre persistencia"
+  ],
+  "reversible": false,
+  "autor": "director"
+}

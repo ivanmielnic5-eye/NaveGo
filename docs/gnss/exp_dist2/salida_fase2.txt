@@ -1,0 +1,49 @@
+=== FASE 2: ERROR RELATIVO (%) POR TRAYECTORIA x RUIDO ===
+(media de 5 semillas por celda; metodos A, B, B*=trapezoidal, C=combinado)
+
+trayectoria      sigma     ref_m        A%        B%       B*%        C%
+T1_recta           0.0    693.22     -0.09      0.00     -0.19     -0.19
+T1_recta           0.5    693.22      5.62      0.00     -0.19      1.92
+T1_recta           1.5    693.22     46.17      0.00     -0.19      9.46
+T1_recta           3.0    693.22    138.48      0.00     -0.19     19.42
+
+T2_virada          0.0    693.22     -0.07     -0.00     -0.19     -0.19
+T2_virada          0.5    693.22      5.77     -0.00     -0.19      1.62
+T2_virada          1.5    693.22     46.79     -0.00     -0.19      8.36
+T2_virada          3.0    693.22    139.32     -0.00     -0.19     17.11
+
+T3_acel_decel      0.0    569.49     -0.04      0.00     -0.27     -0.27
+T3_acel_decel      0.5    569.49      7.61      0.00     -0.27      2.56
+T3_acel_decel      1.5    569.49     68.60      0.00     -0.27     12.43
+T3_acel_decel      3.0    569.49    184.89      0.00     -0.27     24.53
+
+=== ERROR ABSOLUTO MEDIO (%) POR TRAYECTORIA x RUIDO ===
+trayectoria      sigma      |A|%      |B|%     |B*|%      |C|%
+T1_recta           0.0      0.09      0.00      0.19      0.19
+T1_recta           0.5      5.62      0.00      0.19      1.92
+T1_recta           1.5     46.17      0.00      0.19      9.46
+T1_recta           3.0    138.48      0.00      0.19     19.42
+
+T2_virada          0.0      0.07      0.00      0.19      0.19
+T2_virada          0.5      5.77      0.00      0.19      1.62
+T2_virada          1.5     46.79      0.00      0.19      8.36
+T2_virada          3.0    139.32      0.00      0.19     17.11
+
+T3_acel_decel      0.0      0.04      0.00      0.27      0.27
+T3_acel_decel      0.5      7.61      0.00      0.27      2.56
+T3_acel_decel      1.5     68.60      0.00      0.27     12.43
+T3_acel_decel      3.0    184.89      0.00      0.27     24.53
+
+=== VERIFICACION DE HIPOTESIS (criterios fijados) ===
+
+H1 (B en recta cae <2%; refutada si >5% en 3/5): |err B| en T1 medio=0.000% max=0.000% -> CONFIRMADA
+    celdas de T1 con >3/5 corridas sobre 5%: 0
+
+    A   peor celda (media) con ruido:   184.89%
+    B   peor celda (media) con ruido:     0.00%
+    B*  peor celda (media) con ruido:     0.27%
+    C   peor celda (media) con ruido:    24.53%
+H2 (mejor metodo <5% en todas las celdas realistas): mejor=B peor celda=0.00% -> CONFIRMADA
+
+H3 (A en sigma=1.5 supera 20%; refutada si <10%): A err medio=53.85% -> CONFIRMADA
+

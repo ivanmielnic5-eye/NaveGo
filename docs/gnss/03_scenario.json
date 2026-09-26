@@ -1,0 +1,24 @@
+{
+  "scenario_id": "GNSS_CUT_12S_LINEA_RECTA",
+  "seed": 20260924,
+  "duration_s": 60,
+  "report_interval_ms": 1000,
+  "gnss": {
+    "noise_sigma_m": 3.0,
+    "latency_ms": 300,
+    "cut_windows": [{"start_s": 30, "duration_s": 12}],
+    "spikes": {
+      "probability": 0.01,
+      "min_jump_m": 50,
+      "max_jump_m": 500
+    }
+  },
+  "hydro": {
+    "wind_strength": 1.5,
+    "wind_direction_deg": 90
+  },
+  "initial_state": {
+    "lat": -31.648,
+    "lon": -60.708
+  }
+}

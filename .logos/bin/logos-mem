@@ -59,6 +59,8 @@ with open(expand(sources['decisions']['path'])) as f:
     decisions_md = f.read()
 
 active_hyps = []
+count_by_state = {}
+STATES_VISIBLES = {'EN_CURSO', 'PROPUESTA', 'CONFIRMADA'}
 hyp_dir = expand(sources['hypotheses']['path'])
 if os.path.isdir(hyp_dir):
     for fname in sorted(os.listdir(hyp_dir)):
@@ -66,7 +68,9 @@ if os.path.isdir(hyp_dir):
             try:
                 with open(os.path.join(hyp_dir, fname)) as f:
                     h = json.load(f)
-                if h.get('estado') == 'EN_CURSO':
+                estado = h.get('estado', 'DESCONOCIDO')
+                count_by_state[estado] = count_by_state.get(estado, 0) + 1
+                if estado in STATES_VISIBLES:
                     active_hyps.append(h)
             except Exception as e:
                 print(f"  WARN: no pude leer {fname}: {e}")
@@ -145,10 +149,16 @@ md.append(f"- hypothesis: {w.get('hypothesis','?')}")
 md.append(f"- next_step: {w.get('next_step','?')}")
 md.append("")
 
-md.append("## Hipotesis activas (EN_CURSO)")
+md.append("## Hipotesis (conteo por estado)")
+md.append(f"- {count_by_state}")
+md.append("")
+md.append("## Hipotesis visibles (EN_CURSO / PROPUESTA / CONFIRMADA)")
 if active_hyps:
     for h in active_hyps:
-        md.append(f"- {h.get('id','?')}: {h.get('hipotesis','?')}")
+        texto = h.get('hipotesis', '?')
+        if len(texto) > 80:
+            texto = texto[:77] + '...'
+        md.append(f"- [{h.get('estado','?')}] {h.get('id','?')}: {texto}")
 else:
     md.append("- (ninguna)")
 md.append("")

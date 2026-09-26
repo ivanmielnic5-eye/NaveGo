@@ -1,0 +1,21 @@
+{
+  "id": "D-2026-0008",
+  "titulo": "Objetivo de salida de la investigacion GNSS",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "El proyecto tiene multiples lineas de investigacion activas (GNSS, mapas, gobernanza, simulador). Sin un criterio de salida claro, cualquier investigacion puede estirarse indefinidamente sin producir cambios en NaveGo. El Director y el analisis externo acordaron que toda investigacion debe declarar que decision o cambio de NaveGo producira al terminar.",
+  "decision": "La investigacion de continuidad GNSS se considera completa cuando: (1) los 4 escenarios (corte corto, corte largo, cortes multiples, giro durante corte) corrieron al menos una vez contra NaveGo real; (2) los resultados estan guardados en expediente; (3) existe una decision tomada con evidencia sobre si NaveGo necesita dead reckoning o no. La investigacion se reabre si un caso real nuevo revela comportamiento distinto al documentado.",
+  "consecuencias": [
+    "El documento EXPEDIENTE/36_OBJETIVO_SALIDA_GNSS.md es la referencia de cierre",
+    "El simulador Godot queda validado como laboratorio y no se sigue desarrollando salvo necesidad evidenciada",
+    "Cada escenario nuevo debe justificar por que aporta informacion no cubierta",
+    "La investigacion no se cierra por tener buenas respuestas de IAs, se cierra por evidencia empirica"
+  ],
+  "criterio_revision": "Si aparece un caso real que revele comportamiento de NaveGo distinto al documentado en los 4 escenarios, o si el Director decide ampliar el alcance.",
+  "fuentes_verificadas": [
+    "EXPEDIENTE/36_OBJETIVO_SALIDA_GNSS.md",
+    "Analisis externo GPT-4, 2026-09-25"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

@@ -2,8 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
-import { startSession, endSession, insertGpsFix, getSessionFixes } from './db/journal';
+import * as FileSystem from 'expo-file-system/legacy';
+import { StorageAccessFramework } from 'expo-file-system/legacy';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap } from './db/journal';
 import { initDatabase } from './db/schema';
+import { REPLAY_ENABLED } from './devConfig';
+import { realLocationProvider } from './LocationProvider';
+import { replayLocationProvider } from './ReplayLocationProvider';
 import type { GPSFix } from './types/journal';
 
 const PC_BRIDGE_URL = 'http://192.168.100.106:8084/update-trajectory';
@@ -88,6 +93,10 @@ export function useNaveGoTracker() {
   const [isPaused, setIsPaused] = useState(false);
   const [routePoints, setRoutePoints] = useState<Coordinate[]>([]);
   const [totalDistance, setTotalDistance] = useState(0);
+  const [gapCount, setGapCount] = useState(0);
+  const [gapTotalDurationMs, setGapTotalDurationMs] = useState(0);
+  const [gapActive, setGapActive] = useState(false);
+  const [gapMarkers, setGapMarkers] = useState<Array<{startLat:number;startLon:number;endLat:number;endLon:number;durationMs:number}>>([]);
 
   // === Estados de sync (con PC) ===
   const [syncOk, setSyncOk] = useState<boolean | null>(null);
@@ -109,6 +118,14 @@ export function useNaveGoTracker() {
   const lastCogRef = useRef(0);
   const lastFixTimestampRef = useRef<number | null>(null);
   const lastFixAccuracyRef = useRef<number | null>(null);
+  const lastFixIdRef = useRef<string | null>(null);
+  const lastSogRef = useRef<number>(0);
+  const openGapIdRef = useRef<string | null>(null);
+  const lastDistanceLogRef = useRef<number>(0);
+  const fieldTestLogRef = useRef<string[]>([]);
+  const safDirUriRef = useRef<string | null>(null);
+  const gapStartAtMsRef = useRef<number | null>(null);
+  const gapStartPosRef = useRef<{lat:number;lon:number} | null>(null);
 
   // === Helpers ===
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -135,24 +152,35 @@ export function useNaveGoTracker() {
   };
 
   const updateNavigationStatus = (timestamp: number | null, accuracy?: number) => {
+    let nextStatus: NavigationStatus;
+    let reason: string;
     if (!timestamp) {
-      setNavigationStatus('NO_DISPONIBLE');
-      return;
-    }
-    const ageMs = Math.max(0, Date.now() - timestamp);
-    if (ageMs > GNSS_LOST_AFTER_MS) {
-      setNavigationStatus('GNSS_PERDIDO');
-    } else if (ageMs > GNSS_RECOVERING_AFTER_MS) {
-      setNavigationStatus('RECUPERANDO');
-    } else if (accuracy !== undefined && accuracy > MAX_ACCURACY_M) {
-      setNavigationStatus('DEGRADADO');
-    } else if (ageMs > GNSS_DEGRADED_AFTER_MS) {
-      setNavigationStatus('RECUPERANDO');
-    } else if (accuracy !== undefined && accuracy > 10) {
-      setNavigationStatus('DEGRADADO');
+      nextStatus = 'NO_DISPONIBLE';
+      reason = 'sin timestamp';
     } else {
-      setNavigationStatus('CONFIABLE');
+      const ageMs = Math.max(0, Date.now() - timestamp);
+      if (ageMs > GNSS_LOST_AFTER_MS) {
+        nextStatus = 'GNSS_PERDIDO';
+        reason = 'age=' + ageMs + 'ms';
+      } else if (ageMs > GNSS_RECOVERING_AFTER_MS) {
+        nextStatus = 'RECUPERANDO';
+        reason = 'age=' + ageMs + 'ms';
+      } else if (accuracy !== undefined && accuracy > MAX_ACCURACY_M) {
+        nextStatus = 'DEGRADADO';
+        reason = 'acc=' + accuracy;
+      } else if (ageMs > GNSS_DEGRADED_AFTER_MS) {
+        nextStatus = 'RECUPERANDO';
+        reason = 'age=' + ageMs + 'ms';
+      } else if (accuracy !== undefined && accuracy > 10) {
+        nextStatus = 'DEGRADADO';
+        reason = 'acc=' + accuracy;
+      } else {
+        nextStatus = 'CONFIABLE';
+        reason = 'age=' + ageMs + 'ms';
+      }
     }
+    console.log('[STATE] t=' + Date.now() + ' -> ' + nextStatus + ' (' + reason + ')');
+    setNavigationStatus(nextStatus);
   };
 
   const evaluateHazards = (lat: number, lon: number): ActiveHazard[] => {
@@ -175,10 +203,11 @@ export function useNaveGoTracker() {
     location: Location.LocationObject,
     quality: GPSFix['quality'],
     sessionId: string,
+    explicitId?: string,
   ) => {
     if (!dbRef.current) return;
     const fix: GPSFix = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+      id: explicitId ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       session_id: sessionId,
       sequence_no: sequenceNoRef.current++,
       timestamp: location.timestamp || Date.now(),
@@ -190,7 +219,12 @@ export function useNaveGoTracker() {
       heading: location.coords.heading ?? null,
       quality,
       satellites: 0,
+      received_at_ms: Date.now(),
+      source: REPLAY_ENABLED ? 'REPLAY' : 'GNSS',
     };
+    // LOG TEMPORAL para verificar Problem 3 (source + received_at_ms)
+    console.log('[FIX-SRC] source=' + fix.source + ' recv_at=' + fix.received_at_ms + ' id=' + fix.id);
+    console.log('[FIX-CAMP] dt_calc lat=' + fix.lat_raw.toFixed(6) + ' lon=' + fix.lon_raw.toFixed(6) + ' acc=' + fix.accuracy + ' spd=' + fix.speed + ' head=' + fix.heading + ' t=' + fix.timestamp);
     try {
       await insertGpsFix(dbRef.current, fix);
     } catch (error) {
@@ -199,6 +233,7 @@ export function useNaveGoTracker() {
   };
 
   const syncTrajectoryToPC = async (points: Coordinate[]) => {
+    if (REPLAY_ENABLED) return;
     if (!points.length) return;
     try {
       const controller = new AbortController();
@@ -233,6 +268,47 @@ export function useNaveGoTracker() {
     if (watchdogTimerRef.current) clearInterval(watchdogTimerRef.current);
     watchdogTimerRef.current = setInterval(() => {
       updateNavigationStatus(lastFixTimestampRef.current, lastFixAccuracyRef.current ?? undefined);
+
+      // Abrir gap si: hay sesion activa, no pausada, no hay gap ya abierto,
+      // y el ultimo fix tiene mas de GNSS_DEGRADED_AFTER_MS de antiguedad.
+      if (
+        !openGapIdRef.current &&
+        isRecordingRef.current &&
+        !isPausedRef.current &&
+        sessionIdRef.current &&
+        dbRef.current &&
+        lastFixIdRef.current &&
+        lastFixTimestampRef.current &&
+        Date.now() - lastFixTimestampRef.current > GNSS_DEGRADED_AFTER_MS
+      ) {
+        const gapStartAt = lastFixTimestampRef.current;
+        gapStartAtMsRef.current = gapStartAt;
+        if (lastPointRef.current) {
+          gapStartPosRef.current = { lat: lastPointRef.current.lat, lon: lastPointRef.current.lon };
+        }
+        const fixIdAtGapStart = lastFixIdRef.current;
+        const sessionIdAtGapStart = sessionIdRef.current;
+        const sogAtGapStart = lastSogRef.current;
+        const cogAtGapStart = lastCogRef.current;
+        const accAtGapStart = lastFixAccuracyRef.current;
+        console.log('[GAP] abriendo gap desde fix ' + fixIdAtGapStart);
+        void openGap(
+          dbRef.current,
+          sessionIdAtGapStart,
+          fixIdAtGapStart,
+          sogAtGapStart,
+          cogAtGapStart,
+          accAtGapStart,
+          'GNSS_TIMEOUT',
+          gapStartAt,
+        ).then((gapId) => {
+          openGapIdRef.current = gapId;
+          setGapActive(true);
+          console.log('[GAP] abierto id=' + gapId);
+        }).catch((e) => {
+          console.warn('[GAP] error abriendo:', String(e));
+        });
+      }
     }, GNSS_WATCHDOG_INTERVAL_MS);
   };
 
@@ -242,11 +318,14 @@ export function useNaveGoTracker() {
   // =========================================================================
   useEffect(() => {
     let mounted = true;
-    let localSubscription: Location.LocationSubscription | null = null;
+    let localSubscription: { remove: () => void } | null = null;
+    const locationProvider = REPLAY_ENABLED
+      ? replayLocationProvider
+      : realLocationProvider;
 
     const initTelemetry = async () => {
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
+        const { status } = await locationProvider.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           console.error('[TRACKER] Permiso de ubicación denegado');
           return;
@@ -256,7 +335,7 @@ export function useNaveGoTracker() {
         setIsTelemetryActive(true);
         startWatchdog();
 
-        localSubscription = await Location.watchPositionAsync(
+        localSubscription = await locationProvider.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
             timeInterval: 1000,
@@ -264,6 +343,8 @@ export function useNaveGoTracker() {
           },
           (location) => {
             if (!mounted) return;
+
+            console.log('[FIX] t=' + Date.now() + ' lat=' + location.coords.latitude.toFixed(6) + ' lon=' + location.coords.longitude.toFixed(6) + ' acc=' + location.coords.accuracy);
 
             const currentTimestamp = location.timestamp || Date.now();
             const accuracy = location.coords.accuracy ?? 999;
@@ -299,10 +380,44 @@ export function useNaveGoTracker() {
             const quality: GPSFix['quality'] = accuracy <= 10 ? 'GOOD' : accuracy <= 50 ? 'SUSPECT' : 'REJECTED';
 
             if (sessionIdRef.current) {
-              void persistRawFix(location, quality, sessionIdRef.current);
+              const fixId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+              lastFixIdRef.current = fixId;
+              fieldTestLogRef.current.push(JSON.stringify({measuredAt: currentTimestamp, receivedAt: Date.now(), lat: location.coords.latitude, lon: location.coords.longitude, accuracy: location.coords.accuracy, speed: location.coords.speed, heading: location.coords.heading}));
+              lastSogRef.current = liveSog;
+              persistRawFix(location, quality, sessionIdRef.current, fixId).then(() => {
+                if (openGapIdRef.current && dbRef.current) {
+                  const gapId = openGapIdRef.current;
+                  const durMs = currentTimestamp - (lastFixTimestampRef.current ?? currentTimestamp);
+                  const realGapDurMs = currentTimestamp - (gapStartAtMsRef.current ?? currentTimestamp);
+                  void closeGap(dbRef.current, gapId, fixId, currentTimestamp).then(() => {
+                    console.log('[GAP] cerrado id=' + gapId + ' duracion=' + realGapDurMs + 'ms');
+                    setGapCount((prev) => prev + 1);
+                    setGapTotalDurationMs((prev) => prev + realGapDurMs);
+                    setGapActive(false);
+                    if (gapStartPosRef.current) {
+                      const startPos = gapStartPosRef.current;
+                      setGapMarkers((prev) => [...prev, {
+                        startLat: startPos.lat,
+                        startLon: startPos.lon,
+                        endLat: location.coords.latitude,
+                        endLon: location.coords.longitude,
+                        durationMs: realGapDurMs,
+                      }]);
+                      gapStartPosRef.current = null;
+                    }
+                    gapStartAtMsRef.current = null;
+                  }).catch((e) => {
+                    console.warn('[GAP] error cerrando:', String(e));
+                  });
+                  openGapIdRef.current = null;
+                }
+              }).catch(() => {});
             }
 
-            if (accuracy > MAX_ACCURACY_M) return;
+            if (accuracy > MAX_ACCURACY_M) {
+              console.log('[FILTER] t=' + Date.now() + ' acc=' + accuracy + ' > ' + MAX_ACCURACY_M);
+              return;
+            }
 
             let distanceIncrement = 0;
             if (lastPointRef.current) {
@@ -317,6 +432,7 @@ export function useNaveGoTracker() {
             // FASE 1: gap de GPS. Reiniciar track sin contar la distancia del gap.
             let isGapRestart = false;
             if (distanceIncrement > MAX_JUMP_DISTANCE_M) {
+              console.log('[FILTER] t=' + Date.now() + ' jump=' + distanceIncrement.toFixed(2) + 'm > ' + MAX_JUMP_DISTANCE_M + 'm');
               isGapRestart = true;
               distanceIncrement = 0;
             }
@@ -355,6 +471,13 @@ export function useNaveGoTracker() {
             lastPointRef.current = newPoint;
             routePointsRef.current = [...routePointsRef.current, newPoint];
             totalDistanceRef.current += distanceIncrement;
+
+            // LOG DE DISTANCIA cada 10 segundos (temporal para tests)
+            const nowLog = Date.now();
+            if (nowLog - lastDistanceLogRef.current >= 10000) {
+              lastDistanceLogRef.current = nowLog;
+              console.log('[DIST] t=' + nowLog + ' total=' + totalDistanceRef.current.toFixed(2) + 'm puntos=' + routePointsRef.current.length);
+            }
 
             setRoutePoints(routePointsRef.current);
             setTotalDistance(totalDistanceRef.current);
@@ -396,6 +519,21 @@ export function useNaveGoTracker() {
   const startTracking = async () => {
     if (isRecordingRef.current) return;
 
+    // Pedir carpeta SAF si no la tenemos (test de campo)
+    if (!safDirUriRef.current) {
+      try {
+        const perm = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (perm.granted) {
+          safDirUriRef.current = perm.directoryUri;
+          console.log('[FIELD-LOG] carpeta elegida: ' + perm.directoryUri);
+        } else {
+          console.log('[FIELD-LOG] permiso denegado');
+        }
+      } catch (e) {
+        console.warn('[FIELD-LOG] error pidiendo carpeta:', String(e));
+      }
+    }
+
     try {
       if (!dbRef.current) {
         dbRef.current = await SQLite.openDatabaseAsync('navego.db');
@@ -428,6 +566,12 @@ export function useNaveGoTracker() {
     }
 
     isRecordingRef.current = true;
+    setGapCount(0);
+    setGapTotalDurationMs(0);
+    setGapActive(false);
+    setGapMarkers([]);
+    gapStartPosRef.current = null;
+    gapStartAtMsRef.current = null;
     setIsRecording(true);
     setIsTracking(true);
     setIsPaused(false);
@@ -443,12 +587,50 @@ export function useNaveGoTracker() {
     isPausedRef.current = false;
 
     if (dbRef.current && sessionIdRef.current) {
+      // FIX H-2026-0004: abandonar gap abierto antes de cerrar la sesion
+      if (openGapIdRef.current) {
+        try {
+          await abandonGap(dbRef.current, openGapIdRef.current, Date.now());
+          console.log('[FIX-H0004] gap abandonado:', openGapIdRef.current);
+          openGapIdRef.current = null;
+          setGapActive(false);
+        } catch (e) {
+          console.warn('[FIX-H0004] error abandonando gap:', String(e));
+        }
+      }
+
+      // LOG FINAL de distancia (temporal para tests)
+      const gapsOpen = openGapIdRef.current ? 1 : 0;
+      console.log('[DIST-FINAL] total=' + totalDistanceRef.current.toFixed(2) + 'm puntos=' + routePointsRef.current.length + ' gap_abierto=' + gapsOpen);
+
+      // FIELD LOG: escribir buffer via SAF (test de campo TCL)
+      if (fieldTestLogRef.current.length > 0) {
+        try {
+          if (safDirUriRef.current) {
+            const fileName = 'tcl_field_' + Date.now() + '.jsonl';
+            const fileUri = await StorageAccessFramework.createFileAsync(
+              safDirUriRef.current,
+              fileName,
+              'application/jsonl'
+            );
+            await FileSystem.writeAsStringAsync(fileUri, fieldTestLogRef.current.join('\n'));
+            console.log('[FIELD-LOG] ' + fieldTestLogRef.current.length + ' fixes guardados en ' + fileName);
+          } else {
+            console.warn('[FIELD-LOG] no hay carpeta elegida, no se guardo el log');
+          }
+        } catch (e) {
+          console.warn('[FIELD-LOG] error:', String(e));
+        }
+        fieldTestLogRef.current = [];
+      }
+
       try {
         await endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current);
         console.log('[TRACKER] Sesion cerrada OK');
       } catch (e) {
         console.warn('[TRACKER] endSession fallo:', e);
       }
+
       sessionIdRef.current = null;
     }
   };
@@ -518,6 +700,10 @@ export function useNaveGoTracker() {
     nav,
     routePoints,
     totalDistance,
+    gapCount,
+    gapTotalDurationMs,
+    gapActive,
+    gapMarkers,
     currentSog,
     currentCog,
     isTracking,

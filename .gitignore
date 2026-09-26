@@ -88,3 +88,15 @@ sandbox_corredor/out_mision_b/
 *.geojsonseq
 *.mbtiles
 *.osm.pbf
+
+# Backups de archivos (con sufijo .pre-*)
+*.pre-*
+
+# Backup de DB del celular via adb
+navego-db-backup.ab
+
+# Outputs de experimentos GNSS (regenerables con los scripts .py de cada carpeta)
+docs/gnss/exp_*/fixes_*.jsonl
+docs/gnss/exp_*/fixes_*.json
+docs/gnss/exp_*/scenario_*.json
+docs/gnss/tcl_field/tcl_field_*.jsonl

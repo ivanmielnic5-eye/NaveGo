@@ -1,0 +1,21 @@
+{
+  "id": "D-2026-0002",
+  "titulo": "Gap como entidad persistente",
+  "estado": "CONGELADA",
+  "fecha": "2026-09-25",
+  "contexto": "Cuando se pierde la senal GNSS, no alcanza con 'no tener datos'. Hay que registrar explicitamente que hubo una perdida: cuando empezo, cuando termino, con que datos de navegacion contaba el sistema en ese momento.",
+  "decision": "La perdida de GNSS se registra explicitamente como GapEvent con estado OPEN/CLOSED, vinculando ultimo fix observado antes, primer fix observado despues, duracion, ultimo SOG/COG/accuracy conocidos, y motivo de la perdida.",
+  "consecuencias": [
+    "Se puede reconstruir la historia de huecos de una sesion",
+    "La UI puede mostrar 'GNSS PERDIDO desde hace Xs'",
+    "La distancia recorrida durante gaps queda marcada como desconocida, no como cero",
+    "Los gaps quedan persistidos aunque la app muera durante uno de ellos"
+  ],
+  "criterio_revision": "Si emerge la necesidad de gaps jerarquicos o anidados, o si la informacion almacenada resulta insuficiente.",
+  "fuentes_verificadas": [
+    "Analisis interno de la maquina de estados existente del tracker",
+    "Reportes de navegacion marina sobre track discontinuo"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

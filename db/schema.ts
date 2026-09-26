@@ -11,6 +11,7 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
     'PRAGMA user_version;'
   );
   const currentVersion = result?.user_version ?? 0;
+  console.log('[SCHEMA] initDatabase: currentVersion =', currentVersion);
 
   if (currentVersion < 1) {
     await db.execAsync(`
@@ -46,6 +47,81 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
       PRAGMA user_version = 1;
       COMMIT;
     `);
+  }
+
+  if (currentVersion === 1) {
+    await db.withExclusiveTransactionAsync(async (txn) => {
+      const columns = await txn.getAllAsync<{ name: string }>(
+        `PRAGMA table_info(gps_fixes);`
+      );
+      const columnNames = new Set(columns.map((c) => c.name));
+
+      if (!columnNames.has('received_at_ms')) {
+        await txn.execAsync(`ALTER TABLE gps_fixes ADD COLUMN received_at_ms INTEGER;`);
+      }
+      if (!columnNames.has('source')) {
+        await txn.execAsync(`ALTER TABLE gps_fixes ADD COLUMN source TEXT DEFAULT 'GNSS';`);
+      }
+
+      await txn.execAsync(`
+        CREATE TABLE IF NOT EXISTS gap_events (
+          id TEXT PRIMARY KEY NOT NULL,
+          session_id TEXT NOT NULL,
+          start_fix_id TEXT NOT NULL,
+          end_fix_id TEXT,
+          start_at_ms INTEGER NOT NULL,
+          end_at_ms INTEGER,
+          detected_at_ms INTEGER NOT NULL,
+          duration_ms INTEGER,
+          last_observed_sog_mps REAL,
+          last_observed_cog_deg REAL,
+          last_observed_accuracy_m REAL,
+          status TEXT NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN','CLOSED')),
+          reason TEXT NOT NULL DEFAULT 'GNSS_TIMEOUT' CHECK (reason IN ('GNSS_TIMEOUT','INVALID_FIX','PROVIDER_UNAVAILABLE','UNKNOWN')),
+          created_at_ms INTEGER NOT NULL,
+          updated_at_ms INTEGER NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE,
+          FOREIGN KEY (start_fix_id) REFERENCES gps_fixes(id),
+          FOREIGN KEY (end_fix_id) REFERENCES gps_fixes(id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_gap_events_session ON gap_events(session_id, start_at_ms);
+        CREATE INDEX IF NOT EXISTS idx_gap_events_status ON gap_events(session_id, status);
+        CREATE INDEX IF NOT EXISTS idx_gps_fixes_source ON gps_fixes(session_id, source);
+      `);
+
+      await txn.execAsync(`PRAGMA user_version = 2;`);
+
+      // Post-check: verificar que todo quedo bien aplicado
+      const versionCheck = await txn.getFirstAsync<{ user_version: number }>(
+        `PRAGMA user_version;`
+      );
+      if (versionCheck?.user_version !== 2) {
+        throw new Error('[MIGRATION] post-check fallo: user_version != 2');
+      }
+
+      const gpsColumns = await txn.getAllAsync<{ name: string }>(
+        `PRAGMA table_info(gps_fixes);`
+      );
+      const gpsColNames = new Set(gpsColumns.map((c) => c.name));
+      if (!gpsColNames.has('received_at_ms') || !gpsColNames.has('source')) {
+        throw new Error('[MIGRATION] post-check fallo: columnas nuevas faltantes');
+      }
+
+      const gapTable = await txn.getFirstAsync<{ name: string }>(
+        `SELECT name FROM sqlite_master WHERE type='table' AND name='gap_events';`
+      );
+      if (!gapTable) {
+        throw new Error('[MIGRATION] post-check fallo: tabla gap_events no existe');
+      }
+
+      console.log('[MIGRATION] v1 -> v2 aplicada y verificada');
+    });
+  } else if (currentVersion > 2) {
+    throw new Error(
+      '[MIGRATION] DB en version ' + currentVersion +
+      ', esta app solo conoce hasta v2. Actualizar app o restaurar DB.'
+    );
   }
 
   // ===== NUEVAS TABLAS PARA REFERENCIAS =====

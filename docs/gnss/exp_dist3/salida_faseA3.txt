@@ -1,0 +1,43 @@
+=== FASE A3: ERROR RELATIVO (%) POR TRAYECTORIA (media 5 semillas) ===
+sigma_pos=1.5 m  sigma_speed=0.1 m/s  semillas=5000-5004  25 corridas
+
+trayectoria         ref_m        A%      A+K%        B%        H% |     |A|%   |A+K|%     |B|%     |H|%
+T1_recta5          538.88     48.80      1.16      0.21      0.79 |    48.80     1.16     0.22     0.79
+T2_virada          538.88     48.97      3.04      0.21      0.79 |    48.97     3.04     0.22     0.79
+T3_quieto_nav      295.81    141.99      6.02      1.76      3.75 |   141.99     6.02     1.76     3.75
+T4_garreo           96.97    534.12    -93.22    -89.84    -93.22 |   534.12    93.22    89.84    93.22
+T5_variable        413.74     82.10     -3.53      0.23     -1.07 |    82.10     3.53     0.27     1.07
+
+=== ERROR ABSOLUTO (m, media 5 semillas) ===
+trayectoria          ref_m       A_m     A+K_m       B_m       H_m
+T1_recta5           538.88    262.99      6.24      1.15      4.25
+T2_virada           538.88    263.87     16.38      1.15      4.25
+T3_quieto_nav       295.81    420.02     17.80      5.22     11.09
+T4_garreo            96.97    517.93    -90.39    -87.12    -90.39
+T5_variable         413.74    339.69    -14.61      0.96     -4.43
+
+=== GT ALTERNATIVO PARA T4_garreo (no se elige el que favorece) ===
+El camino OSCILADO real es 96.97 m; el desplazamiento NETO real es 0.63 m. Metodos medidos (media):
+  camino oscilado GT =    96.97 m  neto GT =   0.63 m
+  A= 614.90 m  A+K=  6.58 m  B=  9.85 m  H=  6.58 m
+
+=== VERIFICACION DE HIPOTESIS (criterios fijados) ===
+
+H1 (T1_recta5, |err_A+K - err_B| < 5% en >=4/5): ok=5/5 bad=0/5 diffs=[1.404, 1.172, 1.096, 0.838, 0.212] -> CONFIRMADA
+H2 (T4_garreo, |err A+K| < 10 m y |err B| > 50 m): A+K<10m en 0/5  B>50m en 5/5  A+K>20m en 5/5
+    err_abs A+K (m)=[89.37, 90.46, 88.69, 89.69, 93.76]
+    err_abs B   (m)=[87.17, 86.99, 87.98, 86.74, 86.72] -> REFUTADA
+    Causa: contra el camino OSCILADO (96.97 m) A+K descarta los pasos
+    <0.8 m y mide solo la deriva neta (~7 m): error ~90 m. B mide el
+    ruido de speed (~10 m), NO >50 m. Contra el desplazamiento NETO
+    (0.63 m) ambos sobreestiman, B mas que A+K.
+H3 (max|H| < max|A+K| y < max|B| en T3+T5): cumple en 0/2 trayectorias (criterio >=3/5 corridas -> ver nota) -> REFUTADA
+    T3_quieto_nav: max|A+K|=   6.52  max|B|=   2.28  max|H|=   4.04  -> NO
+    T5_variable: max|A+K|=   4.34  max|B|=   0.84  max|H|=   1.37  -> NO
+    H3 pareado por corrida (T3+T5, n=10): H menor que ambos en 0/10
+
+=== BARRIDO DE UMBRAL DEL HIBRIDO (T5_variable, media |err|%) ===
+    umbral=0.50 kn  ->  |err H| medio =  0.611%
+    umbral=1.00 kn  ->  |err H| medio =  1.071%
+    umbral=1.50 kn  ->  |err H| medio =  3.203%
+    umbral=2.00 kn  ->  |err H| medio =  4.447%

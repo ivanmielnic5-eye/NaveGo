@@ -235,7 +235,7 @@ function AppContent() {
     }
   };
 
-  const handleFinalize = async () => {
+  const handleFinalizeConfirmed = async () => {
     const dist = Number(tracker.totalDistance);
     try {
       await tracker.stopTracking();
@@ -246,6 +246,17 @@ function AppContent() {
     Alert.alert(
       'Sistema',
       `Trayecto finalizado y guardado exitosamente.\nDistancia: ${dist.toFixed(1)} m`
+    );
+  };
+
+  const handleFinalize = () => {
+    Alert.alert(
+      'Finalizar trayecto',
+      '¿Estas seguro que queres finalizar? No vas a poder continuar esta sesion.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Finalizar', style: 'destructive', onPress: () => { void handleFinalizeConfirmed(); } },
+      ],
     );
   };
 
@@ -355,6 +366,9 @@ function AppContent() {
             trackPoints={routePoints}
       referencePoints={referencePoints}
       userPos={livePos ?? lastPoint}
+      gapActive={tracker.gapActive}
+      gapMarkers={tracker.gapMarkers}
+      autoFollow={true}
       absolute
     />
 
@@ -406,6 +420,9 @@ function AppContent() {
             trackPoints={routePoints}
             referencePoints={referencePoints}
             userPos={livePos ?? lastPoint}
+      gapActive={tracker.gapActive}
+      gapMarkers={tracker.gapMarkers}
+      autoFollow={true}
             absolute
           />
     <TouchableOpacity style={[glass.mapControl, styles.centerButton]} onPress={handleCenterMap}><Text style={styles.centerButtonText}>CENTRAR</Text></TouchableOpacity>
@@ -460,7 +477,14 @@ function AppContent() {
     <Text style={styles.label}>DISTANCIA</Text>
     <Text style={styles.distanceValue}>{distanceKm} <Text style={styles.distanceUnit}>KM</Text></Text>
     </View>
-    <Text style={styles.distanceSub}>({Number(tracker.totalDistance).toFixed(1)} m)</Text>
+    <Text style={styles.distanceSub}>
+    {Number(tracker.totalDistance).toFixed(0)} m registrados
+    {tracker.gapCount > 0 ? (
+    <Text style={{ color: colors.warning }}>
+    {' · '}{tracker.gapCount} {tracker.gapCount === 1 ? 'gap' : 'gaps'} ({Math.round(tracker.gapTotalDurationMs / 1000)} s)
+    </Text>
+    ) : null}
+    </Text>
 
     {/* FIX 2: 3 estados de grabación */}
     <View style={styles.statusRowCompact}>
