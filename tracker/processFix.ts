@@ -113,6 +113,7 @@ export function processFix(
       isGapRestart: false,
       gapAction: 'NONE',
       distanceDelta: 0,
+      rawDistanceDelta: 0,
       nextState: {
         ...state,
         lastCog: liveCog,
@@ -138,6 +139,7 @@ export function processFix(
       isGapRestart: false,
       gapAction,
       distanceDelta: 0,
+      rawDistanceDelta: 0,
       nextState: {
         ...state,
         lastCog: liveCog,
@@ -150,19 +152,19 @@ export function processFix(
   }
 
   // Distancia al punto anterior.
-  let distanceIncrement = 0;
-  if (state.lastPoint) {
-    distanceIncrement = calculateDistance(
-      state.lastPoint.lat,
-      state.lastPoint.lon,
-      input.lat,
-      input.lon,
-    );
-  }
+  const rawDistanceDelta = state.lastPoint
+    ? calculateDistance(
+        state.lastPoint.lat,
+        state.lastPoint.lon,
+        input.lat,
+        input.lon,
+      )
+    : 0;
 
   // Gap restart: salto > 15m resetea el track sin contar la distancia.
   let isGapRestart = false;
-  if (distanceIncrement > MAX_JUMP_DISTANCE_M) {
+  let distanceIncrement = rawDistanceDelta;
+  if (rawDistanceDelta > MAX_JUMP_DISTANCE_M) {
     isGapRestart = true;
     distanceIncrement = 0;
   }
@@ -180,6 +182,7 @@ export function processFix(
       isGapRestart,
       gapAction,
       distanceDelta: 0,
+      rawDistanceDelta,
       nextState: {
         ...state,
         lastCog: liveCog,
@@ -229,6 +232,7 @@ export function processFix(
     isGapRestart,
     gapAction,
     distanceDelta: distanceIncrement,
+    rawDistanceDelta,
     nextState: {
       lastPoint: {
         lat: input.lat,

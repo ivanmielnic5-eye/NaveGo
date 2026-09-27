@@ -45,8 +45,13 @@ export interface ProcessResult {
   isGapRestart: boolean;
   gapAction: GapAction;
 
-  // Estado siguiente
+  // Distancias
+  /** Distancia aceptada para sumar (0 si isGapRestart). */
   distanceDelta: number;
+  /** Distancia cruda entre el fix anterior y este (antes del reset por gap-restart). Solo para diagnostico. */
+  rawDistanceDelta: number;
+
+  // Estado siguiente
   nextState: ProcessState;
 
   // Telemetria derivada (para UI)

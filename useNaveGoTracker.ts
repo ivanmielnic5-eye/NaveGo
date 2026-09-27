@@ -10,6 +10,8 @@ import { REPLAY_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
 import { replayLocationProvider } from './ReplayLocationProvider';
 import type { GPSFix } from './types/journal';
+import { processFix } from './tracker/processFix';
+import type { ProcessInput, ProcessState, ProcessResult } from './tracker/types';
 
 const PC_BRIDGE_URL = 'http://192.168.100.106:8084/update-trajectory';
 const SYNC_INTERVAL_MS = 10000;
@@ -312,6 +314,103 @@ export function useNaveGoTracker() {
     }, GNSS_WATCHDOG_INTERVAL_MS);
   };
 
+  // === Helpers de efectos (Fase 0 del plan de background) ===
+
+  const publishUiResult = (result: ProcessResult, location: Location.LocationObject) => {
+    const now = Date.now();
+    const fixTimestamp = location.timestamp || now;
+    const fixAccuracy = location.coords.accuracy ?? 999;
+
+    lastFixTimestampRef.current = fixTimestamp;
+    lastFixAccuracyRef.current = fixAccuracy;
+    lastCogRef.current = result.nextState.lastCog;
+
+    setLastFixTimestamp(fixTimestamp);
+    setLastFixAccuracy(fixAccuracy);
+    updateNavigationStatus(fixTimestamp, fixAccuracy);
+    setActiveHazards(evaluateHazards(result.livePosition.lat, result.livePosition.lon));
+    setLivePosition(result.livePosition);
+    setCurrentSog(result.liveSog);
+    setCurrentCog(result.liveCog);
+
+    if (result.newPoint) {
+      lastPointRef.current = {
+        lat: result.newPoint.lat,
+        lon: result.newPoint.lon,
+        sog: result.newPoint.sog,
+        cog: result.newPoint.cog,
+        timestamp: result.newPoint.timestamp,
+      };
+      routePointsRef.current = [...routePointsRef.current, lastPointRef.current];
+      totalDistanceRef.current += result.distanceDelta;
+      setRoutePoints(routePointsRef.current);
+      setTotalDistance(totalDistanceRef.current);
+    }
+
+    const nowLog = Date.now();
+    if (nowLog - lastDistanceLogRef.current >= 10000) {
+      lastDistanceLogRef.current = nowLog;
+      console.log('[DIST] t=' + nowLog + ' total=' + totalDistanceRef.current.toFixed(2) + 'm puntos=' + routePointsRef.current.length);
+    }
+  };
+
+  const persistFixResult = async (result: ProcessResult, location: Location.LocationObject) => {
+    if (!result.persist) return;
+    if (!sessionIdRef.current) return;
+    if (!dbRef.current) return;
+
+    const fixId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    lastFixIdRef.current = fixId;
+    lastSogRef.current = result.liveSog;
+
+    fieldTestLogRef.current.push(JSON.stringify({
+      measuredAt: location.timestamp || Date.now(),
+      receivedAt: Date.now(),
+      lat: location.coords.latitude,
+      lon: location.coords.longitude,
+      accuracy: location.coords.accuracy,
+      speed: location.coords.speed,
+      heading: location.coords.heading,
+    }));
+
+    await persistRawFix(location, result.quality, sessionIdRef.current, fixId);
+
+    if (result.gapAction === 'CLOSE' && openGapIdRef.current && dbRef.current) {
+      const gapId = openGapIdRef.current;
+      const nowMs = location.timestamp || Date.now();
+      const realGapDurMs = nowMs - (gapStartAtMsRef.current ?? nowMs);
+      try {
+        await closeGap(dbRef.current, gapId, fixId, nowMs);
+        console.log('[GAP] cerrado id=' + gapId + ' duracion=' + realGapDurMs + 'ms');
+        setGapCount((prev) => prev + 1);
+        setGapTotalDurationMs((prev) => prev + realGapDurMs);
+        setGapActive(false);
+        if (gapStartPosRef.current) {
+          const startPos = gapStartPosRef.current;
+          setGapMarkers((prev) => [...prev, {
+            startLat: startPos.lat,
+            startLon: startPos.lon,
+            endLat: location.coords.latitude,
+            endLon: location.coords.longitude,
+            durationMs: realGapDurMs,
+          }]);
+          gapStartPosRef.current = null;
+        }
+        gapStartAtMsRef.current = null;
+        openGapIdRef.current = null;
+      } catch (e) {
+        console.warn('[GAP] error cerrando:', String(e));
+      }
+    }
+
+    if (result.rejectForNavigation === 'ACCURACY') {
+      console.log('[FILTER] t=' + Date.now() + ' acc=' + location.coords.accuracy + ' > ' + MAX_ACCURACY_M);
+    }
+    if (result.isGapRestart) {
+      console.log('[FILTER] t=' + Date.now() + ' jump=' + result.rawDistanceDelta.toFixed(2) + 'm > ' + MAX_JUMP_DISTANCE_M + 'm');
+    }
+  };
+
   // =========================================================================
   // TELEMETRÍA VIVA — arranca al montar, muere al desmontar.
   // NO depende de botones.
@@ -346,141 +445,33 @@ export function useNaveGoTracker() {
 
             console.log('[FIX] t=' + Date.now() + ' lat=' + location.coords.latitude.toFixed(6) + ' lon=' + location.coords.longitude.toFixed(6) + ' acc=' + location.coords.accuracy);
 
-            const currentTimestamp = location.timestamp || Date.now();
-            const accuracy = location.coords.accuracy ?? 999;
-            const gpsSpeed = location.coords.speed;
-            const gpsHeading = location.coords.heading;
-
-            // === BLOQUE 1: TELEMETRÍA VIVA (siempre) ===
-            lastFixTimestampRef.current = currentTimestamp;
-            lastFixAccuracyRef.current = accuracy;
-            setLastFixTimestamp(currentTimestamp);
-            setLastFixAccuracy(accuracy);
-            updateNavigationStatus(currentTimestamp, accuracy);
-            setActiveHazards(evaluateHazards(location.coords.latitude, location.coords.longitude));
-            setLivePosition({ lat: location.coords.latitude, lon: location.coords.longitude });
-
-            let liveSog = 0;
-            if (gpsSpeed !== null && gpsSpeed !== undefined && Number.isFinite(gpsSpeed) && gpsSpeed >= 0) {
-              liveSog = gpsSpeed;
-            }
-            setCurrentSog(liveSog);
-
-            let liveCog = lastCogRef.current;
-            if (gpsHeading !== null && gpsHeading !== undefined && Number.isFinite(gpsHeading) && gpsHeading >= 0) {
-              liveCog = gpsHeading;
-              lastCogRef.current = liveCog;
-            }
-            setCurrentCog(liveCog);
-
-            // === BLOQUE 2: GRABACIÓN (solo si isRecordingRef.current) ===
-            if (!isRecordingRef.current) return;
-            if (isPausedRef.current) return;
-
-            const quality: GPSFix['quality'] = accuracy <= 10 ? 'GOOD' : accuracy <= 50 ? 'SUSPECT' : 'REJECTED';
-
-            if (sessionIdRef.current) {
-              const fixId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-              lastFixIdRef.current = fixId;
-              fieldTestLogRef.current.push(JSON.stringify({measuredAt: currentTimestamp, receivedAt: Date.now(), lat: location.coords.latitude, lon: location.coords.longitude, accuracy: location.coords.accuracy, speed: location.coords.speed, heading: location.coords.heading}));
-              lastSogRef.current = liveSog;
-              persistRawFix(location, quality, sessionIdRef.current, fixId).then(() => {
-                if (openGapIdRef.current && dbRef.current) {
-                  const gapId = openGapIdRef.current;
-                  const durMs = currentTimestamp - (lastFixTimestampRef.current ?? currentTimestamp);
-                  const realGapDurMs = currentTimestamp - (gapStartAtMsRef.current ?? currentTimestamp);
-                  void closeGap(dbRef.current, gapId, fixId, currentTimestamp).then(() => {
-                    console.log('[GAP] cerrado id=' + gapId + ' duracion=' + realGapDurMs + 'ms');
-                    setGapCount((prev) => prev + 1);
-                    setGapTotalDurationMs((prev) => prev + realGapDurMs);
-                    setGapActive(false);
-                    if (gapStartPosRef.current) {
-                      const startPos = gapStartPosRef.current;
-                      setGapMarkers((prev) => [...prev, {
-                        startLat: startPos.lat,
-                        startLon: startPos.lon,
-                        endLat: location.coords.latitude,
-                        endLon: location.coords.longitude,
-                        durationMs: realGapDurMs,
-                      }]);
-                      gapStartPosRef.current = null;
-                    }
-                    gapStartAtMsRef.current = null;
-                  }).catch((e) => {
-                    console.warn('[GAP] error cerrando:', String(e));
-                  });
-                  openGapIdRef.current = null;
-                }
-              }).catch(() => {});
-            }
-
-            if (accuracy > MAX_ACCURACY_M) {
-              console.log('[FILTER] t=' + Date.now() + ' acc=' + accuracy + ' > ' + MAX_ACCURACY_M);
-              return;
-            }
-
-            let distanceIncrement = 0;
-            if (lastPointRef.current) {
-              distanceIncrement = calculateDistance(
-                lastPointRef.current.lat,
-                lastPointRef.current.lon,
-                location.coords.latitude,
-                location.coords.longitude,
-              );
-            }
-
-            // FASE 1: gap de GPS. Reiniciar track sin contar la distancia del gap.
-            let isGapRestart = false;
-            if (distanceIncrement > MAX_JUMP_DISTANCE_M) {
-              console.log('[FILTER] t=' + Date.now() + ' jump=' + distanceIncrement.toFixed(2) + 'm > ' + MAX_JUMP_DISTANCE_M + 'm');
-              isGapRestart = true;
-              distanceIncrement = 0;
-            }
-            if (!isGapRestart && distanceIncrement < MIN_DISTANCE_DELTA_M && lastPointRef.current) return;
-
-            let calculatedSog = liveSog;
-            if (calculatedSog === 0 && lastPointRef.current) {
-              const timeDiffSecs = lastPointRef.current.timestamp
-              ? (currentTimestamp - lastPointRef.current.timestamp) / 1000
-              : 1;
-              if (timeDiffSecs > 0 && distanceIncrement > 0) {
-                calculatedSog = distanceIncrement / timeDiffSecs;
-              }
-            }
-
-            let calculatedCog = lastCogRef.current;
-            if (calculatedSog >= MIN_SPEED_FOR_COG_UPDATE && lastPointRef.current) {
-              calculatedCog = calculateHeading(
-                lastPointRef.current.lat,
-                lastPointRef.current.lon,
-                location.coords.latitude,
-                location.coords.longitude,
-              );
-              lastCogRef.current = calculatedCog;
-              setCurrentCog(calculatedCog);
-            }
-
-            const newPoint: Coordinate = {
+            const input: ProcessInput = {
               lat: location.coords.latitude,
               lon: location.coords.longitude,
-              sog: calculatedSog,
-              cog: calculatedCog,
-              timestamp: currentTimestamp,
+              accuracy: location.coords.accuracy ?? 999,
+              speed: location.coords.speed,
+              heading: location.coords.heading,
+              measuredAt: location.timestamp || Date.now(),
             };
 
-            lastPointRef.current = newPoint;
-            routePointsRef.current = [...routePointsRef.current, newPoint];
-            totalDistanceRef.current += distanceIncrement;
+            const currentState: ProcessState = {
+              lastPoint: lastPointRef.current
+                ? {
+                    lat: lastPointRef.current.lat,
+                    lon: lastPointRef.current.lon,
+                    timestamp: lastPointRef.current.timestamp ?? 0,
+                  }
+                : null,
+              lastCog: lastCogRef.current,
+              isRecording: isRecordingRef.current,
+              isPaused: isPausedRef.current,
+              hasOpenGap: openGapIdRef.current !== null,
+            };
 
-            // LOG DE DISTANCIA cada 10 segundos (temporal para tests)
-            const nowLog = Date.now();
-            if (nowLog - lastDistanceLogRef.current >= 10000) {
-              lastDistanceLogRef.current = nowLog;
-              console.log('[DIST] t=' + nowLog + ' total=' + totalDistanceRef.current.toFixed(2) + 'm puntos=' + routePointsRef.current.length);
-            }
+            const result = processFix(input, currentState);
 
-            setRoutePoints(routePointsRef.current);
-            setTotalDistance(totalDistanceRef.current);
+            publishUiResult(result, location);
+            void persistFixResult(result, location);
           },
         );
 
