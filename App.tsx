@@ -181,7 +181,7 @@ function AppContent() {
   const initialPosition = lastPoint || { latitude: -31.6333, longitude: -60.7000 };
 
   const distanceKm = (Number(tracker.totalDistance) / 1000).toFixed(3);
-  const sogKnots = Number(tracker.currentSog || 0).toFixed(1);
+  const sogKnots = (Number(tracker.currentSog || 0) * 1.94384).toFixed(1);
   const cogDeg = Math.round(Number(tracker.currentCog || 0));
 
   const gpsStateText = tracker.isTracking ? 'GPS OK' : 'AMARRE';

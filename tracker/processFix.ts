@@ -25,6 +25,12 @@ const MIN_DISTANCE_DELTA_M = 0.8;
 const MAX_ACCURACY_M = 20;
 const MIN_SPEED_FOR_COG_UPDATE = 0.3;
 
+// Umbral adaptativo de salto: a mayor velocidad, mas distancia
+// entre fixes es normal. Antes era fijo en 15m, lo que descartaba
+// los fixes de cualquier vehiculo rapido (auto a 80+ km/h).
+const JUMP_FACTOR_SPEED = 2.0;
+const JUMP_FACTOR_ACCURACY = 3.0;
+
 const EARTH_RADIUS_M = 6371000;
 
 function toRadians(deg: number): number {
@@ -161,10 +167,21 @@ export function processFix(
       )
     : 0;
 
-  // Gap restart: salto > 15m resetea el track sin contar la distancia.
+  // Gap restart: umbral adaptativo segun velocidad y accuracy.
+  // A mayor velocidad, mayor distancia entre fixes es normal.
+  const dtSec = state.lastPoint
+    ? Math.max((input.measuredAt - state.lastPoint.timestamp) / 1000, 1)
+    : 1;
+  const speedMs = input.speed ?? 0;
+  const accuracyM = input.accuracy ?? 0;
+  const adaptiveThreshold = Math.max(
+    MAX_JUMP_DISTANCE_M,
+    speedMs * dtSec * JUMP_FACTOR_SPEED + accuracyM * JUMP_FACTOR_ACCURACY,
+  );
+
   let isGapRestart = false;
   let distanceIncrement = rawDistanceDelta;
-  if (rawDistanceDelta > MAX_JUMP_DISTANCE_M) {
+  if (rawDistanceDelta > adaptiveThreshold) {
     isGapRestart = true;
     distanceIncrement = 0;
   }
