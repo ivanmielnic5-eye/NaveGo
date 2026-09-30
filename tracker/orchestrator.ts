@@ -24,7 +24,7 @@ import {
 } from '../db/journal';
 import type { GPSFix } from '../types/journal';
 
-const GAP_THRESHOLD_MS = 3500;
+const GAP_THRESHOLD_MS = 15000;
 
 export interface OrchestratorInput {
   sessionId: string;
