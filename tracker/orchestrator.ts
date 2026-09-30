@@ -54,7 +54,7 @@ async function detectAndOpenGapIfNeeded(
   db: SQLiteDatabase,
   sessionId: string,
   state: OrchestratorState,
-  fixMeasuredAt: number,
+  currentReceivedAtMs: number,
 ): Promise<OrchestratorState> {
   // Sin lastPoint o sin lastFixId: no hay gap posible.
   if (!state.processState.lastPoint || !state.lastFixId) {
@@ -66,7 +66,15 @@ async function detectAndOpenGapIfNeeded(
     return state;
   }
 
-  const elapsedMs = fixMeasuredAt - state.processState.lastPoint.timestamp;
+  // Sin recibido previo: primera entrega, no hay gap.
+  if (state.lastReceivedAtMs <= 0) {
+    return state;
+  }
+
+  // El gap se mide sobre RECEPCION, no sobre medicion GNSS.
+  // El OS puede entregar fixes con measuredAt retrasado (batching);
+  // pero receivedAt es siempre el momento en que nos llega.
+  const elapsedMs = currentReceivedAtMs - state.lastReceivedAtMs;
   if (elapsedMs <= GAP_THRESHOLD_MS) {
     return state;
   }
@@ -253,5 +261,6 @@ async function processOneFix(
     lastAccuracy: item.fix.accuracy,
     openGapId: newOpenGapId,
     cursorSeq: nextSeq,
+    lastReceivedAtMs: item.receivedAtMs,
   };
 }

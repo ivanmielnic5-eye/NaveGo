@@ -412,6 +412,7 @@ export interface OrchestratorState {
   lastAccuracy: number | null;
   openGapId: string | null;
   cursorSeq: number;
+  lastReceivedAtMs: number;
 }
 
 export async function loadOrchestratorStateFromDb(
@@ -445,6 +446,13 @@ export async function loadOrchestratorStateFromDb(
     [sessionId],
   );
 
+  const lastReceived = await db.getFirstAsync<{ received_at_ms: number | null }>(
+    `SELECT received_at_ms FROM gps_fixes
+     WHERE session_id = ? AND sequence_no <= ? AND received_at_ms IS NOT NULL
+     ORDER BY sequence_no DESC LIMIT 1`,
+    [sessionId, cursorSeq],
+  );
+
   return {
     processState,
     lastFixId: lastFix?.id ?? null,
@@ -453,6 +461,7 @@ export async function loadOrchestratorStateFromDb(
     lastAccuracy: lastFix?.accuracy ?? null,
     openGapId: openGapRow?.id ?? null,
     cursorSeq,
+    lastReceivedAtMs: lastReceived?.received_at_ms ?? 0,
   };
 }
 
