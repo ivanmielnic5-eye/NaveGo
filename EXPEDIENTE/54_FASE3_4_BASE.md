@@ -184,3 +184,57 @@ Corrida 12:29:18 - 12:30:59 (101s):
 
 *Generado: 2026-09-30*
 *Por: agente (chat) bajo direccion del Director Ivan Mielniczuk*
+
+---
+
+## Analisis de datos crudos (DB exportada 2026-09-30)
+
+DB exportada: navego_export_1790783523809.db (11 MB, SQLite v3).
+Analisis via sqlite3 + Python.
+
+### Contenido de la DB
+
+- 17 sesiones (16 'Sesion NaveGo' + 2 'TASK_TEST' + 1 COMPLETED
+  del viaje + 1 ACTIVE).
+- Fuentes presentes en gps_fixes: GNSS, REPLAY, TASK.
+- 2 sesiones TASK_TEST activas durante la prueba:
+  - session_test_1790782158541_lje86nfa: 581 fixes TASK.
+  - session_test_1790783428718_hxy3a7ma: 40 fixes TASK.
+- Gap events: 44 totales. Todos CLOSED excepto uno (OPEN en
+  sesion vieja de REPLAY, heredado).
+
+### Verificacion de la Task
+
+**Duplicados:** 1 en 141 fixes TASK (0.7%). Causa probable:
+un fix aparecio en el ultimo batch del OS y en el siguiente.
+
+**Frecuencia:**
+- watchPosition: mediana 1000ms entre fixes.
+- Task: mediana 2000ms entre fixes.
+
+**Relacion entre productores:**
+- 40 timestamps de TASK, todos dentro de los 76 de GNSS.
+- 0 timestamps unicos en TASK.
+- 36 timestamps de GNSS ausentes en TASK.
+
+**Conclusion:** la Task recibe el mismo stream pero con menor
+granularidad. `startLocationUpdatesAsync` corre en TaskService
+y el OS agrupa/regatea los fixes. No es bug. En produccion (con
+Task como unico productor) la distancia se acumula a 2s/fix,
+suficiente para un velero tipico.
+
+### Precision y calidad
+
+- Accuracy mediana en los fixes de la Task: ~5-12 m.
+- Quality GOOD en la mayoria. Algunos SUSPECT.
+- Los accuracy altos (>10m) al arranque de la Task confirman
+  que el GPS tarda ~5-10s en estabilizar cuando recien arranca
+  la captura.
+
+### Gaps reales registrados
+
+Los gaps de minutos (239s, 514s, 1021s) estan todos en la
+sesion real del viaje (28-29 sep), no en la sesion test. Eso
+confirma que la Task y watchPosition mantienen sesiones
+independientes sin mezcla.
+
