@@ -223,8 +223,19 @@ export function processFix(
   }
 
   // COG calculado: si el barco se mueve lo suficiente, recalcular rumbo.
+  // Ademas, si vamos a agregar un newPoint (movimiento > MIN_DELTA),
+  // calcular COG por geometria aunque el speed sea bajo (movimiento
+  // real del track sin velocidad reportada por el GPS).
   let calculatedCog = liveCog;
   if (calculatedSog >= MIN_SPEED_FOR_COG_UPDATE && state.lastPoint) {
+    calculatedCog = calculateHeading(
+      state.lastPoint.lat,
+      state.lastPoint.lon,
+      input.lat,
+      input.lon,
+    );
+  } else if (state.lastPoint && distanceIncrement >= MIN_DISTANCE_DELTA_M) {
+    // Hay movimiento geometrico suficiente: rumbo por geometria.
     calculatedCog = calculateHeading(
       state.lastPoint.lat,
       state.lastPoint.lon,
