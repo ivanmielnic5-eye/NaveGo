@@ -455,3 +455,37 @@ export async function loadOrchestratorStateFromDb(
     cursorSeq,
   };
 }
+
+// =========================================================================
+// FASE 3+4 DOC 46 — Sesion test paralela
+// =========================================================================
+
+/**
+ * Busca una sesion ACTIVE con el titulo indicado. Si no existe,
+ * la crea.
+ *
+ * Se usa para que la Task escriba a una sesion paralela
+ * (session_id distinto) sin mezclarse con la sesion real de
+ * watchPosition. Permite comparar ambos productores en las
+ * mismas tablas sin migraciones.
+ */
+export async function findOrCreateTestSession(
+  db: SQLiteDatabase,
+  title: string,
+): Promise<string> {
+  const existing = await db.getFirstAsync<{ id: string }>(
+    `SELECT id FROM sessions WHERE title = ? AND status = 'ACTIVE' LIMIT 1`,
+    [title],
+  );
+  if (existing?.id) {
+    return existing.id;
+  }
+  const sessionId = `session_test_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  await db.runAsync(
+    `INSERT INTO sessions (id, start_time, title, total_distance, status)
+     VALUES (?, ?, ?, 0, 'ACTIVE')`,
+    [sessionId, Date.now(), title],
+  );
+  console.log('[JOURNAL] sesion test creada:', sessionId, title);
+  return sessionId;
+}
