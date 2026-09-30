@@ -530,3 +530,35 @@ export async function insertProcessedPoint(
     ],
   );
 }
+
+/**
+ * Devuelve los processed_points de la sesion con sequence_no > cursor.
+ * Lo usa el hook en modo consumidor (Fase 4).
+ */
+export interface ProcessedPointRow {
+  id: string;
+  sequence_no: number;
+  timestamp: number;
+  lat: number;
+  lon: number;
+  sog: number;
+  cog: number;
+  distance_delta: number;
+  quality: string;
+  has_new_point: number;
+}
+
+export async function getProcessedPointsSince(
+  db: SQLiteDatabase,
+  sessionId: string,
+  sinceSeq: number,
+): Promise<ProcessedPointRow[]> {
+  return await db.getAllAsync<ProcessedPointRow>(
+    `SELECT id, sequence_no, timestamp, lat, lon, sog, cog,
+            distance_delta, quality, has_new_point
+     FROM processed_points
+     WHERE session_id = ? AND sequence_no > ?
+     ORDER BY sequence_no ASC`,
+    [sessionId, sinceSeq],
+  );
+}

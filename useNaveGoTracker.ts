@@ -4,9 +4,9 @@ import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
-import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince } from './db/journal';
 import { initDatabase } from './db/schema';
-import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED } from './devConfig';
+import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED, TASK_PRODUCER_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
 import { replayLocationProvider } from './ReplayLocationProvider';
 import type { GPSFix } from './types/journal';
@@ -117,6 +117,7 @@ export function useNaveGoTracker() {
   const dbRef = useRef<SQLite.SQLiteDatabase | null>(null);
   const sessionIdRef = useRef<string | null>(null);
   const testSessionIdRef = useRef<string | null>(null);
+  const lastProcessedCursorRef = useRef<number>(-1);
   const sequenceNoRef = useRef(0);
   const totalDistanceRef = useRef(0);
   const lastCogRef = useRef(0);
@@ -459,6 +460,11 @@ export function useNaveGoTracker() {
   // NO depende de botones.
   // =========================================================================
   useEffect(() => {
+    if (TASK_PRODUCER_ENABLED && !REPLAY_ENABLED) {
+      console.log('[TRACKER] TASK_PRODUCER_ENABLED: watchPosition OFF');
+      return;
+    }
+
     let mounted = true;
     let localSubscription: { remove: () => void } | null = null;
     const locationProvider = REPLAY_ENABLED
