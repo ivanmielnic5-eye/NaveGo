@@ -493,6 +493,11 @@ export function useNaveGoTracker() {
 
         lastProcessedCursorRef.current = lastRow.sequence_no;
 
+        // Actualizar estado GNSS en cada ciclo (no solo cuando hay punto nuevo).
+        lastFixTimestampRef.current = lastRow.timestamp;
+        const acc = lastFixAccuracyRef.current ?? 999;
+        updateNavigationStatus(lastRow.timestamp, acc);
+
         if (addedPoints.length > 0) {
           routePointsRef.current = [...routePointsRef.current, ...addedPoints];
           totalDistanceRef.current += addedDistance;
@@ -501,6 +506,7 @@ export function useNaveGoTracker() {
           setLivePosition({ lat: lastRow.lat, lon: lastRow.lon });
           setCurrentSog(lastRow.sog);
           setCurrentCog(lastRow.cog);
+          setLastFixTimestamp(lastRow.timestamp);
         }
       } catch (e) {
         console.warn('[POLL] error:', String(e));
