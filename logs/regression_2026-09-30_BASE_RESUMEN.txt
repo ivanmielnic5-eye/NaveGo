@@ -1,0 +1,18 @@
+BASE — 2026-09-30, replay con codigo actual (post Fase 2).
+Corrida con env EXPO_PUBLIC_GNSS_REPLAY=1, sin background test.
+
+[FIX]     270
+[FILTER]  4
+[GAP]     5 lineas (1 abierto+cerrado de 31s, 1 abierto al final)
+[DIST]    ultimo visible: 1432.06 m / 227 pts
+
+Coincide con la BASE del 27/09 en:
+- Cantidad de fixes.
+- Patron de gaps (1 cerrado de 31s + 1 abierto al final).
+- Filtros grandes (409, 407, 134, 129).
+
+Se usa como referencia: cualquier corrida posterior debe dar los
+mismos [FIX], [FILTER] y [GAP].
+
+Proceso Android: 27508.
+Log completo: logs/regression_2026-09-30_BASE.log
