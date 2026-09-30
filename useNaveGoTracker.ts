@@ -452,7 +452,37 @@ export function useNaveGoTracker() {
       }
     };
 
+    const bootstrapSession = async () => {
+      try {
+        if (!dbRef.current) {
+          dbRef.current = await SQLite.openDatabaseAsync('navego.db');
+          await initDatabase(dbRef.current);
+        }
+        // Cerrar huerfanas de arranques previos
+        const orphans = await dbRef.current.getAllAsync<{ id: string; total_distance: number | null }>(
+          "SELECT id, total_distance FROM sessions WHERE status = 'ACTIVE'"
+        );
+        for (const o of orphans) {
+          await endSession(dbRef.current, o.id, o.total_distance ?? 0);
+        }
+        if (orphans.length > 0) {
+          console.log('[TRACKER] Cerradas ' + orphans.length + ' sesiones huérfanas (bootstrap)');
+        }
+        // Crear sesion activa desde el arranque
+        const sid = await startSession(dbRef.current, 'Sesión NaveGo');
+        sessionIdRef.current = sid;
+        isRecordingRef.current = true;
+        setIsRecording(true);
+        console.log('[TRACKER] Sesion auto-bootstrap:', sid);
+      } catch (e) {
+        console.warn('[TRACKER] bootstrapSession fallo:', String(e));
+      }
+    };
+
     startBgTask();
+    if (TASK_PRODUCER_ENABLED) {
+      void bootstrapSession();
+    }
   }, []);
 
   // =========================================================================
@@ -469,7 +499,7 @@ export function useNaveGoTracker() {
     const pollInterval = setInterval(async () => {
       if (!mounted) return;
       if (!dbRef.current || !sessionIdRef.current) return;
-      if (!isRecordingRef.current || isPausedRef.current) return;
+      if (isPausedRef.current) return;
 
       try {
         const rows = await getProcessedPointsSince(
