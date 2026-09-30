@@ -489,3 +489,44 @@ export async function findOrCreateTestSession(
   console.log('[JOURNAL] sesion test creada:', sessionId, title);
   return sessionId;
 }
+
+/**
+ * Persiste el resultado derivado de processFix.
+ * Lo usa el orquestador en modo produccion para que el hook
+ * (consumidor) pueda leer los puntos procesados sin recalcular.
+ */
+export interface ProcessedPoint {
+  id: string;
+  session_id: string;
+  sequence_no: number;
+  timestamp: number;
+  lat: number;
+  lon: number;
+  sog: number;
+  cog: number;
+  distance_delta: number;
+  quality: string;
+  reject_reason: string | null;
+  is_gap_restart: number;
+  gap_action: string | null;
+  has_new_point: number;
+  created_at_ms: number;
+}
+
+export async function insertProcessedPoint(
+  db: SQLiteDatabase,
+  pt: ProcessedPoint,
+): Promise<void> {
+  await db.runAsync(
+    `INSERT INTO processed_points
+      (id, session_id, sequence_no, timestamp, lat, lon, sog, cog,
+       distance_delta, quality, reject_reason, is_gap_restart,
+       gap_action, has_new_point, created_at_ms)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      pt.id, pt.session_id, pt.sequence_no, pt.timestamp, pt.lat, pt.lon,
+      pt.sog, pt.cog, pt.distance_delta, pt.quality, pt.reject_reason,
+      pt.is_gap_restart, pt.gap_action, pt.has_new_point, pt.created_at_ms,
+    ],
+  );
+}

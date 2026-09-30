@@ -15,6 +15,7 @@ import { processFix } from './processFix';
 import type { ProcessInput, ProcessResult } from './types';
 import {
   insertGpsFix,
+  insertProcessedPoint,
   openGap,
   closeGap,
   loadOrchestratorStateFromDb,
@@ -205,6 +206,29 @@ async function processOneFix(
 
   // 7. Persistir el raw fix.
   await insertGpsFix(db, rawFix);
+
+  // 7b. Persistir el punto procesado (resultado de processFix).
+  //     Solo si hay newPoint (el fix fue aceptado para el track).
+  if (result.newPoint) {
+    const processedId = `pp_${item.fix.measuredAt}_${Math.random().toString(36).slice(2, 10)}`;
+    await insertProcessedPoint(db, {
+      id: processedId,
+      session_id: sessionId,
+      sequence_no: nextSeq,
+      timestamp: item.fix.measuredAt,
+      lat: result.newPoint.lat,
+      lon: result.newPoint.lon,
+      sog: result.newPoint.sog,
+      cog: result.newPoint.cog,
+      distance_delta: result.distanceDelta,
+      quality: result.quality,
+      reject_reason: result.rejectForNavigation,
+      is_gap_restart: result.isGapRestart ? 1 : 0,
+      gap_action: result.gapAction,
+      has_new_point: 1,
+      created_at_ms: Date.now(),
+    });
+  }
 
   // 8. Si hay que cerrar gap, cerrarlo.
   let newOpenGapId = state.openGapId;
