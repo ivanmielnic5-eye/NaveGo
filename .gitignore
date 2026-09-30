@@ -100,3 +100,6 @@ docs/gnss/exp_*/fixes_*.jsonl
 docs/gnss/exp_*/fixes_*.json
 docs/gnss/exp_*/scenario_*.json
 docs/gnss/tcl_field/tcl_field_*.jsonl
+
+# Bases de datos exportadas de la app (binarios grandes, no versionar)
+logs/db_export_*/
