@@ -480,11 +480,13 @@ export function useNaveGoTracker() {
         if (!mounted || rows.length === 0) return;
 
         let addedPoints: Coordinate[] = [];
+        let addedDistance = 0;
         let lastRow = null;
         for (const r of rows) {
           lastRow = r;
           if (r.has_new_point === 1) {
             addedPoints.push({ lat: r.lat, lon: r.lon });
+            addedDistance += r.distance_delta;
           }
         }
         if (!lastRow) return;
@@ -493,7 +495,9 @@ export function useNaveGoTracker() {
 
         if (addedPoints.length > 0) {
           routePointsRef.current = [...routePointsRef.current, ...addedPoints];
+          totalDistanceRef.current += addedDistance;
           setRoutePoints(routePointsRef.current);
+          setTotalDistance(totalDistanceRef.current);
           setLivePosition({ lat: lastRow.lat, lon: lastRow.lon });
           setCurrentSog(lastRow.sog);
           setCurrentCog(lastRow.cog);
