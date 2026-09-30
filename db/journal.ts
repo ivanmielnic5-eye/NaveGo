@@ -399,3 +399,59 @@ export async function advanceLastProcessedSeq(
     [seq, sessionId, seq],
   );
 }
+
+/**
+ * Estado completo que necesita el orquestador de la Task.
+ * Incluye el ProcessState + metadatos de persistencia.
+ */
+export interface OrchestratorState {
+  processState: ProcessState;
+  lastFixId: string | null;
+  lastSog: number | null;
+  lastCog: number | null;
+  lastAccuracy: number | null;
+  openGapId: string | null;
+  cursorSeq: number;
+}
+
+export async function loadOrchestratorStateFromDb(
+  db: SQLiteDatabase,
+  sessionId: string,
+): Promise<OrchestratorState> {
+  const processState = await loadProcessStateFromDb(db, sessionId);
+
+  const session = await db.getFirstAsync<{ last_processed_seq: number | null }>(
+    `SELECT last_processed_seq FROM sessions WHERE id = ?`,
+    [sessionId],
+  );
+  const cursorSeq = session?.last_processed_seq ?? -1;
+
+  const lastFix = await db.getFirstAsync<{
+    id: string;
+    speed: number | null;
+    heading: number | null;
+    accuracy: number | null;
+  }>(
+    `SELECT id, speed, heading, accuracy FROM gps_fixes
+     WHERE session_id = ? AND sequence_no <= ?
+     ORDER BY sequence_no DESC LIMIT 1`,
+    [sessionId, cursorSeq],
+  );
+
+  const openGapRow = await db.getFirstAsync<{ id: string }>(
+    `SELECT id FROM gap_events
+     WHERE session_id = ? AND status = 'OPEN'
+     LIMIT 1`,
+    [sessionId],
+  );
+
+  return {
+    processState,
+    lastFixId: lastFix?.id ?? null,
+    lastSog: lastFix?.speed ?? null,
+    lastCog: lastFix?.heading ?? null,
+    lastAccuracy: lastFix?.accuracy ?? null,
+    openGapId: openGapRow?.id ?? null,
+    cursorSeq,
+  };
+}
