@@ -624,3 +624,67 @@ export async function getProcessedRoutePoints(
     [sessionId],
   );
 }
+
+// =========================================================================
+// Lectura de gaps para track honesto (visual amarillo/negro)
+// =========================================================================
+
+export interface GapMarkerRow {
+  id: string;
+  start_at_ms: number;
+  end_at_ms: number | null;
+  duration_ms: number | null;
+  start_lat: number | null;
+  start_lon: number | null;
+  end_lat: number | null;
+  end_lon: number | null;
+}
+
+/**
+ * Devuelve gaps CLOSED cuyo end_at_ms > sinceMs.
+ * Incluye coordenadas del fix de inicio y del fix de cierre.
+ * Lo usa el hook (modo Task) para dibujar los tramos amarillo/negro.
+ */
+export async function getGapsSince(
+  db: SQLiteDatabase,
+  sessionId: string,
+  sinceMs: number,
+): Promise<GapMarkerRow[]> {
+  return await db.getAllAsync<GapMarkerRow>(
+    `SELECT
+       ge.id,
+       ge.start_at_ms,
+       ge.end_at_ms,
+       ge.duration_ms,
+       gf_start.lat_raw as start_lat,
+       gf_start.lon_raw as start_lon,
+       gf_end.lat_raw as end_lat,
+       gf_end.lon_raw as end_lon
+     FROM gap_events ge
+     LEFT JOIN gps_fixes gf_start ON gf_start.id = ge.start_fix_id
+     LEFT JOIN gps_fixes gf_end ON gf_end.id = ge.end_fix_id
+     WHERE ge.session_id = ?
+       AND ge.status = 'CLOSED'
+       AND ge.end_at_ms IS NOT NULL
+       AND ge.end_at_ms > ?
+     ORDER BY ge.start_at_ms ASC`,
+    [sessionId, sinceMs],
+  );
+}
+
+/**
+ * Suma de distance_delta de una sesion (processed_points con new_point).
+ * Se usa al recuperar una sesion ACTIVE para reconstruir la distancia.
+ */
+export async function getSumDistance(
+  db: SQLiteDatabase,
+  sessionId: string,
+): Promise<number> {
+  const row = await db.getFirstAsync<{ total: number | null }>(
+    `SELECT COALESCE(SUM(distance_delta), 0) as total
+     FROM processed_points
+     WHERE session_id = ? AND has_new_point = 1`,
+    [sessionId],
+  );
+  return row?.total ?? 0;
+}

@@ -4,7 +4,7 @@ import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
-import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince, saveIsPaused, getActiveSession, getProcessedRoutePoints } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince, saveIsPaused, getActiveSession, getProcessedRoutePoints, getSumDistance } from './db/journal';
 import { initDatabase } from './db/schema';
 import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED, TASK_PRODUCER_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
@@ -420,20 +420,31 @@ export function useNaveGoTracker() {
   // watchPositionAsync sigue activo en paralelo.
   // =========================================================================
   useEffect(() => {
-    if (!BACKGROUND_TEST_ENABLED && !TASK_PRODUCER_ENABLED) return;
-    if (REPLAY_ENABLED) return;
+    console.log('[TRACKER] useEffect Task: entrando (BG_TEST=' + BACKGROUND_TEST_ENABLED + ', TASK_PRODUCER=' + TASK_PRODUCER_ENABLED + ', REPLAY=' + REPLAY_ENABLED + ')');
+    if (!BACKGROUND_TEST_ENABLED && !TASK_PRODUCER_ENABLED) {
+      console.log('[TRACKER] useEffect Task: saltando (flags off)');
+      return;
+    }
+    if (REPLAY_ENABLED) {
+      console.log('[TRACKER] useEffect Task: saltando (REPLAY=true)');
+      return;
+    }
 
     const startBgTask = async () => {
       try {
+        console.log('[TRACKER] useEffect Task: startBgTask llamado');
         const hasStarted = await Location.hasStartedLocationUpdatesAsync(
           BACKGROUND_LOCATION_TASK,
         );
+        console.log('[TRACKER] useEffect Task: hasStarted=' + hasStarted);
         if (hasStarted) {
           console.log('[TRACKER] Task background ya estaba activa');
           return;
         }
 
+        console.log('[TRACKER] useEffect Task: pidiendo permiso background');
         await Location.requestBackgroundPermissionsAsync();
+        console.log('[TRACKER] useEffect Task: permiso concedido, arrancando');
 
         await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK, {
           accuracy: Location.Accuracy.High,
@@ -483,7 +494,8 @@ export function useNaveGoTracker() {
         if (!mounted) return;
 
         sessionIdRef.current = active.id;
-        totalDistanceRef.current = active.total_distance ?? 0;
+        const distanciaSumada = await getSumDistance(dbRef.current, active.id);
+        totalDistanceRef.current = distanciaSumada;
         routePointsRef.current = puntos.map(p => ({ lat: p.lat, lon: p.lon }));
         lastProcessedCursorRef.current = active.last_processed_seq ?? -1;
         isRecordingRef.current = true;
