@@ -420,7 +420,7 @@ export function useNaveGoTracker() {
   // watchPositionAsync sigue activo en paralelo.
   // =========================================================================
   useEffect(() => {
-    if (!BACKGROUND_TEST_ENABLED) return;
+    if (!BACKGROUND_TEST_ENABLED && !TASK_PRODUCER_ENABLED) return;
     if (REPLAY_ENABLED) return;
 
     const startBgTask = async () => {

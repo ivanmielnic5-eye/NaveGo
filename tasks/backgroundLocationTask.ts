@@ -73,13 +73,20 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
   try {
     const db = await SQLite.openDatabaseAsync('navego.db', { useNewConnection: true });
 
-    const testSession = await db.getFirstAsync<{ id: string }>(
-      `SELECT id FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
+    // Buscar TASK_TEST primero (modo test). Si no existe, buscar
+    // la sesion activa real (modo produccion).
+    let targetSession = await db.getFirstAsync<{ id: string; title: string }>(
+      `SELECT id, title FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
     );
+    if (!targetSession) {
+      targetSession = await db.getFirstAsync<{ id: string; title: string }>(
+        `SELECT id, title FROM sessions WHERE title != 'TASK_TEST' AND status = 'ACTIVE' ORDER BY start_time DESC LIMIT 1`,
+      );
+    }
 
-    if (testSession?.id) {
+    if (targetSession?.id) {
       const items: OrchestratorInput[] = locations.map((loc) => ({
-        sessionId: testSession.id,
+        sessionId: targetSession.id,
         fix: {
           lat: loc.coords.latitude,
           lon: loc.coords.longitude,
@@ -91,7 +98,7 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
         receivedAtMs: Date.now(),
       }));
 
-      const result = await processBatchInDb(db, testSession.id, items);
+      const result = await processBatchInDb(db, targetSession.id, items);
       console.log('[TASK-BG] DB: procesados=' + result.processed + ' skipped=' + result.skipped);
     } else {
       console.log('[TASK-BG] DB: sin sesion TASK_TEST activa, skip');
