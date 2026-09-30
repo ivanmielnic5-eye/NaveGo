@@ -166,12 +166,12 @@ async function processOneFix(
   state: OrchestratorState,
   item: OrchestratorInput,
 ): Promise<OrchestratorState> {
-  // 1. Detectar gap por timestamp (antes de procesar el fix).
+  // 1. Detectar gap por RECEPCION (no por medicion GNSS).
   state = await detectAndOpenGapIfNeeded(
     db,
     sessionId,
     state,
-    item.fix.measuredAt,
+    item.receivedAtMs,
   );
 
   // 2. Actualizar hasOpenGap del estado que va a ver processFix.
