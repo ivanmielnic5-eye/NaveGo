@@ -1,6 +1,7 @@
 // db/journal.ts
 import type { SQLiteDatabase } from 'expo-sqlite';
 import type { GPSFix } from '../types/journal';
+import type { ProcessState } from '../tracker/types';
 
 export async function startSession(db: SQLiteDatabase, title?: string): Promise<string> {
   const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
@@ -286,5 +287,115 @@ export async function abandonGap(
      SET end_at_ms = ?, duration_ms = ?, status = 'CLOSED', updated_at_ms = ?
      WHERE id = ? AND status = 'OPEN'`,
     [abandonedAtMs, durationMs, now, gapId]
+  );
+}
+
+// =========================================================================
+// FASE 3+4 DOC 46 — Estado persistente para la Task de background
+// =========================================================================
+
+/**
+ * Reconstruye el ProcessState leyendo de SQLite.
+ * Lo usa la Task para procesar fixes sin depender de React.
+ */
+export async function loadProcessStateFromDb(
+  db: SQLiteDatabase,
+  sessionId: string,
+): Promise<ProcessState> {
+  // Session: status, is_paused, last_processed_seq
+  const session = await db.getFirstAsync<{
+    status: string;
+    is_paused: number | null;
+    last_processed_seq: number | null;
+  }>(
+    `SELECT status, is_paused, last_processed_seq FROM sessions WHERE id = ?`,
+    [sessionId],
+  );
+
+  const isRecording = session?.status === 'ACTIVE';
+  const isPaused = (session?.is_paused ?? 0) === 1;
+  const cursorSeq = session?.last_processed_seq ?? -1;
+
+  // Ultimo punto procesado (segun el cursor)
+  const lastPoint = await db.getFirstAsync<{
+    lat_raw: number;
+    lon_raw: number;
+    timestamp: number;
+  }>(
+    `SELECT lat_raw, lon_raw, timestamp FROM gps_fixes
+     WHERE session_id = ? AND sequence_no <= ?
+     ORDER BY sequence_no DESC LIMIT 1`,
+    [sessionId, cursorSeq],
+  );
+
+  // Ultimo COG valido (heading > 0)
+  const lastCogRow = await db.getFirstAsync<{ heading: number }>(
+    `SELECT heading FROM gps_fixes
+     WHERE session_id = ? AND sequence_no <= ?
+       AND heading IS NOT NULL AND heading > 0
+     ORDER BY sequence_no DESC LIMIT 1`,
+    [sessionId, cursorSeq],
+  );
+
+  // Hay gap abierto?
+  const openGap = await db.getFirstAsync<{ id: string }>(
+    `SELECT id FROM gap_events
+     WHERE session_id = ? AND status = 'OPEN'
+     LIMIT 1`,
+    [sessionId],
+  );
+
+  return {
+    lastPoint: lastPoint
+      ? { lat: lastPoint.lat_raw, lon: lastPoint.lon_raw, timestamp: lastPoint.timestamp }
+      : null,
+    lastCog: lastCogRow?.heading ?? 0,
+    isRecording,
+    isPaused,
+    hasOpenGap: openGap != null,
+  };
+}
+
+/**
+ * Actualiza is_paused de la sesion.
+ */
+export async function saveIsPaused(
+  db: SQLiteDatabase,
+  sessionId: string,
+  paused: boolean,
+): Promise<void> {
+  await db.runAsync(
+    `UPDATE sessions SET is_paused = ? WHERE id = ?`,
+    [paused ? 1 : 0, sessionId],
+  );
+}
+
+/**
+ * Actualiza el cursor de procesamiento.
+ */
+export async function saveLastProcessedSeq(
+  db: SQLiteDatabase,
+  sessionId: string,
+  seq: number,
+): Promise<void> {
+  await db.runAsync(
+    `UPDATE sessions SET last_processed_seq = ? WHERE id = ?`,
+    [seq, sessionId],
+  );
+}
+
+/**
+ * Avanza el cursor solo si el nuevo seq es mayor al actual.
+ * Idempotente: si lo llamas dos veces con el mismo seq, no cambia nada.
+ */
+export async function advanceLastProcessedSeq(
+  db: SQLiteDatabase,
+  sessionId: string,
+  seq: number,
+): Promise<void> {
+  await db.runAsync(
+    `UPDATE sessions SET last_processed_seq = ?
+     WHERE id = ? AND (last_processed_seq IS NULL OR last_processed_seq < ?)`,
+    [seq, sessionId, seq],
   );
 }
