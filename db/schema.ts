@@ -153,10 +153,55 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
 
       console.log('[MIGRATION] v2 -> v3 aplicada y verificada');
     });
-  } else if (currentVersion > 3) {
+  }
+
+  if (currentVersion === 3) {
+    await db.withExclusiveTransactionAsync(async (txn) => {
+      await txn.execAsync(`
+        CREATE TABLE IF NOT EXISTS processed_points (
+          id TEXT PRIMARY KEY NOT NULL,
+          session_id TEXT NOT NULL,
+          sequence_no INTEGER NOT NULL,
+          timestamp INTEGER NOT NULL,
+          lat REAL NOT NULL,
+          lon REAL NOT NULL,
+          sog REAL NOT NULL,
+          cog REAL NOT NULL,
+          distance_delta REAL NOT NULL,
+          quality TEXT NOT NULL,
+          reject_reason TEXT,
+          is_gap_restart INTEGER DEFAULT 0,
+          gap_action TEXT,
+          has_new_point INTEGER DEFAULT 0,
+          created_at_ms INTEGER NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_processed_points_session
+          ON processed_points(session_id, sequence_no);
+      `);
+
+      await txn.execAsync(`PRAGMA user_version = 4;`);
+
+      const versionCheck = await txn.getFirstAsync<{ user_version: number }>(
+        `PRAGMA user_version;`
+      );
+      if (versionCheck?.user_version !== 4) {
+        throw new Error('[MIGRATION] post-check fallo: user_version != 4');
+      }
+
+      const tbl = await txn.getFirstAsync<{ name: string }>(
+        `SELECT name FROM sqlite_master WHERE type='table' AND name='processed_points';`
+      );
+      if (!tbl) {
+        throw new Error('[MIGRATION] post-check fallo: tabla processed_points no existe');
+      }
+
+      console.log('[MIGRATION] v3 -> v4 aplicada y verificada');
+    });
+  } else if (currentVersion > 4) {
     throw new Error(
       '[MIGRATION] DB en version ' + currentVersion +
-      ', esta app solo conoce hasta v3. Actualizar app o restaurar DB.'
+      ', esta app solo conoce hasta v4. Actualizar app o restaurar DB.'
     );
   }
 
