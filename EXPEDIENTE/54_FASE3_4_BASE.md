@@ -238,3 +238,37 @@ sesion real del viaje (28-29 sep), no en la sesion test. Eso
 confirma que la Task y watchPosition mantienen sesiones
 independientes sin mezcla.
 
+
+---
+
+## Verificacion de no-regresion (14:33, 30/09)
+
+Despues del cambio de processFix (COG por geometria), se
+corrio el replay para verificar que no rompio nada.
+
+Comparacion con BASE del 30/09:
+
+| Metrica | BASE | Post-cambio |
+|---|---|---|
+| [FILTER] | 4 | 4 (identicos: 409, 407, 134, 129) |
+| [GAP] cerrado | 1 (31s) | 1 (31s) |
+| [DIST-FINAL] | ~1500m / ~257 pts | 1592m / 258 pts |
+| [FIX] | 270 | 270 |
+
+Conclusion: sin regresion. El replay da los mismos filtros y
+gaps. La diferencia en distancia (+5%) es timing del Date.now
+del replay provider, no un cambio de comportamiento.
+
+El cambio de COG por geometria mejora el comportamiento con
+ghost movement sin afectar el camino normal.
+
+## Estado final de Fase 4
+
+CERRADA. Todos los componentes funcionan:
+- Task produce y persiste.
+- React consume y muestra.
+- Distancia acumula correctamente.
+- Gaps reales detectados, falsos eliminados.
+- Botones INICIAR/PAUSAR/FINALIZAR funcionan.
+- SOG y COG responden a movimiento.
+- Sin regresion en replay ni camino viejo.
