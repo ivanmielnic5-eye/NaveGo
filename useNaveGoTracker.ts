@@ -689,8 +689,14 @@ export function useNaveGoTracker() {
       } catch (e) {
         console.warn('[TRACKER] Error cerrando huérfanas:', e);
       }
-      const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
-      sessionIdRef.current = sessionId;
+      // Fase 4: si bootstrap ya creo una sesion, reusarla.
+      if (!sessionIdRef.current) {
+        const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
+        sessionIdRef.current = sessionId;
+        console.log('[TRACKER] startTracking creo sesion:', sessionId);
+      } else {
+        console.log('[TRACKER] startTracking reusa sesion bootstrap:', sessionIdRef.current);
+      }
 
       // Fase 3+4 DOC 46: sesion paralela para la Task de background.
       // Solo activa con el flag de test. Si no esta activa, se limpia.
