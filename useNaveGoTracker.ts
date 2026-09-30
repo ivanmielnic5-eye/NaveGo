@@ -507,6 +507,56 @@ export function useNaveGoTracker() {
   }, []);
 
   // =========================================================================
+  // UBICACION VISIBLE AL ABRIR LA APP (sin sesion activa).
+  // watchPosition liviano: solo actualiza livePosition + timestamp
+  // para que el punto azul aparezca. NO graba, NO persiste, NO suma.
+  // Se apaga cuando hay sesion activa (el polling provee todo).
+  // =========================================================================
+  useEffect(() => {
+    if (!TASK_PRODUCER_ENABLED) return;
+    if (REPLAY_ENABLED) return;
+
+    let subscription: { remove: () => void } | null = null;
+
+    const empezar = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.warn('[TRACKER] permiso foreground denegado');
+          return;
+        }
+        subscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 2000,
+            distanceInterval: 0,
+          },
+          (loc) => {
+            if (isRecordingRef.current) return;
+            setLivePosition({
+              lat: loc.coords.latitude,
+              lon: loc.coords.longitude,
+            });
+            lastFixTimestampRef.current = loc.timestamp || Date.now();
+          },
+        );
+        console.log('[TRACKER] watchPosition liviano activo (sin sesion)');
+      } catch (e) {
+        console.warn('[TRACKER] error watch liviano:', String(e));
+      }
+    };
+
+    void empezar();
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+        console.log('[TRACKER] watchPosition liviano detenido');
+      }
+    };
+  }, []);
+
+  // =========================================================================
   // FASE 4 DOC 46: CONSUMIDOR — polling de processed_points.
   // Solo activo con TASK_PRODUCER_ENABLED (sin REPLAY). El hook no
   // captura; lee lo que la Task escribio y actualiza el HUD.
