@@ -10,6 +10,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { Accelerometer } from 'expo-sensors';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import { useNaveGoTracker } from './useNaveGoTracker';
+import { BACKGROUND_TEST_ENABLED } from './devConfig';
 import { colors, fonts, glass, spacing, radii } from './theme';
 import { initDatabase } from './db/schema';
 import { HistoryScreen } from './HistoryScreen';
@@ -532,6 +533,11 @@ function AppContent() {
     <TouchableOpacity style={[glass.actionControl, { paddingHorizontal: 24, backgroundColor: 'rgba(5,25,42,0.55)', borderColor: colors.borderSubtle }]} onPress={handleFinalize}>
     <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>FINALIZAR</Text>
     </TouchableOpacity>
+    {BACKGROUND_TEST_ENABLED && (
+      <TouchableOpacity style={[glass.actionControl, { paddingHorizontal: 24, marginTop: 8, backgroundColor: 'rgba(53,211,154,0.10)', borderColor: colors.borderSubtle }]} onPress={() => { void tracker.exportDatabaseToSAF(); }}>
+      <Text style={[styles.actionButtonText, { color: colors.success }]}>EXPORT DB (TEST)</Text>
+      </TouchableOpacity>
+    )}
     </View>
     </View>
     </SafeAreaView>

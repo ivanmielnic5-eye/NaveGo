@@ -762,6 +762,42 @@ export function useNaveGoTracker() {
     gpsStatus: navigationStatus,
   };
 
+  const exportDatabaseToSAF = async (): Promise<void> => {
+    if (!dbRef.current) {
+      console.warn('[EXPORT] DB no abierta');
+      return;
+    }
+    if (!safDirUriRef.current) {
+      console.warn('[EXPORT] no hay carpeta SAF elegida');
+      return;
+    }
+    try {
+      // Checkpoint WAL to main db para que el archivo este completo
+      await dbRef.current.execAsync('PRAGMA wal_checkpoint(TRUNCATE);');
+      const dbPath = FileSystem.documentDirectory + 'SQLite/navego.db';
+      const info = await FileSystem.getInfoAsync(dbPath);
+      if (!info.exists) {
+        console.warn('[EXPORT] archivo de DB no encontrado:', dbPath);
+        return;
+      }
+      const base64 = await FileSystem.readAsStringAsync(dbPath, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const fileName = `navego_export_${Date.now()}.db`;
+      const fileUri = await StorageAccessFramework.createFileAsync(
+        safDirUriRef.current,
+        fileName,
+        'application/octet-stream'
+      );
+      await FileSystem.writeAsStringAsync(fileUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      console.log('[EXPORT] DB exportada:', fileName);
+    } catch (e) {
+      console.warn('[EXPORT] error:', String(e));
+    }
+  };
+
   return {
     nav,
     routePoints,
@@ -785,6 +821,7 @@ export function useNaveGoTracker() {
     navigationStatus,
     startTracking,
     stopTracking,
+    exportDatabaseToSAF,
     togglePause,
     resetTracking,
     resetDistance: resetTracking,
