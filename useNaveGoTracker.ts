@@ -513,14 +513,23 @@ export function useNaveGoTracker() {
   // Se apaga cuando hay sesion activa (el polling provee todo).
   // =========================================================================
   useEffect(() => {
-    if (!TASK_PRODUCER_ENABLED) return;
-    if (REPLAY_ENABLED) return;
+    console.log('[TRACKER] useEffect ubicacion: entrando (TASK_PRODUCER=' + TASK_PRODUCER_ENABLED + ', REPLAY=' + REPLAY_ENABLED + ')');
+    if (!TASK_PRODUCER_ENABLED) {
+      console.log('[TRACKER] useEffect ubicacion: saltando (TASK_PRODUCER=false)');
+      return;
+    }
+    if (REPLAY_ENABLED) {
+      console.log('[TRACKER] useEffect ubicacion: saltando (REPLAY=true)');
+      return;
+    }
 
     let subscription: { remove: () => void } | null = null;
 
     const empezar = async () => {
       try {
+        console.log('[TRACKER] useEffect ubicacion: pidiendo permiso');
         const { status } = await Location.requestForegroundPermissionsAsync();
+        console.log('[TRACKER] useEffect ubicacion: permiso=' + status);
         if (status !== 'granted') {
           console.warn('[TRACKER] permiso foreground denegado');
           return;
@@ -537,7 +546,11 @@ export function useNaveGoTracker() {
               lat: loc.coords.latitude,
               lon: loc.coords.longitude,
             });
-            lastFixTimestampRef.current = loc.timestamp || Date.now();
+            const ts = loc.timestamp || Date.now();
+            const acc = loc.coords.accuracy ?? 999;
+            lastFixTimestampRef.current = ts;
+            lastFixAccuracyRef.current = acc;
+            updateNavigationStatus(ts, acc);
           },
         );
         console.log('[TRACKER] watchPosition liviano activo (sin sesion)');
