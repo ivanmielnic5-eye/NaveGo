@@ -4,7 +4,7 @@ import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
-import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession } from './db/journal';
 import { initDatabase } from './db/schema';
 import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
@@ -116,6 +116,7 @@ export function useNaveGoTracker() {
 
   const dbRef = useRef<SQLite.SQLiteDatabase | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const testSessionIdRef = useRef<string | null>(null);
   const sequenceNoRef = useRef(0);
   const totalDistanceRef = useRef(0);
   const lastCogRef = useRef(0);
@@ -588,6 +589,16 @@ export function useNaveGoTracker() {
       }
       const sessionId = await startSession(dbRef.current, 'Sesión NaveGo');
       sessionIdRef.current = sessionId;
+
+      // Fase 3+4 DOC 46: sesion paralela para la Task de background.
+      // Solo activa con el flag de test. Si no esta activa, se limpia.
+      if (BACKGROUND_TEST_ENABLED) {
+        const testSessionId = await findOrCreateTestSession(dbRef.current, 'TASK_TEST');
+        testSessionIdRef.current = testSessionId;
+        console.log('[TRACKER] sesion test para Task:', testSessionId);
+      } else {
+        testSessionIdRef.current = null;
+      }
       sequenceNoRef.current = 0;
       totalDistanceRef.current = 0;
       routePointsRef.current = [];
