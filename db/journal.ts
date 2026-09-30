@@ -555,6 +555,7 @@ export interface ProcessedPointRow {
   distance_delta: number;
   quality: string;
   has_new_point: number;
+  accuracy: number | null;
 }
 
 export async function getProcessedPointsSince(
@@ -563,11 +564,14 @@ export async function getProcessedPointsSince(
   sinceSeq: number,
 ): Promise<ProcessedPointRow[]> {
   return await db.getAllAsync<ProcessedPointRow>(
-    `SELECT id, sequence_no, timestamp, lat, lon, sog, cog,
-            distance_delta, quality, has_new_point
-     FROM processed_points
-     WHERE session_id = ? AND sequence_no > ?
-     ORDER BY sequence_no ASC`,
+    `SELECT pp.id, pp.sequence_no, pp.timestamp, pp.lat, pp.lon,
+            pp.sog, pp.cog, pp.distance_delta, pp.quality,
+            pp.has_new_point, gf.accuracy
+     FROM processed_points pp
+     LEFT JOIN gps_fixes gf
+       ON gf.session_id = pp.session_id AND gf.sequence_no = pp.sequence_no
+     WHERE pp.session_id = ? AND pp.sequence_no > ?
+     ORDER BY pp.sequence_no ASC`,
     [sessionId, sinceSeq],
   );
 }
