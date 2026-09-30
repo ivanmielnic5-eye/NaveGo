@@ -6,11 +6,12 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
 import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap } from './db/journal';
 import { initDatabase } from './db/schema';
-import { REPLAY_ENABLED } from './devConfig';
+import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
 import { replayLocationProvider } from './ReplayLocationProvider';
 import type { GPSFix } from './types/journal';
 import { processFix } from './tracker/processFix';
+import { BACKGROUND_LOCATION_TASK, BACKGROUND_TEST_FILE } from './tasks/backgroundLocationTask';
 import type { ProcessInput, ProcessState, ProcessResult } from './tracker/types';
 
 const PC_BRIDGE_URL = 'http://192.168.100.106:8084/update-trajectory';
@@ -412,6 +413,47 @@ export function useNaveGoTracker() {
   };
 
   // =========================================================================
+  // FASE 2 DOC 46 — Task de background en modo observador.
+  // Escribe a JSONL, no toca SQLite. Solo activa con flag explicito.
+  // watchPositionAsync sigue activo en paralelo.
+  // =========================================================================
+  useEffect(() => {
+    if (!BACKGROUND_TEST_ENABLED) return;
+    if (REPLAY_ENABLED) return;
+
+    const startBgTask = async () => {
+      try {
+        const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+          BACKGROUND_LOCATION_TASK,
+        );
+        if (hasStarted) {
+          console.log('[TRACKER] Task background ya estaba activa');
+          return;
+        }
+
+        await Location.requestBackgroundPermissionsAsync();
+
+        await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK, {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1000,
+          distanceInterval: 0,
+          foregroundService: {
+            notificationTitle: 'NaveGo grabando',
+            notificationBody: 'Capturando ubicacion en segundo plano',
+            notificationColor: '#0af',
+          },
+        });
+
+        console.log('[TRACKER] Task background iniciada');
+      } catch (e) {
+        console.warn('[TRACKER] Error iniciando task background:', String(e));
+      }
+    };
+
+    startBgTask();
+  }, []);
+
+  // =========================================================================
   // TELEMETRÍA VIVA — arranca al montar, muere al desmontar.
   // NO depende de botones.
   // =========================================================================
@@ -613,6 +655,28 @@ export function useNaveGoTracker() {
           console.warn('[FIELD-LOG] error:', String(e));
         }
         fieldTestLogRef.current = [];
+      }
+
+      // FASE 2 DOC 46: copiar el archivo de la Task de background al SAF
+      if (BACKGROUND_TEST_ENABLED && safDirUriRef.current) {
+        try {
+          const bgInfo = await FileSystem.getInfoAsync(BACKGROUND_TEST_FILE);
+          if (bgInfo.exists) {
+            const bgFileName = 'tcl_bgtask_' + Date.now() + '.jsonl';
+            const bgFileUri = await StorageAccessFramework.createFileAsync(
+              safDirUriRef.current,
+              bgFileName,
+              'application/jsonl'
+            );
+            const bgContent = await FileSystem.readAsStringAsync(BACKGROUND_TEST_FILE);
+            await FileSystem.writeAsStringAsync(bgFileUri, bgContent);
+            console.log('[BG-LOG] copiado al SAF: ' + bgFileName);
+          } else {
+            console.log('[BG-LOG] sin archivo de background task');
+          }
+        } catch (e) {
+          console.warn('[BG-LOG] error copiando:', String(e));
+        }
       }
 
       try {
