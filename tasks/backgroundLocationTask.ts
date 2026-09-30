@@ -38,38 +38,8 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
   const { locations } = data as { locations: Location.LocationObject[] };
   if (!locations || locations.length === 0) return;
 
-  let contenido = '';
-  try {
-    const info = await FileSystem.getInfoAsync(FILE_PATH);
-    if (info.exists) {
-      contenido = await FileSystem.readAsStringAsync(FILE_PATH);
-    }
-  } catch {
-    contenido = '';
-  }
-
-  let nuevasLineas = '';
-  for (const loc of locations) {
-    const entry = {
-      source: 'task',
-      t: loc.timestamp || Date.now(),
-      lat: loc.coords.latitude,
-      lon: loc.coords.longitude,
-      accuracy: loc.coords.accuracy ?? null,
-      speed: loc.coords.speed ?? null,
-      heading: loc.coords.heading ?? null,
-    };
-    nuevasLineas += JSON.stringify(entry) + '\n';
-  }
-
-  try {
-    await FileSystem.writeAsStringAsync(FILE_PATH, contenido + nuevasLineas);
-    console.log(`[TASK-BG] +${locations.length} fixes escritos`);
-  } catch (e) {
-    console.warn('[TASK-BG] error escribiendo:', String(e));
-  }
-
-  // FASE 3+4 DOC 46: procesar batch en DB si hay sesion TASK_TEST activa.
+  // FASE 3+4 DOC 46: procesar batch en DB.
+  // (JSONL removido - ya no se necesita, era evidencia de Fase 2).
   try {
     const db = await SQLite.openDatabaseAsync('navego.db', { useNewConnection: true });
 
