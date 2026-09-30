@@ -18,6 +18,8 @@
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system/legacy';
+import * as SQLite from 'expo-sqlite';
+import { processBatchInDb, type OrchestratorInput } from '../tracker/orchestrator';
 
 export const BACKGROUND_LOCATION_TASK = 'NAVEGO_BACKGROUND_LOCATION';
 
@@ -65,6 +67,39 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
     console.log(`[TASK-BG] +${locations.length} fixes escritos`);
   } catch (e) {
     console.warn('[TASK-BG] error escribiendo:', String(e));
+  }
+
+  // FASE 3+4 DOC 46: procesar batch en DB si hay sesion TASK_TEST activa.
+  try {
+    const db = await SQLite.openDatabaseAsync('navego.db');
+
+    const testSession = await db.getFirstAsync<{ id: string }>(
+      `SELECT id FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
+    );
+
+    if (testSession?.id) {
+      const items: OrchestratorInput[] = locations.map((loc) => ({
+        sessionId: testSession.id,
+        fix: {
+          lat: loc.coords.latitude,
+          lon: loc.coords.longitude,
+          accuracy: loc.coords.accuracy ?? 999,
+          speed: loc.coords.speed ?? null,
+          heading: loc.coords.heading ?? null,
+          measuredAt: loc.timestamp || Date.now(),
+        },
+        receivedAtMs: Date.now(),
+      }));
+
+      const result = await processBatchInDb(db, testSession.id, items);
+      console.log('[TASK-BG] DB: procesados=' + result.processed + ' skipped=' + result.skipped);
+    } else {
+      console.log('[TASK-BG] DB: sin sesion TASK_TEST activa, skip');
+    }
+
+    await db.closeAsync();
+  } catch (e) {
+    console.warn('[TASK-BG] DB error:', String(e));
   }
 });
 
