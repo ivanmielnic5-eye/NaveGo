@@ -69,9 +69,20 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
     console.warn('[TASK-BG] error escribiendo:', String(e));
   }
 
+  // PRUEBA A (TEMPORAL): abrir DB nueva, SELECT 1, cerrar.
+  // Aisla: expo-sqlite funciona en Headless JS?
+  try {
+    const testDb = await SQLite.openDatabaseAsync('test_prueba_a.db');
+    const result = await testDb.getFirstAsync<{ x: number }>('SELECT 1 as x');
+    console.log('[TASK-BG] PRUEBA A OK:', JSON.stringify(result));
+    await testDb.closeAsync();
+  } catch (e) {
+    console.warn('[TASK-BG] PRUEBA A FALLO:', String(e));
+  }
+
   // FASE 3+4 DOC 46: procesar batch en DB si hay sesion TASK_TEST activa.
   try {
-    const db = await SQLite.openDatabaseAsync('navego.db');
+    const db = await SQLite.openDatabaseAsync('navego.db', { useNewConnection: true });
 
     const testSession = await db.getFirstAsync<{ id: string }>(
       `SELECT id FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
