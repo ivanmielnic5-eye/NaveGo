@@ -4,7 +4,7 @@ import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
-import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince, saveIsPaused } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince, saveIsPaused, getActiveSession, getProcessedRoutePoints } from './db/journal';
 import { initDatabase } from './db/schema';
 import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED, TASK_PRODUCER_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
@@ -453,6 +453,57 @@ export function useNaveGoTracker() {
     };
 
     startBgTask();
+  }, []);
+
+  // =========================================================================
+  // FASE 6 DOC 46: recuperacion de sesion ACTIVE al abrir la app.
+  // Solo activo con TASK_PRODUCER_ENABLED (sin REPLAY).
+  // Si hay sesion ACTIVE, la retoma: carga refs y routePoints
+  // desde SQLite. El HUD muestra el trayecto previo.
+  // =========================================================================
+  useEffect(() => {
+    if (!TASK_PRODUCER_ENABLED) return;
+    if (REPLAY_ENABLED) return;
+
+    let mounted = true;
+
+    const recoverSession = async () => {
+      try {
+        if (!dbRef.current) {
+          dbRef.current = await SQLite.openDatabaseAsync('navego.db');
+          await initDatabase(dbRef.current);
+        }
+        const active = await getActiveSession(dbRef.current);
+        if (!mounted || !active) {
+          console.log('[TRACKER] sin sesion ACTIVE para recuperar');
+          return;
+        }
+
+        const puntos = await getProcessedRoutePoints(dbRef.current, active.id);
+        if (!mounted) return;
+
+        sessionIdRef.current = active.id;
+        totalDistanceRef.current = active.total_distance ?? 0;
+        routePointsRef.current = puntos.map(p => ({ lat: p.lat, lon: p.lon }));
+        lastProcessedCursorRef.current = active.last_processed_seq ?? -1;
+        isRecordingRef.current = true;
+
+        setRoutePoints(routePointsRef.current);
+        setTotalDistance(totalDistanceRef.current);
+        setIsRecording(true);
+        setIsTracking(true);
+        setIsPaused(false);
+        isPausedRef.current = false;
+
+        console.log('[TRACKER] Sesion retomada: ' + active.id +
+          ' puntos=' + puntos.length +
+          ' distancia=' + (active.total_distance ?? 0).toFixed(2) + 'm');
+      } catch (e) {
+        console.warn('[TRACKER] recoverSession fallo:', String(e));
+      }
+    };
+
+    void recoverSession();
   }, []);
 
   // =========================================================================

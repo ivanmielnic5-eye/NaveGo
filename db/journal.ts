@@ -575,3 +575,52 @@ export async function getProcessedPointsSince(
     [sessionId, sinceSeq],
   );
 }
+
+// =========================================================================
+// FASE 6 DOC 46 — Recuperacion de sesion ACTIVE al abrir la app
+// =========================================================================
+
+export interface ActiveSession {
+  id: string;
+  title: string | null;
+  total_distance: number;
+  last_processed_seq: number;
+}
+
+/**
+ * Devuelve la sesion ACTIVE mas reciente, si existe.
+ * Excluye TASK_TEST (esas son de modo test).
+ */
+export async function getActiveSession(
+  db: SQLiteDatabase,
+): Promise<ActiveSession | null> {
+  return await db.getFirstAsync<ActiveSession>(
+    `SELECT id, title, total_distance, last_processed_seq
+     FROM sessions
+     WHERE status = 'ACTIVE' AND (title IS NULL OR title != 'TASK_TEST')
+     ORDER BY start_time DESC LIMIT 1`,
+  );
+}
+
+/**
+ * Devuelve los puntos con newPoint=1 de una sesion, ordenados.
+ * Se usan para reconstruir el track al retomar.
+ */
+export interface RoutePointRow {
+  sequence_no: number;
+  lat: number;
+  lon: number;
+}
+
+export async function getProcessedRoutePoints(
+  db: SQLiteDatabase,
+  sessionId: string,
+): Promise<RoutePointRow[]> {
+  return await db.getAllAsync<RoutePointRow>(
+    `SELECT sequence_no, lat, lon
+     FROM processed_points
+     WHERE session_id = ? AND has_new_point = 1
+     ORDER BY sequence_no ASC`,
+    [sessionId],
+  );
+}
