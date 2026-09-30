@@ -4,7 +4,7 @@ import { AppState } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
 import { StorageAccessFramework } from 'expo-file-system/legacy';
-import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince } from './db/journal';
+import { startSession, endSession, insertGpsFix, getSessionFixes, openGap, closeGap, abandonGap, findOrCreateTestSession, getProcessedPointsSince, saveIsPaused } from './db/journal';
 import { initDatabase } from './db/schema';
 import { REPLAY_ENABLED, BACKGROUND_TEST_ENABLED, TASK_PRODUCER_ENABLED } from './devConfig';
 import { realLocationProvider } from './LocationProvider';
@@ -759,6 +759,21 @@ export function useNaveGoTracker() {
 
       sessionIdRef.current = null;
     }
+
+    // Fase 4: detener la Task de background al finalizar
+    if (TASK_PRODUCER_ENABLED) {
+      try {
+        const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+          BACKGROUND_LOCATION_TASK,
+        );
+        if (hasStarted) {
+          await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
+          console.log('[TRACKER] Task background detenida');
+        }
+      } catch (e) {
+        console.warn('[TRACKER] error deteniendo task:', String(e));
+      }
+    }
   };
 
   const resetTracking = async () => {
@@ -788,6 +803,10 @@ export function useNaveGoTracker() {
     setIsPaused((prev) => {
       const next = !prev;
       isPausedRef.current = next;
+      // Fase 4: persistir is_paused para que la Task lo lea
+      if (TASK_PRODUCER_ENABLED && dbRef.current && sessionIdRef.current) {
+        void saveIsPaused(dbRef.current, sessionIdRef.current, next).catch(() => {});
+      }
       return next;
     });
   };
