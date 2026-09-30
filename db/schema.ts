@@ -117,10 +117,46 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
 
       console.log('[MIGRATION] v1 -> v2 aplicada y verificada');
     });
-  } else if (currentVersion > 2) {
+  }
+
+  if (currentVersion === 2) {
+    await db.withExclusiveTransactionAsync(async (txn) => {
+      const columns = await txn.getAllAsync<{ name: string }>(
+        `PRAGMA table_info(sessions);`
+      );
+      const columnNames = new Set(columns.map((c) => c.name));
+
+      if (!columnNames.has('is_paused')) {
+        await txn.execAsync(`ALTER TABLE sessions ADD COLUMN is_paused INTEGER DEFAULT 0;`);
+      }
+      if (!columnNames.has('last_processed_seq')) {
+        await txn.execAsync(`ALTER TABLE sessions ADD COLUMN last_processed_seq INTEGER DEFAULT -1;`);
+      }
+
+      await txn.execAsync(`PRAGMA user_version = 3;`);
+
+      // Post-check
+      const versionCheck = await txn.getFirstAsync<{ user_version: number }>(
+        `PRAGMA user_version;`
+      );
+      if (versionCheck?.user_version !== 3) {
+        throw new Error('[MIGRATION] post-check fallo: user_version != 3');
+      }
+
+      const sessionColumns = await txn.getAllAsync<{ name: string }>(
+        `PRAGMA table_info(sessions);`
+      );
+      const sessionColNames = new Set(sessionColumns.map((c) => c.name));
+      if (!sessionColNames.has('is_paused') || !sessionColNames.has('last_processed_seq')) {
+        throw new Error('[MIGRATION] post-check fallo: columnas nuevas en sessions faltantes');
+      }
+
+      console.log('[MIGRATION] v2 -> v3 aplicada y verificada');
+    });
+  } else if (currentVersion > 3) {
     throw new Error(
       '[MIGRATION] DB en version ' + currentVersion +
-      ', esta app solo conoce hasta v2. Actualizar app o restaurar DB.'
+      ', esta app solo conoce hasta v3. Actualizar app o restaurar DB.'
     );
   }
 
