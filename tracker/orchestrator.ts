@@ -23,7 +23,7 @@ import {
 } from '../db/journal';
 import type { GPSFix } from '../types/journal';
 
-const GAP_THRESHOLD_MS = 2000;
+const GAP_THRESHOLD_MS = 3500;
 
 export interface OrchestratorInput {
   sessionId: string;
