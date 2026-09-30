@@ -456,6 +456,60 @@ export function useNaveGoTracker() {
   }, []);
 
   // =========================================================================
+  // FASE 4 DOC 46: CONSUMIDOR — polling de processed_points.
+  // Solo activo con TASK_PRODUCER_ENABLED (sin REPLAY). El hook no
+  // captura; lee lo que la Task escribio y actualiza el HUD.
+  // =========================================================================
+  useEffect(() => {
+    if (!TASK_PRODUCER_ENABLED) return;
+    if (REPLAY_ENABLED) return;
+
+    let mounted = true;
+
+    const pollInterval = setInterval(async () => {
+      if (!mounted) return;
+      if (!dbRef.current || !sessionIdRef.current) return;
+      if (!isRecordingRef.current || isPausedRef.current) return;
+
+      try {
+        const rows = await getProcessedPointsSince(
+          dbRef.current,
+          sessionIdRef.current,
+          lastProcessedCursorRef.current,
+        );
+        if (!mounted || rows.length === 0) return;
+
+        let addedPoints: Coordinate[] = [];
+        let lastRow = null;
+        for (const r of rows) {
+          lastRow = r;
+          if (r.has_new_point === 1) {
+            addedPoints.push({ lat: r.lat, lon: r.lon });
+          }
+        }
+        if (!lastRow) return;
+
+        lastProcessedCursorRef.current = lastRow.sequence_no;
+
+        if (addedPoints.length > 0) {
+          routePointsRef.current = [...routePointsRef.current, ...addedPoints];
+          setRoutePoints(routePointsRef.current);
+          setLivePosition({ lat: lastRow.lat, lon: lastRow.lon });
+          setCurrentSog(lastRow.sog);
+          setCurrentCog(lastRow.cog);
+        }
+      } catch (e) {
+        console.warn('[POLL] error:', String(e));
+      }
+    }, 1500);
+
+    return () => {
+      mounted = false;
+      clearInterval(pollInterval);
+    };
+  }, []);
+
+  // =========================================================================
   // TELEMETRÍA VIVA — arranca al montar, muere al desmontar.
   // NO depende de botones.
   // =========================================================================
