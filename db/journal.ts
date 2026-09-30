@@ -29,7 +29,7 @@ export async function insertGpsFix(db: SQLiteDatabase, fix: GPSFix): Promise<voi
   const quality = (fix.quality === 'GOOD' || fix.quality === 'SUSPECT' || fix.quality === 'REJECTED') ? fix.quality : 'SUSPECT';
   const satellites = (typeof fix.satellites === 'number' && Number.isFinite(fix.satellites)) ? Math.floor(fix.satellites) : 0;
   const receivedAtMs = (typeof fix.received_at_ms === 'number' && Number.isFinite(fix.received_at_ms)) ? Math.floor(fix.received_at_ms) : null;
-  const source = (fix.source === 'GNSS' || fix.source === 'REPLAY') ? fix.source : 'GNSS';
+  const source = (fix.source === 'GNSS' || fix.source === 'REPLAY' || fix.source === 'TASK') ? fix.source : 'GNSS';
 
   await db.runAsync(
     `INSERT INTO gps_fixes

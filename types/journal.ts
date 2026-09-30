@@ -14,5 +14,5 @@ export interface GPSFix {
   quality: 'GOOD' | 'SUSPECT' | 'REJECTED';
   satellites?: number | null;
   received_at_ms?: number | null;
-  source?: 'GNSS' | 'REPLAY' | null;
+  source?: 'GNSS' | 'REPLAY' | 'TASK' | null;
 }
