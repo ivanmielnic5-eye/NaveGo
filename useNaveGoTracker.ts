@@ -487,7 +487,20 @@ export function useNaveGoTracker() {
         const active = await getActiveSession(dbRef.current);
         if (!mounted || !active) {
           console.log('[TRACKER] sin sesion ACTIVE para recuperar');
+          // [PIPE][RECOVER] — instrumentacion Fase 1: no hay sesion activa
+          console.log('[PIPE][RECOVER] result=no_active_session');
           return;
+        }
+
+        // [PIPE][RECOVER] — instrumentacion Fase 1: TASK_TEST descartada
+        const taskTestActive = await dbRef.current.getFirstAsync<{ id: string }>(
+          `SELECT id FROM sessions WHERE title='TASK_TEST' AND status='ACTIVE' LIMIT 1`,
+        );
+        if (taskTestActive) {
+          console.warn(
+            '[PIPE][RECOVER] TASK_TEST ACTIVE presente y descartada por getActiveSession: ' +
+            taskTestActive.id,
+          );
         }
 
         const puntos = await getProcessedRoutePoints(dbRef.current, active.id);
@@ -507,11 +520,21 @@ export function useNaveGoTracker() {
         setIsPaused(false);
         isPausedRef.current = false;
 
-        console.log('[TRACKER] Sesion retomada: ' + active.id +
+        // [PIPE][RECOVER] — instrumentacion Fase 1:
+        // reemplaza el log viejo que imprimia active.total_distance
+        // (siempre 0 en ACTIVE). Ahora imprime el valor REAL.
+        console.log(
+          '[PIPE][RECOVER] session_id=' + active.id +
           ' puntos=' + puntos.length +
-          ' distancia=' + (active.total_distance ?? 0).toFixed(2) + 'm');
+          ' getSumDistance=' + distanciaSumada.toFixed(2) + 'm' +
+          ' totalDistanceRef=' + totalDistanceRef.current.toFixed(2) + 'm' +
+          ' lastProcessedCursorRef=' + lastProcessedCursorRef.current +
+          ' (col active.total_distance=' + (active.total_distance ?? 0).toFixed(2) + 'm NO usado)',
+        );
       } catch (e) {
         console.warn('[TRACKER] recoverSession fallo:', String(e));
+        // [PIPE][RECOVER] — instrumentacion Fase 1: excepcion
+        console.warn('[PIPE][RECOVER] exception=' + String(e));
       }
     };
 
@@ -597,11 +620,20 @@ export function useNaveGoTracker() {
       if (!dbRef.current || !sessionIdRef.current) return;
       if (!isRecordingRef.current || isPausedRef.current) return;
 
+      const sessionIdAtPoll = sessionIdRef.current;
+      const cursorIn = lastProcessedCursorRef.current;
+
       try {
         const rows = await getProcessedPointsSince(
           dbRef.current,
-          sessionIdRef.current,
-          lastProcessedCursorRef.current,
+          sessionIdAtPoll,
+          cursorIn,
+        );
+        // [PIPE][POLL] — instrumentacion Fase 1: que leyo el polling
+        console.log(
+          '[PIPE][POLL] session_id=' + sessionIdAtPoll +
+          ' cursor_in=' + cursorIn +
+          ' rows=' + rows.length,
         );
         if (!mounted || rows.length === 0) return;
 
@@ -627,6 +659,15 @@ export function useNaveGoTracker() {
         setLastFixTimestamp(lastRow.timestamp);
         setLastFixAccuracy(acc);
 
+        // [PIPE][POLL] — instrumentacion Fase 1: que va a escribir al estado
+        console.log(
+          '[PIPE][POLL] consumed session_id=' + sessionIdAtPoll +
+          ' cursor_out=' + lastProcessedCursorRef.current +
+          ' newpoints=' + addedPoints.length +
+          ' dist_before=' + totalDistanceRef.current.toFixed(2) +
+          ' dist_delta=' + addedDistance.toFixed(2),
+        );
+
         if (addedPoints.length > 0) {
           routePointsRef.current = [...routePointsRef.current, ...addedPoints];
           totalDistanceRef.current += addedDistance;
@@ -635,9 +676,18 @@ export function useNaveGoTracker() {
           setLivePosition({ lat: lastRow.lat, lon: lastRow.lon });
           setCurrentSog(lastRow.sog);
           setCurrentCog(lastRow.cog);
+
+          // [PIPE][POLL] — instrumentacion Fase 1: valor publicado al estado/HUD
+          console.log(
+            '[PIPE][POLL] published session_id=' + sessionIdAtPoll +
+            ' routePoints_len=' + routePointsRef.current.length +
+            ' totalDistance=' + totalDistanceRef.current.toFixed(2),
+          );
         }
       } catch (e) {
         console.warn('[POLL] error:', String(e));
+        // [PIPE][POLL] — instrumentacion Fase 1: excepcion
+        console.warn('[PIPE][POLL] exception session_id=' + sessionIdAtPoll + ' error=' + String(e));
       }
     }, 1500);
 
@@ -807,6 +857,9 @@ export function useNaveGoTracker() {
       totalDistanceRef.current = 0;
       routePointsRef.current = [];
       lastPointRef.current = null;
+      // [PIPE][START] — instrumentacion Fase 1 + FIX cursor
+      console.log('[PIPE][START] cursor_before=' + lastProcessedCursorRef.current + ' reseteando a -1');
+      lastProcessedCursorRef.current = -1;
       setRoutePoints([]);
       setTotalDistance(0);
     } catch (error) {
@@ -894,11 +947,17 @@ export function useNaveGoTracker() {
         }
       }
 
+      const sessionIdAtStop = sessionIdRef.current;
+      const distAtStop = totalDistanceRef.current;
       try {
-        await endSession(dbRef.current, sessionIdRef.current, totalDistanceRef.current);
+        await endSession(dbRef.current, sessionIdAtStop, distAtStop);
         console.log('[TRACKER] Sesion cerrada OK');
+        // [PIPE][STOP] — instrumentacion Fase 1: endSession OK
+        console.log('[PIPE][STOP] endSession OK session_id=' + sessionIdAtStop + ' total=' + distAtStop.toFixed(2) + 'm');
       } catch (e) {
         console.warn('[TRACKER] endSession fallo:', e);
+        // [PIPE][STOP] — instrumentacion Fase 1: endSession FAIL
+        console.warn('[PIPE][STOP] endSession FAIL session_id=' + sessionIdAtStop + ' error=' + String(e));
       }
 
       sessionIdRef.current = null;
@@ -954,6 +1013,13 @@ export function useNaveGoTracker() {
         const pts = fixes
           .map((f) => ({ lat: f.lat_raw, lon: f.lon_raw }))
           .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+        // [PIPE][APPSTATE] — instrumentacion Fase 1: sobrescritura de routePoints
+        console.warn(
+          '[PIPE][APPSTATE] fires session_id=' + sessionIdRef.current +
+          ' gps_fixes_read=' + fixes.length +
+          ' routePoints_reemplazado_a=' + pts.length +
+          ' cursor_poll_actual=' + lastProcessedCursorRef.current,
+        );
         routePointsRef.current = pts;
         setRoutePoints(pts);
         if (pts.length > 0) {

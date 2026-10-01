@@ -38,21 +38,34 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
   const { locations } = data as { locations: Location.LocationObject[] };
   if (!locations || locations.length === 0) return;
 
-  // FASE 3+4 DOC 46: procesar batch en DB.
-  // (JSONL removido - ya no se necesita, era evidencia de Fase 2).
   try {
     const db = await SQLite.openDatabaseAsync('navego.db', { useNewConnection: true });
 
-    // Buscar TASK_TEST primero (modo test). Si no existe, buscar
-    // la sesion activa real (modo produccion).
     let targetSession = await db.getFirstAsync<{ id: string; title: string }>(
       `SELECT id, title FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
     );
+    let selectedBy = 'TASK_TEST_ACTIVE';
     if (!targetSession) {
       targetSession = await db.getFirstAsync<{ id: string; title: string }>(
         `SELECT id, title FROM sessions WHERE title != 'TASK_TEST' AND status = 'ACTIVE' ORDER BY start_time DESC LIMIT 1`,
       );
+      selectedBy = 'PRODUCTION_ACTIVE';
     }
+
+    // [PIPE][TASK] — instrumentacion Fase 1: seleccion de sesion
+    const counters = await db.getFirstAsync<{ n_active: number; n_task_test_active: number }>(
+      `SELECT
+         (SELECT COUNT(*) FROM sessions WHERE status='ACTIVE') AS n_active,
+         (SELECT COUNT(*) FROM sessions WHERE title='TASK_TEST' AND status='ACTIVE') AS n_task_test_active`,
+    );
+    console.log(
+      '[PIPE][TASK] n_active=' + (counters?.n_active ?? 0) +
+      ' n_task_test_active=' + (counters?.n_task_test_active ?? 0) +
+      ' selected_by=' + selectedBy +
+      ' session_id=' + (targetSession?.id ?? 'none') +
+      ' title=' + (targetSession?.title ?? 'none') +
+      ' batch_size=' + locations.length,
+    );
 
     if (targetSession?.id) {
       const items: OrchestratorInput[] = locations.map((loc) => ({
@@ -70,8 +83,17 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
 
       const result = await processBatchInDb(db, targetSession.id, items);
       console.log('[TASK-BG] DB: procesados=' + result.processed + ' skipped=' + result.skipped);
+
+      // [PIPE][TASK] — instrumentacion Fase 1: resultado del batch
+      console.log(
+        '[PIPE][TASK] wrote session_id=' + targetSession.id +
+        ' procesados=' + result.processed +
+        ' skipped=' + result.skipped,
+      );
     } else {
-      console.log('[TASK-BG] DB: sin sesion TASK_TEST activa, skip');
+      console.log('[TASK-BG] DB: skip reason=no_active_session');
+      // [PIPE][TASK] — instrumentacion Fase 1: motivo de skip
+      console.log('[PIPE][TASK] skip reason=no_active_session');
     }
 
     await db.closeAsync();

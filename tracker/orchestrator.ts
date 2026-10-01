@@ -129,8 +129,20 @@ export async function processBatchInDb(
   let processed = 0;
   let skipped = 0;
 
+  // [PIPE][ORCH] — instrumentacion Fase 1: entrada
+  console.log('[PIPE][ORCH] enter session_id=' + sessionId + ' batch_size=' + fixes.length);
+
   // Cargar estado una vez al inicio del batch.
   let state = await loadOrchestratorStateFromDb(db, sessionId);
+
+  // [PIPE][ORCH] — instrumentacion Fase 1: estado cargado
+  console.log(
+    '[PIPE][ORCH] state session_id=' + sessionId +
+    ' isRecording=' + state.processState.isRecording +
+    ' isPaused=' + state.processState.isPaused +
+    ' cursor_seq=' + state.cursorSeq +
+    ' open_gap=' + (state.openGapId ?? 'none'),
+  );
 
   // Si no esta grabando o esta pausado, no procesar nada.
   if (!state.processState.isRecording || state.processState.isPaused) {
@@ -139,6 +151,8 @@ export async function processBatchInDb(
       state.processState.isRecording +
       ' isPaused=' + state.processState.isPaused,
     );
+    // [PIPE][ORCH] — instrumentacion Fase 1: motivo de skip
+    console.log('[PIPE][ORCH] skip session_id=' + sessionId + ' reason=not_recording_or_paused');
     return { processed: 0, skipped: fixes.length };
   }
 
@@ -152,6 +166,14 @@ export async function processBatchInDb(
       skipped++;
     }
   }
+
+  // [PIPE][ORCH] — instrumentacion Fase 1: salida
+  console.log(
+    '[PIPE][ORCH] exit session_id=' + sessionId +
+    ' processed=' + processed +
+    ' skipped=' + skipped +
+    ' final_cursor=' + state.cursorSeq,
+  );
 
   return { processed, skipped };
 }
