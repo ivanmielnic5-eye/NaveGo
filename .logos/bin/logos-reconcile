@@ -1,0 +1,354 @@
+#!/usr/bin/env python3
+"""
+logos-reconcile — marca una fuente autoritativa como revisada contra HEAD.
+
+Uso:
+    logos-reconcile mark-reviewed <type> [--dry-run]
+
+Esta herramienta registra evidencia de revisión humana en el MANIFEST.
+NO autoriza ni aprueba; solo escribe metadata de procedencia.
+El root of trust sigue siendo responsabilidad del humano.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from typing import Any
+
+
+EXIT_OK = 0
+EXIT_WARNING = 1
+EXIT_BLOCKED = 2
+
+
+def fail(message: str, code: int = EXIT_BLOCKED) -> int:
+    print(f"[logos-reconcile] BLOCKED: {message}")
+    return code
+
+
+def warn(message: str) -> None:
+    print(f"[logos-reconcile] WARNING: {message}")
+
+
+def get_repo_root() -> Path:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        raise RuntimeError("no se pudo determinar la raíz Git")
+    return Path(result.stdout.strip()).resolve()
+
+
+def get_head(repo: Path) -> str:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "--short", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        raise RuntimeError("no se pudo obtener HEAD")
+    head = result.stdout.strip()
+    if not head:
+        raise RuntimeError("HEAD está vacío")
+    return head
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_json(path: Path, label: str) -> Any:
+    try:
+        with path.open("r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        raise RuntimeError(f"{label} no existe: {path}")
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"{label} inválido JSON: {exc}")
+
+
+def expand_path(raw: str) -> Path:
+    return Path(os.path.expanduser(raw))
+
+
+def is_manifest_clean(repo: Path, manifest: Path) -> bool:
+    relative = manifest.relative_to(repo)
+    result = subprocess.run(
+        ["git", "-C", str(repo), "status", "--short", "--", str(relative)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip() == ""
+
+
+def is_manifest_tracked(repo: Path, manifest: Path) -> bool:
+    relative = manifest.relative_to(repo)
+    result = subprocess.run(
+        ["git", "-C", str(repo), "ls-files", "--error-unmatch", "--", str(relative)],
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def resolve_project(manifest: dict[str, Any]) -> str:
+    project = manifest.get("project")
+    if not isinstance(project, str) or not project.strip():
+        raise RuntimeError("MANIFEST.project no es un string válido")
+    return project.strip()
+
+
+def resolve_source(manifest: dict[str, Any], source_type: str) -> tuple[dict[str, Any], int]:
+    sources = manifest.get("sources")
+    if not isinstance(sources, list):
+        raise RuntimeError("MANIFEST.sources no es una lista")
+    matches = [
+        (index, source)
+        for index, source in enumerate(sources)
+        if isinstance(source, dict)
+        and source.get("type") == source_type
+        and source.get("authority") is True
+    ]
+    if len(matches) == 0:
+        raise RuntimeError(f"no existe fuente autoritativa para type={source_type!r}")
+    if len(matches) > 1:
+        raise RuntimeError(f"hay múltiples fuentes autoritativas para type={source_type!r}")
+    index, source = matches[0]
+    return source, index
+
+
+def trust_path(project: str) -> Path:
+    return Path.home() / ".logos" / "trust" / f"{project}.json"
+
+
+def verify_root_of_trust(project: str, manifest: Path) -> tuple[str, int]:
+    """
+    Verifica el root of trust si existe.
+    Devuelve (estado, exit_code_sugerido):
+        - ("VERIFIED", 0)    → trust existe y hash coincide
+        - ("ABSENT", 1)      → trust no existe (WARNING, no bloquea)
+        - lanza RuntimeError → trust existe pero hash no coincide (BLOCKED)
+    """
+    trust = trust_path(project)
+    if not trust.exists():
+        warn(f"root of trust no existe: {trust}")
+        return "ABSENT", EXIT_WARNING
+
+    data = load_json(trust, "root of trust")
+    approved_hash = data.get("approved_manifest_sha256")
+    approved_commit = data.get("approved_manifest_commit")
+
+    if not isinstance(approved_hash, str) or not approved_hash:
+        raise RuntimeError("root of trust no contiene approved_manifest_sha256 válido")
+    if not isinstance(approved_commit, str) or not approved_commit:
+        raise RuntimeError("root of trust no contiene approved_manifest_commit válido")
+
+    current_hash = sha256_file(manifest)
+    if current_hash != approved_hash:
+        raise RuntimeError(
+            "el MANIFEST actual no coincide con approved_manifest_sha256; "
+            "no se marca ninguna fuente"
+        )
+
+    print(
+        "[logos-reconcile] root of trust: OK "
+        f"(approved_manifest_commit={approved_commit})"
+    )
+    return "VERIFIED", EXIT_OK
+
+
+def render_manifest(data: dict[str, Any], trailing: str = "\n") -> str:
+    """Serializa el MANIFEST respetando el formato actual.
+
+    `trailing` es el sufijo exacto a agregar al final (típicamente "\n"
+    o ""), para preservar la presencia/ausencia del salto de línea final
+    del archivo original.
+    """
+    return json.dumps(data, ensure_ascii=False, indent=2) + trailing
+
+
+def write_manifest_atomic(
+    manifest: Path, data: dict[str, Any], trailing: str = "\n"
+) -> None:
+    tmp_fd, tmp_path = tempfile.mkstemp(
+        prefix=".MANIFEST.", suffix=".tmp", dir=str(manifest.parent)
+    )
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8", newline="") as fh:
+            fh.write(render_manifest(data, trailing))
+        os.replace(tmp_path, manifest)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+def show_diff(before_text: str, after_text: str) -> None:
+    """Muestra el diff entre dos textos usando git diff --no-index."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        before = Path(tmpdir) / "MANIFEST.antes.json"
+        after = Path(tmpdir) / "MANIFEST.despues.json"
+        before.write_text(before_text, encoding="utf-8")
+        after.write_text(after_text, encoding="utf-8")
+        result = subprocess.run(
+            ["git", "diff", "--no-index", "--color=never",
+             str(before), str(after)],
+            capture_output=True,
+            text=True,
+        )
+        if result.stdout.strip():
+            print("[logos-reconcile] diff (antes -> despues):")
+            print(result.stdout)
+        else:
+            print("[logos-reconcile] diff: sin cambios")
+
+
+def command_mark_reviewed(args: argparse.Namespace) -> int:
+    repo = get_repo_root()
+    manifest = repo / ".logos" / "MANIFEST.json"
+
+    if not manifest.exists():
+        return fail(f"MANIFEST no existe: {manifest}")
+
+    if not is_manifest_tracked(repo, manifest):
+        return fail("MANIFEST no está trackeado en Git")
+
+    if not is_manifest_clean(repo, manifest):
+        return fail(
+            "MANIFEST tiene cambios sin commitear; "
+            "revisá/aprobá el MANIFEST actual antes de reconciliar"
+        )
+
+    data = load_json(manifest, "MANIFEST")
+    if data.get("fail_closed") is not True:
+        return fail("MANIFEST.fail_closed no es true")
+
+    project = resolve_project(data)
+    head = get_head(repo)
+    source, source_index = resolve_source(data, args.source_type)
+
+    source_path_raw = source.get("path")
+    if not isinstance(source_path_raw, str) or not source_path_raw.strip():
+        return fail(f"la fuente type={args.source_type!r} no tiene path válido")
+
+    resolved_path = expand_path(source_path_raw)
+    if not resolved_path.exists():
+        return fail(
+            f"el archivo de la fuente no existe: {resolved_path}"
+        )
+
+    try:
+        trust_state, trust_exit = verify_root_of_trust(project, manifest)
+    except RuntimeError as exc:
+        return fail(str(exc))
+
+    old_value = source.get("reviewed_against_commit")
+    new_value = head
+
+    print(f"[logos-reconcile] project: {project}")
+    print(f"[logos-reconcile] source type: {args.source_type}")
+    print(f"[logos-reconcile] source path: {source_path_raw}")
+    print(f"[logos-reconcile] HEAD actual: {head}")
+    print(
+        "[logos-reconcile] reviewed_against_commit: "
+        f"{old_value if old_value is not None else '(ausente)'} -> {new_value}"
+    )
+    print(f"[logos-reconcile] trust: {trust_state}")
+    print("")
+
+    if old_value == new_value:
+        print(
+            "[logos-reconcile] NOTA: la fuente ya estaba marcada contra "
+            f"HEAD actual ({new_value}). No hay nada que escribir."
+        )
+        return trust_exit
+
+    updated = json.loads(json.dumps(data))
+    updated["sources"][source_index]["reviewed_against_commit"] = new_value
+
+    before_text = manifest.read_text(encoding="utf-8")
+    trailing = "\n" if before_text.endswith("\n") else ""
+    after_text = render_manifest(updated, trailing)
+
+    if args.dry_run:
+        show_diff(before_text, after_text)
+        print("[logos-reconcile] DRY-RUN: no se modificó el MANIFEST")
+        return trust_exit
+
+    write_manifest_atomic(manifest, updated, trailing)
+
+    print("[logos-reconcile] UPDATED: MANIFEST modificado correctamente")
+    print("")
+    print(
+        "[logos-reconcile] NOTA: exit code = %d indica WARNING (trust no "
+        "existe). El mark-reviewed se aplicó correctamente." % trust_exit
+        if trust_exit == EXIT_WARNING
+        else "[logos-reconcile] NOTA: exit code = 0 (sin advertencias)."
+    )
+    print(
+        "[logos-reconcile] siguiente paso: revisar el diff "
+        "(git diff .logos/MANIFEST.json) antes de commitear."
+    )
+    return trust_exit
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="logos-reconcile",
+        description=(
+            "Reconciliación humana de vigencia de fuentes LOGOS. "
+            "Registra reviewed_against_commit en el MANIFEST."
+        ),
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    mark = sub.add_parser(
+        "mark-reviewed",
+        help="marca una fuente autoritativa como revisada contra HEAD actual",
+    )
+    mark.add_argument(
+        "source_type",
+        help="type de la fuente declarado en MANIFEST.sources",
+    )
+    mark.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="muestra el diff sin modificar el MANIFEST",
+    )
+    mark.set_defaults(func=command_mark_reviewed)
+
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    try:
+        return args.func(args)
+    except RuntimeError as exc:
+        return fail(str(exc), EXIT_BLOCKED)
+    except OSError as exc:
+        return fail(f"error de filesystem: {exc}", EXIT_BLOCKED)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
