@@ -17,6 +17,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -283,6 +284,7 @@ def command_mark_reviewed(args: argparse.Namespace) -> int:
 
     updated = json.loads(json.dumps(data))
     updated["sources"][source_index]["reviewed_against_commit"] = new_value
+    updated["sources"][source_index]["last_human_review"] = date.today().isoformat()
 
     before_text = manifest.read_text(encoding="utf-8")
     trailing = "\n" if before_text.endswith("\n") else ""

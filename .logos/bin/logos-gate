@@ -13,6 +13,18 @@ def expand(p):
         return os.path.join(REPO, p)
     return p
 
+
+def get_head():
+    """Devuelve el hash corto del commit HEAD actual, o None si falla."""
+    try:
+        r = subprocess.run(
+            ['git', '-C', REPO, 'rev-parse', '--short', 'HEAD'],
+            capture_output=True, text=True, check=True
+        )
+        return r.stdout.strip() or None
+    except Exception:
+        return None
+
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 flags = [a for a in sys.argv[1:] if a.startswith('--')]
 JSON_OUT = '--json' in flags
@@ -121,6 +133,47 @@ if checks['manifest'] != 'BLOCKED':
     except Exception as e:
         checks['freshness'] = 'UNKNOWN'
 
+# 3b. Deriva (drift): compara reviewed_against_commit contra HEAD
+head = get_head()
+required_types = set(m.get('required', []))
+optional_types = set(m.get('optional', []))
+drift_required = []
+drift_optional = []
+
+if checks['manifest'] != 'BLOCKED' and head is not None:
+    for src in m['sources']:
+        if not src.get('authority'):
+            continue
+        if src.get('role') != 'singleton':
+            continue
+        stype = src.get('type')
+        if stype not in required_types and stype not in optional_types:
+            continue
+        reviewed = src.get('reviewed_against_commit')
+        if reviewed is None:
+            msg = f'{stype}(sin revisar)'
+            if stype in required_types:
+                drift_required.append(msg)
+            else:
+                drift_optional.append(msg)
+        elif reviewed != head:
+            msg = f'{stype}({reviewed})'
+            if stype in required_types:
+                drift_required.append(msg)
+            else:
+                drift_optional.append(msg)
+
+    if drift_required:
+        checks['drift'] = f'BLOCKED (required: {",".join(drift_required)})'
+        reasons.append('drift_required:' + ','.join(drift_required))
+    elif drift_optional:
+        checks['drift'] = f'WARNING (optional: {",".join(drift_optional)})'
+        warnings.append('drift_optional:' + ','.join(drift_optional))
+    else:
+        checks['drift'] = 'OK'
+else:
+    checks['drift'] = 'SKIP'
+
 # 4. Status final
 if any(v == 'BLOCKED' for v in checks.values()) or reasons:
     status = 'BLOCKED'
@@ -164,7 +217,8 @@ else:
         'required': 'Required',
         'authority': 'Authority',
         'project_identity': 'Project identity',
-        'freshness': 'Freshness'
+        'freshness': 'Freshness',
+        'drift': 'Drift'
     }
     for k, label in labels.items():
         v = checks.get(k, '-')

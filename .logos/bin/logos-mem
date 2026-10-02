@@ -5,6 +5,7 @@ import json, os, sys, subprocess, hashlib, datetime
 REPO = os.getcwd()
 MANIFEST = os.path.join(REPO, '.logos/MANIFEST.json')
 VALIDATOR = os.path.join(REPO, '.logos/bin/validate-manifest')
+GATE = os.path.join(REPO, '.logos/bin/logos-gate')
 
 def expand(p):
     if p.startswith('~'):
@@ -110,10 +111,39 @@ except Exception:
 now = datetime.datetime.now().astimezone().isoformat(timespec='seconds')
 manifest_version = m['manifest_version']
 
+# 3c. Estado del gate (para reportar en capsula)
+gate_result = None
+try:
+    r_gate = subprocess.run([GATE, PROYECTO, '--json'], capture_output=True, text=True)
+    gate_result = json.loads(r_gate.stdout)
+except Exception:
+    gate_result = None
+
 # 4. Generar markdown
 md = []
 md.append(f"# Capsula de Memoria — {m['project']}")
 md.append("")
+md.append("## Estado del contexto")
+if gate_result is None:
+    md.append("- gate_status: NO_DISPONIBLE")
+    md.append("- drift: NO_DISPONIBLE")
+else:
+    gs = gate_result.get('status', '?')
+    drift_val = gate_result.get('checks', {}).get('drift', '?')
+    md.append(f"- gate_status: {gs}")
+    md.append(f"- drift: {drift_val}")
+    drift_reasons = [x.split(':', 1)[1] for x in gate_result.get('reasons', []) if x.startswith('drift_required:') and ':' in x]
+    drift_warnings = [x.split(':', 1)[1] for x in gate_result.get('warnings', []) if x.startswith('drift_optional:') and ':' in x]
+    if drift_reasons:
+        md.append(f"- drift_required: {', '.join(drift_reasons)}")
+    if drift_warnings:
+        md.append(f"- drift_optional: {', '.join(drift_warnings)}")
+    if gs == 'BLOCKED':
+        md.append("")
+        md.append("ATENCION: Este contexto tiene fuentes sin reconciliar contra HEAD.")
+        md.append("NO confiar en esta capsula sin antes correr logos-reconcile o logos-baseline.")
+md.append("")
+
 md.append("## Procedencia")
 md.append(f"- generated_at: {now}")
 md.append(f"- project: {m['project']}")
@@ -245,7 +275,9 @@ meta = {
         "sources_index": [{'type': s['type'], 'path': s['path']}
                           for s in m['sources'] if s.get('authority')]
     },
-    "warnings": ["Validador reporto WARNING"] if warning_flag else []
+    "warnings": ["Validador reporto WARNING"] if warning_flag else [],
+    "gate_status": (gate_result or {}).get("status", "NO_DISPONIBLE"),
+    "gate_drift": (gate_result or {}).get("checks", {}).get("drift", "NO_DISPONIBLE")
 }
 
 with open(out_json, 'w') as f:
