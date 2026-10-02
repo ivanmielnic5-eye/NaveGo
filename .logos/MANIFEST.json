@@ -41,7 +41,7 @@
         "freshness"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "380c7c0"
+      "reviewed_against_commit": "05ecd2e"
     },
     {
       "type": "profile",
@@ -56,7 +56,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "380c7c0"
+      "reviewed_against_commit": "05ecd2e"
     },
     {
       "type": "protocol",
@@ -71,7 +71,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "380c7c0"
+      "reviewed_against_commit": "05ecd2e"
     },
     {
       "type": "decisions",
@@ -86,7 +86,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "380c7c0"
+      "reviewed_against_commit": "05ecd2e"
     },
     {
       "type": "decision_manifest",
@@ -99,7 +99,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "decision_gate",
@@ -112,7 +114,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "session_spec",
@@ -125,7 +129,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "spec_capsule",
@@ -138,7 +144,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "hypotheses",
@@ -164,8 +172,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-09-22",
-      "reviewed_against_commit": "816e82d"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_commit": "05ecd2e"
     },
     {
       "type": "glossary",
@@ -178,7 +186,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "evidence",
@@ -203,7 +213,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "workflow",
@@ -216,7 +228,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "incidents",
@@ -229,7 +243,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "multi_ia_protocol",
@@ -242,7 +258,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "framework_decision",
@@ -255,7 +273,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "decision_maps",
@@ -268,7 +288,9 @@
         "exists",
         "readable",
         "nonempty"
-      ]
+      ],
+      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-02"
     },
     {
       "type": "historical_sessions",
@@ -327,6 +349,30 @@
         "profile",
         "protocol",
         "decisions"
+      ]
+    },
+    {
+      "at": "2026-10-02T11:54:59-03:00",
+      "project": "NAVEGO",
+      "head": "05ecd2e",
+      "reason": "revision inicial de fuentes opcionales LOGOS v1.1",
+      "updated_sources": [
+        "state",
+        "profile",
+        "protocol",
+        "decisions",
+        "decision_manifest",
+        "decision_gate",
+        "session_spec",
+        "spec_capsule",
+        "pending",
+        "glossary",
+        "architecture",
+        "workflow",
+        "incidents",
+        "multi_ia_protocol",
+        "framework_decision",
+        "decision_maps"
       ]
     }
   ]

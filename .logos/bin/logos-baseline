@@ -47,10 +47,13 @@ def get_head():
     return r.stdout.strip()
 
 
-def update_baseline(manifest, project, head, reason):
+def update_baseline(manifest, project, head, reason, include_optional=False):
     """Actualiza reviewed_against_commit y last_human_review de todas
-    las fuentes requeridas. Devuelve lista de tipos actualizados."""
+    las fuentes requeridas. Si include_optional=True, tambien las
+    opcionales. Devuelve lista de tipos actualizados."""
     required = set(manifest.get("required", []))
+    optional = set(manifest.get("optional", []))
+    targets = required | optional if include_optional else required
     today = datetime.date.today().isoformat()
     updated = []
 
@@ -60,7 +63,7 @@ def update_baseline(manifest, project, head, reason):
         if src.get("role") != "singleton":
             continue
         stype = src.get("type")
-        if stype not in required:
+        if stype not in targets:
             continue
 
         src["reviewed_against_commit"] = head
@@ -89,6 +92,8 @@ def main():
     parser.add_argument("project", help="Nombre del proyecto (ej: NAVEGO)")
     parser.add_argument("--reason", required=True,
                         help="Razon de la actualizacion (obligatoria)")
+    parser.add_argument("--include-optional", action="store_true",
+                        help="Tambien actualizar fuentes opcionales")
     args = parser.parse_args()
 
     if not MANIFEST.exists():
@@ -119,7 +124,7 @@ def main():
     print(f"[logos-baseline] HEAD:    {head}")
     print(f"[logos-baseline] reason:  {args.reason}")
 
-    updated = update_baseline(manifest, args.project, head, args.reason)
+    updated = update_baseline(manifest, args.project, head, args.reason, include_optional=args.include_optional)
 
     if not updated:
         print("[logos-baseline] AVISO: no hubo fuentes requeridas para actualizar.")
