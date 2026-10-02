@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""
+logos-baseline — Actualiza reviewed_against_commit de TODAS las fuentes
+requeridas al HEAD actual, en una sola accion humana deliberada.
+
+Uso:
+    logos-baseline <PROYECTO> --reason="<texto obligatorio>"
+
+Esto es una accion GRUESA. Declara que el estado completo sigue vigente
+sin revisar fuente por fuente. Queda registrada en el historial del
+MANIFEST con fecha y commit.
+
+Regla: NUNCA automatizar. Siempre requiere una accion humana explicita.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import datetime
+from pathlib import Path
+
+
+REPO = Path.cwd()
+MANIFEST = REPO / ".logos" / "MANIFEST.json"
+
+
+def expand(p):
+    if p.startswith("~"):
+        return Path(os.path.expanduser(p))
+    if not os.path.isabs(p):
+        return REPO / p
+    return Path(p)
+
+
+def load_json(path, label):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def get_head():
+    r = subprocess.run(
+        ["git", "-C", str(REPO), "rev-parse", "--short", "HEAD"],
+        capture_output=True, text=True, check=True
+    )
+    return r.stdout.strip()
+
+
+def update_baseline(manifest, project, head, reason):
+    """Actualiza reviewed_against_commit y last_human_review de todas
+    las fuentes requeridas. Devuelve lista de tipos actualizados."""
+    required = set(manifest.get("required", []))
+    today = datetime.date.today().isoformat()
+    updated = []
+
+    for src in manifest["sources"]:
+        if not src.get("authority"):
+            continue
+        if src.get("role") != "singleton":
+            continue
+        stype = src.get("type")
+        if stype not in required:
+            continue
+
+        src["reviewed_against_commit"] = head
+        src["last_human_review"] = today
+        updated.append(stype)
+
+    # Registrar en historial del MANIFEST
+    if "baseline_history" not in manifest:
+        manifest["baseline_history"] = []
+    manifest["baseline_history"].append({
+        "at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
+        "project": project,
+        "head": head,
+        "reason": reason,
+        "updated_sources": updated,
+    })
+
+    return updated
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="logos-baseline",
+        description="Actualiza reviewed_against_commit de todas las fuentes requeridas."
+    )
+    parser.add_argument("project", help="Nombre del proyecto (ej: NAVEGO)")
+    parser.add_argument("--reason", required=True,
+                        help="Razon de la actualizacion (obligatoria)")
+    args = parser.parse_args()
+
+    if not MANIFEST.exists():
+        print(f"[logos-baseline] BLOCKED: no existe {MANIFEST}")
+        return 2
+
+    manifest = load_json(MANIFEST, "MANIFEST")
+    if manifest.get("project") != args.project:
+        print(f"[logos-baseline] BLOCKED: MANIFEST declara '{manifest.get('project')}', pediste '{args.project}'")
+        return 2
+
+    # Verificar que el MANIFEST este limpio en git
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(REPO), "status", "--short", "--", ".logos/MANIFEST.json"],
+            capture_output=True, text=True, check=True
+        )
+        if r.stdout.strip() != "":
+            print("[logos-baseline] BLOCKED: MANIFEST tiene cambios sin commitear.")
+            print("  Commitea o revierte los cambios primero.")
+            return 2
+    except Exception as e:
+        print(f"[logos-baseline] BLOCKED: error git: {e}")
+        return 2
+
+    head = get_head()
+    print(f"[logos-baseline] project: {args.project}")
+    print(f"[logos-baseline] HEAD:    {head}")
+    print(f"[logos-baseline] reason:  {args.reason}")
+
+    updated = update_baseline(manifest, args.project, head, args.reason)
+
+    if not updated:
+        print("[logos-baseline] AVISO: no hubo fuentes requeridas para actualizar.")
+        return 1
+
+    with open(MANIFEST, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+    print(f"[logos-baseline] UPDATED: {len(updated)} fuentes actualizadas:")
+    for t in updated:
+        print(f"  - {t} -> {head}")
+    print("")
+    print("[logos-baseline] siguiente paso: revisar el diff y commitear.")
+    print("[logos-baseline]   git diff .logos/MANIFEST.json")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
