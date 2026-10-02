@@ -41,7 +41,7 @@
         "freshness"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "9012c2d"
+      "reviewed_against_commit": "380c7c0"
     },
     {
       "type": "profile",
@@ -55,8 +55,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-09-22",
-      "reviewed_against_commit": "6c767c4"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_commit": "380c7c0"
     },
     {
       "type": "protocol",
@@ -71,7 +71,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "39430a7"
+      "reviewed_against_commit": "380c7c0"
     },
     {
       "type": "decisions",
@@ -86,7 +86,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "8a9d5ce"
+      "reviewed_against_commit": "380c7c0"
     },
     {
       "type": "decision_manifest",
@@ -314,6 +314,20 @@
       "id": "CR-02",
       "description": "Debe existir exactamente una fuente authority:true por tipo singleton",
       "check": "authority_uniqueness"
+    }
+  ],
+  "baseline_history": [
+    {
+      "at": "2026-10-02T11:50:01-03:00",
+      "project": "NAVEGO",
+      "head": "380c7c0",
+      "reason": "cierre del hito de background + LOGOS v1.1",
+      "updated_sources": [
+        "state",
+        "profile",
+        "protocol",
+        "decisions"
+      ]
     }
   ]
 }
