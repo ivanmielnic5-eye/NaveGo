@@ -1,0 +1,329 @@
+#!/usr/bin/env python3
+"""
+logos-brief — Genera un brief de arranque para un hilo nuevo.
+
+Uso:
+    logos-brief <PROYECTO>
+
+Produce dos archivos:
+    EXPEDIENTE/BRIEF_<PROYECTO>.md          (para leer)
+    EXPEDIENTE/BRIEF_<PROYECTO>_pegable.txt (para pegar en chat)
+"""
+
+import json
+import os
+import subprocess
+import sys
+import datetime
+from pathlib import Path
+
+
+REPO = Path.cwd()
+MANIFEST = REPO / ".logos" / "MANIFEST.json"
+GATE = REPO / ".logos" / "bin" / "logos-gate"
+
+
+def expand(p):
+    if p.startswith("~"):
+        return Path(os.path.expanduser(p))
+    if not os.path.isabs(p):
+        return REPO / p
+    return Path(p)
+
+
+def load_json(path, label):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[logos-brief] WARN: no pude leer {label}: {e}")
+        return None
+
+
+def get_head():
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(REPO), "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, check=True
+        )
+        return r.stdout.strip() or None
+    except Exception:
+        return None
+
+
+def get_branch():
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(REPO), "branch", "--show-current"],
+            capture_output=True, text=True, check=True
+        )
+        return r.stdout.strip() or None
+    except Exception:
+        return None
+
+
+def run_gate(project):
+    try:
+        r = subprocess.run(
+            [str(GATE), project, "--json"],
+            capture_output=True, text=True
+        )
+        return json.loads(r.stdout)
+    except Exception as e:
+        print(f"[logos-brief] WARN: gate fallo: {e}")
+        return None
+
+
+def read_text(path):
+    try:
+        return Path(path).read_text(encoding="utf-8")
+    except Exception:
+        return ""
+
+
+def construir_secciones(project, manifest, gate_result, head, branch):
+    """Devuelve una lista de strings (markdown) con las 9 secciones."""
+    sources = {s["type"]: s for s in manifest["sources"]}
+
+    # --- Identidad ---
+    profile = load_json(expand(sources["profile"]["path"]), "profile")
+    profile = profile or {}
+
+    sec_identidad = []
+    sec_identidad.append("## 1. Identidad")
+    sec_identidad.append(f"- Proyecto: {project}")
+    sec_identidad.append(f"- Repo: {REPO}")
+    sec_identidad.append(f"- Rama: {branch or '(desconocida)'}")
+    sec_identidad.append(f"- HEAD: {head or '(desconocido)'}")
+    sec_identidad.append(f"- Nombre: {profile.get('name', '?')}")
+    sec_identidad.append(f"- Tipo: {profile.get('type', '?')}")
+    sec_identidad.append("")
+
+    # --- Estado del contexto ---
+    sec_contexto = []
+    sec_contexto.append("## 2. Estado del contexto")
+    if gate_result is None:
+        sec_contexto.append("- gate_status: NO_DISPONIBLE")
+        sec_contexto.append("- drift: NO_DISPONIBLE")
+        sec_contexto.append("")
+        sec_contexto.append("AVISO: no se pudo consultar el gate.")
+    else:
+        gs = gate_result.get("status", "?")
+        drift_val = gate_result.get("checks", {}).get("drift", "?")
+        sec_contexto.append(f"- gate_status: {gs}")
+        sec_contexto.append(f"- drift: {drift_val}")
+        if gs == "BLOCKED":
+            sec_contexto.append("")
+            sec_contexto.append("ATENCION: hay fuentes sin reconciliar contra HEAD.")
+            sec_contexto.append("Antes de trabajar, correr `logos-reconcile` o `logos-baseline`.")
+    sec_contexto.append("")
+
+    # --- Mision y fase ---
+    state = load_json(expand(sources["state"]["path"]), "state")
+    state = state or {}
+    mision = state.get("mission", {})
+    sec_mision = []
+    sec_mision.append("## 3. Mision y fase")
+    sec_mision.append(f"- Objetivo: {mision.get('objective', '?')}")
+    sec_mision.append(f"- Fase: {mision.get('phase', '?')}")
+    sec_mision.append(f"- Estado: {state.get('state', {}).get('status', '?')}")
+    sec_mision.append(f"- Riesgo: {state.get('state', {}).get('risk', '?')}")
+    sec_mision.append("")
+
+    # --- Estado actual (funciona / roto / pendiente) ---
+    sec_actual = []
+    sec_actual.append("## 4. Estado actual")
+    sec_actual.append("")
+    sec_actual.append("Funciona (verificado):")
+    sec_actual.append("- Captura en primer plano.")
+    sec_actual.append("- Captura en segundo plano (pantalla apagada).")
+    sec_actual.append("- Retoma de sesion tras reinicio del celular.")
+    sec_actual.append("- Finalizar + reabrir -> boton INICIAR.")
+    sec_actual.append("- Cerrar sin finalizar + reabrir -> retoma sesion.")
+    sec_actual.append("")
+    sec_actual.append("Pendiente (bugs finos):")
+    sec_actual.append("- Track honesto (amarillo/negro) no aparece en el mapa.")
+    sec_actual.append("- SOG en 0.3 estando quieto.")
+    sec_actual.append("- Movimientos lentos (4-5 m) no se contabilizan.")
+    sec_actual.append("")
+
+    return {
+        "identidad": sec_identidad,
+        "contexto": sec_contexto,
+        "mision": sec_mision,
+        "actual": sec_actual,
+        "state": state,
+        "profile": profile,
+    }
+
+
+def secciones_5_a_9(project, manifest):
+    """Secciones 5-9 del brief."""
+    sources = {s["type"]: s for s in manifest["sources"]}
+    state = load_json(expand(sources["state"]["path"]), "state") or {}
+    work = state.get("work", {})
+    constraints = state.get("constraints", {}).get("active", [])
+
+    # --- 5. Trabajo activo ---
+    sec5 = []
+    sec5.append("## 5. Trabajo activo")
+    sec5.append(f"- Hipotesis: {work.get('hypothesis_id', '?')}")
+    sec5.append(f"  {work.get('hypothesis', '?')}")
+    sec5.append(f"- Proximo paso: {work.get('next_step', '?')}")
+    sec5.append(f"- Ultima decision: {work.get('last_decision', '?')}")
+    sec5.append("")
+
+    # --- 6. Restricciones ---
+    sec6 = []
+    sec6.append("## 6. Restricciones activas")
+    for c in constraints:
+        sec6.append(f"- {c}")
+    sec6.append("")
+
+    # --- 7. Pendientes priorizados ---
+    sec7 = []
+    sec7.append("## 7. Pendientes priorizados")
+    pend_path = os.path.expanduser("~/.logos/PENDIENTES_NAVEGO.md")
+    if os.path.exists(pend_path):
+        try:
+            with open(pend_path, encoding="utf-8") as f:
+                lines = f.readlines()
+            # Buscar headers de nivel ### y tomar los ultimos 5
+            headers = [l.strip() for l in lines if l.startswith("### ")]
+            ultimos = headers[-5:] if len(headers) > 5 else headers
+            for h in ultimos:
+                sec7.append(f"- {h[4:]}")  # quitar "### "
+        except Exception:
+            sec7.append("- (no se pudo leer PENDIENTES_NAVEGO.md)")
+    else:
+        sec7.append("- (PENDIENTES_NAVEGO.md no existe)")
+    sec7.append("")
+
+    # --- 8. Comandos operativos ---
+    sec8 = []
+    sec8.append("## 8. Comandos operativos")
+    sec8.append("")
+    sec8.append("Ver estado del contexto:")
+    sec8.append("```")
+    sec8.append(f".logos/bin/logos-gate {project}")
+    sec8.append("```")
+    sec8.append("")
+    sec8.append("Regenerar capsula:")
+    sec8.append("```")
+    sec8.append(f".logos/bin/logos-mem {project}")
+    sec8.append("```")
+    sec8.append("")
+    sec8.append("Marcar una fuente como revisada:")
+    sec8.append("```")
+    sec8.append(f".logos/bin/logos-reconcile mark-reviewed <type>")
+    sec8.append("```")
+    sec8.append("")
+    sec8.append("Build de la app (release):")
+    sec8.append("```")
+    sec8.append("cd ~/navego_recuperado")
+    sec8.append("unset EXPO_PUBLIC_GNSS_REPLAY")
+    sec8.append("unset EXPO_PUBLIC_GNSS_BACKGROUND_TEST")
+    sec8.append("unset EXPO_PUBLIC_GNSS_TASK_PRODUCER")
+    sec8.append("npx expo run:android --variant release")
+    sec8.append("```")
+    sec8.append("")
+
+    # --- 9. Reglas duras ---
+    sec9 = []
+    sec9.append("## 9. Reglas duras de trabajo")
+    sec9.append("- Backup explicito .pre-<etapa> antes de tocar codigo.")
+    sec9.append("- Un paso por vez. Verificar despues de cada cambio.")
+    sec9.append("- Comandos con bloque de copiar/pegar claro.")
+    sec9.append("- El codigo va al chat, no a bash.")
+    sec9.append("- Los .pre-* de backup NUNCA se borran sin permiso.")
+    sec9.append("- Hablar en criollo primero, despues el termino tecnico.")
+    sec9.append("- No proponer cambios hasta que el Director diga 'vamos'.")
+    sec9.append("- El sistema NO MIENTE. No inventa datos.")
+    sec9.append("- Verificar toda cita de LLM antes de apoyarse en ella.")
+    sec9.append("")
+
+    return sec5, sec6, sec7, sec8, sec9
+
+
+def render_markdown(project, s):
+    """Arma el texto completo del .md."""
+    parts = []
+    parts.append(f"# Brief de arranque — {project}")
+    parts.append("")
+    parts.append(f"Generado: {datetime.datetime.now().astimezone().isoformat(timespec='seconds')}")
+    parts.append("")
+    parts.append("---")
+    parts.append("")
+    for key in ("identidad", "contexto", "mision", "actual"):
+        parts.extend(s[key])
+    for sec in s["ultimas"]:
+        parts.extend(sec)
+    return "\n".join(parts) + "\n"
+
+
+def render_pegable(project, s):
+    """Version para pegar en un chat nuevo."""
+    header = (
+        "=" * 60 + "\n"
+        "BRIEF DE ARRANQUE — " + project + "\n"
+        "=" * 60 + "\n"
+        "Pega este mensaje como primero del hilo nuevo.\n"
+        "El receptor debe leerlo completo antes de responder.\n"
+        + "=" * 60 + "\n\n"
+    )
+    body = render_markdown(project, s)
+    footer = (
+        "\n" + "=" * 60 + "\n"
+        "FIN DEL BRIEF\n"
+        "=" * 60 + "\n"
+    )
+    return header + body + footer
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Uso: logos-brief <PROYECTO>")
+        return 2
+    project = sys.argv[1]
+
+    if not MANIFEST.exists():
+        print(f"[logos-brief] ERROR: no existe {MANIFEST}")
+        return 2
+
+    manifest = load_json(MANIFEST, "MANIFEST")
+    if manifest is None:
+        return 2
+
+    if manifest.get("project") != project:
+        print(f"[logos-brief] ERROR: MANIFEST declara '{manifest.get('project')}', pediste '{project}'")
+        return 2
+
+    head = get_head()
+    branch = get_branch()
+    gate_result = run_gate(project)
+
+    base = construir_secciones(project, manifest, gate_result, head, branch)
+    sec5, sec6, sec7, sec8, sec9 = secciones_5_a_9(project, manifest)
+    base["ultimas"] = [sec5, sec6, sec7, sec8, sec9]
+
+    md_text = render_markdown(project, base)
+    pegable_text = render_pegable(project, base)
+
+    exp_dir = REPO / "EXPEDIENTE"
+    exp_dir.mkdir(exist_ok=True)
+    md_path = exp_dir / f"BRIEF_{project}.md"
+    peg_path = exp_dir / f"BRIEF_{project}_pegable.txt"
+
+    md_path.write_text(md_text, encoding="utf-8")
+    peg_path.write_text(pegable_text, encoding="utf-8")
+
+    print(f"[logos-brief] OK")
+    print(f"  {md_path} ({len(md_text)} bytes)")
+    print(f"  {peg_path} ({len(pegable_text)} bytes)")
+    print(f"  gate_status: {(gate_result or {}).get('status', 'NO_DISPONIBLE')}")
+    print(f"  HEAD: {head or '(desconocido)'}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
