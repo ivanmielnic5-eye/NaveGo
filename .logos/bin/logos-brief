@@ -263,22 +263,37 @@ def render_markdown(project, s):
 
 def render_pegable(project, s):
     """Version para pegar en un chat nuevo."""
-    header = (
-        "=" * 60 + "\n"
-        "BRIEF DE ARRANQUE — " + project + "\n"
-        "=" * 60 + "\n"
-        "Pega este mensaje como primero del hilo nuevo.\n"
-        "El receptor debe leerlo completo antes de responder.\n"
-        + "=" * 60 + "\n\n"
-    )
+    sep = "=" * 60
+    header_lines = [
+        sep,
+        "BRIEF DE ARRANQUE - " + project,
+        sep,
+        "Arranque de hilo nuevo sobre el proyecto " + project + ".",
+        "",
+        "INSTRUCCION INICIAL",
+        "-------------------",
+        "Lee todo este mensaje antes de responder. Despues:",
+        "1. Confirma en 3 lineas que entendiste (proyecto, rama, estado).",
+        "2. No propongas cambios hasta que el Director diga 'vamos'.",
+        "",
+        "REGLAS DURAS DE TRABAJO (no negociables)",
+        "----------------------------------------",
+        "- Backup explicito .pre-<etapa> antes de tocar codigo.",
+        "- Un paso por vez. Verificar despues de cada cambio.",
+        "- Comandos con bloque de copiar/pegar claro.",
+        "- El codigo va al chat, no a bash.",
+        "- Los .pre-* de backup NUNCA se borran sin permiso.",
+        "- Hablar en criollo primero, despues el termino tecnico.",
+        "- El sistema NO MIENTE. No inventa datos.",
+        "- Verificar toda cita de LLM antes de apoyarse en ella.",
+        "",
+        sep,
+        "",
+    ]
+    header = "\n".join(header_lines) + "\n"
     body = render_markdown(project, s)
-    footer = (
-        "\n" + "=" * 60 + "\n"
-        "FIN DEL BRIEF\n"
-        "=" * 60 + "\n"
-    )
+    footer = "\n" + sep + "\n" + "FIN DEL BRIEF\n" + sep + "\n"
     return header + body + footer
-
 
 def main():
     if len(sys.argv) < 2:

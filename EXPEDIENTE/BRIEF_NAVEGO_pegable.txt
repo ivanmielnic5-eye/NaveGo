@@ -1,72 +1,30 @@
 ============================================================
-BRIEF DE ARRANQUE — NAVEGO
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-Pega este mensaje como primero del hilo nuevo.
-El receptor debe leerlo completo antes de responder.
+BRIEF DE ARRANQUE - NAVEGO
+============================================================
+Arranque de hilo nuevo sobre el proyecto NAVEGO.
+
+INSTRUCCION INICIAL
+-------------------
+Lee todo este mensaje antes de responder. Despues:
+1. Confirma en 3 lineas que entendiste (proyecto, rama, estado).
+2. No propongas cambios hasta que el Director diga 'vamos'.
+
+REGLAS DURAS DE TRABAJO (no negociables)
+----------------------------------------
+- Backup explicito .pre-<etapa> antes de tocar codigo.
+- Un paso por vez. Verificar despues de cada cambio.
+- Comandos con bloque de copiar/pegar claro.
+- El codigo va al chat, no a bash.
+- Los .pre-* de backup NUNCA se borran sin permiso.
+- Hablar en criollo primero, despues el termino tecnico.
+- El sistema NO MIENTE. No inventa datos.
+- Verificar toda cita de LLM antes de apoyarse en ella.
+
 ============================================================
 
 # Brief de arranque — NAVEGO
 
-Generado: 2026-10-02T11:56:17-03:00
+Generado: 2026-10-02T12:15:11-03:00
 
 ---
 
@@ -74,7 +32,7 @@ Generado: 2026-10-02T11:56:17-03:00
 - Proyecto: NAVEGO
 - Repo: /home/ivan/navego_recuperado
 - Rama: experimento-v4-admin
-- HEAD: 2e0b51c
+- HEAD: a9b780f
 - Nombre: NaveGo
 - Tipo: navigation
 
@@ -164,122 +122,4 @@ npx expo run:android --variant release
 
 ============================================================
 FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
-FIN DEL BRIEF
-=
+============================================================
