@@ -87,6 +87,31 @@ def formatear_historial(history: list) -> str:
     return "\n".join(lineas)
 
 
+def _parsear_respuesta_json(texto: str) -> dict:
+    """Parsea la respuesta del modelo buscando el primer objeto JSON valido."""
+    texto = texto.strip()
+    if texto.startswith("```"):
+        lineas = texto.split(chr(10))
+        lineas = [l for l in lineas if not l.strip().startswith("```")]
+        texto = chr(10).join(lineas).strip()
+    i = texto.find("{")
+    j = texto.rfind("}")
+    if i == -1 or j == -1 or j <= i:
+        return {"_error": "sin_json", "_raw": texto[:200]}
+    try:
+        return json.loads(texto[i:j+1])
+    except json.JSONDecodeError as e:
+        return {"_error": "json_invalido: " + str(e), "_raw": texto[:200]}
+
+
+def _stop_modelo():
+    import subprocess
+    try:
+        subprocess.run(["ollama", "stop", MODELO_DECISION], capture_output=True, timeout=10)
+    except Exception:
+        pass
+
+
 def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
     """Llama a Ollama y devuelve el JSON parseado. Retorna dict vacio si falla."""
     data = json.dumps({
@@ -102,22 +127,33 @@ def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
         headers={"Content-Type": "application/json"},
     )
 
-    try:
-        with urllib.request.urlopen(req, timeout=timeout_s) as r:
-            resp = json.load(r).get("response", "").strip()
-    except Exception as e:
-        return {"_error": f"error de conexion: {e}"}
+    resp = ""
+    for intento in range(2):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout_s) as r:
+                resp = json.load(r).get("response", "").strip()
+        except Exception as e:
+            return {"_error": f"error de conexion: {e}"}
 
-    try:
-        decision = json.loads(resp)
-    except json.JSONDecodeError as e:
-        return {"_error": f"json invalido: {e}", "_raw": resp[:200]}
+        if resp and "?????" not in resp:
+            break
+
+        if intento == 0:
+            _stop_modelo()
+
+    if not resp or "?????" in resp:
+        return {"_error": "respuesta_vacia_o_corrupta", "_raw": resp[:200]}
+
+    decision = _parsear_respuesta_json(resp)
+
+    if "_error" in decision:
+        return decision
 
     if "accion" not in decision:
         return {"_error": "sin campo accion", "_raw": resp[:200]}
 
     if decision["accion"] not in ACCIONES_VALIDAS:
-        return {"_error": f"accion desconocida: {decision['accion']}", "_raw": resp[:200]}
+        return {"_error": "accion desconocida: " + str(decision["accion"]), "_raw": resp[:200]}
 
     return decision
 
