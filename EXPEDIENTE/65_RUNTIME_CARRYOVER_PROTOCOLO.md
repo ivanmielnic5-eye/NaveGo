@@ -175,3 +175,87 @@ Implementar runtime_carryover.py con los seis tests. Ejecutar Test 1 y Test 2 pr
 *Documento cerrado. Se puede proceder a implementar runtime_carryover.py.*
 *Fecha: 2026-10-05.*
 *Registrado en EXPEDIENTE/65.*
+
+---
+
+# MEMO 65 — ADDENDUM
+
+## RUNTIME-CARRYOVER-001 — RESULTADO DEFINITIVO
+
+**Fecha:** 2026-10-05
+
+### Resultado
+
+RUNTIME-CARRYOVER-001 queda **CONFIRMADO**.
+
+El Test 6 ejecutó las 6 permutaciones A/A′/B. El sentinel S* recibió exactamente los mismos inputs lógicos en las 6 ejecuciones.
+
+Sin `ollama stop`, S* heredó la acción de la última llamada A/A′/B.
+
+Con `ollama stop` antes de S*, `ollama ps` confirmó `unloaded` y S* respondió siempre:
+
+`corregir_rumbo|59.3`
+
+Resultado con stop: **6/6 idénticos**.
+
+### Evidencia clave
+
+Las llamadas A/A′/B fueron **byte por byte idénticas** entre la corrida sin stop y la corrida con stop.
+
+Por tanto:
+
+* el comportamiento de A/A′/B es reproducible dentro de cada permutación;
+* la variable experimental fue únicamente el `ollama stop` antes de S*;
+* sin stop, S* cambia siguiendo la última llamada;
+* con stop, S* vuelve al comportamiento aislado de referencia.
+
+El comportamiento de referencia de S* queda establecido en **18/18** ejecuciones aisladas/con reset como:
+
+`corregir_rumbo|59.3`
+
+### Conclusión
+
+Existe **carry-over de estado de inferencia** entre llamadas cuando el modelo permanece cargado.
+
+El estado contaminante desaparece al descargar el modelo/runner mediante `ollama stop`.
+
+Esto localiza el fenómeno en el **estado asociado al modelo/runner cargado o en la ruta de ejecución que se reinicia al descargarlo**.
+
+No queda establecido todavía el mecanismo interno exacto (KV cache, estado del runner u otro componente del runtime). Esa investigación queda separada de este experimento.
+
+### Lo que NO significa
+
+El `FAIL` de Test 6 **es correcto** y no debe “arreglarse” insertando `ollama stop` dentro de Test 6.
+
+Test 6 mide precisamente si existe dependencia del resultado respecto del estado previo. La dependencia fue detectada.
+
+`ollama stop` sólo debe utilizarse cuando el objetivo experimental sea obtener una **medición en estado limpio**, no para eliminar el fenómeno que el test pretende detectar.
+
+### Política operativa resultante
+
+Para benchmarks que pretendan comparar decisiones de forma independiente:
+
+`preparar estado → ejecutar caso → descargar/resetear modelo → siguiente medición`
+
+Para experimentos cuyo objetivo sea estudiar carry-over:
+
+`NO resetear`, porque el estado heredado forma parte del fenómeno medido.
+
+### Estado
+
+**RUNTIME-CARRYOVER-001: CONFIRMED**
+
+**Test 6: FAIL por diseño esperado**
+
+**Mecanismo exacto del carry-over: ABIERTO**
+
+**Acción inmediata: documentar y cerrar este capítulo**
+
+**No modificar todavía:** retrieval, corpus, ROCm/driver, test6.py ni lógica de agente.
+
+### Nota de arquitectura
+
+**No** convertir `_stop_modelo()` en comportamiento normal del agente Timonel. Eso sería una política experimental que destruye precisamente la propiedad de continuidad del runtime.
+
+Primero hay que distinguir entre **"modo de medición limpia"** (benchmark con resets explícitos) y **"runtime operativo del agente"** (donde el estado heredado puede ser información legítima, no ruido).
+
