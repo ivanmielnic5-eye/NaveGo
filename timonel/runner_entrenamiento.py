@@ -31,10 +31,23 @@ def generar_meta(rng: random.Random) -> tuple:
     return round(mx, 1), round(mz, 1)
 
 
+def generar_mision(rng: random.Random, n_metas: int = 2) -> list:
+    """Genera una lista de N metas aleatorias. Para misiones tipo 'recoger y llevar'."""
+    metas = []
+    for i in range(n_metas):
+        dist = rng.uniform(80.0, 220.0)
+        ang = rng.uniform(0.0, 360.0)
+        mx = round(dist * math.sin(math.radians(ang)), 1)
+        mz = round(-dist * math.cos(math.radians(ang)), 1)
+        metas.append((mx, mz))
+    return metas
+
+
 def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
                  rng_seed: int = None, timeout_s: float = 300.0,
                  usar_memoria: bool = False, viento_max_kn: float = 0.0,
-                 viento_variar: bool = False, viento_periodo_s: float = 20.0):
+                 viento_variar: bool = False, viento_periodo_s: float = 20.0,
+                 n_metas: int = 1):
     """Corre N corridas y guarda cada una."""
     rng = random.Random(rng_seed) if rng_seed is not None else random.Random()
     dir_salida.mkdir(parents=True, exist_ok=True)
@@ -54,10 +67,17 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
     print()
 
     for i in range(n_corridas):
-        meta_x, meta_z = generar_meta(rng)
+        if n_metas == 1:
+            meta_x, meta_z = generar_meta(rng)
+            metas = None
+            meta_para_reporte = (meta_x, meta_z)
+        else:
+            metas = generar_mision(rng, n_metas=n_metas)
+            meta_x, meta_z = metas[0]
+            meta_para_reporte = metas[-1]  # la meta final
 
         agente = AgenteTimonel(
-            meta_x=meta_x, meta_z=meta_z,
+            meta_x=meta_x, meta_z=meta_z, metas=metas,
             timeout_s=timeout_s, usar_llm=usar_llm,
             conn=conn if usar_memoria else None,
             max_pasos=15,
@@ -103,8 +123,11 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         info_viento = ""
         if viento_max_kn > 0.0:
             info_viento = f" viento={viento_int:>4.1f}kn/{viento_dir:>3.0f}deg"
-        print(f"[{i+1:>3d}/{n_corridas}] meta=({meta_x:>6.1f},{meta_z:>6.1f})"
-              f"{info_viento} -> {corrida.resultado:>8s} dist={corrida.dist_final:>6.1f}m "
+        info_metas = ""
+        if n_metas > 1:
+            info_metas = f" metas={agente.metas_alcanzadas}/{n_metas}"
+        print(f"[{i+1:>3d}/{n_corridas}] meta=({meta_para_reporte[0]:>6.1f},{meta_para_reporte[1]:>6.1f})"
+              f"{info_viento}{info_metas} -> {corrida.resultado:>8s} dist={corrida.dist_final:>6.1f}m "
               f"t={corrida.t_total:>5.1f}s pasos={corrida.num_pasos}")
 
     t_fin_batch = time.time()
@@ -181,6 +204,8 @@ def main():
                         help="El viento cambia cada N segundos (mas dificil)")
     parser.add_argument("--viento-periodo", type=float, default=20.0,
                         help="Cada cuantos segundos cambia el viento variable")
+    parser.add_argument("--n-metas", type=int, default=1,
+                        help="Cantidad de metas por corrida (misiones multi-punto)")
     parser.add_argument("--timeout", type=float, default=300.0, help="Timeout por corrida (s)")
     parser.add_argument("--dir", type=str, default=None, help="Directorio de salida")
     args = parser.parse_args()
@@ -200,6 +225,7 @@ def main():
         viento_max_kn=args.viento_max,
         viento_variar=args.viento_variable,
         viento_periodo_s=args.viento_periodo,
+        n_metas=args.n_metas,
     )
 
 

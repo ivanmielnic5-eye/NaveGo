@@ -183,20 +183,17 @@ def _score_similitud(d_actual: float, desv_actual: float, sog_actual: float,
 def recuperar_similares(conn: sqlite3.Connection,
                         dist_meta: float, desvio: float, sog: float,
                         n: int = 5,
-                        solo_exitos: bool = True) -> list:
+                        solo_exitos: bool = True,
+                        umbral_desvio_deg: float = 45.0,
+                        umbral_dist_m: float = 60.0) -> list:
     """
     Recupera las N decisiones mas parecidas a la situacion actual.
 
-    Args:
-        conn: conexion SQLite
-        dist_meta: distancia a la meta en la situacion actual
-        desvio: desvio angular (heading - rumbo a meta) en grados
-        sog: velocidad en nudos
-        n: cantidad de experiencias a devolver
-        solo_exitos: si True, solo devuelve decisiones de corridas exitosas
-
-    Returns:
-        Lista de Experiencia ordenadas por similitud (mas parecida primero).
+    Estrategia en cascada:
+    1. Filtro duro: mismo signo de desvio + diferencia de desvio y distancia
+       dentro de umbrales. Si hay resultados, devuelve los mejores.
+    2. Fallback 1: solo mismo signo de desvio.
+    3. Fallback 2: todas las filas (score general).
     """
     cur = conn.cursor()
     if solo_exitos:
@@ -212,16 +209,14 @@ def recuperar_similares(conn: sqlite3.Connection,
             FROM decisiones
             LIMIT 5000
         """)
-
     filas = cur.fetchall()
 
-    experiencias = []
-    for f in filas:
+    def armar(f):
         score = _score_similitud(
             dist_meta, desvio, sog,
             f["dist_meta"], f["desvio"], f["sog"],
         )
-        experiencias.append(Experiencia(
+        return Experiencia(
             dist_meta=f["dist_meta"],
             desvio=f["desvio"],
             sog=f["sog"],
@@ -230,10 +225,47 @@ def recuperar_similares(conn: sqlite3.Connection,
             exito=bool(f["exito"]),
             resultado_corrida=f["resultado_corrida"],
             score_similitud=score,
-        ))
+        )
 
-    experiencias.sort(key=lambda e: e.score_similitud)
-    return experiencias[:n]
+    # Etapa 1: filtro duro
+    candidatos = []
+    for f in filas:
+        mismo_signo = (desvio * f["desvio"]) >= 0
+        dif_desv = abs(desvio - f["desvio"])
+        dif_dist = abs(dist_meta - f["dist_meta"])
+        if mismo_signo and dif_desv < umbral_desvio_deg and dif_dist < umbral_dist_m:
+            candidatos.append(armar(f))
+
+    if candidatos:
+        candidatos.sort(key=lambda e: e.score_similitud)
+        return candidatos[:n]
+
+    # Etapa 2: fallback sin filtros (solo si etapa 1 no dio nada)
+    # NOTA: quitamos la etapa de "mismo signo" porque el corpus esta sesgado
+    # hacia desvios positivos y esa etapa devolvia ruido.
+    for f in filas:
+        candidatos.append(armar(f))
+    candidatos.sort(key=lambda e: e.score_similitud)
+    return candidatos[:n]
+
+
+def filtrar_por_consenso(experiencias: list, minimo_ratio: float = 0.6) -> list:
+    """
+    Filtra una lista de experiencias para quedarse con la decision mayoritaria
+    si tiene al menos `minimo_ratio` del total.
+
+    Ejemplo: si 3 de 5 dicen ir_a_punto, ratio 0.6, devuelve solo las 3.
+    Si 2-1-1-1, ninguna tiene 0.6, devuelve lista vacia (sin consenso).
+    """
+    if not experiencias:
+        return []
+    from collections import Counter
+    conteo = Counter(e.decision for e in experiencias)
+    total = len(experiencias)
+    decision_top, n_top = conteo.most_common(1)[0]
+    if n_top / total >= minimo_ratio:
+        return [e for e in experiencias if e.decision == decision_top]
+    return []
 
 
 def formatear_experiencias_para_prompt(experiencias: list) -> str:

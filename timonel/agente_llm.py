@@ -13,7 +13,7 @@ import urllib.request
 
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-MODELO_DECISION = "qwen2.5-coder:1.5b"
+MODELO_DECISION = "qwen2.5-coder:7b"
 
 # Acciones validas que Qwen puede elegir
 ACCIONES_VALIDAS = {"corregir_rumbo", "ir_a_punto", "frenar", "terminar"}
@@ -49,18 +49,18 @@ ACCIONES DISPONIBLES:
 - frenar: detener el barco.
 - terminar: SOLO si distancia < 15m.
 
+TAREA:
+Analiza la situacion actual. Elegi la mejor accion.
+
+Criterios generales (guias):
+- Si estas a menos de 15m de la meta: terminar.
+- Si estas mal alineado (>30deg): corregir_rumbo.
+- Si estas bien alineado (<=30deg): ir_a_punto.
+
 {prefijo_exp}
 
-TAREA:
-Analiza la situacion actual. Si hay experiencias previas similares,
-considera que funciono y que no. Elegi la mejor accion.
-
-Criterios generales (no son reglas rigidas, son guias):
-- Si estas a menos de 15m de la meta: considera terminar.
-- Si estas mal alineado con el rumbo hacia la meta: considera corregir_rumbo.
-- Si estas bien alineado: considera ir_a_punto.
-
-Podes decidir distinto si las experiencias sugieren otra cosa.
+REVISA LAS EXPERIENCIAS ANTES DE DECIDIR. Si alguna experiencia similar
+sugiere una accion distinta a las guias, priorizala.
 
 Responde UNICAMENTE con JSON, sin texto adicional. Formato:
 {{"accion": "<accion>", "parametro": <parametro o null>}}
@@ -121,8 +121,10 @@ def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
     bloque_experiencias = ""
     if conn is not None:
         try:
-            from memoria import recuperar_similares, formatear_experiencias_para_prompt
-            exp = recuperar_similares(conn, dist, desvio, sog, n=3, solo_exitos=False)
+            from memoria import (recuperar_similares, formatear_experiencias_para_prompt,
+                                 filtrar_por_consenso)
+            exp = recuperar_similares(conn, dist, desvio, sog, n=5, solo_exitos=False)
+            exp = filtrar_por_consenso(exp, minimo_ratio=0.6)
             bloque_experiencias = formatear_experiencias_para_prompt(exp)
         except Exception:
             bloque_experiencias = ""

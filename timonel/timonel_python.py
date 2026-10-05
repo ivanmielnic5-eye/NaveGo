@@ -66,11 +66,19 @@ def guardar_corrida(corrida: Corrida, dir_salida: Path):
 class AgenteTimonel:
     """Agente que decide maniobras y las ejecuta en el simulador."""
 
-    def __init__(self, meta_x: float, meta_z: float,
+    def __init__(self, meta_x: float = None, meta_z: float = None,
+                 metas: list = None,
                  timeout_s: float = 300.0, usar_llm: bool = False,
                  conn=None, max_pasos: int = 15):
-        self.meta_x = meta_x
-        self.meta_z = meta_z
+        # Compatibilidad: acepta meta_x/meta_z O metas (lista)
+        if metas is not None:
+            self.metas = list(metas)
+        elif meta_x is not None and meta_z is not None:
+            self.metas = [(meta_x, meta_z)]
+        else:
+            raise ValueError("Hay que pasar meta_x/meta_z o metas")
+        self.meta_x = self.metas[0][0]
+        self.meta_z = self.metas[0][1]
         self.timeout_s = timeout_s
         self.usar_llm = usar_llm
         self.conn = conn
@@ -80,6 +88,8 @@ class AgenteTimonel:
         self.t_inicio = 0.0
         self.llm_fallos = 0
         self.terminar_prematuros = 0
+        self.metas_alcanzadas = 0
+        self.tiempo_congelado = 0
 
     def _registrar_paso(self, decision: str, argumento: str, exito: bool, detalle: dict):
         paso = Paso(
@@ -165,10 +175,20 @@ class AgenteTimonel:
         paso_num = 0
 
         while self.barco.t - self.t_inicio < self.timeout_s:
+            # Meta actual = primera de la lista
+            self.meta_x, self.meta_z = self.metas[0]
             dist = distancia_a(self.barco, self.meta_x, self.meta_z)
+
             if dist < 15.0:
-                resultado = "LLEGO"
-                break
+                # Llego a la meta actual. Sacarla y seguir.
+                self.metas.pop(0)
+                self.metas_alcanzadas += 1
+                if not self.metas:
+                    # No hay mas metas: mision cumplida.
+                    resultado = "LLEGO"
+                    break
+                # Hay mas metas: continuar sin cortar
+                continue
 
             if paso_num >= self.max_pasos:
                 resultado = "FRACASO"
@@ -176,6 +196,7 @@ class AgenteTimonel:
 
             decision, argumento = self._decidir()
             paso_num += 1
+            t_al_inicio_paso = self.barco.t
 
             if decision == "corregir_rumbo":
                 obj_deg = float(argumento.split("=")[1])
@@ -211,6 +232,24 @@ class AgenteTimonel:
             if decision != "terminar":
                 self.terminar_prematuros = 0
 
+            # Detectar receta que no avanza tiempo (loop atascado)
+            t_antes = t_al_inicio_paso
+            if self.barco.t <= t_antes + 0.1:
+                self.tiempo_congelado += 1
+                if self.tiempo_congelado >= 3:
+                    # Fallback: forzar ir_a_punto hacia meta actual
+                    ir_a_punto(self.barco, self.meta_x, self.meta_z,
+                               tol_dist=15.0, timeout_s=60.0)
+                    self.tiempo_congelado = 0
+                    if self.barco.t <= t_antes + 0.1:
+                        # Ni ir_a_punto avanzó: cortar
+                        resultado = "FRACASO"
+                        self._registrar_paso(decision, argumento, False,
+                                             {"error": "tiempo_congelado"})
+                        break
+            else:
+                self.tiempo_congelado = 0
+
             self._registrar_paso(decision, argumento, exito, detalle)
 
             if verbose:
@@ -219,8 +258,8 @@ class AgenteTimonel:
         dist_final = distancia_a(self.barco, self.meta_x, self.meta_z)
         corrida = Corrida(
             fecha=datetime.now().isoformat(timespec="seconds"),
-            meta_x=self.meta_x,
-            meta_z=self.meta_z,
+            meta_x=self.metas[-1][0] if self.metas else 0.0,
+            meta_z=self.metas[-1][1] if self.metas else 0.0,
             pos_inicial=pos_inicial,
             hdg_inicial=hdg_inicial,
             pasos=[asdict(p) for p in self.pasos],
@@ -232,6 +271,8 @@ class AgenteTimonel:
         )
         if self.usar_llm:
             print(f"[agente] fallos de LLM: {self.llm_fallos}")
+        if self.metas_alcanzadas > 0:
+            print(f"[agente] metas alcanzadas: {self.metas_alcanzadas}")
         return corrida
 
 
