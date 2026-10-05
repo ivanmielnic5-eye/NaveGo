@@ -3511,6 +3511,22 @@
   },
   {
     "state": {
+      "pos_x": -79.43,
+      "pos_z": -17.17,
+      "hdg": 256.0,
+      "sog": 6.54,
+      "meta_x": -200.4,
+      "meta_z": 79.6,
+      "dist_meta": 154.9,
+      "viento_kn": 19.9,
+      "viento_dir": 230.8
+    },
+    "history": [],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
       "pos_x": -102.69,
       "pos_z": -6.6,
       "hdg": 238.9,
@@ -4971,6 +4987,47 @@
     "history": [],
     "decision": "ir_a_punto",
     "fuente": "oraculo"
+  },
+  {
+    "state": {
+      "pos_x": -3.79,
+      "pos_z": -26.38,
+      "hdg": 341.8,
+      "sog": 8.85,
+      "meta_x": -42.7,
+      "meta_z": -88.5,
+      "dist_meta": 73.3,
+      "viento_kn": 36.6,
+      "viento_dir": 359.8
+    },
+    "history": [],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
+      "pos_x": -7.9,
+      "pos_z": -39.31,
+      "hdg": 336.0,
+      "sog": 8.72,
+      "meta_x": -42.7,
+      "meta_z": -88.5,
+      "dist_meta": 60.3,
+      "viento_kn": 36.6,
+      "viento_dir": 359.8
+    },
+    "history": [
+      {
+        "paso": 1,
+        "pos_x": -3.79,
+        "pos_z": -26.38,
+        "hdg": 341.8,
+        "sog": 8.85,
+        "decision": "corregir_rumbo"
+      }
+    ],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
   },
   {
     "state": {
@@ -7194,6 +7251,177 @@
         "pos_x": 0.26,
         "pos_z": -44.92,
         "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      }
+    ],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
+      "pos_x": -7.05,
+      "pos_z": -51.68,
+      "hdg": 165.2,
+      "sog": 0.32,
+      "meta_x": 34.3,
+      "meta_z": 185.4,
+      "dist_meta": 240.7,
+      "viento_kn": 32.4,
+      "viento_dir": 336.9
+    },
+    "history": [
+      {
+        "paso": 3,
+        "pos_x": 8.13,
+        "pos_z": -38.73,
+        "hdg": 166.9,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 4,
+        "pos_x": 8.13,
+        "pos_z": -38.73,
+        "hdg": 166.9,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 5,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 6,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 7,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      }
+    ],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
+      "pos_x": -7.05,
+      "pos_z": -51.68,
+      "hdg": 165.2,
+      "sog": 0.32,
+      "meta_x": 34.3,
+      "meta_z": 185.4,
+      "dist_meta": 240.7,
+      "viento_kn": 32.4,
+      "viento_dir": 336.9
+    },
+    "history": [
+      {
+        "paso": 4,
+        "pos_x": 8.13,
+        "pos_z": -38.73,
+        "hdg": 166.9,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 5,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 6,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 7,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 8,
+        "pos_x": -7.05,
+        "pos_z": -51.68,
+        "hdg": 165.2,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      }
+    ],
+    "decision": "corregir_rumbo",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
+      "pos_x": -7.05,
+      "pos_z": -51.68,
+      "hdg": 165.2,
+      "sog": 0.32,
+      "meta_x": 34.3,
+      "meta_z": 185.4,
+      "dist_meta": 240.7,
+      "viento_kn": 32.4,
+      "viento_dir": 336.9
+    },
+    "history": [
+      {
+        "paso": 5,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 6,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 7,
+        "pos_x": 0.26,
+        "pos_z": -44.92,
+        "hdg": 166.4,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 8,
+        "pos_x": -7.05,
+        "pos_z": -51.68,
+        "hdg": 165.2,
+        "sog": 0.32,
+        "decision": "corregir_rumbo"
+      },
+      {
+        "paso": 9,
+        "pos_x": -7.05,
+        "pos_z": -51.68,
+        "hdg": 165.2,
         "sog": 0.32,
         "decision": "corregir_rumbo"
       }
@@ -11476,6 +11704,31 @@
   },
   {
     "state": {
+      "pos_x": -25.386,
+      "pos_z": 0.162,
+      "hdg": 32.44,
+      "sog": 0.85,
+      "meta_x": -126.5,
+      "meta_z": -148.1,
+      "dist_meta": 179.46,
+      "viento_kn": 38.1,
+      "viento_dir": 236.5
+    },
+    "history": [
+      {
+        "paso": 1,
+        "pos_x": 0.0,
+        "pos_z": 0.0,
+        "hdg": 0.0,
+        "sog": 0.0,
+        "decision": "corregir_rumbo"
+      }
+    ],
+    "decision": "corregir_rumbo",
+    "fuente": "oraculo"
+  },
+  {
+    "state": {
       "pos_x": -50.544,
       "pos_z": 8.106,
       "hdg": 32.43,
@@ -13164,6 +13417,22 @@
       }
     ],
     "decision": "ir_a_punto",
+    "fuente": "qwen_sin_memoria"
+  },
+  {
+    "state": {
+      "pos_x": -6.78,
+      "pos_z": -21.45,
+      "hdg": 227.5,
+      "sog": 0.12,
+      "meta_x": -67.1,
+      "meta_z": 80.6,
+      "dist_meta": 118.5,
+      "viento_kn": 29.7,
+      "viento_dir": 53.7
+    },
+    "history": [],
+    "decision": "corregir_rumbo",
     "fuente": "qwen_sin_memoria"
   },
   {
