@@ -1,0 +1,3 @@
+corridas/
+*.db
+__pycache__/
