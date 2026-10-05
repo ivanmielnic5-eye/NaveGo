@@ -23,34 +23,38 @@ def armar_prompt(meta_x: float, meta_z: float,
                  hdg: float, sog: float, dist: float,
                  rumbo_hacia_meta: float) -> str:
     """Arma el prompt para Qwen con el estado actual."""
-    prompt = f"""Sos el timonel de un velero. Tu mision: llegar a la meta y detenerte.
+    desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
 
-ESTADO ACTUAL:
+    prompt = f"""Sos el timonel de un velero. Mision: llegar a la meta.
+
+ESTADO:
 - Posicion: ({pos_x:.1f}, {pos_z:.1f})
 - Meta: ({meta_x:.1f}, {meta_z:.1f})
 - Distancia a meta: {dist:.1f} metros
-- Heading (a donde apunta la proa): {hdg:.1f} grados
+- Heading (proa): {hdg:.1f} grados
 - Rumbo hacia la meta: {rumbo_hacia_meta:.1f} grados
+- Desvio actual: {desvio:.1f} grados
 - Velocidad: {sog:.2f} nudos
 
-ACCIONES DISPONIBLES (elegi UNA):
-1. corregir_rumbo: girar la proa hacia un angulo especifico (0-360 grados)
-2. ir_a_punto: navegar hacia un punto especifico (coordenadas x, z)
-3. frenar: detener el barco
-4. terminar: la mision esta cumplida
+ACCIONES:
+- corregir_rumbo: girar la proa a un angulo. Parametro: grados (0-360).
+- ir_a_punto: avanzar hacia coordenadas. Parametro: [x, z].
+- frenar: detener el barco.
+- terminar: llegaste a la meta.
 
-REGLAS:
-- Si estas a menos de 15m de la meta: usa terminar.
-- Si tu heading esta desviado mas de 20 grados del rumbo hacia la meta: usa corregir_rumbo.
-- Si tu heading esta casi alineado (< 20 grados de desvio): usa ir_a_punto.
-- No uses frenar hasta estar cerca de la meta.
+REGLAS DE DECISION (aplicar en orden):
+1. Si distancia < 15m: usa terminar.
+2. Si desvio > 30 grados: usa corregir_rumbo con parametro = rumbo_hacia_meta.
+3. Si desvio <= 30 grados: usa ir_a_punto con parametro = [{meta_x:.0f}, {meta_z:.0f}].
 
-Responde UNICAMENTE con un JSON valido, sin texto, sin explicacion:
-Formato exacto:
-- Para corregir_rumbo: {{"accion": "corregir_rumbo", "parametro": 90}}
-- Para ir_a_punto: {{"accion": "ir_a_punto", "parametro": [200, 0]}}
-- Para frenar: {{"accion": "frenar", "parametro": null}}
-- Para terminar: {{"accion": "terminar", "parametro": null}}
+REGLA CRITICA: no corrijas el rumbo si el desvio ya es menor a 30 grados.
+Avanzar con desvio pequenio es correcto y eficiente. Corregir de mas hace
+perder tiempo. Confia en ir_a_punto.
+
+Responde UNICAMENTE con JSON, sin texto adicional. Ejemplos:
+{{"accion": "terminar", "parametro": null}}
+{{"accion": "corregir_rumbo", "parametro": 90}}
+{{"accion": "ir_a_punto", "parametro": [200, 0]}}
 """
     return prompt
 
