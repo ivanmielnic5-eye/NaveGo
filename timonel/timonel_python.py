@@ -66,13 +66,16 @@ def guardar_corrida(corrida: Corrida, dir_salida: Path):
 class AgenteTimonel:
     """Agente que decide maniobras y las ejecuta en el simulador."""
 
-    def __init__(self, meta_x: float, meta_z: float, timeout_s: float = 300.0):
+    def __init__(self, meta_x: float, meta_z: float,
+                 timeout_s: float = 300.0, usar_llm: bool = False):
         self.meta_x = meta_x
         self.meta_z = meta_z
         self.timeout_s = timeout_s
+        self.usar_llm = usar_llm
         self.barco = Barco()
         self.pasos: list = []
         self.t_inicio = 0.0
+        self.llm_fallos = 0
 
     def _registrar_paso(self, decision: str, argumento: str, exito: bool, detalle: dict):
         paso = Paso(
@@ -89,8 +92,8 @@ class AgenteTimonel:
         )
         self.pasos.append(paso)
 
-    def _decidir(self) -> tuple:
-        """Decision por reglas simples."""
+    def _decidir_por_reglas(self) -> tuple:
+        """Decision por reglas simples. Fallback y baseline."""
         dist = distancia_a(self.barco, self.meta_x, self.meta_z)
         if dist < 15.0:
             return ("terminar", "llegado")
@@ -101,6 +104,50 @@ class AgenteTimonel:
             return ("ir_a_punto", f"meta=({self.meta_x},{self.meta_z})")
         else:
             return ("corregir_rumbo", f"objetivo={obj_deg:.0f}")
+
+    def _decidir_con_llm(self) -> tuple:
+        """Consulta a Qwen. Si falla, cae en reglas simples."""
+        try:
+            from agente_llm import decidir_con_qwen
+            decision = decidir_con_qwen(self.meta_x, self.meta_z, self.barco)
+        except Exception as e:
+            self.llm_fallos += 1
+            return self._decidir_por_reglas()
+
+        if "_error" in decision:
+            self.llm_fallos += 1
+            return self._decidir_por_reglas()
+
+        accion = decision.get("accion")
+        parametro = decision.get("parametro")
+
+        if accion == "corregir_rumbo":
+            try:
+                obj = float(parametro)
+                return ("corregir_rumbo", f"objetivo={obj:.0f}")
+            except Exception:
+                self.llm_fallos += 1
+                return self._decidir_por_reglas()
+        elif accion == "ir_a_punto":
+            try:
+                mx, mz = parametro
+                return ("ir_a_punto", f"meta=({mx},{mz})")
+            except Exception:
+                self.llm_fallos += 1
+                return self._decidir_por_reglas()
+        elif accion == "frenar":
+            return ("frenar", "ordenado")
+        elif accion == "terminar":
+            return ("terminar", "llegado")
+        else:
+            self.llm_fallos += 1
+            return self._decidir_por_reglas()
+
+    def _decidir(self) -> tuple:
+        """Decision del agente: LLM si esta activo, si no reglas simples."""
+        if self.usar_llm:
+            return self._decidir_con_llm()
+        return self._decidir_por_reglas()
 
     def correr(self, verbose: bool = False) -> Corrida:
         self.t_inicio = self.barco.t
@@ -127,6 +174,8 @@ class AgenteTimonel:
                 exito, detalle = corregir_rumbo(self.barco, objetivo_deg=obj_deg, timeout_s=60.0)
             elif decision == "ir_a_punto":
                 exito, detalle = ir_a_punto(self.barco, self.meta_x, self.meta_z, tol_dist=15.0, timeout_s=90.0)
+            elif decision == "frenar":
+                exito, detalle = frenar(self.barco, timeout_s=30.0)
             elif decision == "terminar":
                 resultado = "LLEGO"
                 break
@@ -150,8 +199,10 @@ class AgenteTimonel:
             dist_final=round(dist_final, 1),
             t_total=round(self.barco.t - self.t_inicio, 1),
             num_pasos=len(self.pasos),
-            modelo_llm="none",
+            modelo_llm="qwen1.5b" if self.usar_llm else "reglas",
         )
+        if self.usar_llm:
+            print(f"[agente] fallos de LLM: {self.llm_fallos}")
         return corrida
 
 
@@ -162,9 +213,15 @@ def main():
     parser.add_argument("--timeout", type=float, default=300.0)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--guardar", action="store_true")
+    parser.add_argument("--llm", action="store_true",
+                        help="Usar Qwen 1.5B para decidir. Si no, reglas simples.")
     args = parser.parse_args()
 
-    agente = AgenteTimonel(meta_x=args.meta_x, meta_z=args.meta_z, timeout_s=args.timeout)
+    agente = AgenteTimonel(
+        meta_x=args.meta_x, meta_z=args.meta_z,
+        timeout_s=args.timeout,
+        usar_llm=args.llm,
+    )
     corrida = agente.correr(verbose=args.verbose)
 
     print()
