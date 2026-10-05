@@ -8,6 +8,7 @@ Interfaz: recibe comandos (timon, timon_ms, avance, avance_ms), devuelve telemet
 """
 
 import math
+import random
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -98,6 +99,14 @@ class Barco:
     viento_direccion_deg: float = 0.0
     viento_intensidad_kn: float = 0.0
 
+    # Viento variable (opcional): si activado, cambia periodicamente
+    viento_variar: bool = False
+    viento_max_kn: float = 0.0
+    viento_periodo_s: float = 20.0
+    viento_seed: int = 0
+    _viento_rng: object = None
+    _t_ultimo_cambio_viento: float = -1e9
+
     def heading_deg(self) -> float:
         """Heading en grados (0=norte, 90=este)."""
         # En Godot, forward = -basis.z. Con yaw=0, el barco mira hacia -Z (norte).
@@ -131,8 +140,32 @@ class Barco:
         self.avance_activo = avance
         self.avance_hasta_ms = self.t * 1000.0 + avance_ms if avance != 0 else 0.0
 
+    def _inicializar_viento_variable(self):
+        if self._viento_rng is None:
+            self._viento_rng = random.Random(self.viento_seed)
+            if self.viento_max_kn > 0.0:
+                self.viento_intensidad_kn = self._viento_rng.uniform(0.0, self.viento_max_kn)
+                self.viento_direccion_deg = self._viento_rng.uniform(0.0, 360.0)
+                self._t_ultimo_cambio_viento = self.t
+
+    def _actualizar_viento_variable(self):
+        """Si el viento es variable, redibuja cada viento_periodo_s segundos."""
+        if not self.viento_variar:
+            return
+        if self.t - self._t_ultimo_cambio_viento < self.viento_periodo_s:
+            return
+        # Redibujar
+        self.viento_intensidad_kn = self._viento_rng.uniform(0.0, self.viento_max_kn)
+        self.viento_direccion_deg = self._viento_rng.uniform(0.0, 360.0)
+        self._t_ultimo_cambio_viento = self.t
+
     def paso(self, dt: float = DT):
         """Avanza un paso de integracion."""
+        # 0. Viento variable
+        if self.viento_variar:
+            self._inicializar_viento_variable()
+            self._actualizar_viento_variable()
+
         # 1. Fuerza de avance (si activo)
         t_ms = self.t * 1000.0
         fx, fz = 0.0, 0.0

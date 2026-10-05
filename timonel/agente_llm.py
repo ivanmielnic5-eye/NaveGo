@@ -32,9 +32,9 @@ def armar_prompt(meta_x: float, meta_z: float,
     if bloque_experiencias:
         prefijo_exp = bloque_experiencias + "\n\n"
 
-    prompt = f"""{prefijo_exp}Sos el timonel de un velero. Mision: llegar a la meta.
+    prompt = f"""Sos el timonel de un velero. Mision: llegar a la meta.
 
-ESTADO:
+ESTADO ACTUAL:
 - Posicion: ({pos_x:.1f}, {pos_z:.1f})
 - Meta: ({meta_x:.1f}, {meta_z:.1f})
 - Distancia a meta: {dist:.1f} metros
@@ -43,30 +43,32 @@ ESTADO:
 - Desvio actual: {desvio:.1f} grados
 - Velocidad: {sog:.2f} nudos
 
-ACCIONES:
+ACCIONES DISPONIBLES:
 - corregir_rumbo: girar la proa a un angulo. Parametro: grados (0-360).
 - ir_a_punto: avanzar hacia coordenadas. Parametro: [x, z].
 - frenar: detener el barco.
-- terminar: llegaste a la meta.
+- terminar: SOLO si distancia < 15m.
 
-REGLAS DE DECISION (aplicar en orden):
-1. Si distancia < 15m: usa terminar.
-2. Si desvio > 30 grados: usa corregir_rumbo con parametro = rumbo_hacia_meta.
-3. Si desvio <= 30 grados: usa ir_a_punto con parametro = [{meta_x:.0f}, {meta_z:.0f}].
+{prefijo_exp}
 
-REGLA CRITICA: no corrijas el rumbo si el desvio ya es menor a 30 grados.
-Avanzar con desvio pequenio es correcto y eficiente. Corregir de mas hace
-perder tiempo. Confia en ir_a_punto.
+TAREA:
+Analiza la situacion actual. Si hay experiencias previas similares,
+considera que funciono y que no. Elegi la mejor accion.
 
-Responde UNICAMENTE con JSON, sin texto adicional. Ejemplos:
-{{"accion": "terminar", "parametro": null}}
-{{"accion": "corregir_rumbo", "parametro": 90}}
-{{"accion": "ir_a_punto", "parametro": [200, 0]}}
+Criterios generales (no son reglas rigidas, son guias):
+- Si estas a menos de 15m de la meta: considera terminar.
+- Si estas mal alineado con el rumbo hacia la meta: considera corregir_rumbo.
+- Si estas bien alineado: considera ir_a_punto.
+
+Podes decidir distinto si las experiencias sugieren otra cosa.
+
+Responde UNICAMENTE con JSON, sin texto adicional. Formato:
+{{"accion": "<accion>", "parametro": <parametro o null>}}
 """
     return prompt
 
 
-def consultar_qwen(prompt: str, timeout_s: int = 30) -> dict:
+def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
     """Llama a Ollama y devuelve el JSON parseado. Retorna dict vacio si falla."""
     data = json.dumps({
         "model": MODELO_DECISION,
@@ -120,7 +122,7 @@ def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
     if conn is not None:
         try:
             from memoria import recuperar_similares, formatear_experiencias_para_prompt
-            exp = recuperar_similares(conn, dist, desvio, sog, n=3)
+            exp = recuperar_similares(conn, dist, desvio, sog, n=3, solo_exitos=False)
             bloque_experiencias = formatear_experiencias_para_prompt(exp)
         except Exception:
             bloque_experiencias = ""

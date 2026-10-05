@@ -33,7 +33,8 @@ def generar_meta(rng: random.Random) -> tuple:
 
 def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
                  rng_seed: int = None, timeout_s: float = 300.0,
-                 usar_memoria: bool = False):
+                 usar_memoria: bool = False, viento_max_kn: float = 0.0,
+                 viento_variar: bool = False, viento_periodo_s: float = 20.0):
     """Corre N corridas y guarda cada una."""
     rng = random.Random(rng_seed) if rng_seed is not None else random.Random()
     dir_salida.mkdir(parents=True, exist_ok=True)
@@ -59,7 +60,25 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
             meta_x=meta_x, meta_z=meta_z,
             timeout_s=timeout_s, usar_llm=usar_llm,
             conn=conn if usar_memoria else None,
+            max_pasos=15,
         )
+
+        # Viento para esta corrida
+        viento_int = 0.0
+        viento_dir = 0.0
+        if viento_variar and viento_max_kn > 0.0:
+            # Viento variable: cambia cada viento_periodo_s segundos
+            agente.barco.viento_variar = True
+            agente.barco.viento_max_kn = viento_max_kn
+            agente.barco.viento_periodo_s = viento_periodo_s
+            agente.barco.viento_seed = rng.randint(0, 2**31 - 1)
+        elif viento_max_kn > 0.0:
+            # Viento constante aleatorio
+            viento_int = rng.uniform(0.0, viento_max_kn)
+            viento_dir = rng.uniform(0.0, 360.0)
+            agente.barco.viento_intensidad_kn = viento_int
+            agente.barco.viento_direccion_deg = viento_dir
+
         corrida = agente.correr(verbose=False)
 
         ruta = guardar_corrida(corrida, dir_salida)
@@ -72,6 +91,8 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         resultados.append({
             "n": i + 1,
             "meta": (meta_x, meta_z),
+            "viento_kn": round(viento_int, 1),
+            "viento_dir": round(viento_dir, 0),
             "resultado": corrida.resultado,
             "dist_final": corrida.dist_final,
             "t_total": corrida.t_total,
@@ -79,8 +100,11 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
             "llm_fallos": agente.llm_fallos if usar_llm else 0,
         })
 
-        print(f"[{i+1:>3d}/{n_corridas}] meta=({meta_x:>6.1f},{meta_z:>6.1f}) "
-              f"-> {corrida.resultado:>8s} dist={corrida.dist_final:>6.1f}m "
+        info_viento = ""
+        if viento_max_kn > 0.0:
+            info_viento = f" viento={viento_int:>4.1f}kn/{viento_dir:>3.0f}deg"
+        print(f"[{i+1:>3d}/{n_corridas}] meta=({meta_x:>6.1f},{meta_z:>6.1f})"
+              f"{info_viento} -> {corrida.resultado:>8s} dist={corrida.dist_final:>6.1f}m "
               f"t={corrida.t_total:>5.1f}s pasos={corrida.num_pasos}")
 
     t_fin_batch = time.time()
@@ -104,6 +128,7 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         "n_corridas": n_corridas,
         "usar_llm": usar_llm,
         "usar_memoria": usar_memoria,
+        "viento_max_kn": viento_max_kn,
         "seed": rng_seed,
         "duracion_real_seg": round(duracion_batch, 1),
         "exitos": exitos,
@@ -150,6 +175,12 @@ def main():
     parser.add_argument("--seed", type=int, default=None, help="Semilla para reproducibilidad")
     parser.add_argument("--memoria", action="store_true",
                         help="Consultar la memoria SQLite para inyectar experiencias")
+    parser.add_argument("--viento-max", type=float, default=0.0,
+                        help="Intensidad maxima de viento aleatorio (nudos). 0 = sin viento.")
+    parser.add_argument("--viento-variable", action="store_true",
+                        help="El viento cambia cada N segundos (mas dificil)")
+    parser.add_argument("--viento-periodo", type=float, default=20.0,
+                        help="Cada cuantos segundos cambia el viento variable")
     parser.add_argument("--timeout", type=float, default=300.0, help="Timeout por corrida (s)")
     parser.add_argument("--dir", type=str, default=None, help="Directorio de salida")
     args = parser.parse_args()
@@ -166,6 +197,9 @@ def main():
         rng_seed=args.seed,
         timeout_s=args.timeout,
         usar_memoria=args.memoria,
+        viento_max_kn=args.viento_max,
+        viento_variar=args.viento_variable,
+        viento_periodo_s=args.viento_periodo,
     )
 
 

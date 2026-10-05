@@ -68,16 +68,18 @@ class AgenteTimonel:
 
     def __init__(self, meta_x: float, meta_z: float,
                  timeout_s: float = 300.0, usar_llm: bool = False,
-                 conn=None):
+                 conn=None, max_pasos: int = 15):
         self.meta_x = meta_x
         self.meta_z = meta_z
         self.timeout_s = timeout_s
         self.usar_llm = usar_llm
         self.conn = conn
+        self.max_pasos = max_pasos
         self.barco = Barco()
         self.pasos: list = []
         self.t_inicio = 0.0
         self.llm_fallos = 0
+        self.terminar_prematuros = 0
 
     def _registrar_paso(self, decision: str, argumento: str, exito: bool, detalle: dict):
         paso = Paso(
@@ -168,6 +170,10 @@ class AgenteTimonel:
                 resultado = "LLEGO"
                 break
 
+            if paso_num >= self.max_pasos:
+                resultado = "FRACASO"
+                break
+
             decision, argumento = self._decidir()
             paso_num += 1
 
@@ -179,10 +185,31 @@ class AgenteTimonel:
             elif decision == "frenar":
                 exito, detalle = frenar(self.barco, timeout_s=30.0)
             elif decision == "terminar":
-                resultado = "LLEGO"
-                break
+                # NO confiar en el LLM. Verificar la distancia real.
+                if dist < 15.0:
+                    resultado = "LLEGO"
+                    break
+                else:
+                    # El LLM quiere terminar pero no llego. Ignorar y ejecutar
+                    # ir_a_punto como fallback (asi el barco AVANZA de verdad).
+                    self.terminar_prematuros += 1
+                    if self.terminar_prematuros >= 5:
+                        resultado = "TIMEOUT"
+                        break
+                    # Fallback: ejecutar ir_a_punto hacia la meta
+                    exito, detalle = ir_a_punto(
+                        self.barco, self.meta_x, self.meta_z,
+                        tol_dist=15.0, timeout_s=60.0
+                    )
+                    # Registrar como si hubiera decidido ir_a_punto
+                    decision = "ir_a_punto_fallback"
+                    argumento = f"meta=({self.meta_x},{self.meta_z})"
             else:
                 exito, detalle = False, {"error": "decision desconocida"}
+
+            # Resetear contador si ejecutamos una accion real (no terminar_prematuro)
+            if decision != "terminar":
+                self.terminar_prematuros = 0
 
             self._registrar_paso(decision, argumento, exito, detalle)
 
