@@ -23,7 +23,8 @@ def armar_prompt(meta_x: float, meta_z: float,
                  pos_x: float, pos_z: float,
                  hdg: float, sog: float, dist: float,
                  rumbo_hacia_meta: float,
-                 bloque_experiencias: str = "") -> str:
+                 bloque_experiencias: str = "",
+                 bloque_historial: str = "") -> str:
     """Arma el prompt para Qwen con el estado actual y experiencias previas."""
     desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
 
@@ -42,6 +43,8 @@ ESTADO ACTUAL:
 - Rumbo hacia la meta: {rumbo_hacia_meta:.1f} grados
 - Desvio actual: {desvio:.1f} grados
 - Velocidad: {sog:.2f} nudos
+
+{bloque_historial}
 
 ACCIONES DISPONIBLES:
 - corregir_rumbo: girar la proa a un angulo. Parametro: grados (0-360).
@@ -68,6 +71,22 @@ Responde UNICAMENTE con JSON, sin texto adicional. Formato:
     return prompt
 
 
+def formatear_historial(history: list) -> str:
+    """Convierte una lista de pasos previos en texto para el prompt."""
+    if not history:
+        return ""
+    lineas = ["HISTORIAL DE LA MISION (ultimos pasos):"]
+    for h in history:
+        lineas.append(
+            "  paso " + str(h.get("paso", "?")) + ": "
+            + "pos=(" + str(h.get("pos_x", "?")) + "," + str(h.get("pos_z", "?")) + ") "
+            + "hdg=" + str(h.get("hdg", "?")) + " "
+            + "sog=" + str(h.get("sog", "?")) + " "
+            + "-> " + str(h.get("decision", "?"))
+        )
+    return "\n".join(lineas)
+
+
 def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
     """Llama a Ollama y devuelve el JSON parseado. Retorna dict vacio si falla."""
     data = json.dumps({
@@ -75,7 +94,7 @@ def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
         "prompt": prompt,
         "stream": False,
         "format": "json",
-        "options": {"num_ctx": 2048, "temperature": 0.2, "num_predict": 80},
+        "options": {"num_ctx": 2048, "temperature": 0, "seed": 555, "num_predict": 80, "top_k": 40, "top_p": 0.9, "repeat_penalty": 1.0},
     }).encode()
 
     req = urllib.request.Request(
@@ -103,7 +122,7 @@ def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
     return decision
 
 
-def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
+def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None, history=None) -> dict:
     """
     Toma el estado del barco, arma el prompt, consulta a Qwen y devuelve la decision.
     Si conn != None, recupera experiencias similares y las inyecta al prompt.
@@ -123,11 +142,13 @@ def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
         try:
             from memoria import (recuperar_similares, formatear_experiencias_para_prompt,
                                  filtrar_por_consenso)
-            exp = recuperar_similares(conn, dist, desvio, sog, n=5, solo_exitos=False)
+            exp = recuperar_similares(conn, dist, desvio, sog, n=5, solo_exitos=True)
             exp = filtrar_por_consenso(exp, minimo_ratio=0.6)
             bloque_experiencias = formatear_experiencias_para_prompt(exp)
         except Exception:
             bloque_experiencias = ""
+
+    bloque_historial = formatear_historial(history) if history else ""
 
     prompt = armar_prompt(
         meta_x=meta_x, meta_z=meta_z,
@@ -135,6 +156,7 @@ def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
         hdg=hdg, sog=sog,
         dist=dist, rumbo_hacia_meta=rumbo_hacia_meta,
         bloque_experiencias=bloque_experiencias,
+        bloque_historial=bloque_historial,
     )
 
     return consultar_qwen(prompt)
