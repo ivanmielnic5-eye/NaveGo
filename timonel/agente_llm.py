@@ -94,7 +94,7 @@ def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
         "prompt": prompt,
         "stream": False,
         "format": "json",
-        "options": {"num_ctx": 2048, "temperature": 0, "seed": 555, "num_predict": 80, "top_k": 40, "top_p": 0.9, "repeat_penalty": 1.0},
+        "options": {"num_ctx": 2048, "temperature": 0, "seed": 555, "num_predict": 80, "top_k": 40, "top_p": 0.9, "repeat_penalty": 1.0, "num_batch": 512},
     }).encode()
 
     req = urllib.request.Request(

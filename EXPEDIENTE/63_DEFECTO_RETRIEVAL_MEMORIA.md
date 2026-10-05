@@ -157,3 +157,37 @@ Sirve como regresion: si en el futuro se cambia el retrieval o el prompt, se pue
 *Documento cerrado. Si se necesita modificar, se crea un 64_REVISION_3.md.*
 *Fecha: 2026-10-05.*
 *Registrado en EXPEDIENTE/63.*
+
+---
+
+## 8. Update — Regimen estable observado en GPU (2026-10-05 tarde)
+
+Despues del analisis del defecto de retrieval, se detecto un problema adicional durante el benchmark: no-determinismo entre bloques de ejecucion de Ollama.
+
+**Sintoma observado:** con temperature=0 y seed=555, mismo prompt, mismo modelo, el sistema mostro dos regimenes estables en una hora:
+- Regimen A: siempre ir_a_punto.
+- Regimen B: siempre corregir_rumbo.
+Dentro de cada regimen era consistente (20/20). Entre regimenes, distinto.
+
+**Investigacion realizada:**
+
+1. Backend verificado: ROCm con HSA_OVERRIDE_GFX_VERSION=11.0.0 (GPU Radeon 760M presenta gfx1103, se fuerza a gfx1100).
+2. DSH encontro que el binario Ollama 0.34.0/ROCm 7.2 no trae kernels Tensile para gfx1103.
+3. Se probaron variaciones: num_batch explicito (512), Flash Attention on/off, CPU-only.
+4. **Resultado:** con num_batch=512, FA=1, GPU: 20/20 ciclos con ollama stop + recarga dieron corregir_rumbo|59.3. Sin variacion.
+5. Mismo resultado en CPU-only (identico). Mismo resultado con FA=0 (identico).
+
+**Conclusion:** no se identifico la causa del regimen A. No se puede afirmar que el problema este resuelto. Se puede afirmar que, en este momento y con esta configuracion (num_batch=512, FA=1, GPU), el sistema es estable dentro de un bloque de 20 ciclos.
+
+**Protocolo adoptado para el benchmark:**
+
+A, A_prima y B se ejecutan dentro del MISMO bloque de ejecucion, sin detener Ollama entre condiciones. Si aparece un cambio de regimen, afecta a las tres condiciones por igual y la comparacion se mantiene valida. La primera corrida de cada bloque se descarta como warm-up.
+
+**Version congelada:**
+- Ollama 0.34.0
+- ROCm 7.2
+- HSA_OVERRIDE_GFX_VERSION=11.0.0
+- OLLAMA_IGPU_ENABLE=1
+- OLLAMA_FLASH_ATTENTION=1
+- temperature=0, seed=555, num_batch=512
+- Modelo: qwen2.5-coder:1.5b (digest d7372fd82851)
