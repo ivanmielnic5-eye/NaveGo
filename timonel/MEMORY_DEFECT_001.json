@@ -1,0 +1,253 @@
+[
+  {
+    "contexto_id": 0,
+    "fuente_contexto": "oraculo",
+    "estado": {
+      "pos_x": 0.0,
+      "pos_z": 0.0,
+      "hdg": 0.0,
+      "sog": 0.0,
+      "meta_x": 171.5,
+      "meta_z": -119.1,
+      "dist_meta": 208.8,
+      "viento_kn": 6.4,
+      "viento_dir": 202.0
+    },
+    "historial_len": 0,
+    "dec_A": {
+      "accion": "corregir_rumbo",
+      "parametro": 55.2
+    },
+    "dec_Ap": {
+      "accion": "corregir_rumbo",
+      "parametro": 55.2
+    },
+    "dec_B": {
+      "accion": "corregir_rumbo",
+      "parametro": 55.2
+    },
+    "eval_A": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 69.02,
+      "progreso_qwen": 20.88,
+      "regret": 48.14,
+      "safety_violation": false
+    },
+    "eval_Ap": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 69.02,
+      "progreso_qwen": 20.88,
+      "regret": 48.14,
+      "safety_violation": false
+    },
+    "eval_B": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 69.02,
+      "progreso_qwen": 20.88,
+      "regret": 48.14,
+      "safety_violation": false
+    }
+  },
+  {
+    "contexto_id": 1,
+    "fuente_contexto": "oraculo",
+    "estado": {
+      "pos_x": 117.796,
+      "pos_z": -87.211,
+      "hdg": 55.2,
+      "sog": 3.35,
+      "meta_x": 171.5,
+      "meta_z": -119.1,
+      "dist_meta": 62.46,
+      "viento_kn": 6.4,
+      "viento_dir": 202.0
+    },
+    "historial_len": 1,
+    "dec_A": {
+      "accion": "corregir_rumbo",
+      "parametro": 59.3
+    },
+    "dec_Ap": {
+      "accion": "ir_a_punto",
+      "parametro": [
+        171.5,
+        -119.1
+      ]
+    },
+    "dec_B": {
+      "accion": "corregir_rumbo",
+      "parametro": 59.3
+    },
+    "eval_A": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 48.5,
+      "progreso_qwen": 0.0,
+      "regret": 48.5,
+      "safety_violation": false
+    },
+    "eval_Ap": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 48.5,
+      "progreso_qwen": 48.5,
+      "regret": 0.0,
+      "safety_violation": false
+    },
+    "eval_B": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 48.5,
+      "progreso_qwen": 0.0,
+      "regret": 48.5,
+      "safety_violation": false
+    }
+  },
+  {
+    "contexto_id": 2,
+    "fuente_contexto": "qwen_sin_memoria",
+    "estado": {
+      "pos_x": -18.19,
+      "pos_z": -34.01,
+      "hdg": 277.8,
+      "sog": 4.43,
+      "meta_x": -156.7,
+      "meta_z": -2.7,
+      "dist_meta": 142.0,
+      "viento_kn": 24.0,
+      "viento_dir": 7.0
+    },
+    "historial_len": 0,
+    "dec_A": {
+      "accion": "corregir_rumbo",
+      "parametro": 257.3
+    },
+    "dec_Ap": {
+      "accion": "ir_a_punto",
+      "parametro": [
+        -156.7,
+        -2.7
+      ]
+    },
+    "dec_B": {
+      "accion": "corregir_rumbo",
+      "parametro": 257.3
+    },
+    "eval_A": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 41.74,
+      "progreso_qwen": 10.88,
+      "regret": 30.86,
+      "safety_violation": false
+    },
+    "eval_Ap": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 41.74,
+      "progreso_qwen": 41.74,
+      "regret": 0.0,
+      "safety_violation": false
+    },
+    "eval_B": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 41.74,
+      "progreso_qwen": 10.88,
+      "regret": 30.86,
+      "safety_violation": false
+    }
+  },
+  {
+    "contexto_id": 3,
+    "fuente_contexto": "qwen_sin_memoria",
+    "estado": {
+      "pos_x": -28.03,
+      "pos_z": -36.3,
+      "hdg": 264.8,
+      "sog": 3.57,
+      "meta_x": -156.7,
+      "meta_z": -2.7,
+      "dist_meta": 133.0,
+      "viento_kn": 24.0,
+      "viento_dir": 7.0
+    },
+    "historial_len": 1,
+    "dec_A": {
+      "accion": "corregir_rumbo",
+      "parametro": 255.4
+    },
+    "dec_Ap": {
+      "accion": "corregir_rumbo",
+      "parametro": 255.4
+    },
+    "dec_B": {
+      "accion": "corregir_rumbo",
+      "parametro": 255.4
+    },
+    "eval_A": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 43.79,
+      "progreso_qwen": 4.23,
+      "regret": 39.56,
+      "safety_violation": false
+    },
+    "eval_Ap": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 43.79,
+      "progreso_qwen": 4.23,
+      "regret": 39.56,
+      "safety_violation": false
+    },
+    "eval_B": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 43.79,
+      "progreso_qwen": 4.23,
+      "regret": 39.56,
+      "safety_violation": false
+    }
+  },
+  {
+    "contexto_id": 4,
+    "fuente_contexto": "qwen_sin_memoria",
+    "estado": {
+      "pos_x": -31.61,
+      "pos_z": -36.78,
+      "hdg": 262.6,
+      "sog": 3.44,
+      "meta_x": -156.7,
+      "meta_z": -2.7,
+      "dist_meta": 129.7,
+      "viento_kn": 24.0,
+      "viento_dir": 7.0
+    },
+    "historial_len": 2,
+    "dec_A": {
+      "accion": "corregir_rumbo",
+      "parametro": 254.8
+    },
+    "dec_Ap": {
+      "accion": "corregir_rumbo",
+      "parametro": 262.6
+    },
+    "dec_B": {
+      "accion": "corregir_rumbo",
+      "parametro": 254.8
+    },
+    "eval_A": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 49.09,
+      "progreso_qwen": 0.0,
+      "regret": 49.09,
+      "safety_violation": false
+    },
+    "eval_Ap": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 49.09,
+      "progreso_qwen": 0.0,
+      "regret": 49.09,
+      "safety_violation": false
+    },
+    "eval_B": {
+      "oraculo_mejor": "ir_a_punto",
+      "progreso_oraculo": 49.09,
+      "progreso_qwen": 0.0,
+      "regret": 49.09,
+      "safety_violation": false
+    }
+  }
+]
