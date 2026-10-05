@@ -27,7 +27,7 @@ CENTER_OF_MASS_OFFSET = (0.0, -1.5, 0.0)
 
 FLOAT_FORCE = 120.0
 FORWARD_DRAG = 0.0134
-LATERAL_DRAG = 0.15
+LATERAL_DRAG = 0.05           # bajado de 0.15 para permitir deriva por viento
 WATER_ANGULAR_DRAG = 0.005
 
 # Fisica avanzada (ver EXPEDIENTE/58: informe LLM Notebook)
@@ -35,6 +35,12 @@ RUDDER_EFFECT_REF_KN = 2.5      # nudos, velocidad donde el timon tiene efecto c
 PROP_WASH_FACTOR = 0.35         # efectividad del timon con throttle aplicado (chorro del helicoptero)
 PROP_WALK_TORQUE = 1800.0       # N.m, torque de prop walk en reversa (helicoptero dextrogiro)
 PROP_WALK_SPEED_MAX_MS = 2.5    # m/s, arriba de esto el prop walk no aplica
+
+# Viento (ver EXPEDIENTE/58: informe LLM Notebook)
+# Fuerza por nudo de viento: a 10 nudos aplica 10*VIENTO_FUERZA_POR_NUDO newtons
+VIENTO_FUERZA_POR_NUDO = 200.0  # N por nudo de viento (calibrado para viento realista)
+VIENTO_NUDO_A_MS = 0.5144       # 1 nudo = 0.5144 m/s
+VIENTO_TORQUE_POR_NUDO = 20.0   # N.m por nudo de viento lateral (desvia la proa)
 
 ROLL_STIFFNESS = 0.3
 PITCH_STIFFNESS = 0.3
@@ -86,6 +92,12 @@ class Barco:
     # Tiempo simulado (s)
     t: float = 0.0
 
+    # Viento (direccion en grados, intensidad en nudos)
+    # Direccion: hacia donde sopla. 0=norte (sopla de sur a norte)
+    # Intensidad: 0.0 = sin viento
+    viento_direccion_deg: float = 0.0
+    viento_intensidad_kn: float = 0.0
+
     def heading_deg(self) -> float:
         """Heading en grados (0=norte, 90=este)."""
         # En Godot, forward = -basis.z. Con yaw=0, el barco mira hacia -Z (norte).
@@ -131,6 +143,32 @@ class Barco:
         else:
             self.avance_activo = 0
 
+        # 1b. Fuerza del viento (si hay viento)
+        torque_viento = 0.0
+        if self.viento_intensidad_kn > 0.0:
+            # Convertir intensidad a fuerza en newtons
+            fuerza_n = self.viento_intensidad_kn * VIENTO_FUERZA_POR_NUDO
+            # Vector de direccion del viento (hacia donde sopla)
+            rad = math.radians(self.viento_direccion_deg)
+            viento_x = math.sin(rad) * fuerza_n
+            viento_z = -math.cos(rad) * fuerza_n
+            # Aplicar como fuerza al centro de masa
+            fx += viento_x
+            fz += viento_z
+
+            # Torque del viento: la obra muerta (arriba) recibe el viento
+            # y genera torque que desvia la proa a sotavento.
+            # La componente lateral del viento (perpendicular al rumbo)
+            # es la que genera el torque.
+            # fwd = direccion de la proa
+            fwd_x = math.sin(self.yaw)
+            fwd_z = -math.cos(self.yaw)
+            # Producto cruzado para obtener componente lateral
+            # (viento_x, viento_z) x (fwd_x, fwd_z) = viento_x*fwd_z - viento_z*fwd_x
+            viento_lateral = viento_x * fwd_z - viento_z * fwd_x
+            # Torque proporcional a la componente lateral
+            torque_viento = (viento_lateral / fuerza_n) * self.viento_intensidad_kn * VIENTO_TORQUE_POR_NUDO
+
         # 2. Torque de timon (si activo) — con perdida de gobierno a baja velocidad
         torque = 0.0
         if self.timon_activo != 0 and t_ms <= self.timon_hasta_ms:
@@ -152,6 +190,9 @@ class Barco:
         if self.avance_activo < 0 and self.speed_ms() < PROP_WALK_SPEED_MAX_MS:
             walk_factor = max(0.0, 1.0 - self.speed_ms() / PROP_WALK_SPEED_MAX_MS)
             torque += PROP_WALK_TORQUE * walk_factor * abs(self.avance_activo)
+
+        # 2c. Torque del viento (abatimiento)
+        torque += torque_viento
 
         # 3. Integrar velocidad lineal (F = m*a -> a = F/m)
         ax = fx / MASS
