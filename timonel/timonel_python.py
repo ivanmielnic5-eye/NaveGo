@@ -256,6 +256,12 @@ class AgenteTimonel:
                 print(f"[agente] paso {paso_num}: {decision}({argumento}) exito={exito} dist={dist:.1f}m t={self.barco.t:.1f}s")
 
         dist_final = distancia_a(self.barco, self.meta_x, self.meta_z)
+
+        # Si terminamos por timeout pero el barco esta en rango de llegada,
+        # marcarlo como LLEGO (el loop puede haber salido sin chequear).
+        if resultado == "TIMEOUT" and dist_final < 15.0:
+            resultado = "LLEGO"
+
         corrida = Corrida(
             fecha=datetime.now().isoformat(timespec="seconds"),
             meta_x=self.metas[-1][0] if self.metas else 0.0,

@@ -13,7 +13,7 @@ import urllib.request
 
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-MODELO_DECISION = "qwen2.5-coder:7b"
+MODELO_DECISION = "qwen2.5-coder:1.5b"
 
 # Acciones validas que Qwen puede elegir
 ACCIONES_VALIDAS = {"corregir_rumbo", "ir_a_punto", "frenar", "terminar"}
