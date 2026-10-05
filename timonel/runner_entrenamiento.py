@@ -19,6 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 from timonel_python import AgenteTimonel, guardar_corrida
+from memoria import conectar, guardar_corrida_y_decisiones, estadisticas
 
 
 def generar_meta(rng: random.Random) -> tuple:
@@ -31,10 +32,16 @@ def generar_meta(rng: random.Random) -> tuple:
 
 
 def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
-                 rng_seed: int = None, timeout_s: float = 300.0):
+                 rng_seed: int = None, timeout_s: float = 300.0,
+                 usar_memoria: bool = False):
     """Corre N corridas y guarda cada una."""
     rng = random.Random(rng_seed) if rng_seed is not None else random.Random()
     dir_salida.mkdir(parents=True, exist_ok=True)
+
+    # Conexion a la memoria (SQLite)
+    conn = conectar()
+    est_antes = estadisticas(conn)
+    print(f"[runner] Memoria antes: {est_antes['corridas']} corridas, {est_antes['decisiones']} decisiones")
 
     resultados = []
     t_inicio_batch = time.time()
@@ -51,10 +58,17 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         agente = AgenteTimonel(
             meta_x=meta_x, meta_z=meta_z,
             timeout_s=timeout_s, usar_llm=usar_llm,
+            conn=conn if usar_memoria else None,
         )
         corrida = agente.correr(verbose=False)
 
         ruta = guardar_corrida(corrida, dir_salida)
+        # Guardar tambien en la memoria SQLite
+        try:
+            from dataclasses import asdict as _asdict
+            guardar_corrida_y_decisiones(conn, _asdict(corrida))
+        except Exception as e:
+            print(f"  [memoria] error guardando: {e}")
         resultados.append({
             "n": i + 1,
             "meta": (meta_x, meta_z),
@@ -89,6 +103,7 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         "fecha": datetime.now().isoformat(timespec="seconds"),
         "n_corridas": n_corridas,
         "usar_llm": usar_llm,
+        "usar_memoria": usar_memoria,
         "seed": rng_seed,
         "duracion_real_seg": round(duracion_batch, 1),
         "exitos": exitos,
@@ -121,6 +136,10 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
         json.dump(resumen, f, indent=2, ensure_ascii=False)
     print(f"[runner] Resumen guardado en: {ruta_resumen}")
 
+    est_despues = estadisticas(conn)
+    print(f"[runner] Memoria despues: {est_despues['corridas']} corridas, {est_despues['decisiones']} decisiones")
+    conn.close()
+
     return resumen
 
 
@@ -129,6 +148,8 @@ def main():
     parser.add_argument("--n", type=int, default=10, help="Cantidad de corridas")
     parser.add_argument("--llm", action="store_true", help="Usar Qwen para decidir")
     parser.add_argument("--seed", type=int, default=None, help="Semilla para reproducibilidad")
+    parser.add_argument("--memoria", action="store_true",
+                        help="Consultar la memoria SQLite para inyectar experiencias")
     parser.add_argument("--timeout", type=float, default=300.0, help="Timeout por corrida (s)")
     parser.add_argument("--dir", type=str, default=None, help="Directorio de salida")
     args = parser.parse_args()
@@ -144,6 +165,7 @@ def main():
         dir_salida=dir_salida,
         rng_seed=args.seed,
         timeout_s=args.timeout,
+        usar_memoria=args.memoria,
     )
 
 

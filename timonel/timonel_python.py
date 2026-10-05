@@ -67,11 +67,13 @@ class AgenteTimonel:
     """Agente que decide maniobras y las ejecuta en el simulador."""
 
     def __init__(self, meta_x: float, meta_z: float,
-                 timeout_s: float = 300.0, usar_llm: bool = False):
+                 timeout_s: float = 300.0, usar_llm: bool = False,
+                 conn=None):
         self.meta_x = meta_x
         self.meta_z = meta_z
         self.timeout_s = timeout_s
         self.usar_llm = usar_llm
+        self.conn = conn
         self.barco = Barco()
         self.pasos: list = []
         self.t_inicio = 0.0
@@ -109,7 +111,7 @@ class AgenteTimonel:
         """Consulta a Qwen. Si falla, cae en reglas simples."""
         try:
             from agente_llm import decidir_con_qwen
-            decision = decidir_con_qwen(self.meta_x, self.meta_z, self.barco)
+            decision = decidir_con_qwen(self.meta_x, self.meta_z, self.barco, conn=self.conn)
         except Exception as e:
             self.llm_fallos += 1
             return self._decidir_por_reglas()
@@ -215,12 +217,24 @@ def main():
     parser.add_argument("--guardar", action="store_true")
     parser.add_argument("--llm", action="store_true",
                         help="Usar Qwen 1.5B para decidir. Si no, reglas simples.")
+    parser.add_argument("--memoria", action="store_true",
+                        help="Consultar la memoria SQLite para inyectar experiencias.")
     args = parser.parse_args()
+
+    conn = None
+    if args.memoria:
+        try:
+            from memoria import conectar
+            conn = conectar()
+            print("[main] memoria conectada")
+        except Exception as e:
+            print(f"[main] no se pudo conectar a memoria: {e}")
 
     agente = AgenteTimonel(
         meta_x=args.meta_x, meta_z=args.meta_z,
         timeout_s=args.timeout,
         usar_llm=args.llm,
+        conn=conn,
     )
     corrida = agente.correr(verbose=args.verbose)
 

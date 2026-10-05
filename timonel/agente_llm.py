@@ -8,6 +8,7 @@ NO ejecuta comandos. Solo pide DECISIONES de alto nivel:
 """
 
 import json
+import math
 import urllib.request
 
 
@@ -21,11 +22,17 @@ ACCIONES_VALIDAS = {"corregir_rumbo", "ir_a_punto", "frenar", "terminar"}
 def armar_prompt(meta_x: float, meta_z: float,
                  pos_x: float, pos_z: float,
                  hdg: float, sog: float, dist: float,
-                 rumbo_hacia_meta: float) -> str:
-    """Arma el prompt para Qwen con el estado actual."""
+                 rumbo_hacia_meta: float,
+                 bloque_experiencias: str = "") -> str:
+    """Arma el prompt para Qwen con el estado actual y experiencias previas."""
     desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
 
-    prompt = f"""Sos el timonel de un velero. Mision: llegar a la meta.
+    # Prefijo con experiencias previas (si las hay)
+    prefijo_exp = ""
+    if bloque_experiencias:
+        prefijo_exp = bloque_experiencias + "\n\n"
+
+    prompt = f"""{prefijo_exp}Sos el timonel de un velero. Mision: llegar a la meta.
 
 ESTADO:
 - Posicion: ({pos_x:.1f}, {pos_z:.1f})
@@ -94,22 +101,36 @@ def consultar_qwen(prompt: str, timeout_s: int = 30) -> dict:
     return decision
 
 
-def decidir_con_qwen(meta_x: float, meta_z: float, barco) -> dict:
+def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None) -> dict:
     """
     Toma el estado del barco, arma el prompt, consulta a Qwen y devuelve la decision.
+    Si conn != None, recupera experiencias similares y las inyecta al prompt.
     Si falla, retorna dict con "_error".
     """
-    import math
     dx = meta_x - barco.pos_x
     dz = meta_z - barco.pos_z
     dist = math.sqrt(dx * dx + dz * dz)
     rumbo_hacia_meta = math.degrees(math.atan2(dx, -dz)) % 360.0
+    hdg = barco.heading_deg()
+    desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
+    sog = barco.sog_kn()
+
+    # Recuperar experiencias previas si hay memoria disponible
+    bloque_experiencias = ""
+    if conn is not None:
+        try:
+            from memoria import recuperar_similares, formatear_experiencias_para_prompt
+            exp = recuperar_similares(conn, dist, desvio, sog, n=3)
+            bloque_experiencias = formatear_experiencias_para_prompt(exp)
+        except Exception:
+            bloque_experiencias = ""
 
     prompt = armar_prompt(
         meta_x=meta_x, meta_z=meta_z,
         pos_x=barco.pos_x, pos_z=barco.pos_z,
-        hdg=barco.heading_deg(), sog=barco.sog_kn(),
+        hdg=hdg, sog=sog,
         dist=dist, rumbo_hacia_meta=rumbo_hacia_meta,
+        bloque_experiencias=bloque_experiencias,
     )
 
     return consultar_qwen(prompt)
