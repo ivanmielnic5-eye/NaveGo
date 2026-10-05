@@ -47,10 +47,11 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
                  rng_seed: int = None, timeout_s: float = 300.0,
                  usar_memoria: bool = False, viento_max_kn: float = 0.0,
                  viento_variar: bool = False, viento_periodo_s: float = 20.0,
-                 n_metas: int = 1):
+                 n_metas: int = 1, estados_output: str = None):
     """Corre N corridas y guarda cada una."""
     rng = random.Random(rng_seed) if rng_seed is not None else random.Random()
     dir_salida.mkdir(parents=True, exist_ok=True)
+    todos_los_estados = []
 
     # Conexion a la memoria (SQLite)
     conn = conectar()
@@ -120,6 +121,13 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
             "llm_fallos": agente.llm_fallos if usar_llm else 0,
         })
 
+        for est in agente.estados_evaluados:
+            est["corrida_n"] = i + 1
+            est["corrida_seed"] = rng_seed
+            est["usar_memoria"] = usar_memoria
+            est["usar_llm"] = usar_llm
+            todos_los_estados.append(est)
+
         info_viento = ""
         if viento_max_kn > 0.0:
             info_viento = f" viento={viento_int:>4.1f}kn/{viento_dir:>3.0f}deg"
@@ -188,6 +196,13 @@ def correr_batch(n_corridas: int, usar_llm: bool, dir_salida: Path,
     print(f"[runner] Memoria despues: {est_despues['corridas']} corridas, {est_despues['decisiones']} decisiones")
     conn.close()
 
+    if estados_output is not None:
+        out_path = Path(estados_output)
+        with out_path.open("w", encoding="utf-8") as f_out:
+            json.dump(todos_los_estados, f_out, indent=2, ensure_ascii=False)
+        print("[runner] Estados guardados en: " + str(out_path))
+        print("[runner] Total de estados: " + str(len(todos_los_estados)))
+
     return resumen
 
 
@@ -206,6 +221,8 @@ def main():
                         help="Cada cuantos segundos cambia el viento variable")
     parser.add_argument("--n-metas", type=int, default=1,
                         help="Cantidad de metas por corrida (misiones multi-punto)")
+    parser.add_argument("--estados-output", type=str, default=None,
+                        help="Si se especifica, guarda los estados evaluados por el agente en ese archivo JSON")
     parser.add_argument("--timeout", type=float, default=300.0, help="Timeout por corrida (s)")
     parser.add_argument("--dir", type=str, default=None, help="Directorio de salida")
     args = parser.parse_args()
@@ -226,6 +243,7 @@ def main():
         viento_variar=args.viento_variable,
         viento_periodo_s=args.viento_periodo,
         n_metas=args.n_metas,
+        estados_output=args.estados_output,
     )
 
 

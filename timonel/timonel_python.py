@@ -90,6 +90,7 @@ class AgenteTimonel:
         self.terminar_prematuros = 0
         self.metas_alcanzadas = 0
         self.tiempo_congelado = 0
+        self.estados_evaluados = []
 
     def _registrar_paso(self, decision: str, argumento: str, exito: bool, detalle: dict):
         paso = Paso(
@@ -197,6 +198,23 @@ class AgenteTimonel:
             decision, argumento = self._decidir()
             paso_num += 1
             t_al_inicio_paso = self.barco.t
+
+            # Instrumentacion: guardar estado + decision + contexto
+            self.estados_evaluados.append({
+                "paso_num": paso_num,
+                "t": round(self.barco.t, 2),
+                "pos_x": round(self.barco.pos_x, 3),
+                "pos_z": round(self.barco.pos_z, 3),
+                "hdg": round(self.barco.heading_deg(), 2),
+                "sog": round(self.barco.sog_kn(), 2),
+                "meta_x": self.meta_x,
+                "meta_z": self.meta_z,
+                "dist_meta": round(dist, 2),
+                "viento_kn": round(self.barco.viento_intensidad_kn, 1),
+                "viento_dir": round(self.barco.viento_direccion_deg, 1),
+                "decision": decision,
+                "argumento": argumento,
+            })
 
             if decision == "corregir_rumbo":
                 obj_deg = float(argumento.split("=")[1])
