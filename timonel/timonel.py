@@ -11,6 +11,7 @@ Un escritor por archivo:
 """
 
 import json
+import math
 import os
 import time
 from pathlib import Path
@@ -20,10 +21,10 @@ GODOT_DIR = Path.home() / ".local/share/godot/app_userdata/interfaz/timonel"
 TELEMETRIA = GODOT_DIR / "telemetria.jsonl"
 COMANDOS = GODOT_DIR / "comandos.jsonl"
 
-INTERVALO_S = 15.0
+INTERVALO_S = 3.0
 MODO_FASE1 = False   # True: no consulta DSH. False: consulta.
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-MODELO = "qwen2.5-coder:7b"
+MODELO = "qwen2.5-coder:3b"
 
 def leer_ultima_telemetria(n=5):
     """Devuelve las ultimas n lineas de telemetria como listas de dicts."""
@@ -63,6 +64,35 @@ def escribir_comando(timon, timon_ms, avance, avance_ms, fuente, nota):
         f.flush()
     print(f"[timonel] comando escrito: {entry}")
 
+def timon_python(px, pz, hdg, meta_x=200.0, meta_z=0.0):
+    """Devuelve (timon, avance). Ley de control con freno al llegar."""
+    dx = meta_x - px
+    dz = meta_z - pz
+    dist = math.hypot(dx, dz)
+    bearing = math.degrees(math.atan2(dx, -dz)) % 360
+    delta = (bearing - hdg + 180) % 360 - 180
+
+    # Zona de llegada: frenar todo
+    if dist < 10.0:
+        return 0, 0
+
+    # Timon segun delta
+    if delta > 15:
+        timon = 1
+    elif delta < -15:
+        timon = -1
+    else:
+        timon = 0
+
+    # Avance: solo si esta razonablemente alineado
+    if abs(delta) > 45:
+        avance = 0
+    else:
+        avance = 1
+
+    return timon, avance
+
+
 def consultar_dsh(muestras):
     """Consulta a DSH. Devuelve (timon, timon_ms, avance, avance_ms, nota)."""
     import urllib.request
@@ -79,62 +109,23 @@ def consultar_dsh(muestras):
     dist = u.get("dist_a_meta", 0)
     prog = u.get("progreso", 0)
 
-    contexto = (
-        "Sos el timonel del velero Polaris. MISION: hay gente esperando "
-        "en Puerto Sano, que esta en pos_x = 200, pos_z = 0. "
-        "Ahora estas en pos_x = %.1f, pos_z = %.1f. "
-        "El viento sopla del norte (000) a %.1f nudos y te empuja al sur. "
-        "Tenes que llegar a Puerto Sano con el barco a flote.\n\n"
-        "COMANDOS DISPONIBLES (responde con los 4):\n"
-        "- timon: -1 (babor/izquierda), 0 (recto), +1 (estribor/derecha)\n"
-        "- timon_ms: cuantos milisegundos aplicar el timon (0 a 30000)\n"
-        "- avance: -1 (reversa), 0 (no acelerar), +1 (adelante)\n"
-        "- avance_ms: cuantos milisegundos aplicar avance (0 a 30000)\n\n"
-        "ESCALA HDG (direccion de la proa): 000=norte, 090=este, 180=sur, 270=oeste.\n"
-        "ESCALA COG (direccion del movimiento): igual escala.\n"
-        "Para ir de tu posicion actual a Puerto Sano (200, 0), "
-        "necesitas HDG cercano a 090 (este).\n\n"
-        "REGLA DE DECISION (usa HDG). Cinco casos:\n"
-        "- HDG 075 a 105: en rumbo. timon=0.\n"
-        "- HDG 105 a 180: timon=-1.\n"
-        "- HDG 180 a 270: timon=-1.\n"
-        "- HDG 270 a 360: timon=+1.\n"
-        "- HDG 000 a 075: timon=+1.\n"
-        "Siempre que muevas el timon, pon avance=1 para tener "
-        "autoridad sobre la proa.\n\n"
-        "CALIBRACION DEL TIMON (medida real): 1s = 6.7 grados. "
-        "3s = 20 grados. 5s = 34 grados. 10s = 67 grados. "
-        "Para corregir 30 grados, aplica 4000ms. Para corregir 10 "
-        "grados, aplica 1500ms. NO apliques timon mas de 10s "
-        "seguidos, porque gira demasiado."
-    ) % (px, pz, aws)
-
-    estado = (
-        "ESTADO ACTUAL:\n"
-        "- HDG: %.1f (proa)\n"
-        "- COG: %.1f (movimiento)\n"
-        "- SOG: %.2f nudos\n"
-        "- AWS: %.1f (viento)\n"
-        "- AWA: %.1f (angulo viento)\n"
-        "- pos: (%.1f, %.1f)\n"
-        "- dist_a_meta: %.1f metros\n"
-        "- progreso (ultimo ciclo): %+.1f metros (positivo=se acerco)"
-    ) % (hdg, cog, sog, aws, awa, px, pz, dist, prog)
-
     prompt = (
-        contexto
-        + "\n\n"
-        + estado
-        + "\n\nResponde UNICAMENTE con un JSON valido, sin texto, "
-        "sin explicacion, sin markdown. Formato exacto: "
+        "Sos el timonel del velero Polaris. Meta: (200, 0).\n"
+        "Pos actual: (%.1f, %.1f). HDG: %.1f. Dist a meta: %.1f m.\n"
+        "Regla de timon segun HDG:\n"
+        "  HDG 000-075 -> timon=+1\n"
+        "  HDG 075-105 -> timon=0\n"
+        "  HDG 105-360 -> timon=-1\n"
+        "Pon siempre avance=1 y avance_ms=1500.\n"
+        "Responde SOLO JSON: "
         '{"timon": N, "timon_ms": N, "avance": N, "avance_ms": N}'
-    )
+    ) % (px, pz, hdg, dist)
     data = json.dumps({
         "model": MODELO,
         "prompt": prompt,
         "stream": False,
         "format": "json",
-        "options": {"num_ctx": 2048, "temperature": 0.3}
+        "options": {"num_ctx": 512, "temperature": 0.0, "num_predict": 100}
     }).encode()
     req = urllib.request.Request(
         OLLAMA_URL, data=data,
@@ -145,10 +136,24 @@ def consultar_dsh(muestras):
             respuesta = json.load(r).get("response", "").strip()
     except Exception as e:
         return 0, 0, 0, 0, f"error HTTP: {e}"
+    import re
+    texto = respuesta.strip()
+    if texto.startswith("```"):
+        texto = re.sub(r"^```[a-z]*\n?", "", texto)
+        texto = re.sub(r"\n?```$", "", texto)
+    i = texto.find("{")
+    if i == -1:
+        return 0, 0, 0, 0, f"sin JSON: {texto[:80]}"
+    j = texto.rfind("}")
+    if j == -1 or j <= i:
+        # Respuesta truncada: intentar reparar agregando el cierre
+        texto = texto[i:] + "}"
+    else:
+        texto = texto[i:j+1]
     try:
-        obj = json.loads(respuesta)
-    except Exception:
-        return 0, 0, 0, 0, f"JSON no parseable: {respuesta[:60]}"
+        obj = json.loads(texto)
+    except Exception as e:
+        return 0, 0, 0, 0, f"JSON no parseable ({e}): {texto[:120]}"
     timon = int(obj.get("timon", 0))
     timon_ms = int(obj.get("timon_ms", 0))
     avance = int(obj.get("avance", 0))
@@ -174,9 +179,16 @@ def main():
             muestras = leer_ultima_telemetria(5)
             if MODO_FASE1:
                 escribir_comando(0, 0, 0, 0, "fase1", "quieto")
+            elif muestras:
+                u = muestras[-1]
+                timon, avance = timon_python(u.get("pos_x", 0), u.get("pos_z", 0),
+                                             u.get("hdg_deg", 0))
+                timon_ms = 1500
+                avance_ms = 1500
+                escribir_comando(timon, timon_ms, avance, avance_ms,
+                                 "python", f"hdg={u.get('hdg_deg',0):.0f}")
             else:
-                timon, timon_ms, avance, avance_ms, nota = consultar_dsh(muestras)
-                escribir_comando(timon, timon_ms, avance, avance_ms, "dsh", nota)
+                escribir_comando(0, 0, 0, 0, "sin_tel", "sin telemetria")
         except KeyboardInterrupt:
             print("[timonel] saliendo.")
             break
