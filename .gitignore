@@ -27,3 +27,10 @@ export/
 build/
 *.exe
 *.pck
+
+# Patrones que se colaron en el primer add
+*.bak_*
+*_backup_*
+*.bak
+*.old
+*.copy

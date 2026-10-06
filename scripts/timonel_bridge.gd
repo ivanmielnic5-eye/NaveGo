@@ -85,8 +85,8 @@ func _write_telemetry() -> void:
         var nav = heading_integrator.get_navigation_snapshot()
         aws_kn = nav.get("apparent_wind_speed_ms", 0.0) * 1.94384449
         awa_deg = nav.get("apparent_wind_angle_deg", 0.0)
-    var meta_x := 200.0
-    var meta_z := 0.0
+    var meta_x := 36.0
+    var meta_z := -6.0
     var dist_a_meta := sqrt(pow(pos.x - meta_x, 2) + pow(pos.z - meta_z, 2))
     var progreso := 0.0
     if _dist_anterior > 0.0:
