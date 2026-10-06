@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://da1koevd5x4c"]
+
+[ext_resource type="Script" uid="uid://bxsiwx0n3po74" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://cqnmdtfw286wl" path="res://scripts/water.gd" id="2_water"]
+[ext_resource type="Script" uid="uid://cgagsuw3rdi18" path="res://scripts/wind.gd" id="3_wind"]
+[ext_resource type="Script" uid="uid://c8bv0gx72hlkf" path="res://scripts/float_cube.gd" id="4_float"]
+[ext_resource type="PackedScene" uid="uid://di5wodx1u7jwt" path="res://sailboat.glb" id="5_5vw27"]
+[ext_resource type="Script" uid="uid://cb33cjj56t8br" path="res://scripts/HeadingWindIntegrator.gd" id="5_hwi"]
+[ext_resource type="Script" uid="uid://ou2qejqnr812" path="res://scripts/Monitor.gd" id="6_monitor"]
+[ext_resource type="Script" uid="uid://cgibfpqjqhy7p" path="res://scripts/grid_reference.gd" id="7_grid"]
+[ext_resource type="Script" uid="uid://d1enlhb14let1" path="res://scripts/camara_seguimiento.gd" id="9_kek77"]
+[ext_resource type="Script" uid="uid://jbgery1880rg" path="res://scripts/ground_truth_logger.gd" id="10_4c57u"]
+[ext_resource type="Script" uid="uid://c1buqu40ymly0" path="res://scripts/timonel_bridge.gd" id="11_efxa6"]
+[ext_resource type="PackedScene" uid="uid://llumykpn175q" path="res://scripts/Puerto_Esperanza.glb" id="12_dg77c"]
+[ext_resource type="Script" uid="uid://dc2cu2a6o3s4g" path="res://scripts/camera_switcher.gd" id="13_camsw"]
+[ext_resource type="Shader" uid="uid://dihqksq2ghi6p" path="res://water.gdshader" id="14_water_shader"]
+
+[sub_resource type="ShaderMaterial" id="Mat_water"]
+render_priority = 0
+shader = ExtResource("14_water_shader")
+shader_parameter/water_level = 0.0
+shader_parameter/wave1_amplitude = 0.5
+shader_parameter/wave1_wavelength = 30.0
+shader_parameter/wave1_dir_deg = 90.0
+shader_parameter/wave1_speed = 3.0
+shader_parameter/wave2_amplitude = 0.25
+shader_parameter/wave2_wavelength = 18.0
+shader_parameter/wave2_dir_deg = 135.0
+shader_parameter/wave2_speed = 2.2
+shader_parameter/wave3_amplitude = 0.15
+shader_parameter/wave3_wavelength = 12.0
+shader_parameter/wave3_dir_deg = 45.0
+shader_parameter/wave3_speed = 1.8
+shader_parameter/wave4_amplitude = 0.08
+shader_parameter/wave4_wavelength = 6.0
+shader_parameter/wave4_dir_deg = 200.0
+shader_parameter/wave4_speed = 1.2
+shader_parameter/wave_time = 0.0
+shader_parameter/shallow_color = Color(0.15, 0.35, 0.6, 1)
+shader_parameter/deep_color = Color(0.05, 0.15, 0.35, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
+size = Vector2(500, 500)
+subdivide_width = 150
+subdivide_depth = 150
+
+[sub_resource type="BoxShape3D" id="BoxShape_sailboat"]
+size = Vector3(3, 1.5, 10)
+
+[node name="Main" type="Node3D" unique_id=28250627]
+script = ExtResource("1_main")
+sailboat_path = NodePath("SailboatBody")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=866476925]
+transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 20, 0)
+
+[node name="Cam1_Picado" type="Camera3D" parent="." unique_id=817993581]
+transform = Transform3D(-0.06388236, 0.062094137, -0.99602383, 0.04835796, 0.99708253, 0.05905859, 0.99678516, -0.044392873, -0.06669874, -13.988281, 10.427433, 2.0777283)
+current = true
+fov = 95.6
+size = 100.0
+near = 0.005
+
+[node name="Water" type="Node3D" parent="." unique_id=2127756271]
+script = ExtResource("2_water")
+
+[node name="WaterMesh" type="MeshInstance3D" parent="Water" unique_id=1304019715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6608887, -3.0517578e-05, 0.41363525)
+material_override = SubResource("Mat_water")
+mesh = SubResource("PlaneMesh_water")
+
+[node name="Wind" type="Node3D" parent="." unique_id=61830861]
+transform = Transform3D(-0.1, 0, 0, 0, 0.1, 0, 0, 0, -0.1, 0, 0, 0)
+script = ExtResource("3_wind")
+target_path = NodePath("../SailboatBody")
+wind_speed_ms = 0.0
+wind_strength = 0.0
+gust_amplitude = 0.0
+gust_frequency = 0.0
+direction_variation = 0.0
+
+[node name="SailboatBody" type="RigidBody3D" parent="." unique_id=1325920536]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mass = 8000.0
+script = ExtResource("4_float")
+
+[node name="Collision" type="CollisionShape3D" parent="SailboatBody" unique_id=691390579]
+shape = SubResource("BoxShape_sailboat")
+
+[node name="ProbeContainer" type="Node3D" parent="SailboatBody" unique_id=1776515151]
+
+[node name="Probe1" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=401907234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -0.5, 4.5)
+
+[node name="Probe2" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=756356430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.5, 4.5)
+
+[node name="Probe3" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=530439851]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -0.5, -4.5)
+
+[node name="Probe4" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=1935491423]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.5, -4.5)
+
+[node name="Probe5" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=468508780]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 4.5)
+
+[node name="Probe6" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=514943640]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 4.5)
+
+[node name="Probe7" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=128194432]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -4.5)
+
+[node name="Probe8" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=2144712447]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -4.5)
+
+[node name="Probe9" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=625927112]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 4.5)
+
+[node name="Probe10" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=2105792513]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 4.5)
+
+[node name="Probe11" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=43039478]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, -4.5)
+
+[node name="Probe12" type="Marker3D" parent="SailboatBody/ProbeContainer" unique_id=463073390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, -4.5)
+
+[node name="Perimetro_Velero" parent="SailboatBody" unique_id=1438879205 instance=ExtResource("5_5vw27")]
+transform = Transform3D(-0.00592, 0, 0, 0, 0.00592, 0, 0, 0, -0.00592, 0, 0, 0)
+
+[node name="HeadingIntegrator" type="Node" parent="." unique_id=2144483926]
+script = ExtResource("5_hwi")
+wind_controller_path = NodePath("../Wind")
+sailboat_path = NodePath("../SailboatBody")
+
+[node name="Monitor" type="Node" parent="." unique_id=121734453]
+script = ExtResource("6_monitor")
+sailboat_path = NodePath("../SailboatBody")
+heading_integrator_path = NodePath("../HeadingIntegrator")
+
+[node name="GridReference" type="Node3D" parent="." unique_id=973692084]
+script = ExtResource("7_grid")
+grid_size = Vector2(100, 100)
+color = Color(0.80922353, 0.4598891, 0.6451902, 0.3019608)
+
+[node name="Cam_Seguimiento" type="Camera3D" parent="." unique_id=657695057]
+fov = 80.5
+near = 0.076
+script = ExtResource("9_kek77")
+objetivo_path = NodePath("../SailboatBody")
+distancia = 400.0
+altura = 120.0
+
+[node name="GroundTruthLogger" type="Node" parent="." unique_id=571899547]
+script = ExtResource("10_4c57u")
+target_path = NodePath("../SailboatBody")
+
+[node name="TimonelBridge" type="Node" parent="." unique_id=1772878243]
+script = ExtResource("11_efxa6")
+sailboat_path = NodePath("../SailboatBody")
+
+[node name="Sketchfab_Scene" parent="TimonelBridge" unique_id=115165402 instance=ExtResource("12_dg77c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 2, -6)
+
+[node name="Amarre" type="Node3D" parent="TimonelBridge" unique_id=114470]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.382, 0.403, 0.106)
+
+[node name="Cam2_Cenital" type="Camera3D" parent="." unique_id=664511622]
+
+[node name="Cam3_Lateral_Der" type="Camera3D" parent="." unique_id=415191996]
+
+[node name="Cam4_Subjetiva" type="Camera3D" parent="." unique_id=459193933]
+
+[node name="Cam5_Lateral_Izq" type="Camera3D" parent="." unique_id=1298254169]
+
+[node name="Cam6_Fija_Muelle" type="Camera3D" parent="." unique_id=1345267601]
+
+[node name="CameraSwitcher" type="Node" parent="." unique_id=1182721353]
+script = ExtResource("13_camsw")
+sailboat_path = NodePath("../SailboatBody")
+cam1_path = NodePath("../Cam1_Picado")
+cam2_path = NodePath("../Cam2_Cenital")
+cam3_path = NodePath("../Cam3_Lateral_Der")
+cam4_path = NodePath("../Cam4_Subjetiva")
+cam5_path = NodePath("../Cam5_Lateral_Izq")
+cam6_path = NodePath("../Cam6_Fija_Muelle")
