@@ -14,11 +14,13 @@ def expand(p):
     return p
 
 
-def get_head():
-    """Devuelve el hash corto del commit HEAD actual, o None si falla."""
+def get_head(repo_path=None):
+    """Devuelve el hash corto del commit HEAD actual, o None si falla.
+    Si repo_path es None, usa REPO (comportamiento historico)."""
+    target = repo_path or REPO
     try:
         r = subprocess.run(
-            ['git', '-C', REPO, 'rev-parse', '--short', 'HEAD'],
+            ['git', '-C', target, 'rev-parse', '--short', 'HEAD'],
             capture_output=True, text=True, check=True
         )
         return r.stdout.strip() or None
@@ -26,18 +28,74 @@ def get_head():
         return None
 
 
-def is_ancestor(older, newer):
-    """True si 'older' es ancestro de 'newer' (o iguales)."""
+def is_ancestor(older, newer, repo_path=None):
+    """True si 'older' es ancestro de 'newer' (o iguales).
+    Si repo_path es None, usa REPO (comportamiento historico)."""
     if older == newer:
         return True
+    target = repo_path or REPO
     try:
         r = subprocess.run(
-            ['git', '-C', REPO, 'merge-base', '--is-ancestor', older, newer],
+            ['git', '-C', target, 'merge-base', '--is-ancestor', older, newer],
             capture_output=True, text=True
         )
         return r.returncode == 0
     except Exception:
         return False
+
+
+def classify_review(reviewed, head, repo_path):
+    """Clasifica reviewed_against_commit contra HEAD segun D-2026-0009.
+    Devuelve (estado, detalle). Estados: CURRENT, STALE, DIVERGED,
+    INVALID, UNREVIEWED."""
+    if reviewed is None or reviewed == '' or str(reviewed).strip() == '':
+        return ('UNREVIEWED', 'sin reviewed_against_commit')
+
+    # Verificar existencia del commit
+    r = subprocess.run(
+        ['git', '-C', repo_path, 'cat-file', '-e', f'{reviewed}^{{commit}}'],
+        capture_output=True, text=True
+    )
+    if r.returncode != 0:
+        stderr = (r.stderr or '').lower()
+        if any(s in stderr for s in ['not a valid object name',
+                                      'unknown revision',
+                                      'bad object',
+                                      'does not exist',
+                                      'invalid object name']):
+            return ('INVALID', f'{reviewed} no existe como commit')
+        return ('INVALID', f'error verificando {reviewed}: {(r.stderr or "").strip()[:80]}')
+
+    if reviewed == head:
+        return ('CURRENT', 'al dia')
+
+    # Verificar ancestria
+    r = subprocess.run(
+        ['git', '-C', repo_path, 'merge-base', '--is-ancestor', reviewed, head],
+        capture_output=True, text=True
+    )
+    if r.returncode == 0:
+        return ('STALE', f'{reviewed} es ancestro de {head}')
+    elif r.returncode == 1:
+        return ('DIVERGED', f'{reviewed} no es ancestro de {head}')
+    else:
+        return ('DIVERGED', f'error merge-base: {(r.stderr or "").strip()[:80]}')
+
+
+def policy_for(state, is_required):
+    """Devuelve nivel de enforcement segun D-2026-0009.
+    Niveles: OK, WARNING, BLOCKED."""
+    if state == 'CURRENT':
+        return 'OK'
+    if state == 'STALE':
+        return 'BLOCKED' if is_required else 'WARNING'
+    if state == 'UNREVIEWED':
+        return 'BLOCKED' if is_required else 'WARNING'
+    if state == 'DIVERGED':
+        return 'BLOCKED'
+    if state == 'INVALID':
+        return 'BLOCKED'
+    return 'BLOCKED'  # conservador ante estado desconocido
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 flags = [a for a in sys.argv[1:] if a.startswith('--')]
@@ -154,6 +212,17 @@ optional_types = set(m.get('optional', []))
 drift_required = []
 drift_optional = []
 
+# Extension 2026-10-08: cada fuente puede declarar repo_root propio.
+# Si no lo declara, se usa REPO (comportamiento identico al historico).
+_head_cache = {}
+
+def _head_for_source(src):
+    repo_root = src.get('repo_root')
+    repo_path = expand(repo_root) if repo_root else REPO
+    if repo_path not in _head_cache:
+        _head_cache[repo_path] = get_head(repo_path)
+    return _head_cache[repo_path], repo_path
+
 if checks['manifest'] != 'BLOCKED' and head is not None:
     for src in m['sources']:
         if not src.get('authority'):
@@ -163,26 +232,33 @@ if checks['manifest'] != 'BLOCKED' and head is not None:
         stype = src.get('type')
         if stype not in required_types and stype not in optional_types:
             continue
-        reviewed = src.get('reviewed_against_commit')
-        if reviewed is None:
-            msg = f'{stype}(sin revisar)'
-            if stype in required_types:
-                drift_required.append(msg)
-            else:
-                drift_optional.append(msg)
-        elif not is_ancestor(reviewed, head):
-            msg = f'{stype}({reviewed})'
-            if stype in required_types:
-                drift_required.append(msg)
-            else:
-                drift_optional.append(msg)
 
+        src_head, src_repo = _head_for_source(src)
+        if src_head is None:
+            # Sin git en el repo de esa fuente: no se puede clasificar.
+            continue
+
+        reviewed = src.get('reviewed_against_commit')
+        state, _detail = classify_review(reviewed, src_head, src_repo)
+        level = policy_for(state, stype in required_types)
+
+        if level == 'BLOCKED':
+            drift_required.append(f'{stype}({state}:{reviewed or "-"})')
+        elif level == 'WARNING':
+            drift_optional.append(f'{stype}({state}:{reviewed or "-"})')
+        # CURRENT: sin accion
+
+    # Mostrar BLOCKED y WARNING simultaneamente si ambos existen.
+    # Antes era elif, lo que ocultaba los WARNING cuando habia BLOCKED.
+    parts = []
     if drift_required:
-        checks['drift'] = f'BLOCKED (required: {",".join(drift_required)})'
+        parts.append(f'BLOCKED (required: {",".join(drift_required)})')
         reasons.append('drift_required:' + ','.join(drift_required))
-    elif drift_optional:
-        checks['drift'] = f'WARNING (optional: {",".join(drift_optional)})'
+    if drift_optional:
+        parts.append(f'WARNING (optional: {",".join(drift_optional)})')
         warnings.append('drift_optional:' + ','.join(drift_optional))
+    if parts:
+        checks['drift'] = ' + '.join(parts)
     else:
         checks['drift'] = 'OK'
 else:

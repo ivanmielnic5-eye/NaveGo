@@ -1,0 +1,24 @@
+{
+  "id": "D-2026-0009",
+  "titulo": "Semantica de reviewed_against_commit y estados del Gate",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-08",
+  "contexto": "El gate actual usa is_ancestor(reviewed, head) que detecta solo 'el reviewed no existe en la historia del repo'. NO detecta 'hubo commits nuevos despues del ultimo review'. Como consecuencia, las 16 fuentes de NAVEGO con reviewed=05ecd2e y HEAD=ace014a aparecen OK aunque haya ~10 commits sin revisar. El bug quedo expuesto al intentar integrar Godot como fuente (simulator_source) y descubrir que el mismo mecanismo no detectaba cambios reales.",
+  "decision": "Reemplazar la semantica binaria (OK/DRIFT) por cinco estados derivados de reviewed_against_commit. CURRENT: reviewed == HEAD. STALE: reviewed es ancestro estricto de HEAD. DIVERGED: reviewed no es ancestro de HEAD y distinto. INVALID: reviewed no existe como commit valido. UNREVIEWED: reviewed nulo, vacio o no declarado. Verificacion de existencia con git cat-file -e <reviewed>^{commit}. Verificacion de ancestria con merge-base --is-ancestor (0=ancestro, 1=no ancestro, otro=error operativo). Politica: CURRENT=OK. STALE+optional=WARNING. STALE+required=BLOCKED. UNREVIEWED+optional=WARNING. UNREVIEWED+required=BLOCKED. DIVERGED o INVALID=BLOCKED siempre.",
+  "consecuencias": [
+    "El gate de NAVEGO va a pasar a WARNING/BLOCKED hasta que las 16 fuentes se revisen y se actualice el reviewed_against_commit de cada una",
+    "Eso es el comportamiento correcto: el sistema ahora DICE la verdad sobre el estado real",
+    "Requiere reconciliacion fuente por fuente (no bulk update)",
+    "Permite a la integracion Godot ↔ LOGOS detectar cambios reales en ~/interfaz/ sin revision",
+    "El campo reviewed_against_commit recupera su significado literal: 'la ultima vez que esta fuente fue revisada, el repositorio estaba en este commit exacto'"
+  ],
+  "criterio_revision": "Si la semantica de 5 estados produce falsos positivos sistematicos (por ejemplo, WARNING permanente por ruido de commits menores), o si el costo de reconciliacion resulta desproporcionado al beneficio.",
+  "fuentes_verificadas": [
+    "Codigo de logos-gate (auditado 2026-10-08, lineas ~150-180)",
+    "Test empirico 2026-10-08: reviewed=e3a1038 (ancestro) → OK (bug)",
+    "Test empirico 2026-10-08: reviewed=deadbeef (inexistente) → WARNING (correcto)",
+    "Evidencia: 16 fuentes de NAVEGO con ~10 commits sin detectar drift"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

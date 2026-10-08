@@ -1,6 +1,6 @@
 # INDICE DE DECISIONES CONGELADAS
 
-Ultima actualizacion: 2026-09-25
+Ultima actualizacion: 2026-10-08
 
 ---
 
@@ -17,6 +17,10 @@ Ultima actualizacion: 2026-09-25
 - D-2026-0006 - Version efectiva de expo-sqlite: 16.0.10 (CONGELADA)
 - D-2026-0007 - Un solo escritor por worktree (CONGELADA)
 - D-2026-0008 - Objetivo de salida de la investigacion GNSS (CONGELADA)
+
+## KERNEL LOGOS / GATE
+
+- D-2026-0009 - Semantica de reviewed_against_commit y estados del Gate (CONGELADA)
 
 ---
 

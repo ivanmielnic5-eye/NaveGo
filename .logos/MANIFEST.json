@@ -24,7 +24,8 @@
     "framework_decision",
     "decision_maps",
     "decision_manifest",
-    "decision_gate"
+    "decision_gate",
+    "simulator_source"
   ],
   "sources": [
     {
@@ -324,6 +325,21 @@
       "validation_policy": [
         "exists"
       ]
+    },
+    {
+      "type": "simulator_source",
+      "path": "~/interfaz/",
+      "authority": true,
+      "role": "singleton",
+      "repo_root": "~/interfaz/",
+      "description": "Codigo y escena autoritativa del simulador Godot de NaveGo.",
+      "generated_by": "git",
+      "validation_policy": [
+        "exists",
+        "readable"
+      ],
+      "last_human_review": "2026-10-08",
+      "reviewed_against_commit": "f1ab9f6"
     }
   ],
   "consistency_rules": [
