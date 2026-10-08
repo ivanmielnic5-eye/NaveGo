@@ -210,7 +210,16 @@ def main():
     if clipboard_ok:
         print(f"     Copiado al portapapeles ({clipboard_ok}). Pegar directo en el chat.")
     else:
-        print(f"     (portapapeles no disponible, abrir el archivo a mano)")
+        print(f"     (portapapeles no disponible, copiar el bloque de abajo)")
+    print()
+    print("=" * 70)
+    print("SI EL PORTAPAPELES FALLA, COPIAR DESDE ACA HASTA EL FINAL")
+    print("=" * 70)
+    print()
+    # Imprimir TODO el contenido para que el usuario pueda seleccionar
+    print(contenido)
+    print()
+    print("=" * 70)
     return 0
 
 if __name__ == "__main__":
