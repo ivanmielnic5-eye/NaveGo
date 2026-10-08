@@ -245,6 +245,106 @@ def secciones_5_a_9(project, manifest):
     return sec5, sec6, sec7, sec8, sec9
 
 
+def seccion_10_simulador(project, manifest):
+    """Seccion 10: estado del simulador Godot (si esta declarado en el MANIFEST)."""
+    sources = {s["type"]: s for s in manifest["sources"]}
+    sim = sources.get("simulator_source")
+    sec10 = []
+    sec10.append("## 10. Simulador Godot")
+    sec10.append("")
+    if sim is None:
+        sec10.append("- (simulator_source no declarado en el MANIFEST)")
+        sec10.append("")
+        return sec10
+
+    sim_path = sim.get("path", "?")
+    p = os.path.expanduser(sim_path)
+    if not os.path.isabs(p):
+        p = os.path.join(REPO, p)
+
+    # HEAD
+    sim_head = "(no es repo git)"
+    try:
+        r = subprocess.run(
+            ['git', '-C', p, 'rev-parse', '--short', 'HEAD'],
+            capture_output=True, text=True
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            sim_head = r.stdout.strip()
+    except Exception:
+        pass
+
+    # Rama
+    sim_branch = "?"
+    try:
+        r = subprocess.run(
+            ['git', '-C', p, 'branch', '--show-current'],
+            capture_output=True, text=True
+        )
+        if r.returncode == 0:
+            sim_branch = r.stdout.strip() or "(detached)"
+    except Exception:
+        pass
+
+    # Ultimo commit
+    sim_last = "?"
+    try:
+        r = subprocess.run(
+            ['git', '-C', p, 'log', '-1', '--pretty=format:%h %s (%ar)'],
+            capture_output=True, text=True
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            sim_last = r.stdout.strip()
+    except Exception:
+        pass
+
+    sim_hash = sim.get("reviewed_against_hash", "")
+    hash_str = (sim_hash[:16] + "...") if sim_hash else "(sin hash)"
+
+    sec10.append(f"- Path: {sim_path}")
+    sec10.append(f"- Rama: {sim_branch}")
+    sec10.append(f"- HEAD: {sim_head}")
+    sec10.append(f"- Ultimo commit: {sim_last}")
+    sec10.append(f"- reviewed_against_hash: {hash_str}")
+    sec10.append("")
+
+    # Hipotesis con domain=simulator
+    hyp_dir = os.path.expanduser("~/.logos/hypotheses")
+    sim_hyps = []
+    if os.path.isdir(hyp_dir):
+        for fname in sorted(os.listdir(hyp_dir)):
+            if not fname.endswith(".json") or "TEMPLATE" in fname:
+                continue
+            try:
+                with open(os.path.join(hyp_dir, fname), encoding="utf-8") as fh:
+                    h = json.load(fh)
+                if h.get("domain") == "simulator":
+                    sim_hyps.append(h)
+            except Exception:
+                pass
+
+    sec10.append("Hipotesis del simulador (domain=simulator):")
+    if sim_hyps:
+        for h in sim_hyps:
+            texto = h.get("hipotesis", "?")
+            if len(texto) > 70:
+                texto = texto[:67] + "..."
+            sec10.append(f"- [{h.get('estado','?')}] {h.get('id','?')}: {texto}")
+    else:
+        sec10.append("- (ninguna registrada todavia)")
+    sec10.append("")
+
+    sec10.append("Comandos del simulador:")
+    sec10.append("```")
+    sec10.append(f"cd {sim_path}")
+    sec10.append("git log --oneline -5")
+    sec10.append("git status -s")
+    sec10.append("```")
+    sec10.append("")
+
+    return sec10
+
+
 def render_markdown(project, s):
     """Arma el texto completo del .md."""
     parts = []
@@ -319,7 +419,8 @@ def main():
 
     base = construir_secciones(project, manifest, gate_result, head, branch)
     sec5, sec6, sec7, sec8, sec9 = secciones_5_a_9(project, manifest)
-    base["ultimas"] = [sec5, sec6, sec7, sec8, sec9]
+    sec10 = seccion_10_simulador(project, manifest)
+    base["ultimas"] = [sec5, sec6, sec7, sec8, sec9, sec10]
 
     md_text = render_markdown(project, base)
     pegable_text = render_pegable(project, base)

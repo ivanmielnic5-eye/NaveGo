@@ -1,6 +1,6 @@
 # Brief de arranque — NAVEGO
 
-Generado: 2026-10-02T12:15:11-03:00
+Generado: 2026-10-08T13:13:23-03:00
 
 ---
 
@@ -8,7 +8,7 @@ Generado: 2026-10-02T12:15:11-03:00
 - Proyecto: NAVEGO
 - Repo: /home/ivan/navego_recuperado
 - Rama: experimento-v4-admin
-- HEAD: a9b780f
+- HEAD: 2a693ba
 - Nombre: NaveGo
 - Tipo: navigation
 
@@ -40,7 +40,7 @@ Pendiente (bugs finos):
 - Hipotesis: H-2026-0023
   Cierre del hito de background: bugs finos + recuperacion del track honesto
 - Proximo paso: Fix de SOG en reposo, reconectar getGapsSince al polling, y cierre de LOGOS v1.1
-- Ultima decision: D-2026-0009: Implementacion de LOGOS v1.1 (logos-reconcile + drift detection + logos-brief)
+- Ultima decision: Implementacion de LOGOS v1.1 (logos-reconcile + drift detection + logos-brief). Pendiente: registrar formalmente como D-XXXX en el registro instituido (ubicacion por confirmar).
 
 ## 6. Restricciones activas
 - No tocar GNSS sin hipotesis previa
@@ -52,11 +52,11 @@ Pendiente (bugs finos):
 - R-18: source of truth
 
 ## 7. Pendientes priorizados
-- Prioridad
 - Hallazgos del refactor Fase 0 (DSH + analisis cruzado)
 - Higiene de disco
 - Track honesto — pérdida por migración Doc 46
 - Field log no se escribe tras reinicio del celular
+- Diseño pendiente: jerarquía de confianza de fuentes para cartas náuticas
 
 ## 8. Comandos operativos
 
@@ -94,4 +94,22 @@ npx expo run:android --variant release
 - No proponer cambios hasta que el Director diga 'vamos'.
 - El sistema NO MIENTE. No inventa datos.
 - Verificar toda cita de LLM antes de apoyarse en ella.
+
+## 10. Simulador Godot
+
+- Path: ~/interfaz/
+- Rama: experimento-godot
+- HEAD: f1ab9f6
+- Ultimo commit: f1ab9f6 Ajustes post-migracion: meta al muelle nuevo + gitignore limpio (hace 2 días)
+- reviewed_against_hash: 136eeb517f4c0f32...
+
+Hipotesis del simulador (domain=simulator):
+- (ninguna registrada todavia)
+
+Comandos del simulador:
+```
+cd ~/interfaz/
+git log --oneline -5
+git status -s
+```
 
