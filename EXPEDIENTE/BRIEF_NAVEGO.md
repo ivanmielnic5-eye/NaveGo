@@ -1,6 +1,6 @@
 # Brief de arranque — NAVEGO
 
-Generado: 2026-10-08T13:30:03-03:00
+Generado: 2026-10-08T13:43:12-03:00
 
 ---
 
@@ -8,7 +8,7 @@ Generado: 2026-10-08T13:30:03-03:00
 - Proyecto: NAVEGO
 - Repo: /home/ivan/navego_recuperado
 - Rama: experimento-v4-admin
-- HEAD: 6b96426
+- HEAD: 2267672
 - Nombre: NaveGo
 - Tipo: navigation
 

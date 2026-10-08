@@ -6,6 +6,29 @@ o sobre el simulador Godot, sin perder contexto.
 
 ---
 
+## FLUJO PRINCIPAL (un solo comando)
+
+    cd ~/navego_recuperado && ./.logos/bin/logos-arranque
+
+Hace todo automaticamente:
+  1. Verifica el gate.
+  2. Regenera el brief de NAVEGO.
+  3. Compone CONTEXTO_ARRANQUE_NAVEGO.txt en el Escritorio.
+  4. Lo copia al portapapeles (requiere wl-clipboard o xclip).
+  5. Solo queda pegar en el chat del hilo nuevo con Ctrl+V.
+
+Si el portapapeles no esta disponible, el archivo queda igual en
+~/Escritorio/CONTEXTO_ARRANQUE_NAVEGO.txt.
+
+Si el gate esta BLOCKED en el momento de correrlo, el archivo se
+genera igual, pero la seccion 2 va a mostrar el bloqueo. En ese
+caso, no trabajar hasta resolverlo.
+
+Esta rutina (las secciones siguientes) es el detalle manual por
+si logos-arranque falla o para entender que hace por dentro.
+
+---
+
 ## Por que existe este documento
 
 Cuando un hilo de IA se llena o se corta, se pierde el contexto. Este

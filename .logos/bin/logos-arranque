@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""logos-arranque - Genera el archivo de contexto para pegar en hilo nuevo.
+
+Uso:
+  logos-arranque                Genera en $HOME/Escritorio/CONTEXTO_ARRANQUE_NAVEGO.txt
+  logos-arranque --out <path>   Genera en path especificado
+
+Hace en una sola corrida:
+  1. Verifica el gate.
+  2. Regenera el brief.
+  3. Compone un solo archivo con contexto fijo + contexto vivo.
+  4. Lo guarda en el path indicado.
+"""
+import datetime, json, os, subprocess, sys
+from pathlib import Path
+
+REPO = Path.home() / "navego_recuperado"
+GATE = REPO / ".logos/bin/logos-gate"
+BRIEF = REPO / ".logos/bin/logos-brief"
+BRIEF_MD = REPO / "EXPEDIENTE/BRIEF_NAVEGO.md"
+
+def detectar_escritorio():
+    for d in [Path.home()/"Escritorio", Path.home()/"Desktop", Path.home()/"desktop"]:
+        if d.is_dir():
+            return d
+    return Path.home()
+
+def main():
+    args = sys.argv[1:]
+    out_path = None
+    for i, a in enumerate(args):
+        if a == '--out' and i+1 < len(args):
+            out_path = Path(args[i+1]).expanduser()
+            break
+    if out_path is None:
+        out_path = detectar_escritorio() / "CONTEXTO_ARRANQUE_NAVEGO.txt"
+
+    os.chdir(REPO)
+
+    # 1. Gate
+    gate_status = "NO_DISPONIBLE"
+    gate_raw = ""
+    try:
+        r = subprocess.run([str(GATE), "NAVEGO", "--json"],
+                          capture_output=True, text=True, cwd=str(REPO))
+        gate_data = json.loads(r.stdout)
+        gate_status = gate_data.get("status", "?")
+        gate_raw = json.dumps({
+            "status": gate_status,
+            "checks": gate_data.get("checks", {}),
+            "reasons": gate_data.get("reasons", []),
+            "warnings": gate_data.get("warnings", []),
+        }, indent=2, ensure_ascii=False)
+    except Exception as e:
+        gate_raw = f"ERROR consultando gate: {e}"
+
+    # 2. Regenerar brief
+    try:
+        subprocess.run([str(BRIEF), "NAVEGO"], capture_output=True, text=True, cwd=str(REPO))
+    except Exception:
+        pass
+
+    # 3. Leer brief generado
+    brief_text = ""
+    if BRIEF_MD.exists():
+        brief_text = BRIEF_MD.read_text(encoding="utf-8")
+
+    # 4. HEAD de NaveGo
+    try:
+        r = subprocess.run(['git', '-C', str(REPO), 'rev-parse', '--short', 'HEAD'],
+                          capture_output=True, text=True)
+        head_navego = r.stdout.strip()
+    except Exception:
+        head_navego = "?"
+
+    # 5. HEAD del simulador
+    try:
+        r = subprocess.run(['git', '-C', str(Path.home()/'interfaz'), 'rev-parse', '--short', 'HEAD'],
+                          capture_output=True, text=True)
+        head_godot = r.stdout.strip()
+    except Exception:
+        head_godot = "?"
+
+    fecha = datetime.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
+
+    # 6. Componer el archivo
+    partes = []
+    partes.append("=" * 70)
+    partes.append("CONTEXTO DE ARRANQUE — NAVEGO / LOGOS / SIMULADOR")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append(f"Generado automaticamente: {fecha}")
+    partes.append(f"HEAD NaveGo: {head_navego}")
+    partes.append(f"HEAD Simulador: {head_godot}")
+    partes.append(f"Gate: {gate_status}")
+    partes.append("")
+    partes.append("Pegar este archivo ENTERO al inicio de cada hilo nuevo cuando")
+    partes.append("el anterior se llena o se corta.")
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("1. QUE ES CADA COSA")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append("LOGOS")
+    partes.append("  El metodo, el invariante. Sistema de memoria y evidencia.")
+    partes.append("  No cambia. Todo lo demas puede variar. Principio: el")
+    partes.append("  sistema NO MIENTE. No inventa datos. Metodo popperiano:")
+    partes.append("  hipotesis falsables, experimento, resultado, decision.")
+    partes.append("")
+    partes.append("NAVEGO")
+    partes.append("  La app movil en desarrollo. React Native + Expo + SQLite.")
+    partes.append("  Objetivo: navegacion autonoma, offline, soberana.")
+    partes.append("  Repo: github.com/ivanmielnic5-eye/NaveGo")
+    partes.append("  Directorio local: ~/navego_recuperado")
+    partes.append("  Rama de trabajo: experimento-v4-admin")
+    partes.append("")
+    partes.append("GODOT (el simulador)")
+    partes.append("  Laboratorio de NAVEGO. Simula el barco Polaris, el viento,")
+    partes.append("  las olas, la flotabilidad. Es una FUENTE de NAVEGO.")
+    partes.append("  Directorio local: ~/interfaz")
+    partes.append("  Rama: experimento-godot")
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("2. ESTADO ACTUAL DEL GATE")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append(gate_raw)
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("3. BRIEF DE NAVEGO (generado al momento)")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append(brief_text)
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("4. REGLAS DURAS (no negociables)")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append("- Backup explicito .pre-<etapa> antes de tocar codigo critico.")
+    partes.append("- Un paso por vez. Verificar despues de cada cambio.")
+    partes.append("- El codigo va al chat, no a bash.")
+    partes.append("- Los .pre-* de backup NUNCA se borran sin permiso del Director.")
+    partes.append("- Hablar en criollo primero, despues el termino tecnico.")
+    partes.append("- No proponer cambios hasta que el Director diga 'vamos'.")
+    partes.append("- El sistema NO MIENTE. No inventa datos.")
+    partes.append("- Verificar toda cita de LLM antes de apoyarse en ella.")
+    partes.append("- NO forzar commit con -f. Si git se queja, hay un motivo.")
+    partes.append("- NO mezclar cambios no relacionados en el mismo commit.")
+    partes.append("- NO actualizar el hash de una fuente sin revisarla.")
+    partes.append("- NO abrir dos hilos sobre el mismo archivo a la vez (R-INC-01).")
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("5. COMANDOS CLAVE")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append("Gate:                ./.logos/bin/logos-gate NAVEGO")
+    partes.append("Brief:               ./.logos/bin/logos-brief NAVEGO")
+    partes.append("Hash de una fuente:  ./.logos/bin/logos-hash <path>")
+    partes.append("Manual completo:     cat EXPEDIENTE/MANUAL_ARRANQUE_HILO_NUEVO.md")
+    partes.append("Modo simulador:      ~/.logos/bin/logos-open simulador")
+    partes.append("Este archivo:        ~/.logos/bin/logos-arranque")
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("6. GLOSARIO MINIMO")
+    partes.append("=" * 70)
+    partes.append("")
+    partes.append("Fuente       Archivo declarado en el MANIFEST con hash revisado.")
+    partes.append("MANIFEST     .logos/MANIFEST.json. Declara fuentes y sus hashes.")
+    partes.append("Gate         Verifica si las fuentes estan al dia. Si no, BLOCKED.")
+    partes.append("Brief        Documento de arranque que resume el estado actual.")
+    partes.append("Hipotesis    Afirmacion falsable. ~/.logos/hypotheses/H-2026-NNNN.json")
+    partes.append("Decision     Regla arquitectonica. .logos/decisions/D-2026-NNNN.json")
+    partes.append("Polaris      Nombre del velero simulado en Godot.")
+    partes.append("Timonel      Agente Python que maneja Polaris.")
+    partes.append("")
+    partes.append("=" * 70)
+    partes.append("FIN DEL CONTEXTO")
+    partes.append("=" * 70)
+    partes.append("")
+
+    contenido = "\n".join(partes)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(contenido, encoding="utf-8")
+    size_kb = len(contenido.encode("utf-8")) / 1024
+
+    # Copiar al portapapeles si esta disponible y no se pidio --no-clipboard
+    clipboard_ok = False
+    if '--no-clipboard' not in args:
+        import shutil
+        if shutil.which("wl-copy"):
+            try:
+                subprocess.run(["wl-copy"], input=contenido.encode("utf-8"), check=True)
+                clipboard_ok = "wl-copy"
+            except Exception:
+                pass
+        if not clipboard_ok and shutil.which("xclip"):
+            try:
+                subprocess.run(["xclip", "-selection", "clipboard"],
+                              input=contenido.encode("utf-8"), check=True)
+                clipboard_ok = "xclip"
+            except Exception:
+                pass
+
+    print(f"[OK] Contexto generado")
+    print(f"     Path: {out_path}")
+    print(f"     Tamaño: {size_kb:.1f} KB")
+    print(f"     Gate: {gate_status}")
+    print(f"     HEAD NaveGo: {head_navego}")
+    print(f"     HEAD Simulador: {head_godot}")
+    if clipboard_ok:
+        print(f"     Copiado al portapapeles ({clipboard_ok}). Pegar directo en el chat.")
+    else:
+        print(f"     (portapapeles no disponible, abrir el archivo a mano)")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
