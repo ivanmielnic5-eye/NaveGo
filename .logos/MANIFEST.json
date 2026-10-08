@@ -25,7 +25,8 @@
     "decision_maps",
     "decision_manifest",
     "decision_gate",
-    "simulator_source"
+    "simulator_source",
+    "manual_arranque"
   ],
   "sources": [
     {
@@ -362,6 +363,20 @@
       "last_human_review": "2026-10-08",
       "reviewed_against_commit": "f1ab9f6",
       "reviewed_against_hash": "136eeb517f4c0f322032e14368471dbac7dfa1a1d3e1e8429725f058c5af4deb"
+    },
+    {
+      "type": "manual_arranque",
+      "path": "EXPEDIENTE/MANUAL_ARRANQUE_HILO_NUEVO.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Manual canonico de arranque de hilo nuevo sobre NAVEGO y el simulador.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "reviewed_against_hash": "89b0c81110a727bc038c808645aaee71a22f7be376c98cf2ece64c9ad64c72dd"
     }
   ],
   "consistency_rules": [
