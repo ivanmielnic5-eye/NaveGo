@@ -42,7 +42,8 @@
         "freshness"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e"
+      "reviewed_against_commit": "05ecd2e",
+      "reviewed_against_hash": "d0acbf4c5dea39eebba99e06a3b961a13d24886425a9415125db67c2474d448c"
     },
     {
       "type": "profile",
@@ -57,7 +58,8 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e"
+      "reviewed_against_commit": "05ecd2e",
+      "reviewed_against_hash": "524c871e9008e21b8eee1e34d9bea370aaadb6a055b312eee251228fe5293a77"
     },
     {
       "type": "protocol",
@@ -72,7 +74,8 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e"
+      "reviewed_against_commit": "05ecd2e",
+      "reviewed_against_hash": "79315a09d652cef3809ac3cfcb81b8f4b387c1b1a134658f002d842de46bd8a8"
     },
     {
       "type": "decisions",
@@ -87,7 +90,8 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e"
+      "reviewed_against_commit": "05ecd2e",
+      "reviewed_against_hash": "3124412218c0b4756fb18fdde8fdc46d2fc2b09bae82d3fffe443b694532398d"
     },
     {
       "type": "decision_manifest",
@@ -102,7 +106,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "eb69005dcd9a913ac1b23d9c66fcdf3c1342599a9a50685498ba996589240c85"
     },
     {
       "type": "decision_gate",
@@ -117,7 +122,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "d95d78643e0b41136b24ebae59dcd7a048b8a206a23f59560dd00502e4fd8f27"
     },
     {
       "type": "session_spec",
@@ -132,7 +138,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "7893947be11d3d2a587f677ebf48084e2070f4b4962a15b18e429c75a711a940"
     },
     {
       "type": "spec_capsule",
@@ -147,7 +154,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "15c685d1c7bb917867b3ec87766e470fd6c72b40a0e2155b0d6a0bde8a767f24"
     },
     {
       "type": "hypotheses",
@@ -159,7 +167,8 @@
       "validation_policy": [
         "exists",
         "readable"
-      ]
+      ],
+      "reviewed_against_hash": "f15a16e85717cd32cf021dfee84b9fe63f9d8aa52e1f4ac7fee62d95f5b9ce97"
     },
     {
       "type": "pending",
@@ -174,7 +183,8 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e"
+      "reviewed_against_commit": "05ecd2e",
+      "reviewed_against_hash": "905b0e154b678975f861b43540fa59e3e12dccf04f9f1a5bf75c9bbe723f19c4"
     },
     {
       "type": "glossary",
@@ -189,7 +199,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "5eee1242d3af2a5c1de5d36418d311ffae84427d007ededa4d45d8816ef0bef0"
     },
     {
       "type": "evidence",
@@ -201,7 +212,8 @@
       "validation_policy": [
         "exists",
         "readable"
-      ]
+      ],
+      "reviewed_against_hash": "1d6cd6387ce43e141f7f9d1f4de9b2e35d41be910c16ed0bd8a06cfe2b699b5f"
     },
     {
       "type": "architecture",
@@ -216,7 +228,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "5465b5da8f462ffa1b852dcc7905d8341bb8b335276e0fc2d5f29fe4a1f45ae5"
     },
     {
       "type": "workflow",
@@ -231,7 +244,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "7c83e4bf835ce6c93317fa7c87a6aa3207e94b1dddc5f49743a73337a405b667"
     },
     {
       "type": "incidents",
@@ -246,7 +260,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "bd62f555e38bc0aaa0a8d713fe6e23daa2e8649f61b61d2dc04fa341747789ef"
     },
     {
       "type": "multi_ia_protocol",
@@ -261,7 +276,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "6d2760d1403a3d4450a023edc2c6867480db538b5a8273ac36df47869b08896a"
     },
     {
       "type": "framework_decision",
@@ -276,7 +292,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "a7bedadcaf88a88d9b4168a84647576e04dfa13d91f16d5dec044c2121fa3be7"
     },
     {
       "type": "decision_maps",
@@ -291,7 +308,8 @@
         "nonempty"
       ],
       "reviewed_against_commit": "05ecd2e",
-      "last_human_review": "2026-10-02"
+      "last_human_review": "2026-10-02",
+      "reviewed_against_hash": "74bc016a53639fcb872dfe22fc9756813f22b6de122d772a82c5a0aa74f76aa6"
     },
     {
       "type": "historical_sessions",
@@ -302,7 +320,8 @@
       "generated_by": "manual",
       "validation_policy": [
         "exists"
-      ]
+      ],
+      "reviewed_against_hash": "339cc579586ca101e9b63bea2f0e5e6ae04a1a7feb47b9cc579ab40271291014"
     },
     {
       "type": "historical_state",
@@ -313,7 +332,8 @@
       "generated_by": "manual",
       "validation_policy": [
         "exists"
-      ]
+      ],
+      "reviewed_against_hash": "86eba92f6ec0a5789352223800c96f8bb4ec877b42dbf68c4a2077b7c0a2d78b"
     },
     {
       "type": "historical_sync",
@@ -324,7 +344,8 @@
       "generated_by": "manual",
       "validation_policy": [
         "exists"
-      ]
+      ],
+      "reviewed_against_hash": "932235fa5f4b1ea3acf6823159f18ed29aae58ecfeb74ed4a4d8adb2ffa28bc5"
     },
     {
       "type": "simulator_source",
@@ -339,7 +360,8 @@
         "readable"
       ],
       "last_human_review": "2026-10-08",
-      "reviewed_against_commit": "f1ab9f6"
+      "reviewed_against_commit": "f1ab9f6",
+      "reviewed_against_hash": "136eeb517f4c0f322032e14368471dbac7dfa1a1d3e1e8429725f058c5af4deb"
     }
   ],
   "consistency_rules": [
@@ -390,6 +412,14 @@
         "framework_decision",
         "decision_maps"
       ]
+    },
+    {
+      "at": "2026-10-08",
+      "reason": "Reconciliacion inicial post D-2026-0010 (migracion a hash)",
+      "tipo": "revalidacion mecanica sin cambio de contenido",
+      "verificacion_previa": "git diff 05ecd2e..HEAD -- <cada fuente> = vacio",
+      "fuentes_reconciliadas": 22,
+      "nota": "No es revision humana nueva. El contenido no cambio desde 05ecd2e. Se registra hash actual como reviewed_against_hash."
     }
   ]
 }

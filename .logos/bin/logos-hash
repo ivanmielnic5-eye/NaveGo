@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""logos-hash - Calcula SHA256 canonico de una fuente segun D-2026-0010.
+
+Uso:
+  logos-hash <path>              Imprime hash (16 chars por default)
+  logos-hash --full <path>       Imprime SHA256 completo
+  logos-hash --verbose <path>    Imprime detalles (archivos contados, tipo)
+
+Convencion (D-2026-0010):
+  ARCHIVO:    SHA256(contenido)
+  DIRECTORIO: SHA256 concatenado de [path_rel + NUL + len + NUL + contenido]
+              ordenado por path_rel, comparacion ordinal
+  REPO GIT:   (si existe .git/ en el path) git ls-files + contenido working tree
+  .git/       siempre excluido
+  SYMLINKS:   no se siguen, se hashea el destino como metadata
+"""
+import hashlib, os, subprocess, sys
+
+def hash_file(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        while True:
+            chunk = f.read(65536)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h
+
+def hash_directory_standard(dirpath):
+    """Recorrido normal de un directorio (no git)."""
+    dirpath = os.path.abspath(dirpath)
+    entries = []
+    for root, dirs, files in os.walk(dirpath):
+        # Excluir .git/ siempre
+        dirs[:] = [d for d in dirs if d != '.git']
+        for fname in files:
+            full = os.path.join(root, fname)
+            rel = os.path.relpath(full, dirpath)
+            entries.append((rel, full))
+    # Ordenar por path relativo (ordinal, byte a byte)
+    entries.sort(key=lambda e: e[0].encode('utf-8'))
+    h = hashlib.sha256()
+    for rel, full in entries:
+        if os.path.islink(full):
+            # Symlink: hashear destino como metadata
+            target = os.readlink(full)
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'LINK:' + target.encode('utf-8'))
+            h.update(b'\x00')
+            continue
+        try:
+            with open(full, 'rb') as f:
+                content = f.read()
+        except (OSError, PermissionError):
+            continue
+        h.update(rel.encode('utf-8'))
+        h.update(b'\x00')
+        h.update(str(len(content)).encode('utf-8'))
+        h.update(b'\x00')
+        h.update(content)
+    return h, len(entries)
+
+def hash_directory_git(repo_path):
+    """Repo git: git ls-files + contenido working tree."""
+    repo_path = os.path.abspath(repo_path)
+    r = subprocess.run(
+        ['git', '-C', repo_path, 'ls-files', '-z'],
+        capture_output=True
+    )
+    if r.returncode != 0:
+        return None, 0
+    files = [f for f in r.stdout.split(b'\x00') if f]
+    files.sort()
+    h = hashlib.sha256()
+    contados = 0
+    for fbytes in files:
+        rel = fbytes.decode('utf-8', errors='replace')
+        full = os.path.join(repo_path, rel)
+        if os.path.islink(full):
+            target = os.readlink(full)
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'LINK:' + target.encode('utf-8'))
+            h.update(b'\x00')
+            contados += 1
+            continue
+        if not os.path.exists(full):
+            # Trackeado pero eliminado: cuenta y afecta hash
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'DELETED\x00')
+            contados += 1
+            continue
+        try:
+            with open(full, 'rb') as fh:
+                content = fh.read()
+        except (OSError, PermissionError):
+            continue
+        h.update(rel.encode('utf-8'))
+        h.update(b'\x00')
+        h.update(str(len(content)).encode('utf-8'))
+        h.update(b'\x00')
+        h.update(content)
+        contados += 1
+    return h, contados
+
+def hash_source(path):
+    """Devuelve (hash_hex, cantidad_archivos, tipo)."""
+    path = os.path.expanduser(path)
+    if not os.path.exists(path):
+        return None, 0, 'NO_EXISTE'
+    if os.path.isfile(path):
+        h = hash_file(path)
+        return h.hexdigest(), 1, 'ARCHIVO'
+    if os.path.isdir(path):
+        # Detectar si es un repo git
+        if os.path.isdir(os.path.join(path, '.git')):
+            h, n = hash_directory_git(path)
+            if h is None:
+                return None, 0, 'GIT_ERROR'
+            return h.hexdigest(), n, 'REPO_GIT'
+        h, n = hash_directory_standard(path)
+        return h.hexdigest(), n, 'DIRECTORIO'
+    return None, 0, 'TIPO_DESCONOCIDO'
+
+def main():
+    args = sys.argv[1:]
+    full = '--full' in args
+    verbose = '--verbose' in args
+    paths = [a for a in args if not a.startswith('--')]
+    if not paths:
+        print("Uso: logos-hash [--full] [--verbose] <path>")
+        return 1
+    for p in paths:
+        h, n, tipo = hash_source(p)
+        if h is None:
+            print(f"ERROR: {tipo}  {p}")
+            continue
+        h_short = h[:16] if not full else h
+        if verbose:
+            print(f"{h_short}  tipo={tipo}  archivos={n}  {p}")
+        else:
+            print(h_short)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

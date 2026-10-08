@@ -21,6 +21,7 @@ Ultima actualizacion: 2026-10-08
 ## KERNEL LOGOS / GATE
 
 - D-2026-0009 - Semantica de reviewed_against_commit y estados del Gate (CONGELADA)
+- D-2026-0010 - Freshness de fuentes por hash de contenido (CONGELADA)
 
 ---
 

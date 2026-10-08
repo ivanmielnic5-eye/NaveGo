@@ -44,6 +44,109 @@ def is_ancestor(older, newer, repo_path=None):
         return False
 
 
+def _hash_file(path):
+    """SHA256 de archivo (D-2026-0010)."""
+    h = hashlib.sha256()
+    try:
+        with open(path, 'rb') as fh:
+            while True:
+                chunk = fh.read(65536)
+                if not chunk:
+                    break
+                h.update(chunk)
+    except (OSError, PermissionError):
+        return None
+    return h.hexdigest()
+
+
+def _hash_dir_standard(dirpath):
+    """SHA256 de directorio segun D-2026-0010."""
+    dirpath = os.path.abspath(dirpath)
+    entries = []
+    for root, dirs, files in os.walk(dirpath):
+        dirs[:] = [d for d in dirs if d != '.git']
+        for fname in files:
+            full = os.path.join(root, fname)
+            rel = os.path.relpath(full, dirpath)
+            entries.append((rel, full))
+    entries.sort(key=lambda e: e[0].encode('utf-8'))
+    h = hashlib.sha256()
+    for rel, full in entries:
+        if os.path.islink(full):
+            target = os.readlink(full)
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'LINK:' + target.encode('utf-8'))
+            h.update(b'\x00')
+            continue
+        try:
+            with open(full, 'rb') as fh:
+                content = fh.read()
+        except (OSError, PermissionError):
+            continue
+        h.update(rel.encode('utf-8'))
+        h.update(b'\x00')
+        h.update(str(len(content)).encode('utf-8'))
+        h.update(b'\x00')
+        h.update(content)
+    return h.hexdigest()
+
+
+def _hash_git_repo(repo_path):
+    """SHA256 de archivos trackeados por git (working tree)."""
+    repo_path = os.path.abspath(repo_path)
+    r = subprocess.run(
+        ['git', '-C', repo_path, 'ls-files', '-z'],
+        capture_output=True
+    )
+    if r.returncode != 0:
+        return None
+    files = [fb for fb in r.stdout.split(b'\x00') if fb]
+    files.sort()
+    h = hashlib.sha256()
+    for fbytes in files:
+        rel = fbytes.decode('utf-8', errors='replace')
+        full = os.path.join(repo_path, rel)
+        if os.path.islink(full):
+            target = os.readlink(full)
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'LINK:' + target.encode('utf-8'))
+            h.update(b'\x00')
+            continue
+        if not os.path.exists(full):
+            h.update(rel.encode('utf-8'))
+            h.update(b'\x00')
+            h.update(b'DELETED\x00')
+            continue
+        try:
+            with open(full, 'rb') as fh:
+                content = fh.read()
+        except (OSError, PermissionError):
+            continue
+        h.update(rel.encode('utf-8'))
+        h.update(b'\x00')
+        h.update(str(len(content)).encode('utf-8'))
+        h.update(b'\x00')
+        h.update(content)
+    return h.hexdigest()
+
+
+def compute_source_hash(path):
+    """Devuelve el hash actual de una fuente segun su tipo.
+    Devuelve None si el path no existe o no se puede hashear."""
+    path = expand(path) if not os.path.isabs(os.path.expanduser(path)) else os.path.expanduser(path)
+    if not os.path.exists(path):
+        return None
+    if os.path.isfile(path):
+        return _hash_file(path)
+    if os.path.isdir(path):
+        if os.path.isdir(os.path.join(path, '.git')):
+            return _hash_git_repo(path)
+        return _hash_dir_standard(path)
+    return None
+
+
 def classify_review(reviewed, head, repo_path):
     """Clasifica reviewed_against_commit contra HEAD segun D-2026-0009.
     Devuelve (estado, detalle). Estados: CURRENT, STALE, DIVERGED,
@@ -223,7 +326,7 @@ def _head_for_source(src):
         _head_cache[repo_path] = get_head(repo_path)
     return _head_cache[repo_path], repo_path
 
-if checks['manifest'] != 'BLOCKED' and head is not None:
+if checks['manifest'] != 'BLOCKED':
     for src in m['sources']:
         if not src.get('authority'):
             continue
@@ -233,20 +336,51 @@ if checks['manifest'] != 'BLOCKED' and head is not None:
         if stype not in required_types and stype not in optional_types:
             continue
 
+        # Prioridad 1: reviewed_against_hash (D-2026-0010)
+        reviewed_hash = src.get('reviewed_against_hash')
+        if reviewed_hash is not None and reviewed_hash != '':
+            current_hash = compute_source_hash(src.get('path', ''))
+            if current_hash is None:
+                state = 'INVALID'
+                ref = f'path_no_hashable'
+            elif current_hash == reviewed_hash:
+                state = 'CURRENT'
+                ref = reviewed_hash[:16]
+            else:
+                state = 'STALE'
+                ref = f'{reviewed_hash[:8]}!={current_hash[:8]}'
+            level = policy_for(state, stype in required_types)
+            if level == 'BLOCKED':
+                drift_required.append(f'{stype}({state}:{ref})')
+            elif level == 'WARNING':
+                drift_optional.append(f'{stype}({state}:{ref})')
+            continue
+
+        # Prioridad 2: reviewed_against_commit (legacy, D-2026-0009)
+        reviewed = src.get('reviewed_against_commit')
+        if reviewed is None or reviewed == '':
+            # UNREVIEWED
+            level = policy_for('UNREVIEWED', stype in required_types)
+            if level == 'BLOCKED':
+                drift_required.append(f'{stype}(UNREVIEWED:-)')
+            elif level == 'WARNING':
+                drift_optional.append(f'{stype}(UNREVIEWED:-)')
+            continue
+
         src_head, src_repo = _head_for_source(src)
         if src_head is None:
             # Sin git en el repo de esa fuente: no se puede clasificar.
+            # Si la fuente esta declarada con commit, asumimos que esta OK
+            # porque su path probablemente no es git y no podemos comparar.
             continue
 
-        reviewed = src.get('reviewed_against_commit')
         state, _detail = classify_review(reviewed, src_head, src_repo)
         level = policy_for(state, stype in required_types)
 
         if level == 'BLOCKED':
-            drift_required.append(f'{stype}({state}:{reviewed or "-"})')
+            drift_required.append(f'{stype}({state}:{reviewed})')
         elif level == 'WARNING':
-            drift_optional.append(f'{stype}({state}:{reviewed or "-"})')
-        # CURRENT: sin accion
+            drift_optional.append(f'{stype}({state}:{reviewed})')
 
     # Mostrar BLOCKED y WARNING simultaneamente si ambos existen.
     # Antes era elif, lo que ocultaba los WARNING cuando habia BLOCKED.

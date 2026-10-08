@@ -1,0 +1,27 @@
+{
+  "id": "D-2026-0010",
+  "titulo": "Freshness de fuentes por hash de contenido",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-08",
+  "contexto": "D-2026-0009 implemento 5 estados de drift basados en reviewed_against_commit vs HEAD. Al correr el gate contra el MANIFEST real el 2026-10-08, aparecio un falso positivo sistematico: 36 commits avanzaron en el repo entre 05ecd2e y 1a495b6, pero NINGUNA fuente del MANIFEST cambio su contenido (verificado con git diff). El gate las marca STALE porque el repo avanzo, no porque la fuente cambio. El error conceptual es confundir 'el repositorio cambio' con 'la fuente cambio'. Ademas hay 4 tipos distintos de fuentes (Git interno, externo, Git externo, externo sin revision) y el modelo basado en commit solo cubre correctamente el primero.",
+  "decision": "Reemplazar reviewed_against_commit como mecanismo de enforcement por reviewed_against_hash (SHA256 del contenido). El commit queda como metadata de proveniencia informativa, no como criterio de freshness. Convencion de hasheo: (1) ARCHIVO: SHA256(contenido). (2) DIRECTORIO: SHA256 concatenado de [path_relativo + NUL + len(contenido) + NUL + contenido] por cada archivo, ordenado por path_relativo con comparacion ordinal byte-a-byte; incluye deteccion de eliminaciones (un archivo trackeado que desaparece cambia el hash). (3) REPO GIT (repo_root): usar git ls-files para obtener archivos trackeados, leer su CONTENIDO ACTUAL del working tree (no del blob del commit), hashear con la misma convencion de directorio. (4) EXCLUSIONES: .git/ siempre excluido; otros excludes deben declararse explicitamente por fuente, NO heredarse de .gitignore. (5) SYMLINKS: no se siguen recursivamente; se hashea el destino como metadata. Los 5 estados de D-2026-0009 se mantienen (CURRENT/STALE/DIVERGED/INVALID/UNREVIEWED) pero recalculados con hash: CURRENT = hash actual == reviewed_against_hash; STALE = hash actual != reviewed_against_hash; UNREVIEWED = sin reviewed_against_hash; DIVERGED e INVALID no aplican a fuentes con hash porque no hay historia Git que comparar.",
+  "consecuencias": [
+    "El gate ya no marca falso positivo por avance del repo cuando la fuente no cambio",
+    "Todas las fuentes (Git interno, externo, Git externo, externo sin revision) usan el mismo mecanismo: hash de contenido",
+    "reviewed_against_commit queda en el MANIFEST como metadata de 'cuando se reviso' y 'contra que estado del repo', sin valor de enforcement",
+    "Requiere reconciliacion inicial de las 22 fuentes: calcular hash actual y registrarlo como reviewed_against_hash (revalidacion mecanica, no revision humana nueva, porque el contenido no cambio desde 05ecd2e)",
+    "Los 5 estados de D-2026-0009 se mantienen con semantica actualizada: DIVERGED e INVALID ya no aplican a fuentes con hash (solo a fuentes con reviewed_against_commit sin hash)",
+    "Habilita la integracion Godot porque simulator_source se hashea con git ls-files + working tree, sin ruido de .git/"
+  ],
+  "criterio_revision": "Si el costo de computo del hash de directorios grandes (por ejemplo ~/interfaz/ o EXPEDIENTE/05_EVIDENCIA/) resulta prohibitivo, o si aparece un caso donde hash de contenido y estado real divergen sistematicamente (por ejemplo, archivos binarios con metadata no capturada).",
+  "fuentes_verificadas": [
+    "Codigo de logos-gate con 5 estados (commit 1a495b6, auditado 2026-10-08)",
+    "Analisis 2026-10-08: 36 commits entre 05ecd2e y 1a495b6 sin cambios en las fuentes del MANIFEST",
+    "Verificacion: git diff 05ecd2e..HEAD -- <cada fuente> devuelve vacio para las 16 fuentes declaradas",
+    "Evidencia empirica del falso positivo: gate marca BLOCKED aunque el contenido de las fuentes no cambio",
+    "Propuesta de hash de directorio con longitud explicita y orden ordinal",
+    "Analisis externo Luna (GPT-5.6), 2026-10-08"
+  ],
+  "reversible": true,
+  "autor": "director"
+}
