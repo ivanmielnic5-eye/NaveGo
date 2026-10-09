@@ -362,7 +362,7 @@
       ],
       "last_human_review": "2026-10-08",
       "reviewed_against_commit": "f1ab9f6",
-      "reviewed_against_hash": "136eeb517f4c0f322032e14368471dbac7dfa1a1d3e1e8429725f058c5af4deb"
+      "reviewed_against_hash": "6b110d01bc538669945b8016ed020dc736ae6cfa6ede33c025f60db7c8d87cbc"
     },
     {
       "type": "manual_arranque",
@@ -435,6 +435,14 @@
       "verificacion_previa": "git diff 05ecd2e..HEAD -- <cada fuente> = vacio",
       "fuentes_reconciliadas": 22,
       "nota": "No es revision humana nueva. El contenido no cambio desde 05ecd2e. Se registra hash actual como reviewed_against_hash."
+    },
+    {
+      "at": "2026-10-09",
+      "reason": "Revision del simulator_source tras agregar assets/blender/sailboat_work.blend",
+      "fuentes_actualizadas": [
+        "simulator_source"
+      ],
+      "nota": "Cambio legitimo: se agrego el archivo de trabajo de Blender al repo del simulador."
     }
   ]
 }
