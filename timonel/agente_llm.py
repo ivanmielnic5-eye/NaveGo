@@ -23,15 +23,24 @@ def armar_prompt(meta_x: float, meta_z: float,
                  pos_x: float, pos_z: float,
                  hdg: float, sog: float, dist: float,
                  rumbo_hacia_meta: float,
+                 viento_kn: float = 0.0, viento_dir: float = 0.0,
                  bloque_experiencias: str = "",
                  bloque_historial: str = "") -> str:
-    """Arma el prompt para Qwen con el estado actual y experiencias previas."""
+    """Arma el prompt para Qwen.
+
+    Sin reglas de decision (memo 73, decision 4).
+    El modelo debe discriminar la accion correcta del estado.
+    El viento se incluye porque el oraculo simula con viento (memo 74 seccion 7).
+    """
     desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
 
-    # Prefijo con experiencias previas (si las hay)
     prefijo_exp = ""
     if bloque_experiencias:
         prefijo_exp = bloque_experiencias + "\n\n"
+
+    bloque_viento = ""
+    if viento_kn > 0.0:
+        bloque_viento = f"- Viento: {viento_kn:.1f} nudos desde {viento_dir:.0f} grados\n"
 
     prompt = f"""Sos el timonel de un velero. Mision: llegar a la meta.
 
@@ -43,33 +52,25 @@ ESTADO ACTUAL:
 - Rumbo hacia la meta: {rumbo_hacia_meta:.1f} grados
 - Desvio actual: {desvio:.1f} grados
 - Velocidad: {sog:.2f} nudos
-
+{bloque_viento}
 {bloque_historial}
 
 ACCIONES DISPONIBLES:
-- corregir_rumbo: girar la proa a un angulo. Parametro: grados (0-360).
-- ir_a_punto: avanzar hacia coordenadas. Parametro: [x, z].
-- frenar: detener el barco.
-- terminar: SOLO si distancia < 15m.
+- corregir_rumbo: girar la proa a un angulo absoluto (0=norte, 90=este). Parametro: grados (0-360).
+- ir_a_punto: navegar hacia coordenadas. Parametro: [x, z].
+- frenar: reducir velocidad hasta aproximadamente 0.3 nudos.
+- terminar: declarar fin de mision. Valida SOLO si la distancia a meta es menor a 15 metros.
 
 TAREA:
-Analiza la situacion actual. Elegi la mejor accion.
-
-Criterios generales (guias):
-- Si estas a menos de 15m de la meta: terminar.
-- Si estas mal alineado (>30deg): corregir_rumbo.
-- Si estas bien alineado (<=30deg): ir_a_punto.
+Analiza la situacion y elegi la accion que mejor contribuya a llegar a la meta.
 
 {prefijo_exp}
-
-REVISA LAS EXPERIENCIAS ANTES DE DECIDIR. Si alguna experiencia similar
-sugiere una accion distinta a las guias, priorizala.
 
 Responde UNICAMENTE con JSON, sin texto adicional. Formato:
 {{"accion": "<accion>", "parametro": <parametro o null>}}
 """
-    return prompt
 
+    return prompt
 
 def formatear_historial(history: list) -> str:
     """Convierte una lista de pasos previos en texto para el prompt."""
