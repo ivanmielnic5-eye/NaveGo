@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://cgibfpqjqhy7p" path="res://scripts/grid_reference.gd" id="7_grid"]
 [ext_resource type="Script" uid="uid://pf4sorbqgght" path="res://rudder_controller.gd" id="8_2cqfq"]
 [ext_resource type="Script" uid="uid://d1enlhb14let1" path="res://scripts/camara_seguimiento.gd" id="9_kek77"]
+[ext_resource type="Script" uid="uid://dqlu5ji8u47im" path="res://sail_controller.gd" id="9_sail"]
 [ext_resource type="Script" uid="uid://jbgery1880rg" path="res://scripts/ground_truth_logger.gd" id="10_4c57u"]
 [ext_resource type="Script" uid="uid://c1buqu40ymly0" path="res://scripts/timonel_bridge.gd" id="11_efxa6"]
 [ext_resource type="PackedScene" uid="uid://llumykpn175q" path="res://scripts/Puerto_Esperanza.glb" id="12_dg77c"]
@@ -75,10 +76,10 @@ mesh = SubResource("PlaneMesh_water")
 transform = Transform3D(-0.1, 0, 0, 0, 0.1, 0, 0, 0, -0.1, 0, 0, 0)
 script = ExtResource("3_wind")
 target_path = NodePath("../SailboatBody")
-wind_speed_ms = 0.0
-wind_strength = 0.0
-gust_amplitude = 0.0
-gust_frequency = 0.0
+wind_speed_ms = 20.0
+wind_strength = 0.5
+gust_amplitude = 0.3
+gust_frequency = 1.5
 direction_variation = 0.0
 
 [node name="SailboatBody" type="RigidBody3D" parent="." unique_id=1325920536]
@@ -134,14 +135,15 @@ visible = false
 [node name="sailboat_v2" parent="SailboatBody" unique_id=583481980 instance=ExtResource("4_vivmo")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -5.973744, -0.5, -0.36971202)
 
-[node name="Timon" parent="SailboatBody/sailboat_v2/Sketchfab_model/cb932ba4034643229ae0ba7c02f6db1f_fbx/RootNode/Sailboat/Object_4" parent_id_path=PackedInt32Array(583481980, 180681079) index="0" unique_id=2033269585]
-
 [node name="Viento" parent="SailboatBody/sailboat_v2" index="5" unique_id=808628408]
 visible = false
 
 [node name="RudderController" type="Node3D" parent="SailboatBody" unique_id=1804757359]
 script = ExtResource("8_2cqfq")
 metadata/timon = true
+
+[node name="SailController" type="Node3D" parent="." unique_id=855540147]
+script = ExtResource("9_sail")
 
 [node name="HeadingIntegrator" type="Node" parent="." unique_id=2144483926]
 script = ExtResource("5_hwi")
