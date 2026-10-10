@@ -28,9 +28,8 @@ def armar_prompt(meta_x: float, meta_z: float,
                  bloque_historial: str = "") -> str:
     """Arma el prompt para Qwen.
 
-    Sin reglas de decision (memo 73, decision 4).
-    El modelo debe discriminar la accion correcta del estado.
-    El viento se incluye porque el oraculo simula con viento (memo 74 seccion 7).
+    Contrato de tarea explicito (que significa cada accion).
+    Sin reglas condicionales (que accion elegir ante que estado).
     """
     desvio = abs((rumbo_hacia_meta - hdg + 540) % 360 - 180)
 
@@ -42,13 +41,16 @@ def armar_prompt(meta_x: float, meta_z: float,
     if viento_kn > 0.0:
         bloque_viento = f"- Viento: {viento_kn:.1f} nudos desde {viento_dir:.0f} grados\n"
 
-    prompt = f"""Sos el timonel de un velero. Mision: llegar a la meta.
+    fase = "en la meta" if dist < 15.0 else "navegando"
+
+    prompt = f"""Sos el timonel de un velero. Mision: llevar el barco a la meta.
 
 ESTADO ACTUAL:
 - Posicion: ({pos_x:.1f}, {pos_z:.1f})
 - Meta: ({meta_x:.1f}, {meta_z:.1f})
 - Distancia a meta: {dist:.1f} metros
-- Heading (proa): {hdg:.1f} grados
+- Fase de mision: {fase}
+- Heading (proa): {hdg:.1f} grados (0=norte, 90=este)
 - Rumbo hacia la meta: {rumbo_hacia_meta:.1f} grados
 - Desvio actual: {desvio:.1f} grados
 - Velocidad: {sog:.2f} nudos
@@ -56,13 +58,37 @@ ESTADO ACTUAL:
 {bloque_historial}
 
 ACCIONES DISPONIBLES:
-- corregir_rumbo: girar la proa a un angulo absoluto (0=norte, 90=este). Parametro: grados (0-360).
-- ir_a_punto: navegar hacia coordenadas. Parametro: [x, z].
-- frenar: reducir velocidad hasta aproximadamente 0.3 nudos.
-- terminar: declarar fin de mision. Valida SOLO si la distancia a meta es menor a 15 metros.
+
+1) corregir_rumbo
+   Que hace: gira la proa del barco hasta un angulo absoluto.
+   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.
+   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.
+   Efecto: el barco no avanza, solo gira.
+
+2) ir_a_punto
+   Que hace: navega hacia coordenadas especificas.
+   Parametro: [x, z].
+   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta
+   y puede avanzar directamente.
+   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.
+
+3) frenar
+   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.
+   Parametro: ninguno.
+   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con
+   precision o detenerte suavemente cerca de la meta.
+   NO detiene completamente el barco. Solo lo desacelera.
+   Efecto: el barco pierde velocidad progresivamente.
+
+4) terminar
+   Que hace: declara la mision como cumplida.
+   Parametro: ninguno.
+   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada
+   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.
+   Efecto: la mision se cierra.
 
 TAREA:
-Analiza la situacion y elegi la accion que mejor contribuya a llegar a la meta.
+Analiza el estado actual y elegi la accion que mejor contribuya al objetivo.
 
 {prefijo_exp}
 
@@ -128,6 +154,28 @@ def _validar_decision(decision: dict, raw: str) -> dict:
     return decision
 
 
+def _consultar_via_chat(prompt: str, modelo: str, timeout_s: int = 120) -> str:
+    """Llama a /api/chat. Usado para modelos de chat como Llama."""
+    data = json.dumps({
+        "model": modelo,
+        "messages": [
+            {"role": "system", "content": "Sos un agente de navegacion. Respondes EXCLUSIVAMENTE con este esquema JSON exacto, sin ninguna otra clave ni texto: {\"accion\": \"<corregir_rumbo|ir_a_punto|frenar|terminar>\", \"parametro\": <numero o [x, z] o null>}. No agregues claves como 'answer', 'response' ni 'reasoning'. Solo 'accion' y 'parametro'."},
+            {"role": "user", "content": prompt},
+        ],
+        "stream": False,
+        "format": "json",
+        "options": {"num_ctx": 2048, "temperature": 0, "seed": 555, "num_predict": 80, "num_batch": 512},
+    }).encode()
+    req = urllib.request.Request(
+        "http://127.0.0.1:11434/api/chat",
+        data=data,
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=timeout_s) as r:
+        resp = json.load(r)
+    return resp.get("message", {}).get("content", "").strip()
+
+
 def _stop_modelo():
     import subprocess
     try:
@@ -137,7 +185,24 @@ def _stop_modelo():
 
 
 def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
-    """Llama a Ollama y devuelve el JSON parseado. Retorna dict vacio si falla."""
+    """Llama a Ollama y devuelve el JSON parseado. Retorna dict vacio si falla.
+
+    Dispatch por modelo:
+    - Modelos de chat (llama): usa /api/chat con format:json.
+    - Modelos de codigo (qwen): usa /api/generate con reintento por respuesta corrupta.
+    """
+    if "llama" in MODELO_DECISION.lower():
+        try:
+            resp = _consultar_via_chat(prompt, MODELO_DECISION, timeout_s=max(timeout_s, 120))
+        except Exception as e:
+            return {"_error": f"error de conexion chat: {e}"}
+        if not resp:
+            return {"_error": "respuesta_vacia_chat", "_raw": ""}
+        decision = _parsear_respuesta_json(resp)
+        if "_error" in decision:
+            return decision
+        return _validar_decision(decision, resp)
+
     data = json.dumps({
         "model": MODELO_DECISION,
         "prompt": prompt,
