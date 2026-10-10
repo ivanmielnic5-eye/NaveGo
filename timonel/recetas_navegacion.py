@@ -234,3 +234,31 @@ def frenar(b: Barco, sog_objetivo_kn: float = 0.3,
         "sog_final": round(b.sog_kn(), 2),
         "motivo": "timeout",
     }
+
+
+# ============================================================
+# RECETA 4: Terminar (accion logica terminal)
+# ============================================================
+
+def terminar(b: Barco, meta_x: float, meta_z: float,
+             tol_dist: float = 15.0) -> tuple[bool, dict]:
+    """
+    Accion logica terminal. NO ejecuta maniobra fisica.
+
+    - Si dist_a_meta < tol_dist: exito (mision cumplida).
+    - Si dist_a_meta >= tol_dist: error (terminar invalido).
+
+    Congelado en memo 74 seccion 2.
+    """
+    dist = math.sqrt((b.pos_x - meta_x)**2 + (b.pos_z - meta_z)**2)
+    if dist < tol_dist:
+        return True, {
+            "t_total": 0.0,
+            "dist_final": round(dist, 2),
+            "motivo": "terminal_exitoso",
+        }
+    return False, {
+        "t_total": 0.0,
+        "dist_final": round(dist, 2),
+        "motivo": "terminal_invalido_dist_" + str(round(dist, 1)),
+    }
