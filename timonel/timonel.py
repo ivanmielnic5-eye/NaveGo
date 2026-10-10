@@ -124,7 +124,6 @@ def consultar_dsh(muestras):
         "model": MODELO,
         "prompt": prompt,
         "stream": False,
-        "format": "json",
         "options": {"num_ctx": 512, "temperature": 0.0, "num_predict": 100}
     }).encode()
     req = urllib.request.Request(
