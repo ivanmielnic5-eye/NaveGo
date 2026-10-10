@@ -64,7 +64,7 @@ def escribir_comando(timon, timon_ms, avance, avance_ms, fuente, nota):
         f.flush()
     print(f"[timonel] comando escrito: {entry}")
 
-def timon_python(px, pz, hdg, meta_x=200.0, meta_z=0.0):
+def timon_python(px, pz, hdg, meta_x=36.0, meta_z=-6.0):
     """Devuelve (timon, avance). Ley de control con freno al llegar."""
     dx = meta_x - px
     dz = meta_z - pz
@@ -110,7 +110,7 @@ def consultar_dsh(muestras):
     prog = u.get("progreso", 0)
 
     prompt = (
-        "Sos el timonel del velero Polaris. Meta: (200, 0).\n"
+        "Sos el timonel del velero Polaris. Meta: (36, -6).\n"
         "Pos actual: (%.1f, %.1f). HDG: %.1f. Dist a meta: %.1f m.\n"
         "Regla de timon segun HDG:\n"
         "  HDG 000-075 -> timon=+1\n"
@@ -171,7 +171,7 @@ def main():
     print(f"[timonel] comandos:   {COMANDOS}")
     print(f"[timonel] modo fase 1: {MODO_FASE1}")
     print(f"[timonel] intervalo:   {INTERVALO_S}s")
-    print("[timonel] MISION: Puerto Sano en (200, 0).")
+    print("[timonel] MISION: Puerto Esperanza en (36, -6).")
     print("[timonel] Ctrl+C para salir.")
     while True:
         try:

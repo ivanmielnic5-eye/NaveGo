@@ -96,15 +96,24 @@ def evaluar_decision_con_oraculo(state, decision_qwen):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--n", type=int, default=10, help="Cuantos contextos evaluar")
+    parser.add_argument("--offset", type=int, default=0, help="Desde que contexto empezar")
     parser.add_argument("--banco", type=str, default=str(BANCO_DEFAULT))
     parser.add_argument("--output", type=str, default=None)
     args = parser.parse_args()
+
+    # Warm-up: descartar la primera corrida (memo 63, seccion 8)
+    print("Warm-up...")
+    from timonel_python import AgenteTimonel as _AT
+    _warm = _AT(meta_x=100, meta_z=100, timeout_s=10, usar_llm=True, conn=None, max_pasos=1)
+    _warm.correr(verbose=False)
+    print("Warm-up listo.")
+    print()
 
     banco = json.load(open(args.banco))
     print("Banco cargado: " + str(len(banco)) + " contextos")
 
     # Tomar los primeros N contextos
-    contextos = banco[:args.n]
+    contextos = banco[args.offset:args.offset+args.n]
     conn = conectar()
 
     resultados = []

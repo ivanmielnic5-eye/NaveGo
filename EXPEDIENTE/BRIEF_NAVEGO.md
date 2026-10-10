@@ -1,6 +1,6 @@
 # Brief de arranque — NAVEGO
 
-Generado: 2026-10-08T13:43:12-03:00
+Generado: 2026-10-09T22:17:21-03:00
 
 ---
 
@@ -8,13 +8,13 @@ Generado: 2026-10-08T13:43:12-03:00
 - Proyecto: NAVEGO
 - Repo: /home/ivan/navego_recuperado
 - Rama: experimento-v4-admin
-- HEAD: 2267672
+- HEAD: a984d4b
 - Nombre: NaveGo
 - Tipo: navigation
 
 ## 2. Estado del contexto
-- gate_status: READY
-- drift: OK
+- gate_status: WARNING
+- drift: WARNING (optional: simulator_source(STALE:6b110d01!=d4b93f07))
 
 ## 3. Mision y fase
 - Objetivo: Sistema de navegacion autonomo, offline, soberano
@@ -52,11 +52,11 @@ Pendiente (bugs finos):
 - R-18: source of truth
 
 ## 7. Pendientes priorizados
-- Hallazgos del refactor Fase 0 (DSH + analisis cruzado)
-- Higiene de disco
 - Track honesto — pérdida por migración Doc 46
 - Field log no se escribe tras reinicio del celular
 - Diseño pendiente: jerarquía de confianza de fuentes para cartas náuticas
+- Auto-commit WIP en logos-arranque
+- Blender MCP — velas dinamicas + timon + mastil no rigido
 
 ## 8. Comandos operativos
 
@@ -99,9 +99,9 @@ npx expo run:android --variant release
 
 - Path: ~/interfaz/
 - Rama: experimento-godot
-- HEAD: f1ab9f6
-- Ultimo commit: f1ab9f6 Ajustes post-migracion: meta al muelle nuevo + gitignore limpio (hace 2 días)
-- reviewed_against_hash: 136eeb517f4c0f32...
+- HEAD: e30c123
+- Ultimo commit: e30c123 Blender: archivo de trabajo de Polaris con velas separadas (hace 20 horas)
+- reviewed_against_hash: 6b110d01bc538669...
 
 Hipotesis del simulador (domain=simulator):
 - (ninguna registrada todavia)
