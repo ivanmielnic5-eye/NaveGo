@@ -104,6 +104,29 @@ def _parsear_respuesta_json(texto: str) -> dict:
         return {"_error": "json_invalido: " + str(e), "_raw": texto[:200]}
 
 
+def _validar_decision(decision: dict, raw: str) -> dict:
+    """Valida accion y parametro segun memo 74 seccion 2.
+    Devuelve la decision si es valida, o un dict con _error."""
+    if "accion" not in decision:
+        return {"_error": "sin campo accion", "_raw": raw[:200]}
+    accion = decision["accion"]
+    if accion not in ACCIONES_VALIDAS:
+        return {"_error": "accion desconocida: " + str(accion), "_raw": raw[:200]}
+    parametro = decision.get("parametro")
+    if accion == "corregir_rumbo":
+        if not isinstance(parametro, (int, float)) or isinstance(parametro, bool):
+            return {"_error": "corregir_rumbo sin parametro numerico", "_raw": raw[:200]}
+        if not (0.0 <= float(parametro) <= 360.0):
+            return {"_error": "corregir_rumbo parametro fuera de rango: " + str(parametro), "_raw": raw[:200]}
+    elif accion == "ir_a_punto":
+        if not isinstance(parametro, (list, tuple)) or len(parametro) != 2:
+            return {"_error": "ir_a_punto sin parametro [x, z]", "_raw": raw[:200]}
+        if not all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in parametro):
+            return {"_error": "ir_a_punto parametro no numerico", "_raw": raw[:200]}
+    # frenar y terminar: sin parametro requerido
+    return decision
+
+
 def _stop_modelo():
     import subprocess
     try:
@@ -148,13 +171,7 @@ def consultar_qwen(prompt: str, timeout_s: int = 10) -> dict:
     if "_error" in decision:
         return decision
 
-    if "accion" not in decision:
-        return {"_error": "sin campo accion", "_raw": resp[:200]}
-
-    if decision["accion"] not in ACCIONES_VALIDAS:
-        return {"_error": "accion desconocida: " + str(decision["accion"]), "_raw": resp[:200]}
-
-    return decision
+    return _validar_decision(decision, resp)
 
 
 def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None, history=None) -> dict:
