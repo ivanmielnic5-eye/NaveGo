@@ -203,11 +203,15 @@ def decidir_con_qwen(meta_x: float, meta_z: float, barco, conn=None, history=Non
 
     bloque_historial = formatear_historial(history) if history else ""
 
+    viento_kn = getattr(barco, "viento_intensidad_kn", 0.0)
+    viento_dir = getattr(barco, "viento_direccion_deg", 0.0)
+
     prompt = armar_prompt(
         meta_x=meta_x, meta_z=meta_z,
         pos_x=barco.pos_x, pos_z=barco.pos_z,
         hdg=hdg, sog=sog,
         dist=dist, rumbo_hacia_meta=rumbo_hacia_meta,
+        viento_kn=viento_kn, viento_dir=viento_dir,
         bloque_experiencias=bloque_experiencias,
         bloque_historial=bloque_historial,
     )
