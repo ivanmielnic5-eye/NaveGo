@@ -1,0 +1,17 @@
+Entendido. Aquí tienes el borrador del segundo borrador:
+
+NaveGo y su enfoque refactorizado
+
+Estimado equipo,
+
+Me complace presentar un borrador del segundo borrador del proyecto NaveGo. Este borrador sigue la línea general del diseño propuesto anteriormente, pero con algunas modificaciones y mejoras adicionales. Algunos de los puntos principales incluyen:
+
+  * Separación clara de lógica de negocio de lógica de UI y lógica de base de datos.
+  * Uso de clases y objetos para mejorar la organización y la reutilización del código.
+  * Mejora de la arquitectura general del sistema, lo que facilita la escalabilidad y el mantenimiento a largo plazo.
+
+Es importante mencionar que este borrador no resuelve todos los problemas existentes en NaveGo, pero proporciona un punto de partida sólido para seguir trabajando en la mejora continua del proyecto. 
+
+Si alguien tiene alguna pregunta, aporte o sugerencia adicional, no dudes en compartirlo a través de este hilo. Estamos abiertos a recibir cualquier tipo de retroalimentación constructiva.
+
+Saludos,

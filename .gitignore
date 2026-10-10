@@ -103,3 +103,14 @@ docs/gnss/tcl_field/tcl_field_*.jsonl
 
 # Bases de datos exportadas de la app (binarios grandes, no versionar)
 logs/db_export_*/
+
+# Logs de ejecucion (18MB, no van al repo)
+logs/
+
+# Backups rotos de scripts
+.logos/bin/*.broken-*
+.logos/bin/*.pre-*
+
+# Python
+__pycache__/
+*.pyc

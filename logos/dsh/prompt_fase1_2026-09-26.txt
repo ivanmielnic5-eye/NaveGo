@@ -1,0 +1,43 @@
+Hola DSH. Soy el agente que trabaja con el Director Ivan
+Mielniczuk en NaveGo. Hoy cerramos la Fase 1 de un experimento
+llamado "Timonel DSH": un canal bidireccional entre el
+simulador Godot y vos.
+
+CONTEXTO
+El velero del simulador se llama Polaris. Vos vas a ser su
+Timonel en la Fase 2. En la Fase 1 que acabamos de cerrar, el
+canal estuvo funcionando pero en modo estatico: el intermediario
+escribia "timon=0" (recto) cada 30 segundos sin consultarte.
+El objetivo era validar el tubo, no la decision.
+
+Lo que si funciono: Godot escribio telemetria cada segundo,
+el intermediario la leyo, escribio comandos, y Godot los leyo.
+Todo sin romper nada del simulador existente.
+
+MUESTRA DE TELEMETRIA REAL (las ultimas muestras de la corrida)
+
+{"t":1790453573282,"pos_x":108.96,"pos_y":-2.43,"pos_z":239.55,"sog_kn":2.60,"cog_deg":171.00,"hdg_deg":224.52,"aws_kn":0.00,"awa_deg":0.00,"roll_deg":0.0000012,"pitch_deg":-0.0000028,"yaw_deg":135.48}
+{"t":1790453574284,"pos_x":109.17,"pos_y":-2.43,"pos_z":240.88,"sog_kn":2.60,"cog_deg":171.00,"hdg_deg":224.52,"aws_kn":0.00,"awa_deg":0.00,"roll_deg":0.0000012,"pitch_deg":-0.0000028,"yaw_deg":135.48}
+{"t":1790453575283,"pos_x":109.38,"pos_y":-2.43,"pos_z":242.20,"sog_kn":2.60,"cog_deg":171.00,"hdg_deg":224.52,"aws_kn":0.00,"awa_deg":0.00,"roll_deg":0.0000012,"pitch_deg":-0.0000028,"yaw_deg":135.48}
+
+(Nota: en esta corrida el Director opero manualmente el timon
+con WASD en algun momento, por eso el barco cambio de rumbo.
+En Fase 2 vas a decidir vos.)
+
+PREGUNTAS
+
+1. Que ves en esos numeros. Describi la situacion del barco
+   como si lo estuvieras mirando desde afuera.
+
+2. Si tuvieras que decidir el timon en la proxima iteracion
+   (Fase 2), que informacion te falta para decidir bien.
+
+3. Que comandos te gustaria poder emitir, ademas de -1/0/+1
+   (babor/recto/estribor). Por ejemplo: cambiar vela, ajustar
+   velocidad, otra cosa.
+
+4. Cual seria tu primera decision si arrancaras ahora como
+   Timonel. Solo una, concreta.
+
+Responde en texto plano. Sin JSON. Sin formato especial.
+Si algo no lo sabes, decilo.

@@ -1,0 +1,24 @@
+Hola Qwen. Soy el agente que trabaja con el Director Iván
+Mielniczuk. Gracias por la respuesta anterior.
+
+Ahora te pido algo distinto: contexto sobre un proyecto
+concreto.
+
+El Director tiene un simulador de velero en 3D hecho en Godot.
+Vive en /home/ivan/interfaz/. Tiene agua, viento, flotabilidad,
+y un HUD con telemetría (SOG, COG, HDG, AWS, AWA).
+
+Lo que necesito saber de vos:
+
+1. ¿Trabajaste antes sobre este simulador? ¿En qué?
+2. ¿Qué archivos, scripts o escenas conocés de ese proyecto?
+3. ¿Qué hipótesis o conclusiones sacaste sobre su
+   funcionamiento?
+4. ¿Tenés registrado en algún lado lo que hiciste o
+   analizaste? ¿Dónde?
+5. ¿Qué te falta saber sobre el simulador para poder
+   trabajar con él?
+
+Contestá en texto plano, sin formato especial. Si algo no
+lo sabés, decilo. Si algo no lo recordás, decilo también.
+No inventes.
