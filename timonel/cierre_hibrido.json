@@ -1,0 +1,42 @@
+{
+  "fecha": "2026-10-11",
+  "fase": "prototipo hibrido — CERRADO",
+  "conclusion": "El filtro de admisibles NO rompe el colapso. El LLM ignora el estado.",
+  "caso_evidencia": {
+    "estado": "desvio=0.0 grados (barco mirando exactamente a la meta)",
+    "accion_esperada": "ir_a_punto",
+    "accion_recibida": "corregir_rumbo 45.0",
+    "prompt_estaba_bien_formado": true,
+    "system_prompt_estaba_bien": true,
+    "parser_extrajo_json_limpio": true
+  },
+  "caso_control_1": {
+    "estado": "desalineado, meta lejos",
+    "admisibles": [
+      "corregir_rumbo",
+      "ir_a_punto",
+      "frenar"
+    ],
+    "accion_recibida": "corregir_rumbo 45.0"
+  },
+  "caso_control_2": {
+    "estado": "terminal, dist=7m",
+    "admisibles": [
+      "corregir_rumbo",
+      "ir_a_punto",
+      "frenar",
+      "terminar"
+    ],
+    "accion_recibida": "corregir_rumbo 45.0"
+  },
+  "caso_control_3": {
+    "estado": "parado, dist=141m, admisibles reducidas a 2",
+    "admisibles": [
+      "corregir_rumbo",
+      "ir_a_punto"
+    ],
+    "accion_recibida": "corregir_rumbo 45.0"
+  },
+  "interpretacion": "En los 4 casos, el LLM devolvio la misma accion y el mismo parametro. El filtro de admisibles no cambio el comportamiento. La hipotesis de Luna (admisibilidad rompe colapso) NO se cumple para Llama 3.1 8b.",
+  "estado_modelo": "Llama 3.1 8b colapsa a corregir_rumbo en TODOS los casos probados, independientemente del prompt, filtro o system."
+}
