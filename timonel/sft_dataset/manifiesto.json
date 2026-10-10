@@ -1,0 +1,32 @@
+{
+  "fecha": "2026-10-10T18:48:04.854379",
+  "seed_split": 42,
+  "n_train": 240,
+  "n_val": 60,
+  "accion_counts_train": {
+    "frenar": 60,
+    "ir_a_punto": 60,
+    "terminar": 60,
+    "corregir_rumbo": 60
+  },
+  "accion_counts_val": {
+    "corregir_rumbo": 15,
+    "frenar": 15,
+    "terminar": 15,
+    "ir_a_punto": 15
+  },
+  "familia_counts_train": {
+    "lejos": 68,
+    "medio": 82,
+    "terminal": 60,
+    "cerca": 30
+  },
+  "familia_counts_val": {
+    "medio": 15,
+    "lejos": 18,
+    "terminal": 15,
+    "cerca": 12
+  },
+  "system_prompt": "Sos un agente de navegacion. Respondes EXCLUSIVAMENTE con el esquema: {\"accion\": \"<nombre>\", \"parametro\": <valor o null>}.",
+  "confirmatorio_intacto": true
+}
