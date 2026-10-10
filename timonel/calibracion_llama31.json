@@ -1,0 +1,276 @@
+{
+  "fecha": "2026-10-10T17:30:04.628212",
+  "modelo": "llama3.1:8b",
+  "split": "desarrollo",
+  "n_muestra": 20,
+  "accuracy_accion": 0.0,
+  "accuracy_parametro": null,
+  "por_accion": {
+    "corregir_rumbo": {
+      "ok": 0,
+      "total": 5
+    },
+    "ir_a_punto": {
+      "ok": 0,
+      "total": 5
+    },
+    "frenar": {
+      "ok": 0,
+      "total": 5
+    },
+    "terminar": {
+      "ok": 0,
+      "total": 5
+    }
+  },
+  "por_familia": {
+    "terminal": {
+      "ok": 0,
+      "total": 5
+    },
+    "cerca": {
+      "ok": 0,
+      "total": 2
+    },
+    "medio": {
+      "ok": 0,
+      "total": 5
+    },
+    "lejos": {
+      "ok": 0,
+      "total": 8
+    }
+  },
+  "confusion": {
+    "frenar": {
+      "_error_": 5
+    },
+    "corregir_rumbo": {
+      "_error_": 5
+    },
+    "terminar": {
+      "_error_": 5
+    },
+    "ir_a_punto": {
+      "_error_": 5
+    }
+  },
+  "resultados": [
+    {
+      "context_id": "CC002-001201",
+      "true_accion": "frenar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 0.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001010",
+      "true_accion": "corregir_rumbo",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 80.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000712",
+      "true_accion": "corregir_rumbo",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 85.1,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002256",
+      "true_accion": "frenar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 0.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001244",
+      "true_accion": "terminar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": null,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001933",
+      "true_accion": "terminar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": null,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000834",
+      "true_accion": "terminar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": null,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000537",
+      "true_accion": "ir_a_punto",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": [
+        106.48,
+        44.01
+      ],
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000493",
+      "true_accion": "frenar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 0.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000966",
+      "true_accion": "frenar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 0.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000107",
+      "true_accion": "ir_a_punto",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": [
+        155.58,
+        60.39
+      ],
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000050",
+      "true_accion": "corregir_rumbo",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 258.94,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001993",
+      "true_accion": "ir_a_punto",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": [
+        193.13,
+        126.38
+      ],
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000327",
+      "true_accion": "frenar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 0.3,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001687",
+      "true_accion": "terminar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": null,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001123",
+      "true_accion": "corregir_rumbo",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 253.97,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001568",
+      "true_accion": "terminar",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": null,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002269",
+      "true_accion": "ir_a_punto",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": [
+        10.5,
+        247.73
+      ],
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000182",
+      "true_accion": "ir_a_punto",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": [
+        -2.27,
+        140.35
+      ],
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001519",
+      "true_accion": "corregir_rumbo",
+      "pred_accion": "_error_",
+      "pred_param": null,
+      "true_param": 137.97,
+      "accion_ok": false,
+      "param_ok": null,
+      "familia": "cerca"
+    }
+  ],
+  "duracion_s": 150.7
+}

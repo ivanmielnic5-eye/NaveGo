@@ -1,0 +1,57 @@
+{
+  "fecha": "2026-10-11",
+  "fase": "iteracion de prompts — CERRADA",
+  "modelo_probado": "llama3.1:8b",
+  "contextos": "20 del split DESARROLLO de CC002, balanceados (5 por accion)",
+  "variantes": {
+    "VA": {
+      "descripcion": "prompt actual",
+      "accuracy": 0.25,
+      "uso": {
+        "corregir_rumbo": 20
+      },
+      "nota": "colapso a accion unica"
+    },
+    "VB": {
+      "descripcion": "contrato corregido con admisibles",
+      "accuracy": 0.25,
+      "uso": {
+        "ir_a_punto": 20
+      },
+      "nota": "colapso a accion unica distinta"
+    },
+    "VC": {
+      "descripcion": "VB + enfasis visual",
+      "accuracy": 0.05,
+      "uso": {
+        "ir_a_punto": 1,
+        "_error_": 19
+      },
+      "nota": "rompe runtime (HTTP 500) con prompts largos"
+    },
+    "VD": {
+      "descripcion": "VB + few-shot (4 ejemplos)",
+      "accuracy": 0.05,
+      "uso": {
+        "_error_": 15,
+        "corregir_rumbo": 4,
+        "ir_a_punto": 1
+      },
+      "nota": "rompe JSON en mayoria de casos"
+    }
+  },
+  "conclusion": "El prompt no es la variable. Mueve el colapso de una accion a otra pero no crea capacidad de discriminacion. Prompts largos rompen el runtime.",
+  "modelos_colapsados": {
+    "qwen2.5-coder:1.5b": "30%, usa 2 de 4 acciones",
+    "qwen2.5-coder:3b": "25%, colapsa a corregir_rumbo",
+    "qwen2.5-coder:7b": "25%, colapsa a corregir_rumbo",
+    "llama3.1:8b": "25%, colapsa segun prompt"
+  },
+  "hallazgo": "Action collapse documentado en literatura. Limite de modelos sin entrenamiento especifico en este dominio.",
+  "proximos_pasos_posibles": [
+    "A) Aceptar limite y rediseñar benchmark para documentarlo",
+    "B) Fine-tuning SFT+DPO con banco CC002",
+    "C) Arquitectura hibrida (LLM propone + logica simbolica filtra)",
+    "D) Cambiar a modelo mas grande o especifico para agentes"
+  ]
+}

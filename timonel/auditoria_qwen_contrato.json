@@ -1,0 +1,188 @@
+{
+  "fecha": "2026-10-10T17:22:20.608276",
+  "modelo": "qwen2.5-coder:1.5b",
+  "auditorias": [
+    {
+      "context_id": "CC002-000566",
+      "familia": "medio",
+      "true_accion": "corregir_rumbo",
+      "true_param": 6.74,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (17.1, -144.5)\n- Distancia a meta: 145.5 metros\n- Fase de mision: navegando\n- Heading (proa): 207.9 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 6.7 grados\n- Desvio actual: 158.9 grados\n- Velocidad: 2.65 nudos\n- Viento: 10.0 nudos desde 24 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-000618",
+      "familia": "medio",
+      "true_accion": "corregir_rumbo",
+      "true_param": 204.21,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (-52.6, 117.0)\n- Distancia a meta: 128.3 metros\n- Fase de mision: navegando\n- Heading (proa): 336.6 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 204.2 grados\n- Desvio actual: 132.4 grados\n- Velocidad: 2.87 nudos\n- Viento: 10.0 nudos desde 144 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-001547",
+      "familia": "medio",
+      "true_accion": "ir_a_punto",
+      "true_param": [
+        -51.23,
+        -116.34
+      ],
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": true,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (-51.2, -116.3)\n- Distancia a meta: 127.1 metros\n- Fase de mision: navegando\n- Heading (proa): 312.7 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 336.2 grados\n- Desvio actual: 23.5 grados\n- Velocidad: 3.84 nudos\n- Viento: 10.0 nudos desde 119 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-000043",
+      "familia": "lejos",
+      "true_accion": "ir_a_punto",
+      "true_param": [
+        151.54,
+        50.24
+      ],
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": true,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (151.5, 50.2)\n- Distancia a meta: 159.7 metros\n- Fase de mision: navegando\n- Heading (proa): 197.3 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 108.3 grados\n- Desvio actual: 88.9 grados\n- Velocidad: 0.00 nudos\n- Viento: 10.0 nudos desde 76 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-000092",
+      "familia": "medio",
+      "true_accion": "frenar",
+      "true_param": 0.3,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (-44.2, 72.8)\n- Distancia a meta: 85.2 metros\n- Fase de mision: navegando\n- Heading (proa): 359.6 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 211.3 grados\n- Desvio actual: 148.3 grados\n- Velocidad: 3.92 nudos\n- Viento: 5.0 nudos desde 161 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-000808",
+      "familia": "medio",
+      "true_accion": "frenar",
+      "true_param": 0.3,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (95.3, 80.3)\n- Distancia a meta: 124.6 metros\n- Fase de mision: navegando\n- Heading (proa): 273.2 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 130.1 grados\n- Desvio actual: 143.1 grados\n- Velocidad: 7.07 nudos\n- Viento: 5.0 nudos desde 17 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-001955",
+      "familia": "terminal",
+      "true_accion": "terminar",
+      "true_param": null,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (-8.7, -4.2)\n- Distancia a meta: 9.7 metros\n- Fase de mision: en la meta\n- Heading (proa): 30.5 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 295.4 grados\n- Desvio actual: 95.0 grados\n- Velocidad: 4.81 nudos\n- Viento: 15.0 nudos desde 95 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    },
+    {
+      "context_id": "CC002-000444",
+      "familia": "terminal",
+      "true_accion": "terminar",
+      "true_param": null,
+      "pred_accion": "ir_a_punto",
+      "pred_param": [
+        7.2,
+        -12.8
+      ],
+      "acierto": false,
+      "prompt": "Sos el timonel de un velero. Mision: llevar el barco a la meta.\n\nESTADO ACTUAL:\n- Posicion: (0.0, 0.0)\n- Meta: (7.2, -12.8)\n- Distancia a meta: 14.7 metros\n- Fase de mision: en la meta\n- Heading (proa): 101.0 grados (0=norte, 90=este)\n- Rumbo hacia la meta: 29.5 grados\n- Desvio actual: 71.5 grados\n- Velocidad: 6.61 nudos\n- Viento: 5.0 nudos desde 95 grados\n\n\n\nACCIONES DISPONIBLES:\n\n1) corregir_rumbo\n   Que hace: gira la proa del barco hasta un angulo absoluto.\n   Parametro: grados (0-360). 0=norte, 90=este, 180=sur, 270=oeste.\n   Cuando es apropiada: cuando el rumbo actual esta muy desviado del rumbo a la meta.\n   Efecto: el barco no avanza, solo gira.\n\n2) ir_a_punto\n   Que hace: navega hacia coordenadas especificas.\n   Parametro: [x, z].\n   Cuando es apropiada: cuando el barco ya esta razonablemente alineado con la meta\n   y puede avanzar directamente.\n   Efecto: el barco avanza hacia el punto, corrigiendo rumbo automaticamente.\n\n3) frenar\n   Que hace: reduce la velocidad del barco a aproximadamente 0.3 nudos.\n   Parametro: ninguno.\n   Cuando es apropiada: cuando necesitas reducir la velocidad para maniobrar con\n   precision o detenerte suavemente cerca de la meta.\n   NO detiene completamente el barco. Solo lo desacelera.\n   Efecto: el barco pierde velocidad progresivamente.\n\n4) terminar\n   Que hace: declara la mision como cumplida.\n   Parametro: ninguno.\n   Cuando es apropiada: SOLO cuando el barco ya esta dentro del radio de llegada\n   (distancia a meta menor a 15 metros). Fuera de ese radio, es invalida.\n   Efecto: la mision se cierra.\n\nTAREA:\nAnaliza el estado actual y elegi la accion que mejor contribuya al objetivo.\n\n\n\nResponde UNICAMENTE con JSON, sin texto adicional. Formato:\n{\"accion\": \"<accion>\", \"parametro\": <parametro o null>}\n",
+      "respuesta_cruda": "{\"accion\": \"ir_a_punto\", \"parametro\": [7.2, -12.8]}",
+      "respuesta_parseada": {
+        "accion": "ir_a_punto",
+        "parametro": [
+          7.2,
+          -12.8
+        ]
+      },
+      "error": null
+    }
+  ]
+}

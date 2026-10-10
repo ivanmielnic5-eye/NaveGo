@@ -1,0 +1,172 @@
+{
+  "fecha": "2026-10-10T17:03:06.902707",
+  "modelo": "qwen2.5-coder:1.5b",
+  "D": {
+    "test": "D",
+    "n": 20,
+    "resultados": [
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1669.0
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1526.9
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1515.3
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1519.5
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1524.0
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1517.9
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1520.8
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1507.1
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1522.4
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1496.5
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1508.3
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1504.9
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1511.2
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1504.8
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1498.2
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1504.0
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1501.8
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1502.5
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1519.7
+      },
+      {
+        "accion": "ir_a_punto",
+        "parametro": [
+          100.0,
+          100.0
+        ],
+        "load_ms": 1515.0
+      }
+    ],
+    "unicas": 1
+  },
+  "duracion_s": 68.4
+}

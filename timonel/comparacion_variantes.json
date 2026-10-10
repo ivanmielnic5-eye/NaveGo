@@ -1,0 +1,83 @@
+{
+  "fecha": "2026-10-10T18:15:40.085170",
+  "modelo": "llama3.1:8b",
+  "seed": 777,
+  "n": 20,
+  "resultados": {
+    "VA": {
+      "accuracy": 0.25,
+      "aciertos": 5,
+      "total": 20,
+      "por_accion_ok": {
+        "corregir_rumbo": 5
+      },
+      "por_accion_total": {
+        "ir_a_punto": 5,
+        "frenar": 5,
+        "corregir_rumbo": 5,
+        "terminar": 5
+      },
+      "uso_acciones": {
+        "corregir_rumbo": 20
+      },
+      "duracion_s": 44.1
+    },
+    "VB": {
+      "accuracy": 0.25,
+      "aciertos": 5,
+      "total": 20,
+      "por_accion_ok": {
+        "ir_a_punto": 5
+      },
+      "por_accion_total": {
+        "ir_a_punto": 5,
+        "frenar": 5,
+        "corregir_rumbo": 5,
+        "terminar": 5
+      },
+      "uso_acciones": {
+        "ir_a_punto": 20
+      },
+      "duracion_s": 72.8
+    },
+    "VC": {
+      "accuracy": 0.05,
+      "aciertos": 1,
+      "total": 20,
+      "por_accion_ok": {
+        "ir_a_punto": 1
+      },
+      "por_accion_total": {
+        "ir_a_punto": 5,
+        "frenar": 5,
+        "corregir_rumbo": 5,
+        "terminar": 5
+      },
+      "uso_acciones": {
+        "ir_a_punto": 1,
+        "_error_": 19
+      },
+      "duracion_s": 155.5
+    },
+    "VD": {
+      "accuracy": 0.05,
+      "aciertos": 1,
+      "total": 20,
+      "por_accion_ok": {
+        "corregir_rumbo": 1
+      },
+      "por_accion_total": {
+        "ir_a_punto": 5,
+        "frenar": 5,
+        "corregir_rumbo": 5,
+        "terminar": 5
+      },
+      "uso_acciones": {
+        "_error_": 15,
+        "corregir_rumbo": 4,
+        "ir_a_punto": 1
+      },
+      "duracion_s": 123.5
+    }
+  }
+}

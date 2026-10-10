@@ -1,0 +1,122 @@
+[
+  {
+    "context_id": "CC002-000566",
+    "true_accion": "corregir_rumbo",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000618",
+    "true_accion": "corregir_rumbo",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-002124",
+    "true_accion": "corregir_rumbo",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-001547",
+    "true_accion": "ir_a_punto",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000043",
+    "true_accion": "ir_a_punto",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-002254",
+    "true_accion": "ir_a_punto",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000092",
+    "true_accion": "frenar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000808",
+    "true_accion": "frenar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-002256",
+    "true_accion": "frenar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-001955",
+    "true_accion": "terminar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000444",
+    "true_accion": "terminar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  },
+  {
+    "context_id": "CC002-000847",
+    "true_accion": "terminar",
+    "crudo": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'",
+    "parsed": {
+      "_error": "sin_json",
+      "_raw": "ERROR_CHAT: module 'agente_llm' has no attribute '_consultar_via_chat'"
+    },
+    "tipo_error": "FORMAT_ERROR"
+  }
+]

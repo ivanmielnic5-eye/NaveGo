@@ -1,0 +1,133 @@
+{
+  "fecha": "2026-10-10",
+  "contexto": "Pruebas de prompt para Llama 3.1 8b sobre casos controlados",
+  "variantes": [
+    {
+      "nombre": "V1",
+      "descripcion": "system minimo + user corto",
+      "reglas_en_prompt": false,
+      "casos": {
+        "desalineado": {
+          "esperado": "corregir_rumbo",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": true
+        },
+        "alineado": {
+          "esperado": "ir_a_punto",
+          "recibido": "ir_a_punto (sin parametro)",
+          "ok": "parcial"
+        },
+        "terminal": {
+          "esperado": "terminar",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": false
+        }
+      },
+      "aciertos": "1.5/3"
+    },
+    {
+      "nombre": "V2",
+      "descripcion": "system reforzado + prompt medio",
+      "reglas_en_prompt": false,
+      "casos": {
+        "desalineado": {
+          "esperado": "corregir_rumbo",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": true
+        },
+        "alineado": {
+          "esperado": "ir_a_punto",
+          "recibido": "corregir_rumbo [45,0]",
+          "ok": false
+        },
+        "terminal": {
+          "esperado": "terminar",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": false
+        }
+      },
+      "aciertos": "1/3"
+    },
+    {
+      "nombre": "V3",
+      "descripcion": "few-shot en user (3 ejemplos)",
+      "reglas_en_prompt": "few-shot",
+      "casos": {
+        "desalineado": {
+          "esperado": "corregir_rumbo",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": true
+        },
+        "alineado": {
+          "esperado": "ir_a_punto",
+          "recibido": "ir_a_punto [100,100]",
+          "ok": true
+        },
+        "terminal": {
+          "esperado": "terminar",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": false
+        }
+      },
+      "aciertos": "2/3"
+    },
+    {
+      "nombre": "V4",
+      "descripcion": "fase prominente (>>>FASE<<<) sin contrato completo",
+      "reglas_en_prompt": false,
+      "casos": {
+        "terminal_7m": {
+          "esperado": "terminar",
+          "recibido": "terminar",
+          "ok": true
+        },
+        "terminal_12m": {
+          "esperado": "terminar",
+          "recibido": "terminar",
+          "ok": true
+        },
+        "alineado": {
+          "esperado": "ir_a_punto",
+          "recibido": "corregir_rumbo 45.0",
+          "ok": false
+        }
+      },
+      "aciertos": "2/3"
+    },
+    {
+      "nombre": "V5",
+      "descripcion": "fase prominente + contrato completo CON reglas 'cuando'",
+      "reglas_en_prompt": true,
+      "casos": {
+        "terminal_7m": {
+          "esperado": "terminar",
+          "recibido": "terminar null",
+          "ok": true
+        },
+        "terminal_12m": {
+          "esperado": "terminar",
+          "recibido": "terminar null",
+          "ok": true
+        },
+        "alineado": {
+          "esperado": "ir_a_punto",
+          "recibido": "corregir_rumbo null",
+          "ok": false
+        },
+        "desalineado": {
+          "esperado": "corregir_rumbo",
+          "recibido": "corregir_rumbo null",
+          "ok": true
+        }
+      },
+      "aciertos": "3/4",
+      "problema_extra": "parametro null cuando corresponde dar uno"
+    }
+  ],
+  "hallazgo_central": "La variante que mejor acierta incluye reglas condicionales 'cuando X'. Eso convierte la medicion de discriminacion en medicion de obediencia. Sin reglas, los modelos no discriminan. Tension conceptual no resuelta.",
+  "contexto_qwen": {
+    "1.5b": "30% accuracy, usa 2 de 4 acciones",
+    "3b": "25% accuracy, colapsa a corregir_rumbo",
+    "7b": "25% accuracy, colapsa a corregir_rumbo"
+  }
+}
