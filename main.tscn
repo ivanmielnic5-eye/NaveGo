@@ -76,10 +76,8 @@ mesh = SubResource("PlaneMesh_water")
 transform = Transform3D(-0.1, 0, 0, 0, 0.1, 0, 0, 0, -0.1, 0, 0, 0)
 script = ExtResource("3_wind")
 target_path = NodePath("../SailboatBody")
-wind_speed_ms = 20.0
 wind_strength = 0.5
 gust_amplitude = 0.3
-gust_frequency = 1.5
 direction_variation = 0.0
 
 [node name="SailboatBody" type="RigidBody3D" parent="." unique_id=1325920536]

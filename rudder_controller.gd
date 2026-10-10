@@ -3,7 +3,7 @@ extends Node
 @export var angulo_maximo : float = 35.0
 @export var velocidad_giro : float = 60.0
 @export var nombre_timon : String = "Timon"
-@export var torque_max : float = 3000.0
+@export var torque_max : float = 5500.0
 @export var velocidad_min_efecto : float = 0.5
 @export var invertir : bool = false
 

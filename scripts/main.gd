@@ -74,11 +74,12 @@ func _physics_process(delta):
 	if Input.is_key_pressed(KEY_W):
 		apply_force += forward * force
 	if Input.is_key_pressed(KEY_S):
-		apply_force += -forward * force
-	if Input.is_key_pressed(KEY_A):
-		apply_torque += Vector3.UP * torque
-	if Input.is_key_pressed(KEY_D):
-		apply_torque += -Vector3.UP * torque
+		apply_force += -forward * force# A/D ahora los maneja rudder_controller.gd
+# 
+# 	if Input.is_key_pressed(KEY_A):
+# 		apply_torque += Vector3.UP * torque
+# 	if Input.is_key_pressed(KEY_D):
+# 		apply_torque += -Vector3.UP * torque
 
 	if apply_force != Vector3.ZERO:
 		sailboat.apply_central_force(apply_force)
