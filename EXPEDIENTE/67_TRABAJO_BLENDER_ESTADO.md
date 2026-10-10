@@ -218,3 +218,33 @@ Objetos MESH:
 ### Comando de arranque del hilo nuevo
 
 ~/.logos/bin/logos-arranque
+
+---
+
+## ACTUALIZACION 2026-10-10 (mañana) — TIMON FISICO FUNCIONAL
+
+### Estado del timon en Godot
+
+- Timon visual (nodo `Timon` dentro de Sketchfab) gira con A/D.
+- `RudderController` (nodo Node, hijo de Main) aplica torque fisico
+  proporcional al angulo del timon Y a la velocidad del barco.
+- Valor final: `torque_max = 5500` en rudder_controller.gd.
+- Doble torque A/D de main.gd desactivado (estaba duplicando).
+
+### Medicion validada
+
+- Vuelta 360 grados a 9.1 nudos: ~70 segundos.
+- Radio de giro ~28m a esa velocidad.
+- A 5 nudos el radio baja a ~15m, mismo tiempo aprox.
+- Rango REALISTA para velero de 10m.
+
+### Lo que cambio respecto a ayer
+
+- Ayer: 30s por vuelta (irreal, giraba como lancha).
+- Hoy: 70s por vuelta (realista, fisica de velero).
+
+### Pendiente
+
+- Timonel no maneja velas todavia (solo timon y avance).
+- Extender protocolo para que Timonel pueda decidir angulo de vela.
+- Conectar `consultar_dsh()` al main() de timonel.py (Fase 3).
