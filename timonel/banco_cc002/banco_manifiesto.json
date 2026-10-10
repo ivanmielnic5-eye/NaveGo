@@ -1,0 +1,29 @@
+{
+  "version": "CC002-1.0",
+  "fecha_generacion": "2026-10-10T16:50:24.329878",
+  "seed": 42,
+  "oracle_version": "2.0",
+  "umbral_unicidad_m": 2.0,
+  "n_candidatos_generados": 3000,
+  "n_contextos_finales": 600,
+  "n_descartados": {
+    "margen_insuficiente": 290,
+    "terminal_invalido": 422
+  },
+  "split_counts": {
+    "desarrollo": 300,
+    "confirmatorio": 300
+  },
+  "accion_counts": {
+    "corregir_rumbo": 194,
+    "ir_a_punto": 1346,
+    "frenar": 237,
+    "terminar": 511
+  },
+  "familia_counts": {
+    "cerca": 225,
+    "medio": 785,
+    "terminal": 511,
+    "lejos": 767
+  }
+}
