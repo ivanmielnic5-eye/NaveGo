@@ -20,6 +20,16 @@ Este memo consolida:
 
 Es el documento de referencia del proyecto a partir de ahora.
 
+> **PREMISA FUNDAMENTAL DEL PROYECTO (2026-10-11)**
+>
+> La calidad se busca activamente en todas las áreas del sistema.
+> No se aceptan autolimitaciones por inercia.
+> Al tocar cualquier módulo, se revisan los supuestos heredados antes
+> de aceptarlos.
+
+---
+
+
 ---
 
 ## 1. USO PREVISTO DE POLARIS (Opcion B)
@@ -214,6 +224,16 @@ Criterio de "terminado" del paso 3:
 
 9. No usar el confirmatorio para decidir diseño. Si se uso para
    diagnostico, generar uno nuevo con semillas nuevas.
+
+10. **Revision de supuestos heredados.** Al modificar cualquier modulo del
+    sistema, revisar y declarar el estatus de cada supuesto heredado:
+    - justificado (se documenta la razon y sigue igual)
+    - inercia (se cambia con criterio)
+    - sin justificar (se investiga antes de tocarlo)
+
+    Los marcados como inercia se corrigen. Los marcados como sin justificar
+    se investigan. Los justificados se preservan.
+
 
 ---
 
