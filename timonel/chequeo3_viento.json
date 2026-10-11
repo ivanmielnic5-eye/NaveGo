@@ -1,0 +1,406 @@
+{
+  "fecha": "2026-10-11T11:25:07.629582",
+  "cambios_totales": 0,
+  "resultados": [
+    {
+      "context_id": "CC002-000566",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 23.8
+    },
+    {
+      "context_id": "CC002-000618",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 144.2
+    },
+    {
+      "context_id": "CC002-002124",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 210.7
+    },
+    {
+      "context_id": "CC002-001989",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 62.8
+    },
+    {
+      "context_id": "CC002-001426",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 227.2
+    },
+    {
+      "context_id": "CC002-001347",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 240.9
+    },
+    {
+      "context_id": "CC002-001010",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 167.7
+    },
+    {
+      "context_id": "CC002-000682",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-001473",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 196.1
+    },
+    {
+      "context_id": "CC002-000134",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 238.3
+    },
+    {
+      "context_id": "CC002-001730",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 137.1
+    },
+    {
+      "context_id": "CC002-001654",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 262.7
+    },
+    {
+      "context_id": "CC002-000806",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 0.7
+    },
+    {
+      "context_id": "CC002-000102",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 324.4
+    },
+    {
+      "context_id": "CC002-000613",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 78.6
+    },
+    {
+      "context_id": "CC002-001341",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-002285",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 90.7
+    },
+    {
+      "context_id": "CC002-000163",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 292.9
+    },
+    {
+      "context_id": "CC002-001811",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-000086",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 249.7
+    },
+    {
+      "context_id": "CC002-001017",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 127.7
+    },
+    {
+      "context_id": "CC002-000084",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 186.8
+    },
+    {
+      "context_id": "CC002-001259",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 56.5
+    },
+    {
+      "context_id": "CC002-001183",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 80.7
+    },
+    {
+      "context_id": "CC002-001526",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 127.2
+    },
+    {
+      "context_id": "CC002-000712",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 333.9
+    },
+    {
+      "context_id": "CC002-000625",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-000161",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 15.7
+    },
+    {
+      "context_id": "CC002-000366",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 202.1
+    },
+    {
+      "context_id": "CC002-000059",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 251.8
+    },
+    {
+      "context_id": "CC002-000779",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 298.2
+    },
+    {
+      "context_id": "CC002-002240",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 308.0
+    },
+    {
+      "context_id": "CC002-001251",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 74.6
+    },
+    {
+      "context_id": "CC002-001247",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 144.3
+    },
+    {
+      "context_id": "CC002-000050",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 323.0
+    },
+    {
+      "context_id": "CC002-001107",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 36.3
+    },
+    {
+      "context_id": "CC002-002229",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 316.2
+    },
+    {
+      "context_id": "CC002-000650",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 180.5
+    },
+    {
+      "context_id": "CC002-001599",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-001331",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 10.0,
+      "viento_dir": 0.1
+    },
+    {
+      "context_id": "CC002-001380",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 145.5
+    },
+    {
+      "context_id": "CC002-000283",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 59.8
+    },
+    {
+      "context_id": "CC002-000477",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 345.1
+    },
+    {
+      "context_id": "CC002-001073",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 0.0,
+      "viento_dir": 0.0
+    },
+    {
+      "context_id": "CC002-002050",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 107.3
+    },
+    {
+      "context_id": "CC002-000858",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 128.9
+    },
+    {
+      "context_id": "CC002-000436",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 193.4
+    },
+    {
+      "context_id": "CC002-000980",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 345.5
+    },
+    {
+      "context_id": "CC002-001490",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 175.0
+    },
+    {
+      "context_id": "CC002-001013",
+      "g_con_viento": "ir_a_punto",
+      "g_sin_viento": "ir_a_punto",
+      "cambio": false,
+      "viento_kn": 15.0,
+      "viento_dir": 76.8
+    }
+  ]
+}

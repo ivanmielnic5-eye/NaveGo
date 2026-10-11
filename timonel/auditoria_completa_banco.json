@@ -1,0 +1,2406 @@
+{
+  "fecha": "2026-10-11T10:59:48.257039",
+  "total": 300,
+  "resultados": [
+    {
+      "context_id": "CC002-000566",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000618",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002124",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001989",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001426",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000914",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001347",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001519",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001010",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000682",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000907",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001778",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001473",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000134",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000354",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001487",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001730",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001253",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001123",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001654",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000806",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000102",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000613",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001341",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002285",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000163",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001811",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000086",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001826",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001746",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000088",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001017",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000084",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001259",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001183",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001526",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000712",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000625",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000161",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000366",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000059",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000779",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002240",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001251",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001247",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000440",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000050",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001107",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002229",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000001",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000650",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000657",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000100",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001599",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001887",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001331",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001884",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001380",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000273",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000283",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000477",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001073",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002235",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002050",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000858",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000925",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000436",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000853",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002149",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000370",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002084",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000980",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000118",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "corregir_rumbo",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001490",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001013",
+      "etiqueta_original": "corregir_rumbo",
+      "ganadora_45s": "corregir_rumbo",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001547",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000043",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002254",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001670",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002021",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002137",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000024",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002227",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002251",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001169",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002018",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001993",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002202",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000501",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001771",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001572",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001099",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002273",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002269",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000065",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000450",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001098",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001321",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000496",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001021",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002067",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002024",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002120",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000136",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000772",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000182",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000569",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002236",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000345",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001602",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001690",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001709",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001530",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000185",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001921",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000537",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001500",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002035",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001358",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000107",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002180",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000963",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002016",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001636",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000991",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000782",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001381",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001717",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000942",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000289",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001863",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001856",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001501",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001345",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000287",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001112",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001216",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001631",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001770",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000920",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001848",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002080",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000120",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001161",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001471",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001604",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002210",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001263",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000458",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001029",
+      "etiqueta_original": "ir_a_punto",
+      "ganadora_45s": "ir_a_punto",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": false,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000092",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000808",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002256",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002166",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001266",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001088",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000165",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000393",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001494",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002170",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001391",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000371",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001734",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001463",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000347",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000722",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001444",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000668",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000438",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001749",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002158",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001485",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001397",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000869",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002183",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001288",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000231",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000828",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000977",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002214",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000474",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000302",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001368",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000644",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000961",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001698",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000689",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002192",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001392",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000158",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002144",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001486",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000608",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002186",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000892",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000493",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001570",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000656",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000621",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000098",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001077",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000327",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000946",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000786",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001280",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001068",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000753",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000840",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001238",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001767",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001226",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002195",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000409",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001813",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001557",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000966",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002006",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000774",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001844",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001635",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002108",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001835",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001097",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001201",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001339",
+      "etiqueta_original": "frenar",
+      "ganadora_45s": "frenar",
+      "ganadora_240s": "ir_a_punto",
+      "cambia": true,
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001955",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000444",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000847",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000293",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000551",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001736",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000036",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001845",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002232",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001394",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001601",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001931",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001916",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002173",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001012",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000057",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000191",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000793",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001285",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000204",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001139",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001181",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000542",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000027",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000643",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000816",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001416",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001304",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001036",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002215",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000638",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001014",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000363",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000430",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001043",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000556",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000090",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000517",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001244",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001972",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000053",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000258",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000634",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000564",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000923",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000472",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000758",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001040",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000912",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001783",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001794",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001343",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001687",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001186",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001926",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000955",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002039",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001121",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001980",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000062",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000212",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000083",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001949",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000834",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001568",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001646",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001823",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001100",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002242",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-002152",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001398",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000867",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001933",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-000823",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    },
+    {
+      "context_id": "CC002-001732",
+      "etiqueta_original": "terminar",
+      "ganadora_45s": "terminar",
+      "ganadora_240s": "terminar",
+      "cambia": false,
+      "familia": "terminal"
+    }
+  ]
+}

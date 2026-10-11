@@ -114,3 +114,6 @@ logs/
 # Python
 __pycache__/
 *.pyc
+
+# Adaptadores LoRA descargados de Kaggle (971 MB, no van al repo)
+timonel/lora_descarga/

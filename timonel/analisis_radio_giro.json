@@ -1,0 +1,645 @@
+{
+  "fecha": "2026-10-11T11:11:35.782180",
+  "total_corregir_rumbo": 75,
+  "cambian": 50,
+  "no_cambian": 25,
+  "dist_cambian": {
+    "n": 50,
+    "min": 18.12,
+    "max": 248.11,
+    "media": 143.47,
+    "mediana": 144.37
+  },
+  "dist_no_cambian": {
+    "n": 25,
+    "min": 15.08,
+    "max": 169.02,
+    "media": 25.19,
+    "mediana": 18.51
+  },
+  "desv_cambian": {
+    "n": 50,
+    "min": 35.85,
+    "max": 158.88,
+    "media": 100.06,
+    "mediana": 95.45
+  },
+  "desv_no_cambian": {
+    "n": 25,
+    "min": 11.59,
+    "max": 94.3,
+    "media": 33.99,
+    "mediana": 30.1
+  },
+  "fam_cambian": {
+    "medio": 24,
+    "lejos": 24,
+    "cerca": 2
+  },
+  "fam_no_cambian": {
+    "cerca": 24,
+    "lejos": 1
+  },
+  "detalle": [
+    {
+      "context_id": "CC002-000566",
+      "cambia": true,
+      "dist": 145.47,
+      "desv": 158.88,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000618",
+      "cambia": true,
+      "dist": 128.28,
+      "desv": 132.41,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-002124",
+      "cambia": true,
+      "dist": 150.61,
+      "desv": 80.14,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001989",
+      "cambia": true,
+      "dist": 91.13,
+      "desv": 127.28,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001426",
+      "cambia": true,
+      "dist": 95.16,
+      "desv": 58.13,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000914",
+      "cambia": false,
+      "dist": 19.7,
+      "desv": 20.42,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001347",
+      "cambia": true,
+      "dist": 123.28,
+      "desv": 62.59,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001519",
+      "cambia": false,
+      "dist": 19.49,
+      "desv": 57.05,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001010",
+      "cambia": true,
+      "dist": 215.65,
+      "desv": 125.6,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000682",
+      "cambia": true,
+      "dist": 228.51,
+      "desv": 93.01,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000907",
+      "cambia": false,
+      "dist": 15.99,
+      "desv": 39.62,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001778",
+      "cambia": false,
+      "dist": 18.0,
+      "desv": 12.99,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001473",
+      "cambia": true,
+      "dist": 189.5,
+      "desv": 71.32,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000134",
+      "cambia": true,
+      "dist": 51.56,
+      "desv": 106.31,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000354",
+      "cambia": false,
+      "dist": 17.9,
+      "desv": 40.61,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001487",
+      "cambia": false,
+      "dist": 15.25,
+      "desv": 29.45,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001730",
+      "cambia": true,
+      "dist": 222.51,
+      "desv": 73.51,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001253",
+      "cambia": false,
+      "dist": 22.59,
+      "desv": 41.55,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001123",
+      "cambia": false,
+      "dist": 18.51,
+      "desv": 30.1,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001654",
+      "cambia": true,
+      "dist": 101.85,
+      "desv": 94.01,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000806",
+      "cambia": true,
+      "dist": 248.11,
+      "desv": 57.62,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000102",
+      "cambia": true,
+      "dist": 69.56,
+      "desv": 64.2,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000613",
+      "cambia": true,
+      "dist": 62.15,
+      "desv": 91.02,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001341",
+      "cambia": true,
+      "dist": 131.21,
+      "desv": 96.89,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-002285",
+      "cambia": true,
+      "dist": 79.4,
+      "desv": 125.74,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000163",
+      "cambia": true,
+      "dist": 196.3,
+      "desv": 144.96,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001811",
+      "cambia": true,
+      "dist": 170.2,
+      "desv": 147.56,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000086",
+      "cambia": true,
+      "dist": 110.96,
+      "desv": 77.92,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001826",
+      "cambia": false,
+      "dist": 29.9,
+      "desv": 30.76,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001746",
+      "cambia": false,
+      "dist": 19.37,
+      "desv": 20.57,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000088",
+      "cambia": false,
+      "dist": 16.59,
+      "desv": 14.39,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001017",
+      "cambia": true,
+      "dist": 113.49,
+      "desv": 76.8,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000084",
+      "cambia": true,
+      "dist": 172.99,
+      "desv": 82.54,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001259",
+      "cambia": true,
+      "dist": 67.9,
+      "desv": 127.03,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001183",
+      "cambia": true,
+      "dist": 185.97,
+      "desv": 67.95,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001526",
+      "cambia": true,
+      "dist": 179.25,
+      "desv": 147.75,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000712",
+      "cambia": true,
+      "dist": 140.7,
+      "desv": 74.17,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000625",
+      "cambia": true,
+      "dist": 143.28,
+      "desv": 128.48,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000161",
+      "cambia": true,
+      "dist": 134.22,
+      "desv": 156.31,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000366",
+      "cambia": true,
+      "dist": 208.71,
+      "desv": 106.14,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000059",
+      "cambia": true,
+      "dist": 71.06,
+      "desv": 129.3,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000779",
+      "cambia": true,
+      "dist": 60.25,
+      "desv": 116.73,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-002240",
+      "cambia": true,
+      "dist": 195.65,
+      "desv": 126.03,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001251",
+      "cambia": true,
+      "dist": 157.09,
+      "desv": 83.36,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001247",
+      "cambia": true,
+      "dist": 245.36,
+      "desv": 54.48,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000440",
+      "cambia": false,
+      "dist": 15.08,
+      "desv": 19.2,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000050",
+      "cambia": true,
+      "dist": 158.97,
+      "desv": 77.22,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001107",
+      "cambia": true,
+      "dist": 161.99,
+      "desv": 109.74,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-002229",
+      "cambia": true,
+      "dist": 43.35,
+      "desv": 50.72,
+      "familia": "cerca",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000001",
+      "cambia": false,
+      "dist": 20.88,
+      "desv": 18.65,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000650",
+      "cambia": true,
+      "dist": 174.86,
+      "desv": 76.96,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000657",
+      "cambia": false,
+      "dist": 26.12,
+      "desv": 37.02,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000100",
+      "cambia": false,
+      "dist": 16.95,
+      "desv": 29.33,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001599",
+      "cambia": true,
+      "dist": 233.88,
+      "desv": 89.52,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001887",
+      "cambia": false,
+      "dist": 17.35,
+      "desv": 19.08,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001331",
+      "cambia": true,
+      "dist": 243.42,
+      "desv": 153.27,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001884",
+      "cambia": false,
+      "dist": 16.38,
+      "desv": 16.67,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001380",
+      "cambia": true,
+      "dist": 81.4,
+      "desv": 133.9,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000273",
+      "cambia": false,
+      "dist": 16.04,
+      "desv": 22.88,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000283",
+      "cambia": true,
+      "dist": 70.68,
+      "desv": 80.2,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000477",
+      "cambia": true,
+      "dist": 159.01,
+      "desv": 103.99,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001073",
+      "cambia": true,
+      "dist": 247.6,
+      "desv": 82.5,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-002235",
+      "cambia": false,
+      "dist": 18.92,
+      "desv": 52.71,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-002050",
+      "cambia": true,
+      "dist": 141.51,
+      "desv": 117.46,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000858",
+      "cambia": true,
+      "dist": 54.59,
+      "desv": 122.34,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000925",
+      "cambia": false,
+      "dist": 25.52,
+      "desv": 37.77,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000436",
+      "cambia": true,
+      "dist": 18.12,
+      "desv": 35.85,
+      "familia": "cerca",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000853",
+      "cambia": false,
+      "dist": 18.24,
+      "desv": 46.43,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-002149",
+      "cambia": false,
+      "dist": 19.2,
+      "desv": 60.95,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000370",
+      "cambia": false,
+      "dist": 169.02,
+      "desv": 94.3,
+      "familia": "lejos",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-002084",
+      "cambia": false,
+      "dist": 19.4,
+      "desv": 45.69,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-000980",
+      "cambia": true,
+      "dist": 184.51,
+      "desv": 110.56,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-000118",
+      "cambia": false,
+      "dist": 17.45,
+      "desv": 11.59,
+      "familia": "cerca",
+      "ganadora_240s": "corregir_rumbo"
+    },
+    {
+      "context_id": "CC002-001490",
+      "cambia": true,
+      "dist": 115.28,
+      "desv": 101.43,
+      "familia": "medio",
+      "ganadora_240s": "ir_a_punto"
+    },
+    {
+      "context_id": "CC002-001013",
+      "cambia": true,
+      "dist": 196.93,
+      "desv": 91.39,
+      "familia": "lejos",
+      "ganadora_240s": "ir_a_punto"
+    }
+  ]
+}

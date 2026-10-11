@@ -1,0 +1,939 @@
+{
+  "fecha": "2026-10-11T10:48:05.528950",
+  "configs": {
+    "orig": [
+      5.0,
+      15.0,
+      30.0,
+      45.0
+    ],
+    "ext_90": [
+      5.0,
+      15.0,
+      30.0,
+      45.0,
+      60.0,
+      90.0
+    ],
+    "ext_120": [
+      5.0,
+      15.0,
+      30.0,
+      45.0,
+      60.0,
+      90.0,
+      120.0
+    ]
+  },
+  "cambios_90": 29,
+  "cambios_120": 39,
+  "cambios_90_vs_120": 10,
+  "resultados": {
+    "orig": [
+      {
+        "context_id": "CC002-000566",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000618",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002124",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001989",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001426",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000914",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001347",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001519",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001010",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000682",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000907",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001778",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001473",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000134",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000354",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001487",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001730",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001253",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001123",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001654",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000806",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000102",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000613",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001341",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002285",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000163",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001811",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000086",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001826",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001746",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000088",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001017",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000084",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001259",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001183",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001526",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000712",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000625",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000161",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000366",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000059",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000779",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002240",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001251",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001247",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000440",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000050",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001107",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002229",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000001",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000650",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000657",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000100",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001599",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001887",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001331",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001884",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001380",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000273",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000283",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000477",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001073",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002235",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002050",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000858",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000925",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000436",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000853",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002149",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000370",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002084",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000980",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000118",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001490",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001013",
+        "ganadora": "corregir_rumbo"
+      }
+    ],
+    "ext_90": [
+      {
+        "context_id": "CC002-000566",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000618",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002124",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001989",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001426",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000914",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001347",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001519",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001010",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000682",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000907",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001778",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001473",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000134",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000354",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001487",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001730",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001253",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001123",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001654",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000806",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000102",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000613",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001341",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002285",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000163",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001811",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000086",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001826",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001746",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000088",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001017",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000084",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001259",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001183",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001526",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000712",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000625",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000161",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000366",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000059",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000779",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002240",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001251",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001247",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000440",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000050",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001107",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002229",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000001",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000650",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000657",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000100",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001599",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001887",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001331",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001884",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001380",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000273",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000283",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000477",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001073",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002235",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002050",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000858",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000925",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000436",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000853",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002149",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000370",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002084",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000980",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000118",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001490",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001013",
+        "ganadora": "corregir_rumbo"
+      }
+    ],
+    "ext_120": [
+      {
+        "context_id": "CC002-000566",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000618",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002124",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001989",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001426",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000914",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001347",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001519",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001010",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000682",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000907",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001778",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001473",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000134",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000354",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001487",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001730",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001253",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001123",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001654",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000806",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000102",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000613",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001341",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002285",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000163",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001811",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000086",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001826",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001746",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000088",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001017",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000084",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001259",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001183",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001526",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000712",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000625",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000161",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000366",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000059",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000779",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002240",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001251",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001247",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000440",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000050",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001107",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002229",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000001",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000650",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000657",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000100",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001599",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001887",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001331",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001884",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001380",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000273",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000283",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000477",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001073",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-002235",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002050",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000858",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000925",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000436",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-000853",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002149",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000370",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-002084",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000980",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-000118",
+        "ganadora": "corregir_rumbo"
+      },
+      {
+        "context_id": "CC002-001490",
+        "ganadora": "ir_a_punto"
+      },
+      {
+        "context_id": "CC002-001013",
+        "ganadora": "ir_a_punto"
+      }
+    ]
+  }
+}

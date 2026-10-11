@@ -1,0 +1,407 @@
+{
+  "fecha": "2026-10-11T11:19:32.126566",
+  "margenes": [
+    72.212,
+    48.181,
+    0.608,
+    52.808,
+    1.33,
+    95.382,
+    90.73,
+    73.746,
+    40.364,
+    20.359,
+    30.347,
+    7.092,
+    10.293,
+    22.61,
+    39.466,
+    96.813,
+    31.81,
+    97.62,
+    90.748,
+    46.875,
+    86.581,
+    92.582,
+    8.677,
+    53.389,
+    104.965,
+    54.006,
+    100.038,
+    40.574,
+    92.38,
+    32.312,
+    23.41,
+    88.552,
+    20.934,
+    40.216,
+    39.069,
+    88.427,
+    25.958,
+    21.508,
+    73.383,
+    127.467,
+    29.537,
+    7.611,
+    43.608,
+    68.418,
+    61.774,
+    27.459,
+    1.049,
+    115.907,
+    74.253,
+    16.016
+  ],
+  "detalles": [
+    {
+      "context_id": "CC002-000566",
+      "mejor": "ir_a_punto",
+      "margen": 72.212,
+      "p_ir_a_punto": 131.84,
+      "p_corregir_rumbo": 28.7
+    },
+    {
+      "context_id": "CC002-000618",
+      "mejor": "ir_a_punto",
+      "margen": 48.181,
+      "p_ir_a_punto": 115.8,
+      "p_corregir_rumbo": 46.9
+    },
+    {
+      "context_id": "CC002-002124",
+      "mejor": "ir_a_punto",
+      "margen": 0.608,
+      "p_ir_a_punto": 136.55,
+      "p_corregir_rumbo": 128.97
+    },
+    {
+      "context_id": "CC002-001989",
+      "mejor": "ir_a_punto",
+      "margen": 52.808,
+      "p_ir_a_punto": 76.15,
+      "p_corregir_rumbo": -200.38
+    },
+    {
+      "context_id": "CC002-001426",
+      "mejor": "ir_a_punto",
+      "margen": 1.33,
+      "p_ir_a_punto": 82.06,
+      "p_corregir_rumbo": 77.57
+    },
+    {
+      "context_id": "CC002-001347",
+      "mejor": "ir_a_punto",
+      "margen": 95.382,
+      "p_ir_a_punto": 109.98,
+      "p_corregir_rumbo": -67.74
+    },
+    {
+      "context_id": "CC002-001010",
+      "mejor": "ir_a_punto",
+      "margen": 90.73,
+      "p_ir_a_punto": 200.84,
+      "p_corregir_rumbo": 57.03
+    },
+    {
+      "context_id": "CC002-000682",
+      "mejor": "ir_a_punto",
+      "margen": 73.746,
+      "p_ir_a_punto": 213.63,
+      "p_corregir_rumbo": -41.03
+    },
+    {
+      "context_id": "CC002-001473",
+      "mejor": "ir_a_punto",
+      "margen": 40.364,
+      "p_ir_a_punto": 176.34,
+      "p_corregir_rumbo": 56.24
+    },
+    {
+      "context_id": "CC002-000134",
+      "mejor": "ir_a_punto",
+      "margen": 20.359,
+      "p_ir_a_punto": 37.26,
+      "p_corregir_rumbo": 9.27
+    },
+    {
+      "context_id": "CC002-001730",
+      "mejor": "ir_a_punto",
+      "margen": 30.347,
+      "p_ir_a_punto": 208.23,
+      "p_corregir_rumbo": 135.44
+    },
+    {
+      "context_id": "CC002-001654",
+      "mejor": "ir_a_punto",
+      "margen": 7.092,
+      "p_ir_a_punto": 87.1,
+      "p_corregir_rumbo": 68.65
+    },
+    {
+      "context_id": "CC002-000806",
+      "mejor": "ir_a_punto",
+      "margen": 10.293,
+      "p_ir_a_punto": 233.55,
+      "p_corregir_rumbo": 120.65
+    },
+    {
+      "context_id": "CC002-000102",
+      "mejor": "ir_a_punto",
+      "margen": 22.61,
+      "p_ir_a_punto": 56.24,
+      "p_corregir_rumbo": 24.15
+    },
+    {
+      "context_id": "CC002-000613",
+      "mejor": "ir_a_punto",
+      "margen": 39.466,
+      "p_ir_a_punto": 48.11,
+      "p_corregir_rumbo": -435.28
+    },
+    {
+      "context_id": "CC002-001341",
+      "mejor": "ir_a_punto",
+      "margen": 96.813,
+      "p_ir_a_punto": 117.6,
+      "p_corregir_rumbo": -229.73
+    },
+    {
+      "context_id": "CC002-002285",
+      "mejor": "ir_a_punto",
+      "margen": 31.81,
+      "p_ir_a_punto": 65.97,
+      "p_corregir_rumbo": 21.32
+    },
+    {
+      "context_id": "CC002-000163",
+      "mejor": "ir_a_punto",
+      "margen": 97.62,
+      "p_ir_a_punto": 182.35,
+      "p_corregir_rumbo": 36.34
+    },
+    {
+      "context_id": "CC002-001811",
+      "mejor": "ir_a_punto",
+      "margen": 90.748,
+      "p_ir_a_punto": 156.54,
+      "p_corregir_rumbo": -129.57
+    },
+    {
+      "context_id": "CC002-000086",
+      "mejor": "ir_a_punto",
+      "margen": 46.875,
+      "p_ir_a_punto": 97.09,
+      "p_corregir_rumbo": 30.25
+    },
+    {
+      "context_id": "CC002-001017",
+      "mejor": "ir_a_punto",
+      "margen": 86.581,
+      "p_ir_a_punto": 99.17,
+      "p_corregir_rumbo": -56.94
+    },
+    {
+      "context_id": "CC002-000084",
+      "mejor": "ir_a_punto",
+      "margen": 92.582,
+      "p_ir_a_punto": 159.91,
+      "p_corregir_rumbo": 27.2
+    },
+    {
+      "context_id": "CC002-001259",
+      "mejor": "ir_a_punto",
+      "margen": 8.677,
+      "p_ir_a_punto": 54.77,
+      "p_corregir_rumbo": 33.21
+    },
+    {
+      "context_id": "CC002-001183",
+      "mejor": "ir_a_punto",
+      "margen": 53.389,
+      "p_ir_a_punto": 172.66,
+      "p_corregir_rumbo": 84.34
+    },
+    {
+      "context_id": "CC002-001526",
+      "mejor": "ir_a_punto",
+      "margen": 104.965,
+      "p_ir_a_punto": 166.32,
+      "p_corregir_rumbo": 19.09
+    },
+    {
+      "context_id": "CC002-000712",
+      "mejor": "ir_a_punto",
+      "margen": 54.006,
+      "p_ir_a_punto": 126.98,
+      "p_corregir_rumbo": -87.28
+    },
+    {
+      "context_id": "CC002-000625",
+      "mejor": "ir_a_punto",
+      "margen": 100.038,
+      "p_ir_a_punto": 129.08,
+      "p_corregir_rumbo": -193.59
+    },
+    {
+      "context_id": "CC002-000161",
+      "mejor": "ir_a_punto",
+      "margen": 40.574,
+      "p_ir_a_punto": 120.19,
+      "p_corregir_rumbo": 41.13
+    },
+    {
+      "context_id": "CC002-000366",
+      "mejor": "ir_a_punto",
+      "margen": 92.38,
+      "p_ir_a_punto": 195.89,
+      "p_corregir_rumbo": 62.53
+    },
+    {
+      "context_id": "CC002-000059",
+      "mejor": "ir_a_punto",
+      "margen": 32.312,
+      "p_ir_a_punto": 59.01,
+      "p_corregir_rumbo": 3.0
+    },
+    {
+      "context_id": "CC002-000779",
+      "mejor": "ir_a_punto",
+      "margen": 23.41,
+      "p_ir_a_punto": 45.89,
+      "p_corregir_rumbo": 14.58
+    },
+    {
+      "context_id": "CC002-002240",
+      "mejor": "ir_a_punto",
+      "margen": 88.552,
+      "p_ir_a_punto": 182.09,
+      "p_corregir_rumbo": 24.53
+    },
+    {
+      "context_id": "CC002-001251",
+      "mejor": "ir_a_punto",
+      "margen": 20.934,
+      "p_ir_a_punto": 142.34,
+      "p_corregir_rumbo": 96.95
+    },
+    {
+      "context_id": "CC002-001247",
+      "mejor": "ir_a_punto",
+      "margen": 40.216,
+      "p_ir_a_punto": 231.46,
+      "p_corregir_rumbo": 133.9
+    },
+    {
+      "context_id": "CC002-000050",
+      "mejor": "ir_a_punto",
+      "margen": 39.069,
+      "p_ir_a_punto": 146.16,
+      "p_corregir_rumbo": 90.78
+    },
+    {
+      "context_id": "CC002-001107",
+      "mejor": "ir_a_punto",
+      "margen": 88.427,
+      "p_ir_a_punto": 147.47,
+      "p_corregir_rumbo": 26.64
+    },
+    {
+      "context_id": "CC002-002229",
+      "mejor": "ir_a_punto",
+      "margen": 25.958,
+      "p_ir_a_punto": 28.55,
+      "p_corregir_rumbo": -275.87
+    },
+    {
+      "context_id": "CC002-000650",
+      "mejor": "ir_a_punto",
+      "margen": 21.508,
+      "p_ir_a_punto": 160.04,
+      "p_corregir_rumbo": 118.97
+    },
+    {
+      "context_id": "CC002-001599",
+      "mejor": "ir_a_punto",
+      "margen": 73.383,
+      "p_ir_a_punto": 220.8,
+      "p_corregir_rumbo": -32.57
+    },
+    {
+      "context_id": "CC002-001331",
+      "mejor": "ir_a_punto",
+      "margen": 127.467,
+      "p_ir_a_punto": 228.59,
+      "p_corregir_rumbo": 27.71
+    },
+    {
+      "context_id": "CC002-001380",
+      "mejor": "ir_a_punto",
+      "margen": 29.537,
+      "p_ir_a_punto": 67.97,
+      "p_corregir_rumbo": 21.29
+    },
+    {
+      "context_id": "CC002-000283",
+      "mejor": "ir_a_punto",
+      "margen": 7.611,
+      "p_ir_a_punto": 55.73,
+      "p_corregir_rumbo": 42.74
+    },
+    {
+      "context_id": "CC002-000477",
+      "mejor": "ir_a_punto",
+      "margen": 43.608,
+      "p_ir_a_punto": 145.6,
+      "p_corregir_rumbo": 64.76
+    },
+    {
+      "context_id": "CC002-001073",
+      "mejor": "ir_a_punto",
+      "margen": 68.418,
+      "p_ir_a_punto": 232.87,
+      "p_corregir_rumbo": -8.14
+    },
+    {
+      "context_id": "CC002-002050",
+      "mejor": "ir_a_punto",
+      "margen": 61.774,
+      "p_ir_a_punto": 127.06,
+      "p_corregir_rumbo": 26.94
+    },
+    {
+      "context_id": "CC002-000858",
+      "mejor": "ir_a_punto",
+      "margen": 27.459,
+      "p_ir_a_punto": 41.56,
+      "p_corregir_rumbo": -3.52
+    },
+    {
+      "context_id": "CC002-000436",
+      "mejor": "ir_a_punto",
+      "margen": 1.049,
+      "p_ir_a_punto": 3.16,
+      "p_corregir_rumbo": 1.3
+    },
+    {
+      "context_id": "CC002-000980",
+      "mejor": "ir_a_punto",
+      "margen": 115.907,
+      "p_ir_a_punto": 171.32,
+      "p_corregir_rumbo": -178.4
+    },
+    {
+      "context_id": "CC002-001490",
+      "mejor": "ir_a_punto",
+      "margen": 74.253,
+      "p_ir_a_punto": 100.5,
+      "p_corregir_rumbo": -283.2
+    },
+    {
+      "context_id": "CC002-001013",
+      "mejor": "ir_a_punto",
+      "margen": 16.016,
+      "p_ir_a_punto": 184.06,
+      "p_corregir_rumbo": 155.06
+    }
+  ]
+}
