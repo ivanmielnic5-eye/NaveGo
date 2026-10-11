@@ -458,3 +458,87 @@ Clasificacion:
 Cada cambio se documenta con: supuesto afectado, estatus previo, cambio
 aplicado, justificacion. Se hace backup `.pre-<etapa>` antes de tocar.
 
+
+
+---
+
+## 11. RESULTADO DEL ENTRENADOR v2
+
+### 11.1 El fix
+
+El Entrenador v2 corrige el bug del v1 (comparacion injusta).
+Cada accion corre TODO el horizonte. Todas comparables.
+
+Se implementaron:
+- acciones.py: interfaz de alto nivel (rumbo, ir_a, frenar, terminar).
+- controlador_pid.py: PID de rumbo continuo (Cand 4).
+- entrenador_v2.py: Entrenador con continuacion comun.
+
+### 11.2 Comparacion v1 vs v2 (300 contextos de desarrollo)
+
+Con horizontes DEFAULT [5, 15, 30, 45]:
+- Cambios: 183/300 (61.0%).
+- Distribucion v2: ir_a=137, terminar=89, frenar=60, rumbo=14.
+
+Con horizontes LARGOS [5, 15, 30, 60, 120, 240]:
+- Cambios vs banco (v1): 225/300 (75.0%).
+- Distribucion v2: ir_a=203, terminar=93, frenar=4, rumbo=0.
+
+### 11.3 Lectura del resultado
+
+TRES DE CADA CUATRO etiquetas del banco CC002 estan mal.
+
+El bug del v1 + el horizonte corto producen etiquetas que no
+representan el comportamiento real del barco a largo plazo.
+
+### 11.4 Analisis de las 4 acciones
+
+**ir_a**: navega a la meta con recalculo continuo del rumbo.
+Es la accion dominante. Gana 203/300.
+
+**terminar**: accion logica terminal. Sube a 93 (desde 75).
+14 contextos mas son reconocidos como terminales con horizonte largo.
+
+**frenar**: cae a 4 (desde 75). Con horizonte largo, casi nunca
+gana porque ir_a siempre progresa mas. Esto no significa que frenar
+sea inutil — la funcion de utilidad actual no premia "llegar suave"
+ni "no sobrepasar la meta". Pendiente: rediseñar la utilidad para
+reconocer cuando frenar ayuda.
+
+**rumbo**: cae a 0 con horizontes largos. NO ES INERCIA. El test
+con thetas arbitrarios (0, 45, 90, 135, 180, 225, 270, 315) muestra
+que cada angulo da un resultado distinto y coherente. El problema
+es que el Entrenador v2 fuerza theta = rumbo_a_meta, haciendo que
+rumbo e ir_a apunten al mismo lugar. En este contexto (una meta
+unica, sin obstaculos), ir_a domina.
+
+Correccion de diseño pendiente: rumbo sin stop condition a horizontes
+largos produce progresos NEGATIVOS (el barco pasa de largo la meta
+y sigue). Documentar y decidir si:
+  a) rumbo deberia tener un stop condition (parar al llegar).
+  b) rumbo es accion para fases futuras (obstaculos, direccion
+     especifica por X tiempo).
+
+Decision del Director: mantener rumbo como accion disponible, como
+inversion a futuro. Documentar el estado actual.
+
+### 11.5 Conclusiones
+
+- El Entrenador v2 es la base correcta. Las comparaciones son justas.
+- El banco CC002 actual no sirve para entrenar. Hay que reetiquetar.
+- frenar necesita rediseño de la funcion de utilidad.
+- rumbo queda como accion futura, sin utilidad inmediata en este
+  contexto (meta unica sin obstaculos).
+- El SFT (memo 83) fue entrenado con etiquetas 75% incorrectas. Su
+  65% no mide capacidad, mide imitacion del v1 buggeado.
+
+### 11.6 Proximos pasos (orden)
+
+1. Documentar este hallazgo en Anexo A (acciones).
+2. Diseñar la funcion de utilidad del Entrenador v2 (para decidir
+   si frenar puede ganar en algun contexto).
+3. Correr el experimento de sensibilidad (Grupo 2 del Anexo A).
+4. Reetiquetar CC002 con el Entrenador v2 final.
+5. Generar confirmatorio NUEVO con semillas nuevas.
+6. Reentrenar el SFT.
+
