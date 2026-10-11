@@ -264,3 +264,131 @@ Ese numero es el que orienta todo lo demas.
 **Estado:** CONSOLIDADO.
 **Proximo paso:** diseñar el experimento de sensibilidad (sin codigo).
 **Regla:** calidad primero, performance despues.
+
+
+---
+
+## 10. DISENO DEL EXPERIMENTO DE SENSIBILIDAD (detalle)
+
+### 10.1 Objetivo
+
+Medir cuanto cambian las etiquetas del banco CC002 al perturbar los
+parametros no documentados del simulador. El resultado es un numero
+concreto que orienta el resto del proyecto.
+
+Pregunta operativa:
+> Si mis parametros estan mal por +-30%, ¿mi banco de etiquetas sigue
+> siendo valido?
+
+### 10.2 Parametros a perturbar
+
+Los 6 parametros principales no documentados. Cada uno se perturba
+individualmente (no todos juntos).
+
+| Parametro | Valor actual | Rango de perturbacion |
+|-----------|-------------|----------------------|
+| AVANCE_FORCE | 6000 N | [4200, 7800] |
+| TIMON_TORQUE | 886 N.m | [620, 1150] |
+| FORWARD_DRAG | 0.0134 | [0.0094, 0.0174] |
+| LATERAL_DRAG | 0.05 | [0.035, 0.065] |
+| WATER_ANGULAR_DRAG | 0.005 | [0.0035, 0.0065] |
+| MASA | 3500 kg | [2450, 4550] |
+
+Rango: +-30% del valor original (excepto masa que es +-30% tambien).
+
+### 10.3 Metodologia
+
+Para cada parametro:
+
+1. BASELINE: etiquetar los 300 contextos de desarrollo con parametros actuales.
+   El resultado es el conjunto de etiquetas de referencia.
+2. PERTURBACION ALTA: reetiquetar los 300 contextos con el parametro a +30%.
+3. PERTURBACION BAJA: reetiquetar los 300 contextos con el parametro a -30%.
+4. COMPARAR: cuantas etiquetas cambiaron vs baseline.
+
+Metrica principal:
+- Fraccion de contextos cuya accion_optima cambia.
+
+Metrica secundaria:
+- Distribucion de cambios por clase original (que clases son mas fragiles).
+- Distribucion de cambios por familia (terminal, cerca, medio, lejos).
+
+### 10.4 Parametros de control del experimento
+
+- Semilla aleatoria del simulador: FIJA (no se varia).
+- Viento: el del contexto (no se modifica).
+- Horizonte del Entrenador: el del v2 (post correccion de continuacion comun).
+- Razon (decision de Claude): medir sensibilidad sobre etiquetas que
+  sabemos que estan mal no informa. Primero arreglar el Entrenador,
+  despues medir sensibilidad sobre etiquetas correctas.
+
+### 10.4.bis ORDEN DE EJECUCION CORREGIDO
+
+Segun Claude:
+
+1. Arreglar el Entrenador (continuacion comun + test del absurdo como regresion).
+2. Verificar que el test del absurdo ya no pasa.
+3. Correr el experimento de sensibilidad sobre el Entrenador arreglado.
+4. Despues de sensibilidad: decidir si migrar a cascada o no.
+
+El fix de continuacion comun debe escribirse de forma REUTILIZABLE,
+porque sirve igual para la futura arquitectura en cascada (comparar
+decisiones del outer loop con el mismo horizonte).
+
+### 10.5 Criterio de interpretacion
+
+Para cada parametro perturbado:
+
+- Si < 5% de etiquetas cambian: parametro poco sensible.
+  El banco tiene señal defendible contra perturbaciones de ese parametro.
+
+- Si 5-20% cambian: parametro moderadamente sensible.
+  Hay señal pero con caveat. Se reporta el rango.
+
+- Si > 20% cambian: parametro muy sensible.
+  El banco refleja solo nuestros valores especificos, no la situacion
+  subyacente. Requiere analisis adicional.
+
+Criterio global:
+- Si TODOS los parametros son < 5%: el banco es robusto. Podemos
+  avanzar con confianza.
+- Si alguno es > 20%: hay que decidir si:
+  a) Investigar el parametro especificamente.
+  b) Rediseñar el banco con Domain Randomization (entrenar contra
+     distribucion de parametros en vez de un valor puntual).
+
+### 10.6 Formato de reporte
+
+Tabla final del experimento:
+
+| Parametro | Perturbacion | Etiquetas cambiadas | % | Interpretacion |
+|-----------|-------------|---------------------|---|----------------|
+| AVANCE_FORCE | -30% | ? | ? | ? |
+| AVANCE_FORCE | +30% | ? | ? | ? |
+| TIMON_TORQUE | -30% | ? | ? | ? |
+| ... | ... | ... | ... | ... |
+
+Mas:
+- Grafico de barras: % de cambio por parametro.
+- Detalle: 5 ejemplos de contextos que cambian, con parametro y accion.
+- Analisis: que clases/familias son mas fragiles.
+
+### 10.7 Tiempo estimado
+
+- Implementar el experimento: 1 hora.
+- Correr el experimento: ~10 min por parametro × 2 perturbaciones × 6 parametros = 2 horas.
+- Analisis: 30 min.
+
+Total: ~4 horas.
+
+### 10.8 Lo que NO se hace
+
+- NO se reetiqueta el confirmatorio.
+- NO se cambia el Entrenador todavia.
+- NO se varia el viento.
+- NO se perturban varios parametros juntos (primero individual, después combinado si es necesario).
+
+### 10.9 Resultado esperado
+
+El experimento va a dar UN NUMERO por parametro.
+Ese numero es lo que define si el banco actual sirve o no.
