@@ -1,5 +1,25 @@
 # AUDITORIA DEL ORACULO — Hallazgo completo con verificacion
 
+> **PARCIALMENTE OBSOLETO — 2026-10-11**
+>
+> Este memo documento un hallazgo ("67% de error del Entrenador") que
+> resulto ser un ARTEFACTO de un bug en el Entrenador v1.
+>
+> El bug: cada receta corre hasta que TERMINA o hasta timeout. Como las
+> recetas tienen duraciones distintas (corregir_rumbo termina en ~15s,
+> ir_a_punto corre todo el horizonte), medir "distancia final" favorece
+> a las recetas mas largas. No es un error de decision, es un error de
+> comparacion.
+>
+> Los datos crudos siguen siendo validos (los tests corrieron). La
+> INTERPRETACION queda invalidada.
+>
+> La correccion esta en el memo 87.
+> Se conserva como registro historico y por la leccion de metodo.
+>
+> ---
+>
+> 
 **Fecha:** 2026-10-11
 **Autor:** Directora de Investigacion + Director
 **Estado:** CONFIRMADO. 3 chequeos de verificacion pasados.
