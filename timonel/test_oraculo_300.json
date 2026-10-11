@@ -1,0 +1,685 @@
+{
+  "fecha": "2026-10-10T22:05:15.375022",
+  "total": 75,
+  "ganadores": {
+    "ir_a_punto": 30,
+    "corregir_rumbo": 45
+  },
+  "resultados": [
+    {
+      "context_id": "CC002-000566",
+      "dist_inicial": 145.47,
+      "desv": 158.9,
+      "d_corregir": 116.76,
+      "d_ir_a_punto": 83.6,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000618",
+      "dist_inicial": 128.28,
+      "desv": 132.4,
+      "d_corregir": 81.38,
+      "d_ir_a_punto": 51.2,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002124",
+      "dist_inicial": 150.61,
+      "desv": 80.1,
+      "d_corregir": 40.58,
+      "d_ir_a_punto": 55.52,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001989",
+      "dist_inicial": 91.13,
+      "desv": 127.3,
+      "d_corregir": 32.82,
+      "d_ir_a_punto": 77.67,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001426",
+      "dist_inicial": 95.16,
+      "desv": 58.1,
+      "d_corregir": 17.6,
+      "d_ir_a_punto": 13.1,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000914",
+      "dist_inicial": 19.7,
+      "desv": 20.4,
+      "d_corregir": 8.8,
+      "d_ir_a_punto": 14.88,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001347",
+      "dist_inicial": 123.28,
+      "desv": 62.6,
+      "d_corregir": 17.01,
+      "d_ir_a_punto": 13.3,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001519",
+      "dist_inicial": 19.49,
+      "desv": 57.0,
+      "d_corregir": 11.34,
+      "d_ir_a_punto": 14.83,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001010",
+      "dist_inicial": 215.65,
+      "desv": 125.6,
+      "d_corregir": 158.62,
+      "d_ir_a_punto": 141.05,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000682",
+      "dist_inicial": 228.51,
+      "desv": 93.0,
+      "d_corregir": 126.31,
+      "d_ir_a_punto": 126.29,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000907",
+      "dist_inicial": 15.99,
+      "desv": 39.6,
+      "d_corregir": 9.83,
+      "d_ir_a_punto": 14.21,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001778",
+      "dist_inicial": 18.0,
+      "desv": 13.0,
+      "d_corregir": 8.54,
+      "d_ir_a_punto": 14.06,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001473",
+      "dist_inicial": 189.5,
+      "desv": 71.3,
+      "d_corregir": 88.29,
+      "d_ir_a_punto": 112.01,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000134",
+      "dist_inicial": 51.56,
+      "desv": 106.3,
+      "d_corregir": 42.29,
+      "d_ir_a_punto": 19.48,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000354",
+      "dist_inicial": 17.9,
+      "desv": 40.6,
+      "d_corregir": 9.48,
+      "d_ir_a_punto": 14.42,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001487",
+      "dist_inicial": 15.25,
+      "desv": 29.5,
+      "d_corregir": 9.17,
+      "d_ir_a_punto": 14.92,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001730",
+      "dist_inicial": 222.51,
+      "desv": 73.5,
+      "d_corregir": 128.86,
+      "d_ir_a_punto": 150.85,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001253",
+      "dist_inicial": 22.59,
+      "desv": 41.6,
+      "d_corregir": 11.34,
+      "d_ir_a_punto": 14.41,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001123",
+      "dist_inicial": 18.51,
+      "desv": 30.1,
+      "d_corregir": 4.84,
+      "d_ir_a_punto": 14.58,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001654",
+      "dist_inicial": 101.85,
+      "desv": 94.0,
+      "d_corregir": 33.2,
+      "d_ir_a_punto": 59.32,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000806",
+      "dist_inicial": 248.11,
+      "desv": 57.6,
+      "d_corregir": 160.19,
+      "d_ir_a_punto": 177.2,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000102",
+      "dist_inicial": 69.56,
+      "desv": 64.2,
+      "d_corregir": 36.36,
+      "d_ir_a_punto": 13.32,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000613",
+      "dist_inicial": 62.15,
+      "desv": 91.0,
+      "d_corregir": 60.73,
+      "d_ir_a_punto": 14.04,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001341",
+      "dist_inicial": 131.21,
+      "desv": 96.9,
+      "d_corregir": 45.36,
+      "d_ir_a_punto": 32.49,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002285",
+      "dist_inicial": 79.4,
+      "desv": 125.7,
+      "d_corregir": 58.09,
+      "d_ir_a_punto": 24.76,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000163",
+      "dist_inicial": 196.3,
+      "desv": 145.0,
+      "d_corregir": 159.96,
+      "d_ir_a_punto": 127.37,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001811",
+      "dist_inicial": 170.2,
+      "desv": 147.6,
+      "d_corregir": 104.54,
+      "d_ir_a_punto": 103.96,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000086",
+      "dist_inicial": 110.96,
+      "desv": 77.9,
+      "d_corregir": 80.71,
+      "d_ir_a_punto": 57.39,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001826",
+      "dist_inicial": 29.9,
+      "desv": 30.8,
+      "d_corregir": 8.15,
+      "d_ir_a_punto": 14.83,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001746",
+      "dist_inicial": 19.37,
+      "desv": 20.6,
+      "d_corregir": 7.92,
+      "d_ir_a_punto": 13.49,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000088",
+      "dist_inicial": 16.59,
+      "desv": 14.4,
+      "d_corregir": 11.85,
+      "d_ir_a_punto": 14.5,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001017",
+      "dist_inicial": 113.49,
+      "desv": 76.8,
+      "d_corregir": 41.38,
+      "d_ir_a_punto": 14.32,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000084",
+      "dist_inicial": 172.99,
+      "desv": 82.5,
+      "d_corregir": 145.79,
+      "d_ir_a_punto": 100.29,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001259",
+      "dist_inicial": 67.9,
+      "desv": 127.0,
+      "d_corregir": 25.86,
+      "d_ir_a_punto": 51.05,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001183",
+      "dist_inicial": 185.97,
+      "desv": 68.0,
+      "d_corregir": 101.64,
+      "d_ir_a_punto": 104.74,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001526",
+      "dist_inicial": 179.25,
+      "desv": 147.8,
+      "d_corregir": 160.16,
+      "d_ir_a_punto": 105.07,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000712",
+      "dist_inicial": 140.7,
+      "desv": 74.2,
+      "d_corregir": 60.76,
+      "d_ir_a_punto": 84.35,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000625",
+      "dist_inicial": 143.28,
+      "desv": 128.5,
+      "d_corregir": 68.79,
+      "d_ir_a_punto": 62.45,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000161",
+      "dist_inicial": 134.22,
+      "desv": 156.3,
+      "d_corregir": 93.09,
+      "d_ir_a_punto": 137.65,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000366",
+      "dist_inicial": 208.71,
+      "desv": 106.1,
+      "d_corregir": 146.18,
+      "d_ir_a_punto": 105.86,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000059",
+      "dist_inicial": 71.06,
+      "desv": 129.3,
+      "d_corregir": 29.61,
+      "d_ir_a_punto": 54.06,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000779",
+      "dist_inicial": 60.25,
+      "desv": 116.7,
+      "d_corregir": 45.66,
+      "d_ir_a_punto": 14.36,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-002240",
+      "dist_inicial": 195.65,
+      "desv": 126.0,
+      "d_corregir": 171.12,
+      "d_ir_a_punto": 161.89,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001251",
+      "dist_inicial": 157.09,
+      "desv": 83.4,
+      "d_corregir": 74.8,
+      "d_ir_a_punto": 103.53,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001247",
+      "dist_inicial": 245.36,
+      "desv": 54.5,
+      "d_corregir": 157.88,
+      "d_ir_a_punto": 167.72,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000440",
+      "dist_inicial": 15.08,
+      "desv": 19.2,
+      "d_corregir": 8.19,
+      "d_ir_a_punto": 12.78,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000050",
+      "dist_inicial": 158.97,
+      "desv": 77.2,
+      "d_corregir": 68.19,
+      "d_ir_a_punto": 39.33,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001107",
+      "dist_inicial": 161.99,
+      "desv": 109.7,
+      "d_corregir": 135.34,
+      "d_ir_a_punto": 80.66,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002229",
+      "dist_inicial": 43.35,
+      "desv": 50.7,
+      "d_corregir": 43.57,
+      "d_ir_a_punto": 14.8,
+      "ganador": "ir_a_punto",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000001",
+      "dist_inicial": 20.88,
+      "desv": 18.7,
+      "d_corregir": 8.2,
+      "d_ir_a_punto": 14.05,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000650",
+      "dist_inicial": 174.86,
+      "desv": 77.0,
+      "d_corregir": 65.11,
+      "d_ir_a_punto": 89.49,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000657",
+      "dist_inicial": 26.12,
+      "desv": 37.0,
+      "d_corregir": 10.17,
+      "d_ir_a_punto": 13.95,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000100",
+      "dist_inicial": 16.95,
+      "desv": 29.3,
+      "d_corregir": 8.97,
+      "d_ir_a_punto": 14.77,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001599",
+      "dist_inicial": 233.88,
+      "desv": 89.5,
+      "d_corregir": 128.81,
+      "d_ir_a_punto": 128.53,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001887",
+      "dist_inicial": 17.35,
+      "desv": 19.1,
+      "d_corregir": 4.51,
+      "d_ir_a_punto": 13.52,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001331",
+      "dist_inicial": 243.42,
+      "desv": 153.3,
+      "d_corregir": 215.71,
+      "d_ir_a_punto": 182.05,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001884",
+      "dist_inicial": 16.38,
+      "desv": 16.7,
+      "d_corregir": 8.89,
+      "d_ir_a_punto": 14.64,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001380",
+      "dist_inicial": 81.4,
+      "desv": 133.9,
+      "d_corregir": 60.11,
+      "d_ir_a_punto": 61.54,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000273",
+      "dist_inicial": 16.04,
+      "desv": 22.9,
+      "d_corregir": 4.63,
+      "d_ir_a_punto": 13.64,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000283",
+      "dist_inicial": 70.68,
+      "desv": 80.2,
+      "d_corregir": 27.94,
+      "d_ir_a_punto": 18.36,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000477",
+      "dist_inicial": 159.01,
+      "desv": 104.0,
+      "d_corregir": 94.25,
+      "d_ir_a_punto": 119.09,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-001073",
+      "dist_inicial": 247.6,
+      "desv": 82.5,
+      "d_corregir": 139.06,
+      "d_ir_a_punto": 138.58,
+      "ganador": "ir_a_punto",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002235",
+      "dist_inicial": 18.92,
+      "desv": 52.7,
+      "d_corregir": 11.3,
+      "d_ir_a_punto": 14.59,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002050",
+      "dist_inicial": 141.51,
+      "desv": 117.5,
+      "d_corregir": 114.56,
+      "d_ir_a_punto": 97.27,
+      "ganador": "ir_a_punto",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000858",
+      "dist_inicial": 54.59,
+      "desv": 122.3,
+      "d_corregir": 22.93,
+      "d_ir_a_punto": 30.4,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-000925",
+      "dist_inicial": 25.52,
+      "desv": 37.8,
+      "d_corregir": 9.56,
+      "d_ir_a_punto": 14.27,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000436",
+      "dist_inicial": 18.12,
+      "desv": 35.9,
+      "d_corregir": 16.82,
+      "d_ir_a_punto": 14.96,
+      "ganador": "ir_a_punto",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000853",
+      "dist_inicial": 18.24,
+      "desv": 46.4,
+      "d_corregir": 9.38,
+      "d_ir_a_punto": 14.24,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-002149",
+      "dist_inicial": 19.2,
+      "desv": 61.0,
+      "d_corregir": 10.4,
+      "d_ir_a_punto": 14.71,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000370",
+      "dist_inicial": 169.02,
+      "desv": 94.3,
+      "d_corregir": 79.28,
+      "d_ir_a_punto": 117.0,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-002084",
+      "dist_inicial": 19.4,
+      "desv": 45.7,
+      "d_corregir": 10.27,
+      "d_ir_a_punto": 14.79,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-000980",
+      "dist_inicial": 184.51,
+      "desv": 110.6,
+      "d_corregir": 85.25,
+      "d_ir_a_punto": 145.42,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    },
+    {
+      "context_id": "CC002-000118",
+      "dist_inicial": 17.45,
+      "desv": 11.6,
+      "d_corregir": 4.82,
+      "d_ir_a_punto": 14.57,
+      "ganador": "corregir_rumbo",
+      "familia": "cerca"
+    },
+    {
+      "context_id": "CC002-001490",
+      "dist_inicial": 115.28,
+      "desv": 101.4,
+      "d_corregir": 27.42,
+      "d_ir_a_punto": 72.62,
+      "ganador": "corregir_rumbo",
+      "familia": "medio"
+    },
+    {
+      "context_id": "CC002-001013",
+      "dist_inicial": 196.93,
+      "desv": 91.4,
+      "d_corregir": 73.75,
+      "d_ir_a_punto": 85.95,
+      "ganador": "corregir_rumbo",
+      "familia": "lejos"
+    }
+  ]
+}
