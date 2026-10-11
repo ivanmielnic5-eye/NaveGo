@@ -88,6 +88,42 @@ Hipotesis sobre corregir_rumbo:
 
 ---
 
+## 9. ANALISIS DEL LOG DE ENTRENAMIENTO
+
+Del log de Kaggle (notebookae1a052083.log):
+
+### Configuracion efectiva
+- Unsloth 2026.10.3, Transformers 5.16.1, PyTorch 2.11.0+cu128
+- GPU: Tesla T4 x2 (Kaggle), usada 1 sola
+- Precisión: fp16 (T4 no soporta bf16 nativo)
+- Seed: 3407
+- Learning rate: 2e-4
+- Batch efectivo: 8 (2 x 4 x 1)
+- Trainable params: 41.9M de 8.07B (0.52%)
+
+### Progresion de loss (hallazgo importante)
+| Step | Train Loss | Val Loss |
+|------|-----------|----------|
+| 60   | 0.1236    | 0.1234   |
+| 120  | 0.1133    | 0.1189   | <- mejor val
+| 180  | 0.1018    | 0.1250   | <- val subio
+
+Conclusion: OVERFITTING LEVE.
+- El val loss minimo fue en step 120 (4 epochs), no en 180 (6 epochs).
+- Despues de 120, el modelo empieza a memorizar.
+- Proximo run: parar en 120 steps o usar early stopping patience=2.
+
+### Warnings documentados
+- lora_dropout=0.05 impide usar kernels LoRA fusionados. No afecta
+  el entrenamiento pero ralentiza. Proximo run: dropout=0.
+- Double BOS tokens removidos automaticamente por Unsloth (correcto).
+- Requests a HF Hub sin autenticar (no afecta).
+
+### Implicancia para el piloto confirmatorio
+El modelo final (step 180) no es el mejor. El checkpoint-120 existe en
+el output del notebook y podria tener mejor accuracy. Si vamos a correr
+el benchmark confirmatorio, conviene evaluar ambos checkpoints.
+
 ## 8. FIRMA
 
 **Estado:** PILOTO EXITOSO.
