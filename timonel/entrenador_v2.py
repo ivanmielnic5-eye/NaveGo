@@ -48,7 +48,7 @@ class ResultadoAccion:
     def __init__(self, accion, seguro, progreso_por_horizonte,
                  alineacion_deg, dist_final_m, pos_final,
                  boundary_violation, mission_complete, progreso_medio,
-                 parametro=None, error=""):
+                 dist_al_origen_final=0.0, parametro=None, error=""):
         self.accion = accion
         self.seguro = seguro
         self.progreso_por_horizonte = progreso_por_horizonte
@@ -58,6 +58,7 @@ class ResultadoAccion:
         self.boundary_violation = boundary_violation
         self.mission_complete = mission_complete
         self.progreso_medio = progreso_medio
+        self.dist_al_origen_final = dist_al_origen_final
         self.parametro = parametro
         self.error = error
 
@@ -126,6 +127,7 @@ class Entrenador:
 
         dist_max = _distancia_a(b_max, meta_x, meta_z)
         alineacion = _alineacion_hacia_meta(b_max, meta_x, meta_z)
+        dist_al_origen_final = math.sqrt(b_max.pos_x**2 + b_max.pos_z**2)
 
         # Mission complete
         mission_complete = False
@@ -156,23 +158,77 @@ class Entrenador:
             boundary_violation=boundary_violation,
             mission_complete=mission_complete,
             progreso_medio=progreso_medio,
+            dist_al_origen_final=round(dist_al_origen_final, 2),
             parametro=parametro_usado,
             error=error,
         )
 
+    def _peligro_inminente(self, barco, margen_m=50.0):
+        """Determina si hay peligro inminente de salir del limite.
+
+        Criterio:
+        - El barco esta a menos de margen_m del radio de boundary.
+        - Su velocidad tiene componente hacia afuera.
+
+        Returns:
+            True si hay peligro inminente.
+            False si no.
+        """
+        dist_al_origen = math.sqrt(barco.pos_x**2 + barco.pos_z**2)
+        margen = self.radio_boundary - dist_al_origen
+
+        if margen > margen_m:
+            return False  # Lejos del limite, no hay peligro
+
+        # Esta cerca del limite. Ver si va hacia afuera.
+        if dist_al_origen < 1e-6:
+            return False  # En el origen, no se puede calcular direccion
+
+        # Vector radial (hacia afuera)
+        radial_x = barco.pos_x / dist_al_origen
+        radial_z = barco.pos_z / dist_al_origen
+
+        # Componente radial de la velocidad
+        vel_radial = barco.vel_x * radial_x + barco.vel_z * radial_z
+
+        # Si va hacia afuera con velocidad, es peligro inminente
+        return vel_radial > 0.5  # > 0.5 m/s hacia afuera
+
     def evaluar_todas(self, barco, meta_x, meta_z):
-        """Evalua las 4 acciones. Devuelve lista ordenada (mejor primero)."""
+        """Evalua las 4 acciones con el nuevo orden jerarquico.
+
+        Orden:
+        1. Si hay peligro inminente: gana la que aleja del limite.
+        2. Si no: ranking por (mission_complete, progreso, alineacion,
+           boundary como desempate).
+
+        NO congela la accion si todas violan boundary.
+        """
         resultados = []
         for accion in self.acciones_disponibles:
             r = self._evaluar_accion(barco, meta_x, meta_z, accion)
             resultados.append(r)
 
-        resultados.sort(key=lambda r: (
-            not r.mission_complete,
-            r.boundary_violation,
-            -r.progreso_medio,
-            -r.alineacion_deg,
-        ))
+        # Detectar peligro inminente
+        peligro = self._peligro_inminente(barco)
+
+        if peligro:
+            # La accion que MAS aleja del limite gana.
+            # Metrica: mayor margen al final (dist_al_origen_final mas chica).
+            # Si dos acciones terminan igual, desempatar por progreso.
+            resultados.sort(key=lambda r: (
+                r.dist_al_origen_final,   # menor dist_al_origen = mas seguro
+                not r.mission_complete,
+                -r.progreso_medio,
+            ))
+        else:
+            # Ranking normal. boundary_violation como desempate.
+            resultados.sort(key=lambda r: (
+                not r.mission_complete,
+                -r.progreso_medio,
+                -r.alineacion_deg,
+                r.boundary_violation,  # desempate al final
+            ))
         return resultados
 
     def elegir(self, barco, meta_x, meta_z):
