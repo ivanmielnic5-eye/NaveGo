@@ -5,6 +5,7 @@ Replica la fisica de Godot (Jolt) sin GPU ni render.
 
 Objetivo: entrenar a Timonel sin abrir Godot.
 Interfaz: recibe comandos (timon, timon_ms, avance, avance_ms), devuelve telemetria.
+timon y avance son float en [-1.0, 1.0]. timon_ms y avance_ms son int (milisegundos).
 """
 
 import math
@@ -85,9 +86,9 @@ class Barco:
     yaw_rate: float = 0.0
 
     # Comandos activos
-    timon_activo: int = 0
+    timon_activo: float = 0.0
     timon_hasta_ms: float = 0.0
-    avance_activo: int = 0
+    avance_activo: float = 0.0
     avance_hasta_ms: float = 0.0
 
     # Tiempo simulado (s)
@@ -133,7 +134,7 @@ class Barco:
     def dist_a_meta(self) -> float:
         return math.sqrt((self.pos_x - GOAL_X)**2 + (self.pos_z - GOAL_Z)**2)
 
-    def aplicar_comando(self, timon: int, timon_ms: int, avance: int, avance_ms: int):
+    def aplicar_comando(self, timon: float, timon_ms: float, avance: float, avance_ms: float):
         """Registra un comando nuevo. Se aplica durante los proximos X ms."""
         self.timon_activo = timon
         self.timon_hasta_ms = self.t * 1000.0 + timon_ms if timon != 0 else 0.0
@@ -348,9 +349,9 @@ class Runner:
             c = self._leer_comando_nuevo()
             if c:
                 self.barco.aplicar_comando(
-                    timon=int(c.get("timon", 0)),
+                    timon=float(c.get("timon", 0.0)),
                     timon_ms=int(c.get("timon_ms", 0)),
-                    avance=int(c.get("avance", 0)),
+                    avance=float(c.get("avance", 0.0)),
                     avance_ms=int(c.get("avance_ms", 0)),
                 )
             # 2. Avanzar fisica
