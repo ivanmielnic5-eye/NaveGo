@@ -542,3 +542,89 @@ inversion a futuro. Documentar el estado actual.
 5. Generar confirmatorio NUEVO con semillas nuevas.
 6. Reentrenar el SFT.
 
+
+
+---
+
+## 12. FUNCION DE UTILIDAD DEL ENTRENADOR v2
+
+### 12.1 Definicion (por el Director)
+
+Orden jerarquico estricto:
+
+1. **Estar a salvo. No naufragar.** Gate duro. Si la accion viola
+   seguridad, se descarta sin importar nada mas.
+2. **Llegar bien, enteros.** Mission complete. El objetivo primario.
+3. **Precision + eficiencia.** Llegar cerca y sin sobrepasarse.
+
+El resto (alineacion, suavidad) son criterios de desempate secundarios.
+
+### 12.2 Traduccion a la funcion de ranking
+
+Estructura correcta:
+
+    Si boundary_violation: descartar accion (score = -infinito)
+    Si no:
+        rank = (not mission_complete, -progreso_medio, -alineacion_deg)
+
+NOTA: el orden actual en entrenador_v2.py es
+    (not mission_complete, boundary_violation, -progreso_medio, -alineacion)
+que tiene los dos primeros INVERTIDOS respecto a la decision del Director.
+Hay que corregir el orden.
+
+### 12.3 Justificacion de cada componente
+
+- **boundary_violation (seguridad):** es una penalizacion jerarquica,
+  NO un gate absoluto. Aclaracion del Director (2026-10-11):
+
+  > "Tener cuidado que estar a salvo o no naufragar no congele la accion
+  >  siempre. Salvo si tiene un peligro inminente, que sea peor que estar
+  >  quieto."
+
+  Regla corregida:
+  - Si el peligro es INMINENTE (distancia al limite < X metros Y velocidad
+    hacia afuera): la accion que aleja del limite gana. Gate duro.
+  - Si NO hay peligro inminente: boundary_violation es criterio de
+    desempate. La accion que menos viola gana entre las que empatan.
+  - Si TODAS las acciones violan: la que MENOS viola gana. No se congela.
+  - Si NINGUNA viola: ranking normal por (mission_complete, progreso, alineacion).
+
+  Justificacion: caminar con cuidado cerca de un rio es mas seguro que
+  quedarse parado en medio de una crecida. El sistema debe poder ACCIONAR
+  cuando es mejor accionar que quedarse quieto.
+
+- **mission_complete (llegar):** sin esto, no hay mision. Es el objetivo
+  primario y define el exito.
+
+- **progreso_medio (precision + eficiencia):** la integracion trapezoidal
+  de los horizontes captura ambas cosas a la vez:
+    - Si el barco llega mas rapido -> promedio mas alto.
+    - Si el barco se sobrepasa y se aleja -> promedio mas bajo.
+    - Si el barco se queda quieto -> promedio bajo.
+
+- **alineacion_deg (desempate):** entre dos acciones con progreso similar,
+  preferir la que apunta mas cerca de la meta.
+
+### 12.4 Sobre "llegar sin sobrepasarse"
+
+El progreso medio ya penaliza implicitamente el sobrepaso: si el barco
+pasa la meta y se aleja, los horizontes tardios bajan el promedio.
+Pero no es explicito. Pendiente de evaluar si hace falta una dimension
+adicional de "precision terminal" (distancia al horizonte maximo).
+
+### 12.5 Sobre frenar
+
+Con este orden, frenar solo puede ganar si:
+- El barco esta muy cerca de la meta, con velocidad alta, y
+- Su progreso medio (por seguir avanzando y sobrepasarse) es menor que
+  el de frenar (que se queda justo en la meta).
+
+Eso PUEDE pasar en contextos terminales con sog alta. Hay que medirlo
+despues de corregir el orden.
+
+### 12.6 Decision
+
+Aplicar el orden correcto en entrenador_v2.py:
+1. Primero filtrar por boundary_violation.
+2. Despues rankear por (mission_complete, progreso_medio, alineacion).
+
