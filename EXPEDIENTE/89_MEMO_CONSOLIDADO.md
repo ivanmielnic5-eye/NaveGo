@@ -412,3 +412,49 @@ Total: ~4 horas.
 
 El experimento va a dar UN NUMERO por parametro.
 Ese numero es lo que define si el banco actual sirve o no.
+
+
+---
+
+## ANEXO A — INVENTARIO DE SUPUESTOS DEL SIMULADOR
+
+**Fecha:** 2026-10-11
+**Origen:** aplicacion de Regla 10 (revision de supuestos heredados).
+
+Clasificacion:
+- **Justificado:** tiene razon documentada y verificable.
+- **Inercia:** sin razon, pero se puede cambiar facilmente.
+- **Sin justificar:** no se sabe por que esta asi. Requiere investigacion.
+
+### Tabla de supuestos
+
+| # | Supuesto | Ubicacion | Estatus | Accion propuesta |
+|---|----------|-----------|---------|------------------|
+| 1 | "Replica la fisica de Godot (Jolt)" | Cabecera | Sin justificar | Investigar si se verifico contra Godot |
+| 2 | Constantes fisicas "extraidas del codigo Godot" | Constantes | Sin justificar (18/20) | Investigar origen de cada una |
+| 3 | `timon: int` | aplicar_comando | Inercia | Cambiar a `float` |
+| 4 | `avance: int` | aplicar_comando | Inercia | Cambiar a `float` |
+| 5 | `timon_activo: int = 0` | Atributo Barco | Inercia | Cambiar a `float` |
+| 6 | `avance_activo: int = 0` | Atributo Barco | Inercia | Cambiar a `float` |
+| 7 | Runner fuerza `int(...)` al leer | Runner | Inercia | Cambiar a `float(...)` |
+| 8 | Comando como ventana temporal | aplicar_comando | Sin justificar | Investigar diseno |
+| 9 | MASA = 3500.0 | Constantes | Sin justificar | Investigar origen |
+| 10 | AVANCE_FORCE = 6000.0 | Constantes | Sin justificar | Investigar origen |
+| 11 | TIMON_TORQUE = 886.0 | Constantes | Sin justificar | Investigar origen |
+| 12 | Resto de constantes (~15) | Constantes | Sin justificar | Investigar origen |
+| 13 | Aplicacion de fuerzas por ventana | paso() | Sin justificar | Investigar diseno |
+| 14 | prop_wash con `avance != 0` | paso() | Sin justificar | ¿Por que no proporcional? |
+
+### Orden de revision propuesto
+
+1. **Grupo 1 (tipos):** supuestos 3-7. Bloquean el PID continuo.
+2. **Grupo 2 (constantes fisicas):** supuestos 9-12. Bloquean la validez
+   del ground truth.
+3. **Grupo 3 (diseno):** supuestos 1, 2, 8, 13, 14. Requieren analisis
+   mas profundo.
+
+### Regla aplicable
+
+Cada cambio se documenta con: supuesto afectado, estatus previo, cambio
+aplicado, justificacion. Se hace backup `.pre-<etapa>` antes de tocar.
+
