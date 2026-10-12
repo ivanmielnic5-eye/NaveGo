@@ -1,0 +1,34 @@
+{
+  "fecha": "2026-10-11T20:12:33.224819",
+  "n_generados": 2000,
+  "seed": 2026,
+  "distribucion_accion": {
+    "terminar": 431,
+    "ir_a": 1545,
+    "rumbo": 15,
+    "frenar": 9
+  },
+  "distribucion_familia": {
+    "cerca": 480,
+    "lejos": 910,
+    "medio": 377,
+    "terminal": 233
+  },
+  "por_accion_familia": {
+    "rumbo": {
+      "lejos": 15
+    },
+    "ir_a": {
+      "lejos": 895,
+      "medio": 377,
+      "cerca": 273
+    },
+    "frenar": {
+      "cerca": 9
+    },
+    "terminar": {
+      "cerca": 198,
+      "terminal": 233
+    }
+  }
+}
