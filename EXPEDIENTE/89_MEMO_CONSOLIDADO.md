@@ -1051,3 +1051,100 @@ pre_entrenamiento.py debe distinguir entre los dos niveles.
    2-3m para preparar la proxima fase (canales estrechos).
    Pendiente de verificar viabilidad tecnica.
 
+
+
+---
+
+## 18. CONSULTAS A LUNA Y CLAUDE — CONSTRUCTO Y PREGUNTAS PENDIENTES (2026-10-12)
+
+### 18.1 Contexto
+
+Tras el resultado de CC003 v4 (100% pero midiendo aplicacion del
+criterio, no discriminacion), se consulto a Claude y a Luna con dos
+preguntas:
+
+1. Constructo por fase (que capacidad especifica le atribuimos al
+   modelo en cada una de las 7 fases).
+2. Las preguntas que no nos estamos haciendo.
+
+Las respuestas COMPLETAS estan en los anexos:
+- EXPEDIENTE/ANEXOS/89_ANEXO_B_CLAUDE.md
+- EXPEDIENTE/ANEXOS/89_ANEXO_B_LUNA.md
+- (pendiente) EXPEDIENTE/ANEXOS/89_ANEXO_B_NOTEBOOK_LLM.md
+
+### 18.2 Indice de la respuesta de Claude (anexo B-CLAUDE)
+
+- Correccion de estado: "Fase 1 cerrada" -> "prueba unitaria de
+  aplicacion de contrato con umbral fijo".
+- Hipotesis central propuesta: "decision condicionada por contrato"
+  (cuando cambia la especificacion escrita, la decision cambia sin
+  reentrenar). Es lo unico que un LLM aporta sobre un arbol.
+- Requisitos comunes a todas las fases: baselines obligatorios,
+  contrafacticos de contrato, simetrias, valores no vistos, lazo
+  cerrado.
+- Tabla de constructo por fase (7 fases).
+- Tabla de criterios de falsacion (7 fases).
+- Bloqueantes comunes y especificos entre fases.
+- Las preguntas que no nos hacemos (8 preguntas).
+- Lo que deberia hacernos parar (7 senales).
+- Otros puntos: riesgos estructurales de la hoja de ruta.
+- Bloqueante X antes de Fase 2: un test de Fase 1 que pueda fallar
+  (umbral T variable, valores no vistos, baselines que no lleguen
+  al 100% por construccion, hipotesis escrita).
+
+### 18.3 Indice de la respuesta de Luna (anexo B-LUNA)
+
+- Decision estrategica inicial: no avanzar a Fase 2 como si Fase 1
+  hubiera demostrado discriminacion.
+- Constructo por fase (7 fases, cada una con hipotesis falsable,
+  metrica primaria, baseline, condicion de cierre).
+- Bloqueos entre fases (tabla de 5 bloqueos comunes: validez del
+  entorno, validez de la referencia, capacidad minima, seguridad
+  operacional, reproducibilidad).
+- Las preguntas que no nos hacemos:
+  - Copiloto o piloto automatico.
+  - Que aporta el LLM sobre Python.
+  - Separacion percepcion/planificacion/control.
+  - Que pasa cuando el estado es desconocido o contradictorio.
+  - Como se evita medir solo memorizacion.
+  - Como se determina si el sistema es seguro.
+- Que deberia hacernos parar y repensar (4 senales).
+- X antes de Fase 2: 5 entregables (constructo aprobado, referencia
+  valida, baseline Python, evaluacion confirmatoria, criterio de
+  avance predefinido).
+- Cita IMO (Organizacion Maritima Internacional) para buques
+  autonomos como referencia metodologica.
+- Cierre: la meta no es llegar a Fase 7, es construir evidencia
+  acumulativa de que sabe hacer Timonel, en que condiciones, con
+  que limites, y que valor aporta al capitan.
+
+### 18.4 Coincidencias entre Luna y Claude
+
+- Fase 1 no esta cerrada. Lo que se cerro es una subprueba de
+  aplicacion del criterio de finalizacion.
+- No avanzar a Fase 2 fingiendo que Fase 1 demostro discriminacion.
+- Cada fase necesita: constructo, hipotesis falsable, baseline,
+  criterio de falsacion. Fijados ANTES de correr.
+- La pregunta central: que aporta el LLM sobre Python.
+- Copiloto vs piloto automatico: hay que decidirlo antes de Fase 2.
+- Penrose: sin hipotesis operacionalizable, fuera del roadmap.
+
+### 18.5 Complementariedades
+
+- Claude puso nombre al constructo central ("decision condicionada
+  por contrato") y las tecnicas de medicion (logprobs, curva
+  psicometrica, AUC de atajos).
+- Luna puso la estructura por fase completa (hipotesis, metrica,
+  baseline, cierre, bloqueante) y los 5 entregables concretos
+  antes de Fase 2.
+- Luna agrega: IMO como referencia, el problema del ruido en el
+  estado real, la necesidad de "no se" / abtencion como salida.
+- Claude agrega: la hipotesis central, los baselines obligatorios
+  (incluye modelo base sin SFT), el analisis por logprobs.
+
+### 18.6 Nota
+
+Este anexo preserva las respuestas COMPLETAS. El memo 89 hace de
+indice. Cualquier decision que tomemos sobre el proyecto tiene que
+citar el anexo correspondiente.
+
