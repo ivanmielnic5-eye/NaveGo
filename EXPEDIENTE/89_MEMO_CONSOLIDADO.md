@@ -1148,3 +1148,118 @@ Este anexo preserva las respuestas COMPLETAS. El memo 89 hace de
 indice. Cualquier decision que tomemos sobre el proyecto tiene que
 citar el anexo correspondiente.
 
+
+
+---
+
+## 19. HIPOTESIS CENTRAL DEL PROYECTO — DOS ETAPAS (Director, 2026-10-12)
+
+### 19.1 El marco
+
+Tras las consultas B y C a Claude y Luna (anexos B y C), el Director
+fijo el marco del proyecto en dos etapas claramente separadas:
+
+**ETAPA 1 — ¿APORTA O NO APORTA EL LLM?**
+
+Pregunta: comparar el LLM contra Python (regla, arbol, controlador)
+en la misma tarea.
+
+Requisitos:
+- Baselines que puedan ganarle al LLM (no baselines triviales).
+- Metricas que distingan "acierta" de "decide".
+- Sin la regla escrita en el prompt.
+- Multiples variables relevantes.
+- Contrafactuales.
+- El LLM tiene que aportar algo, no empatar.
+
+Si el LLM no supera al baseline: la hipotesis se refuta para esa
+configuracion. No significa que todo LLM sea incapaz. Significa que
+para este modelo (Llama 3.1 8B) y esta tarea, SFT no alcanza.
+
+**ETAPA 2 — SI APORTA, ¿EN QUE DIMENSION Y CUANTO?**
+
+Pregunta: si Etapa 1 pasa, medir:
+- Magnitud: cuanto aporta.
+- Dimension: en que aporta (interfaz en lenguaje, adaptacion a
+  contrato, conocimiento nautico implicito, otra).
+- Limites: donde deja de aportar.
+- Potenciales: que se puede aprovechar para el copiloto.
+- Limitaciones: que no hay que pedirle.
+
+Etapa 2 es la fase de arquitectura del copiloto. No es una fase mas
+del ABC. Es la siguiente etapa, la que el Director dejo explicitamente
+para despues.
+
+### 19.2 Las 4 dimensiones donde el LLM podria aportar
+
+(Claude, anexo C, seccion A1)
+
+1. Interfaz en lenguaje natural.
+2. Adaptacion a cambios de contrato sin reentrenar.
+3. Conocimiento nautico implicito.
+4. Otras (a determinar por el experimento).
+
+Ninguna de las 4 se asume. Todas se demuestran.
+
+### 19.3 Lo que Luna y Claude aportan a esta hipotesis
+
+**Claude** (anexo C):
+- H1 (competencia aprendida) central. H2 (condicionamiento por
+  contrato) diferencial.
+- 3 escenarios de valor segun H1/H2.
+- Distincion aprendizaje vs obediencia: derivacion + variacion
+  linguistica.
+
+**Luna** (anexo C):
+- H1 con 4 componentes: dependencia estado, correccion,
+  generalizacion, valor incremental. Los 4 necesarios.
+- H2 como auxiliar, va al copiloto futuro.
+- 3 condiciones separadas para test: regla explicita / sin regla /
+  cambio de contrato.
+
+**Coincidencias entre los dos:**
+- H1 central, H2 auxiliar.
+- Fase 1 actual es prueba unitaria, no evidencia de aprendizaje.
+- Necesidad de contrafactuales, baselines, criterios predefinidos.
+
+### 19.4 Lo que el Director agrega al marco
+
+Separar las dos etapas. Claude y Luna las mezclaron en la misma fase.
+El Director las separa:
+
+- Primero: se demuestra que hay aporte (Etapa 1).
+- Despues: se mide el aporte (Etapa 2).
+
+Razon: si Etapa 1 no pasa, Etapa 2 no tiene sentido. Y si Etapa 1
+pasa, Etapa 2 tiene una direccion clara: buscar DONDE esta la
+ventaja, no asumirla.
+
+### 19.5 Lo que NO se hace todavia
+
+- No se rediseña el test todavia. Eso es trabajo del proximo paso.
+- No se decide el orden exacto de las fases. Claude y Luna
+  discrepan (velas antes o despues de obstaculos). Decision
+  pendiente.
+- No se adopta la terminologia de Claude (C0-C4) hasta que el
+  Director la revise.
+- No se toca el codigo del test.
+
+### 19.6 Proximo paso
+
+Disenar el test de Etapa 1:
+- 4 acciones.
+- Multiples variables.
+- Sin regla en el prompt.
+- Baselines: regla, arbol, modelo base sin SFT, Python.
+- Contrafactuales.
+- Analisis psicometrico (ya validado).
+- T variable.
+
+Con criterios de falsacion fijados ANTES.
+
+### 19.7 Referencias
+
+- Anexo B: primera consulta (constructo y preguntas pendientes).
+- Anexo C: segunda consulta (hipotesis central y reordenamiento).
+- Consultas completas preservadas sin resumir.
+
