@@ -1,0 +1,69 @@
+{
+  "fecha": "2026-10-12T19:58:18.730264",
+  "seed": 20261013,
+  "prompt_sha256": "e1af049258a49a05d5cfd4fd8766035ef542de9b9c376024868615383e7dd2a7",
+  "T_train": [
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28
+  ],
+  "T_interp": [
+    11,
+    17,
+    23
+  ],
+  "T_extrap": [
+    6,
+    32
+  ],
+  "BINS": [
+    [
+      0.3,
+      1.0
+    ],
+    [
+      1.0,
+      2.0
+    ],
+    [
+      2.0,
+      4.0
+    ],
+    [
+      4.0,
+      8.0
+    ]
+  ],
+  "N_CELL": {
+    "train": 7,
+    "val": 2,
+    "test_interp": 25,
+    "test_extrap": 25
+  },
+  "files": {
+    "train": {
+      "n": 616,
+      "sha256": "6a2d47cedf4917ccd927941d8cfdf52b014805e6ce6f5f69f9a6bf23c314c0c5"
+    },
+    "test_interp": {
+      "n": 600,
+      "sha256": "7cf53641c4ab4c6f790823e15e9e98ce6852ddade9df4b277326aea5b430cf7b"
+    },
+    "test_extrap": {
+      "n": 400,
+      "sha256": "0cc771a7e60ee7060b44f606273efa8cf2b72709cc22884556d0d6f594bac620"
+    },
+    "val": {
+      "n": 176,
+      "sha256": "40556aea8aae18649e7f9af63db8fa526ba9a786808ede59dc3315a57f4b34f0"
+    }
+  }
+}
