@@ -810,3 +810,149 @@ Esta regla se aplica siempre, sin importar el apuro.
 4. Si accuracy < 100% pero > 70%: discriminacion real.
 5. Si accuracy = 100%: hay otra regla escondida. Buscar.
 
+
+
+---
+
+## 15. HALLAZGO — GAP EN DISTRIBUCION DE DISTANCIAS
+
+### 15.1 El problema
+
+El banco CC003 tenia un gap de 4.24m entre la distancia maxima de
+"terminar" (14.40m) y la distancia minima de "ir_a" (18.64m). No habia
+NINGUN caso entre 14.40 y 18.64.
+
+Implicancia: el modelo no tenia que aprender el umbral exacto (15m).
+Solo tenia que distinguir dos grupos separados. Cualquier umbral entre
+14.4 y 18.6 daba 100%.
+
+### 15.2 Como se detecto
+
+Mirada manual del Director a la distribucion de distancias. No hubo
+chequeo automatico que lo detectara. Eso es un bache: la lista de
+10 chequeos del memo 75 no incluye "distribucion de distancias dentro
+de cada clase".
+
+### 15.3 El fix
+
+Se agrego un pool E al generador de CC003: candidatos con dist entre
+13 y 17m. Con esto, tanto terminar (abajo de 15) como ir_a (arriba de
+15) tienen casos cerca del umbral.
+
+Resultado:
+- Gap entre terminar (14.94m) e ir_a (15.60m): 0.66m.
+- Zona baja (terminar 13-15m): 56 casos.
+- Zona alta (ir_a 15-17m): 13 casos.
+
+### 15.4 Regla nueva
+
+REGLA 16 (nueva): antes de entrenar, verificar la distribucion de
+distancias dentro de cada clase. Detectar gaps. Asegurar cobertura
+de la zona critica (casos de ambas clases cerca del umbral).
+
+Esta regla esta implementada en pre_entrenamiento.py, CHK 4.
+
+### 15.5 Leccion de metodo
+
+Los chequeos tienen que estar en codigo, no en memos. Un memo que
+dice "chequear X" no evita nada si nadie lo ejecuta. Un script que
+chequea X y aborta si falla, si.
+
+---
+
+## 16. TAREAS PENDIENTES ESTRUCTURALES (auto-critica)
+
+### 16.1 Contexto
+
+Autocritica del Director (2026-10-12). En dos dias se repitio el mismo
+patron de error:
+
+- Dia 1: memo 73 decia "sacar reglas del prompt". Lo escribimos como
+  Regla 15. Al dia siguiente, la regla aparecio de nuevo en CC003.
+- Dia 2: memo 75 lista 10 chequeos. Faltaba el de distribucion de
+  distancias. Descubrimos el gap a ojo.
+
+En ambos casos, la regla existia en un memo pero no se ejecuto.
+Dependia de la memoria del Director o de la IA. Eso es un bache
+estructural.
+
+### 16.2 El principio violado
+
+El sistema declara (memo 00 y varios): "una IA propone, otra IA
+chequea". Y "el sistema NO MIENTE".
+
+Ayer violamos esto sin advertirlo:
+- La IA propuso el prompt de CC003.
+- La misma IA ejecuto el entrenamiento.
+- La misma IA acepto el resultado (100%).
+- No hubo verificacion externa entre esos pasos.
+
+El Director lo detecto hoy. Por su memoria, no por el sistema.
+
+### 16.3 Tarea pendiente 1 — Automatizar la verificacion cruzada
+
+**Problema:** la verificacion entre IAs hoy es manual. Depende de que
+el Director recuerde pedirla.
+
+**Objetivo:** meter la verificacion en el pipeline, no en la voluntad.
+
+**Aclaracion del Director (2026-10-12):**
+El chequeo debe ser un AVISO, no un BLOQUEO.
+
+- El sistema AVISA cuando una propuesta no paso por verificacion
+  externa.
+- El Director decide si consultar a otra IA o aceptar el riesgo.
+- El aviso no impide ejecutar. Es informacion, no impedimento.
+- Solo el Director puede saltear el aviso. Si saltea, queda registrado.
+
+**Analogia:** el Gate tiene WARNING y BLOCKED. El aviso de verificacion
+cruzada funciona como WARNING.
+
+**Ideas a evaluar:**
+- Un script que marque si un commit paso por verificacion externa.
+- Un comando tipo logos-verificacion que muestre el estado.
+- Un warning antes de ejecutar el paso siguiente, pidiendo
+  confirmacion explicita del Director.
+- Marca de "verificado por X" opcional en el commit.
+
+**Prioridad:** ALTA.
+
+### 16.4 Tarea pendiente 2 — Auditar la cadena de automatizacion
+
+**Problema:** el sistema tiene muchos eslabones que se ejecutan
+automaticamente o se esperan por costumbre. Nunca auditamos la
+cadena completa buscando gaps.
+
+**Ejemplos de eslabones a auditar:**
+- logos-gate: ¿verifica todo lo que deberia?
+- logos-brief / logos-arranque: ¿incluyen toda la info critica?
+- Los memos: se escriben, se commitean. ¿Alguien verifica que se
+  lean? ¿Que se apliquen?
+- Los backups .pre-*: se hacen. ¿Se verifican? ¿Se pueden restaurar?
+- Los commits: ¿hay chequeo de que no se mezclan cambios no
+  relacionados?
+- Los tests: ¿hay chequeo de que pasen antes de commitear?
+- Las hipotesis registradas: ¿se cierran?
+
+**Metodologia:**
+- Listar eslabones.
+- Por cada uno: que se ejecuta, que se espera, que se verifica, que
+  NO se verifica.
+- Priorizar gaps por impacto.
+- Resolver uno por vez.
+
+**Prioridad:** MEDIA-ALTA.
+
+### 16.5 Lo que NO hacer
+
+- No resolver las dos tareas de una sola vez.
+- No convertirlo en proyecto paralelo.
+- No agregar burocracia sin objetivo.
+- No dejar las tareas sin fecha.
+
+### 16.6 Proxima accion
+
+1. Documentar esto en el memo 89 (esta seccion).
+2. Continuar con el reentrenamiento de hoy (CC003 + prompt limpio).
+3. Elegir momento para Tarea 1 (verificacion cruzada) — la mas urgente.
+4. Despues de Tarea 1, encarar Tarea 2 (auditoria de cadena).
