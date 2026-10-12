@@ -956,3 +956,98 @@ cadena completa buscando gaps.
 2. Continuar con el reentrenamiento de hoy (CC003 + prompt limpio).
 3. Elegir momento para Tarea 1 (verificacion cruzada) — la mas urgente.
 4. Despues de Tarea 1, encarar Tarea 2 (auditoria de cadena).
+
+
+---
+
+## 17. RESULTADO FINAL DEL SFT CC003 v4 (aplicacion del criterio)
+
+### 17.1 El resultado
+
+=== RESULTADO VALIDACION CC003 v4 ===
+Accuracy: 76/76 = 100.0%
+Uso de acciones: {'ir_a': 38, 'terminar': 38}
+Por accion: {'ir_a': 38, 'terminar': 38} / {'ir_a': 38, 'terminar': 38}
+Errores: 0
+
+### 17.2 Lo que SI demuestra
+
+- El pipeline entero funciona end-to-end.
+- El modelo infiere el criterio a partir del proposito (sin que el
+  prompt diga "Valida SOLO si dist < 15m").
+- El banco con pool E funciono: gap bajo de 4.24m a 0.66m.
+- El modelo acierta los 13 casos de la zona alta (15-17m) y los 56
+  de la zona baja (13-15m).
+- pre_entrenamiento.py no bloqueo nada porque estaba todo bien.
+
+### 17.3 Lo que NO demuestra
+
+Luna GPT (respuesta al informe del 2026-10-12) predijo este resultado
+antes de verlo. Su diagnostico:
+
+> "Si obtiene 100%: demostraria que el modelo produce la decision
+>  esperada en esos 76 contextos. No demostraria por si solo que
+>  posee una capacidad general de razonamiento."
+
+> "Como unicamente existen ir_a y terminar, y una accion declara que
+>  la mision esta cumplida, esa definicion practicamente determina la
+>  politica esperada."
+
+CC003 mide APLICACION DE UN CRITERIO CONOCIDO. No discriminacion general.
+
+### 17.4 El gap de 0.66m sigue siendo problema
+
+Luna:
+> "El caso mas proximo de 'terminar' esta a 14,94 m y el mas proximo
+>  de 'ir_a' a 15,60 m. El intervalo de 0,66 m entre ambos deja sin
+>  ejemplos la zona mas cercana al limite real de 15 m. Un clasificador
+>  podria separar esas muestras usando un umbral distinto de 15 m y
+>  aun asi acertar en todos esos casos."
+
+Es decir: el modelo podria estar usando un umbral en cualquier punto
+entre 14.94 y 15.60. No prueba que aprendio el 15 exacto.
+
+### 17.5 Nombre correcto del test
+
+A partir de ahora: "Test de aplicacion del criterio de finalizacion".
+No "Test de discriminacion".
+
+### 17.6 Propuesta de Luna para medir discriminacion real
+
+- Subconjunto de tension alrededor del umbral con cobertura SIMETRICA.
+- Bandas estrechas: 14.5-14.9, 14.9-15.0, 15.0-15.1, 15.1-15.5.
+- Casos a 14.99, 15.00, 15.01 cuando la precision lo permita.
+- Al menos 30 por lado como objetivo inicial.
+- Mantener el banco general separado del banco de tension.
+
+### 17.7 5 chequeos adicionales que Luna propone agregar
+
+1. Consistencia de etiquetas: cada label debe corresponder estricta-
+   mente a la condicion de distancia acordada.
+2. Baseline determinista: correr "if dist<15: terminar else ir_a"
+   sobre el banco. Si no da 100%, algo esta mal antes de entrenar.
+3. Cobertura especifica alrededor del umbral (no solo gap > 3m).
+4. Auditoria de duplicados y contaminacion train/confirmatorio.
+5. Pruebas contrafactuales: variar distancia a traves del limite
+   debe cambiar la etiqueta; variar variables irrelevantes no.
+
+### 17.8 Distincion abortar/advertir (coincide con el Director)
+
+- **Errores de integridad** (schema roto, IDs duplicados, fuga,
+  etiquetas incompatibles): BLOQUEAN.
+- **Advertencias de calidad** (cobertura asimetrica, pocos casos,
+  margen insuficiente): AVISAN pero no bloquean.
+
+pre_entrenamiento.py debe distinguir entre los dos niveles.
+
+### 17.9 Proximo paso
+
+1. Conservar el resultado de CC003 v4 como perteneciente a esta
+   version del test. No reescribir retrospectivamente.
+2. Consultar a Claude con el mismo informe (paralelo a esta seccion).
+3. Definir el proximo experimento para medir discriminacion real
+   (mas acciones, sin umbral explicito, con contrafactuales).
+4. Idea del Director (2026-10-12): achicar el umbral de 15m a
+   2-3m para preparar la proxima fase (canales estrechos).
+   Pendiente de verificar viabilidad tecnica.
+
