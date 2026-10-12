@@ -1,6 +1,6 @@
 {
   "version": "CC003-1.0",
-  "fecha_generacion": "2026-10-11T21:00:08.319526",
+  "fecha_generacion": "2026-10-11T22:33:49.463097",
   "seed": 2026,
   "entrenador_version": "v2",
   "horizontes": [
@@ -12,7 +12,7 @@
     240.0
   ],
   "candidatos_por_pool": 700,
-  "n_candidatos_totales": 2578,
+  "n_candidatos_totales": 2726,
   "n_seleccionados": 150,
   "n_por_accion": 75,
   "split_counts": {
@@ -20,13 +20,13 @@
     "confirmatorio": 76
   },
   "distribucion_accion": {
-    "terminar": 566,
-    "ir_a": 2009,
-    "frenar": 3
+    "terminar": 289,
+    "ir_a": 2379,
+    "frenar": 58
   },
   "distribucion_pool": {
-    "A_terminal": 597,
-    "B_cerca_rapido": 617,
+    "A_terminal": 674,
+    "B_cerca_rapido": 688,
     "C_lejos": 664,
     "D_medio": 700
   }
