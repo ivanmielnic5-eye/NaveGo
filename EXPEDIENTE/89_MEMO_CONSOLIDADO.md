@@ -737,3 +737,76 @@ Estas ideas son para la ultima fase. No se saltean etapas. Pero
 documentarlas ahora evita que se pierdan. Cuando lleguemos, vamos a
 tener todas las piezas listas.
 
+
+
+---
+
+## 14. HALLAZGO — Regla de decision disfrazada de contrato
+
+### 14.1 El problema
+
+El prompt de CC003 (heredado de CC002) incluye esta linea:
+
+> "terminar: declara mision cumplida. Valida SOLO si dist < 15m."
+
+Eso NO es contrato de tarea. Es REGLA DE DECISION. Le dice
+explicitamente al modelo cuando usar terminar. El modelo no necesita
+discriminar: solo comparar "dist < 15".
+
+El memo 73 (decision 4) ya decia: "se elimina la regla de decision del
+prompt". Y Luna en su respuesta al memo 86 ya advertia sobre la
+diferencia entre contrato de tarea y regla de decision.
+
+Pero cuando armamos el prompt de CC003, copiamos el de CC002 sin
+revisar. Error de aplicacion, no de conocimiento.
+
+### 14.2 Evidencia
+
+Baseline trivial: "if dist < 15: terminar; else: ir_a".
+Resultado: 76/76 = 100% en el confirmatorio CC003.
+
+El LLM tambien saco 100%. Pero el LLM no aporta nada que la regla
+trivial no diera ya. Mide obediencia, no discriminacion.
+
+### 14.3 La distincion
+
+**Contrato de tarea** (va en el prompt):
+- Que hace cada accion.
+- Cual es el proposito de la mision.
+- Cual es el formato de salida.
+
+**Regla de decision** (NO va en el prompt):
+- Que accion elegir ante que estado.
+- Umbrales de decision (dist < 15m, desvio > 30, etc.).
+
+### 14.4 Rediseno del prompt
+
+Prompt limpio (v2):
+
+- PROPOSITO: "Llevar el barco a la meta. La mision esta completa
+  cuando el barco llega a la meta." (sin especificar el umbral)
+- ACCIONES:
+  - ir_a: navega hacia la meta corrigiendo rumbo automaticamente.
+  - terminar: declara la mision como cumplida.
+  (sin "Valida SOLO si dist < 15m")
+
+El modelo debe inferir por si mismo que terminar no tiene sentido
+si no llego. Porque "declara la mision cumplida" implica que la
+mision esta cumplida.
+
+### 14.5 Leccion de metodo
+
+REGLA 15 (nueva): antes de cada entrenamiento, revisar el prompt
+contra las decisiones del memo 73 y 89 (seccion 12). Verificar que
+no incluya reglas de decision.
+
+Esta regla se aplica siempre, sin importar el apuro.
+
+### 14.6 Proximos pasos
+
+1. Regenerar train_cc003.jsonl y eval_cc003_*.jsonl con el prompt limpio.
+2. Reentrenar en Kaggle.
+3. Evaluar en confirmatorio.
+4. Si accuracy < 100% pero > 70%: discriminacion real.
+5. Si accuracy = 100%: hay otra regla escondida. Buscar.
+
