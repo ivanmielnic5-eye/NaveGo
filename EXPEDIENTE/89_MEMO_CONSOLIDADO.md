@@ -1263,3 +1263,177 @@ Con criterios de falsacion fijados ANTES.
 - Anexo C: segunda consulta (hipotesis central y reordenamiento).
 - Consultas completas preservadas sin resumir.
 
+
+---
+
+## 20. CIERRE DEL ANÁLISIS DE BANCO A
+
+**Fecha:** 2026-10-12
+**Referencias:** commits 24c53b8 y a8703f0, consulta a Luna 2026-10-12.
+
+### 20.1 Encuadre
+
+Según los documentos (commit 24c53b8 + secciones 1, 2 y 5 de este memo),
+Banco A implementa **Fase 1a** ("Contrato"), con hipótesis falsable y
+criterio de falsación preregistrado. No es un smoke test de
+infraestructura. Esa lectura alternativa no está respaldada por los
+documentos.
+
+### 20.2 Qué se verificó
+
+Pipeline end-to-end:
+- Carga de dataset JSONL desde Kaggle: OK
+- Aplicación de chat template Llama 3.1: OK
+- Entrenamiento LoRA r=16 sobre Llama 3.1 8B en 4-bit: OK
+- Guardado del adapter (167.8 MB): OK
+- Recuperación del adapter: OK
+- Generación en formato válido ("1" o "2"): OK
+
+Dataset:
+- Train: 600 ejemplos (284 "1", 316 "2"). T en {10, 15, 20, 25}.
+- Val: 200 ejemplos (97 "1", 103 "2").
+- Confirmatorio: 750 ejemplos. T en {12.5, 17.5, 22.5}.
+- Regla: `d < T -> terminar; d >= T -> ir_a`.
+
+Entrenamiento:
+- global_step = 150 (2 epochs sobre 600).
+- train_loss final = 0.1880.
+- log_history: loss 2.00 en step 10 -> 0.05 en step 20 -> meseta
+  hasta step 150. eval_loss ≈ train_loss en los tres checkpoints.
+- Warning documentado: "num_items_in_batch could not be counted...
+  gradient accumulation very slightly less accurate". No es error,
+  no causó el colapso.
+
+Evaluación del SFT sobre val:
+- SFT: 103/200 = 51.5%.
+- Fallos: patrón uniforme real="1" pred="2".
+- Colapso a la clase mayoritaria (ir_a).
+
+### 20.3 Qué NO se verificó
+
+- Si el loss se calculó con `train_on_responses_only` (enmascaramiento
+  del prompt) o sobre toda la secuencia. No disponible el `.ipynb`
+  ejecutado con GPU.
+- Evaluación del SFT sobre el confirmatorio (750).
+- Comparación emparejada base vs SFT sobre los mismos contextos.
+- Causa exacta del colapso, aislada.
+
+### 20.4 Hallazgo: contradicción prompt/etiqueta
+
+Archivos: `prompt_banco_A.py` + `generar_banco_A.py`.
+
+- PROMPT: declara que `terminar` requiere `d < T` **Y** "el barco
+  está navegando a baja velocidad".
+- ESTADO: solo entrega `d` y `T`. No entrega velocidad.
+- ETIQUETA: `d < T -> terminar`, sin velocidad. `sog` y `viento_kn`
+  son constantes (0.0).
+
+El modelo lee un contrato que no puede verificar completamente.
+Es una explicación plausible del colapso a `ir_a`, pero no la única
+posible. La corrección metodológica es inequívoca: el prompt y el
+generador deben describir exactamente la misma tarea.
+
+### 20.5 Resolución 51.5% vs 52.3%
+
+Dos mediciones distintas, sobre sets distintos:
+
+| Medición | Modelo | Set | N | Accuracy |
+|---|---|---|---|---|
+| 52.3% | Base sin SFT | Confirmatorio | 750 | 392/750 |
+| 51.5% | SFT (run A) | Val SFT | 200 | 103/200 |
+
+El 52.3% proviene del commit a8703f0. No hay contradicción.
+
+### 20.6 Estado del criterio de falsación de Fase 1a
+
+Criterio 1 (memo sección 2): "el umbral efectivo no sigue a T".
+**Se activa.** El modelo colapsó a ir_a en todas las bandas.
+
+Criterio 2: "el modelo base sin SFT ya saca ≈100%".
+**No se activa.** El base saca 52.3%.
+
+Señal de parada (memo sección 5): "el modelo base iguala al SFT".
+Pendiente de verificar emparejadamente. Los dos números actuales son
+de sets distintos.
+
+### 20.7 Conclusión
+
+El pipeline funcionó end-to-end. La capacidad de Fase 1a **no quedó
+respaldada** por el checkpoint. La causa exacta del fallo no está
+aislada. No se declara refutada la posibilidad de que Llama 3.1 8B
+aprenda la comparación con otro diseño.
+
+---
+
+## 21. RESPUESTA DE LUNA — BANCO A (2026-10-12)
+
+Consulta realizada tras el análisis preliminar. Respuesta completa en
+`ANEXOS/89_ANEXO_D_LUNA.md`.
+
+### 21.1 Puntos clave
+
+1. No reclasificar retroactivamente Banco A como smoke test.
+2. La contradicción prompt/etiqueta es real y plausible causa del
+   colapso, pero no demostrada como causa única.
+3. El `loss = 0.053` no debe interpretarse como firma inequívoca de
+   predecir la clase mayoritaria si el loss incluye el prompt.
+4. La señal de parada del memo (base = SFT) no está formalmente
+   activada: los números 52.3% y 51.5% son de sets distintos.
+5. No reentrenar todavía. Aislar primero el fallo.
+6. Verificar: (a) enmascaramiento del loss, (b) reconciliación
+   prompt/etiquetas, (c) comparación emparejada base vs SFT,
+   (d) generalización por T en T no vistos.
+
+### 21.2 Clasificación propuesta
+
+> "La hipótesis de generalización del umbral no está respaldada por
+>  el checkpoint actual y falla en la validación reportada. La
+>  conclusión confirmatoria sobre generalización a umbrales no vistos
+>  queda pendiente de una evaluación con el checkpoint congelado."
+
+---
+
+## 22. DECISIONES PENDIENTES Y PLAN DE BANCO B
+
+### 22.1 Decisiones del Director pendientes
+
+1. ¿Banco A se cierra como Fase 1a no respaldada, o se rediseña
+   y se corre una nueva versión?
+2. ¿La condición de "baja velocidad" pertenece al objetivo del
+   proyecto? Si sí: agregar velocidad al estado y a las etiquetas.
+   Si no: sacarla del prompt y documentar el error.
+3. ¿Se consulta a Claude antes del próximo test?
+4. ¿Se adopta la propuesta de prompt saneado de Luna (sin mención a
+   velocidad, d con 8 decimales)?
+5. ¿Se pasa a Luna el `.ipynb` local o los 5 ejemplos reales que pide
+   para revisar el enmascaramiento?
+
+### 22.2 Plan de Banco B (borrador)
+
+Orden propuesto, respetando regla de un paso por vez:
+
+1. **Reconciliar prompt y etiquetas.** Decidir si la velocidad
+   pertenece al objetivo o no. Ajustar el generador y el prompt para
+   que describan la misma tarea.
+2. **Verificar enmascaramiento del loss.** Revisar el notebook
+   (local o el de Kaggle si aparece la versión con GPU). Si no se
+   enmascaró, corregir para el próximo run.
+3. **Comparación emparejada base vs SFT.** Evaluar ambos sobre los
+   mismos 750 contextos confirmatorios congelados, mismo prompt,
+   parser y procedimiento. Esto responde la señal de parada del
+   memo.
+4. **Medir generalización directamente.** Tasa de `terminar` por T,
+   matriz de confusión, umbral efectivo estimado en T no vistos.
+5. **Consulta a Claude** antes de generar el próximo banco.
+
+### 22.3 Lo que NO se hace todavía
+
+- NO reentrenar sin aislar el fallo.
+- NO crear nuevos bancos sin resolver la contradicción prompt/etiqueta.
+- NO usar el confirmatorio de A para decidir el diseño de B.
+
+### 22.4 Firma
+
+**Estado:** Banco A cerrado analíticamente. Fase 1a no respaldada.
+**Próximo paso:** decisión del Director sobre secciones 22.1.
+**Regla:** calidad primero, performance después.
