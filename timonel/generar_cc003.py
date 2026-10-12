@@ -73,6 +73,15 @@ def generar_pool_D_medio(rng):
     return _candidato_desde_dist(rng, dist)
 
 
+def generar_pool_E_zona_critica(rng):
+    """Zona critica: dist 13-17m. Fuerza casos cerca del umbral 15m.
+    Con esto, tanto terminar (abajo) como ir_a (arriba) tienen casos
+    cerca del umbral. Sin esto, el modelo solo distingue grupos
+    separados y no aprende el umbral."""
+    dist = rng.uniform(13.0, 17.0)
+    return _candidato_desde_dist(rng, dist)
+
+
 def _candidato_desde_dist(rng, dist, sog_override=None):
     ang_meta = rng.uniform(0.0, 360.0)
     meta_x = round(dist * math.sin(math.radians(ang_meta)), 2)
@@ -164,6 +173,7 @@ def main():
         "B_cerca_rapido": (generar_pool_B_cerca_rapido, args.candidatos_por_pool),
         "C_lejos": (generar_pool_C_lejos, args.candidatos_por_pool),
         "D_medio": (generar_pool_D_medio, args.candidatos_por_pool),
+        "E_zona_critica": (generar_pool_E_zona_critica, args.candidatos_por_pool * 2),
     }
 
     t0 = time.time()
