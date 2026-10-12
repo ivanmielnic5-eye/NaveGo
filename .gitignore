@@ -117,3 +117,6 @@ __pycache__/
 
 # Adaptadores LoRA descargados de Kaggle (971 MB, no van al repo)
 timonel/lora_descarga/
+
+# LoRA CC003 descargado de Kaggle (177 MB, no va al repo)
+timonel/lora_cc003_descarga/
