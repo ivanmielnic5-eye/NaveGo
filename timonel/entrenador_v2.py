@@ -131,9 +131,12 @@ class Entrenador:
 
         # Mission complete
         mission_complete = False
-        if accion == "terminar" and error == "":
+        if accion == "terminar":
             if dist_inicial < 15.0:
                 mission_complete = True
+            else:
+                # Terminar invalida: marcar como error para que se descarte
+                error = "terminar_invalido"
 
         # Progreso medio temporal (integracion trapezoidal)
         horizontes_ordenados = sorted(self.horizontes)
@@ -207,6 +210,9 @@ class Entrenador:
         resultados = []
         for accion in self.acciones_disponibles:
             r = self._evaluar_accion(barco, meta_x, meta_z, accion)
+            # Descartar acciones invalidas (terminar fuera de rango, etc.)
+            if r.error:
+                continue
             resultados.append(r)
 
         # Detectar peligro inminente
