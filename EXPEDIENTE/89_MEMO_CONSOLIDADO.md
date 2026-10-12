@@ -628,3 +628,112 @@ Aplicar el orden correcto en entrenador_v2.py:
 1. Primero filtrar por boundary_violation.
 2. Despues rankear por (mission_complete, progreso_medio, alineacion).
 
+
+
+---
+
+## 13. FASE 7 — VISION AVANZADA (documentacion de ideas)
+
+### 13.1 Origen de las ideas
+
+Estas ideas no son improvisadas. Vienen del proyecto anterior del Director
+llamado "Ojo de Gaia", que era un sistema para leer la complejidad del
+iris humano. De ahi surge el conocimiento de:
+
+- Teselaciones de Penrose.
+- Wavelets aplicadas a senales complejas.
+- Cartografia y proyecciones (McDonnell, Buckminster Fuller).
+- El problema de simplificar estructuras circulares en planos rectos.
+
+Ese proyecto quedo cerrado pero las herramientas matematicas quedaron.
+Se reutilizan en Fase 7 cuando el simulador tenga olas y sensores.
+
+### 13.2 Teselaciones de Penrose
+
+**Que son:** patrones que cubren el plano sin huecos ni superposiciones,
+con solo dos formas (cometa y flecha), pero que NO son periodicos.
+Es decir, el patron nunca se repite exactamente igual.
+
+**Historia real:**
+- Roger Penrose las describio en 1974.
+- Fue nombrado caballero en 1994, mismo ano en que TU Dortmund inauguro
+  un piso con teselados de Penrose. De ahi la confusion de fechas.
+- Penrose gano el Nobel de Fisica en 2020, pero por agujeros negros,
+  no por las teselaciones.
+
+**Conexion con cuasicristales:**
+- Dan Shechtman gano el Nobel de Quimica en 2011 por descubrir
+  cuasicristales.
+- Paul Steinhardt (Princeton) propuso que los teselados de Penrose
+  podian existir como estructura atomica real.
+- Se demostro que si. Es la version fisica de los teselados.
+
+**Aplicacion potencial en Fase 7:**
+- Codificacion eficiente de informacion visual.
+- Deteccion de patrones en el "ojo" del barco.
+- Representacion de estados del mar.
+
+### 13.3 Wavelets (transformada de ondiculas)
+
+**Que son:** una herramienta matematica para analizar senales
+NO estacionarias. A diferencia de Fourier (que da el promedio de
+frecuencias en toda la senal), las wavelets dan la evolucion en el
+tiempo Y en la frecuencia al mismo tiempo.
+
+**Ejemplo:**
+- Fourier: "en esta hora hubo olas de 10s y 5s".
+- Wavelet: "minuto 3 ola de 10s, minuto 5 cambio a 5s, minuto 7
+  volvio a 10s".
+
+**Wavelet de Morlet:** la mas usada para analisis de olas marinas.
+Su forma se parece a una ola de mar con pequenas oscilaciones en los
+bordes.
+
+**Aplicaciones reales en industria naval:**
+- Estimar direccion y periodo de olas desde radar marino.
+- Filtrar movimiento del barco para posicionamiento dinamico.
+- Predecir movimiento del barco en olas irregulares.
+
+**Aplicacion en Fase 7:**
+- Leer la complejidad de las olas.
+- Detectar patrones (convergencias, direcciones, periodos).
+- Alimentar al agente con una representacion matematica de la ola.
+
+### 13.4 Cartografia y proyecciones
+
+**Porter W. McDonnell:** autor del libro "Introduction to Map
+Projections". Referencia en la materia. Cubre desde los principios
+matematicos hasta tipos especificos (equidistantes, area equivalente,
+etc.).
+
+**Buckminster Fuller:** creo la proyeccion Dymaxion en 1943.
+Convierte el globo en un icosaedro desplegable. Sin distorsiones
+importantes. Muestra la Tierra como continente continuo.
+
+**Ojo de Gaia (mision ESA):** la camara de mil millones de pixeles
+de la mision Gaia de la Agencia Espacial Europea. Mapeo la Via Lactea.
+Uso proyecciones como la equirectangular para presentar el mapa del
+cielo en un plano.
+
+**Aplicacion en Fase 7:**
+- Leer la circularidad del ojo (o del mar) en un plano recto.
+- Simplificar estructuras complejas sin perder informacion critica.
+- Mapear el entorno cuando el barco tenga sensores completos.
+
+### 13.5 Estado actual
+
+- **Documentado:** si.
+- **Implementado:** no.
+- **Pendiente:** llegar a Fase 7 en el roadmap.
+- **Requiere:**
+  1. Simulador con olas modeladas.
+  2. Sensores que capten la ola (radar, boya, camara).
+  3. Representacion matematica de la senal (wavelet, Fourier, etc.).
+  4. Agente que aprenda a responder a esa representacion.
+
+### 13.6 Nota
+
+Estas ideas son para la ultima fase. No se saltean etapas. Pero
+documentarlas ahora evita que se pierdan. Cuando lleguemos, vamos a
+tener todas las piezas listas.
+
