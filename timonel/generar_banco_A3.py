@@ -37,7 +37,7 @@ T_INTERP = [11.0, 17.0, 23.0]
 T_EXTRAP = [6.0, 32.0]
 V_MAX_TRAIN = [0.3, 0.5, 0.8, 1.2, 2.0, 3.0]
 V_MAX_INTERP = [0.4, 1.0, 1.6, 2.5]
-V_MAX_EXTRAP = [0.15, 5.0]
+V_MAX_EXTRAP = [0.2, 5.0]
 
 OUT = "bancoA3"
 

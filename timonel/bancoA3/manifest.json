@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-13T20:52:59.155108",
+  "fecha": "2026-10-13T20:59:06.250434",
   "seed": 20261014,
   "T_train": [
     8.0,
@@ -38,7 +38,7 @@
     2.5
   ],
   "V_MAX_EXTRAP": [
-    0.15,
+    0.2,
     5.0
   ],
   "files": {
@@ -56,7 +56,7 @@
     },
     "test_extrap": {
       "n": 400,
-      "sha256": "1318f16d7bd420cffb20f053b6eeb56bf1f713c2102d56204e9935c1a7f6ddbd"
+      "sha256": "3964e1e45507441dc559b62fdeb82f2bb0b47f9b18944befdf60543dcdf4f35c"
     },
     "test_balanceado": {
       "n": 600,
