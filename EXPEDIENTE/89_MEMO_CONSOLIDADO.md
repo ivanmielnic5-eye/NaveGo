@@ -1437,3 +1437,118 @@ Orden propuesto, respetando regla de un paso por vez:
 **Estado:** Banco A cerrado analíticamente. Fase 1a no respaldada.
 **Próximo paso:** decisión del Director sobre secciones 22.1.
 **Regla:** calidad primero, performance después.
+
+---
+
+## 25. PROBE F2 — EL ADAPTADOR DE A2 GENERALIZA A UNA CLAUSULA NUEVA
+
+**Fecha:** 2026-10-13
+**Referencias:** seccion 24, anexo H (Claude), anexo G (Luna).
+
+### 25.1 Que se probo
+
+Etapa 0 del protocolo A3 (seccion 24.9). Sin reentrenar.
+
+Se evaluo el adaptador de A2 (entrenado solo con F1: d<T -> terminar)
+sobre 200 contextos con un contrato nuevo (F2):
+terminar si d<T Y v<=v_max. La palabra "velocidad" no aparecio nunca
+en el entrenamiento de A2.
+
+Cuadrante clave Q2: d<T Y v>v_max. Etiqueta correcta: ir_a.
+Si el modelo dice terminar en Q2, ignora la clausula adicional.
+
+Se comparo contra el mismo modelo con disable_adapter (base sin SFT).
+
+### 25.2 Resultado
+
+Puntaje forzado (lp(terminar) - lp(ir_a)):
+
+  Cuadrante                            SFT      BASE
+  Q1 (d<T, v<=vmax, label=terminar)    1.000    0.980
+  Q2 (d<T, v>vmax,  label=ir_a)        0.980    0.120
+  Q3 (d>=T, v<=vmax, label=ir_a)       1.000    0.260
+  Q4 (d>=T, v>vmax,  label=ir_a)       1.000    0.020
+
+  GLOBAL                               0.995    0.345
+  Q2 (clave)                           0.980    0.120
+
+Prediccion de terminar en Q2 (deberia ser 0):
+  SFT:  1/50
+  BASE: 44/50
+
+Prediccion de terminar en TODOS los cuadrantes (base):
+  Q1: 49/50  Q2: 44/50  Q3: 37/50  Q4: 49/50
+  El base colapsa a "terminar" cuando el prompt menciona velocidad.
+  Falla en los cuatro cuadrantes, no solo en Q2.
+
+Veredicto del probe: SFT APORTA. Lee contrato F2 donde el base falla.
+
+### 25.3 Lectura
+
+El adaptador de A2 respeta una clausula que no vio durante el
+entrenamiento. El base sin SFT no la respeta (colapsa a "si d<T
+entonces terminar" ignorando todo lo demas).
+
+Diferencia en el cuadrante clave: 86 puntos (0.980 vs 0.120).
+
+Lectura tentativa: el SFT no aprendio solo "si d<T -> terminar".
+Aprendio algo mas general: "terminar solo cuando TODAS las condiciones
+del contrato se cumplen visiblemente". Eso es lectura de contrato, no
+memorizacion de una regla fija.
+
+### 25.4 Cautelas
+
+1. Un solo experimento. Una clausula nueva (velocidad), un T fijo
+   (15), un formato. A3 mide en serio con multiples familias,
+   formulaciones y unidades.
+
+2. No mide LLM vs parser Python. Mide LLM con SFT vs LLM sin SFT.
+   La pelea H1b (LLM vs P-text) sigue pendiente.
+
+3. Q2 SFT = 0.98, no 1.0. Un fallo. No se sabe si es ruido o
+   sistematico. Se aclara cuando A3 etapa 1 corra con mas variantes.
+
+4. El veredicto "SFT APORTA" es sobre esta tarea y este artefacto.
+   No es una conclusion sobre "los LLM" en general.
+
+### 25.5 Implicaciones para A3
+
+El resultado del probe apoya H1a (capacidad de adaptacion) de arranque:
+
+- El SFT de A2 ya generaliza a una familia nueva (F2) sin reentrenar.
+- El base no tiene esa capacidad (colapsa a "d<T -> terminar").
+- El SFT aporta valor en la tarea acotada de "leer un contrato nuevo".
+
+Si esto se sostiene con F3 (prioridad de seguridad) y F4 (abstencion),
+el LLM tiene un rol claro como INTERPRETE de contratos (no como
+decisor autonomo).
+
+H1b (LLM vs parser Python) sigue pendiente. La pelea real no es
+contra el base, es contra P-text.
+
+### 25.6 Pendientes de A2
+
+Del cierre de A2 (seccion 24.9, etapa 0) quedan:
+
+- Invariancia semantica (orden de acciones invertido). No medida.
+  Se mide en A3 etapa 1.
+- El fallo unico de Q2 SFT (1/50). Puede ser ruido o sistematico.
+  Se aclara en A3 etapa 1 con mas variantes.
+
+### 25.7 Proximo paso
+
+Etapa 1 del protocolo A3 (seccion 24.9):
+- Generar F1 + F2 con formulaciones F-train y F-dev.
+- Entrenar LLM-A3 (1 semilla).
+- Evaluar contra P-struct, P-text, arbol, LLM-A2 congelado, LLM-A3.
+- Aplicar compuertas y cribado.
+
+Antes de ejecutar, queda una consulta abierta a Claude (anexo H,
+seccion 6): definir la metrica primaria de "ventaja practica" y el
+protocolo de esfuerzo humano de forma preregistrada.
+
+### 25.8 Firma
+
+**Estado:** PROBE F2 ejecutado. SFT aporta sobre el base en F2.
+**Proximo paso:** etapa 1 de A3, previa consulta a Claude.
+**Regla:** calidad primero, performance despues.

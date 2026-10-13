@@ -120,3 +120,17 @@ timonel/lora_descarga/
 
 # LoRA CC003 descargado de Kaggle (177 MB, no va al repo)
 timonel/lora_cc003_descarga/
+
+# --- A2: outputs descargados de Kaggle (1.3 GB, regenerables) ---
+timonel/kaggle_descarga/outputs_A2/
+timonel/kaggle_descarga/timonel_lora_banco_A2/
+timonel/kaggle_descarga/huggingface_tokenizers_cache/
+timonel/kaggle_descarga/unsloth_compiled_cache/
+
+# --- A2: evaluacion (caches generados al correr) ---
+timonel/kaggle_eval_A2/unsloth_compiled_cache/
+timonel/kaggle_eval_A2/huggingface_tokenizers_cache/
+
+# --- A2: probe (caches generados al correr) ---
+timonel/kaggle_probe_nb/unsloth_compiled_cache/
+timonel/kaggle_probe_nb_v2/unsloth_compiled_cache/
