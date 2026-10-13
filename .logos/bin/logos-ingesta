@@ -132,29 +132,101 @@ def cmd_listar(directorio=None):
     return 0
 
 
+def _repo_root():
+    import subprocess
+    here = os.path.dirname(os.path.abspath(__file__))
+    try:
+        out = subprocess.run(
+            ["git", "-C", here, "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True
+        )
+        return out.stdout.strip()
+    except Exception:
+        return None
+
+
+def cmd_commit(archivo, mensaje, push=False):
+    import subprocess
+    if mensaje is None or not mensaje.strip():
+        print("Falta el mensaje de commit.")
+        print('Uso: logos-ingesta commit <archivo> "mensaje"')
+        return 1
+    if not os.path.exists(archivo):
+        print("NO EXISTE: " + archivo)
+        return 1
+    root = _repo_root()
+    if root is None:
+        print("No pude encontrar el repo git.")
+        return 1
+    abs_archivo = os.path.abspath(archivo)
+    untracked = subprocess.run(
+        ["git", "-C", root, "ls-files", "--others", "--exclude-standard", "--", abs_archivo],
+        capture_output=True, text=True
+    ).stdout.strip()
+    diff = subprocess.run(["git", "-C", root, "diff", "--quiet", "--", abs_archivo], capture_output=True)
+    diff_staged = subprocess.run(["git", "-C", root, "diff", "--cached", "--quiet", "--", abs_archivo], capture_output=True)
+    sin_cambios = (diff.returncode == 0 and diff_staged.returncode == 0)
+    if sin_cambios and not untracked:
+        print("Sin cambios: " + os.path.relpath(abs_archivo, root))
+        return 0
+    add = subprocess.run(["git", "-C", root, "add", abs_archivo], capture_output=True, text=True)
+    if add.returncode != 0:
+        print("ERROR en git add:")
+        print(add.stderr)
+        return 1
+    commit = subprocess.run(["git", "-C", root, "commit", "-m", mensaje], capture_output=True, text=True)
+    if commit.returncode != 0:
+        print("ERROR en git commit:")
+        print(commit.stderr)
+        return 1
+    hash_out = subprocess.run(["git", "-C", root, "log", "--oneline", "-1"], capture_output=True, text=True).stdout.strip()
+    print("OK: " + hash_out)
+    if push:
+        push_out = subprocess.run(["git", "-C", root, "push", "origin", "HEAD"], capture_output=True, text=True)
+        if push_out.returncode != 0:
+            print("AVISO: el commit quedo local. Push fallo:")
+            print(push_out.stderr)
+            return 1
+        print("OK: pusheado")
+    else:
+        print("(recorda hacer push si queres subirlo)")
+    return 0
+
+
 def main():
-    if len(sys.argv) < 2:
+    args = sys.argv[1:]
+    if not args:
         print("Uso:")
         print("  logos-ingesta pegar <archivo>")
         print("  logos-ingesta revisar <archivo>")
         print("  logos-ingesta listar [directorio]")
+        print('  logos-ingesta commit [--push] <archivo> "mensaje"')
         return 1
 
-    modo = sys.argv[1]
-    path = sys.argv[2] if len(sys.argv) > 2 else None
+    modo = args[0]
+    resto = args[1:]
 
     if modo == "pegar":
-        if path is None:
+        if not resto:
             print("Falta <archivo>")
             return 1
-        return cmd_pegar(path)
+        return cmd_pegar(resto[0])
     elif modo == "revisar":
-        if path is None:
+        if not resto:
             print("Falta <archivo>")
             return 1
-        return cmd_revisar(path)
+        return cmd_revisar(resto[0])
     elif modo == "listar":
-        return cmd_listar(path)
+        return cmd_listar(resto[0] if resto else None)
+    elif modo == "commit":
+        push = "--push" in resto
+        limpio = [a for a in resto if a != "--push"]
+        if not limpio:
+            print("Falta <archivo>")
+            return 1
+        arch = limpio[0]
+        mensaje = limpio[1] if len(limpio) > 1 else None
+        return cmd_commit(arch, mensaje, push=push)
     else:
         print("Modo desconocido: " + modo)
         return 1
