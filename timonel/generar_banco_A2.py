@@ -18,6 +18,8 @@ import hashlib
 import json
 import os
 import re
+
+from etiquetar import etiquetar_por_T
 import sys
 from collections import Counter
 from datetime import datetime
@@ -59,10 +61,6 @@ def fmt1(x):
     return s
 
 
-def etiqueta(d_mostrado, T_mostrado):
-    return "terminar" if d_mostrado < T_mostrado else "ir_a"
-
-
 def make_ctx(rng, T, lo, hi, lado, split, kind, forbidden=None):
     """Genera un contexto con |d - T| en [lo, hi] del lado indicado."""
     while True:
@@ -81,7 +79,7 @@ def make_ctx(rng, T, lo, hi, lado, split, kind, forbidden=None):
 
     orden = [str(a) for a in rng.permutation(["ir_a", "terminar"])]
     acciones = "\n".join(DESC[a] for a in orden)
-    lab = etiqueta(d, T)
+    lab = etiquetar_por_T(d, T)
     prompt = PROMPT.format(T=fmt1(T), d=fmt1(d), acciones=acciones)
 
     return {
