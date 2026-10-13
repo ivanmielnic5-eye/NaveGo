@@ -95,23 +95,68 @@ def cmd_revisar(path):
     return 0
 
 
+def cmd_listar(directorio=None):
+    if directorio is None:
+        directorio = os.path.expanduser("~/navego_recuperado/timonel/borradores")
+    if not os.path.isdir(directorio):
+        print("NO ES DIRECTORIO: " + directorio)
+        return 1
+    archivos = []
+    for nombre in sorted(os.listdir(directorio)):
+        if not nombre.endswith(".md"):
+            continue
+        full = os.path.join(directorio, nombre)
+        if not os.path.isfile(full):
+            continue
+        stat = os.stat(full)
+        with open(full, encoding="utf-8") as f:
+            nlineas = sum(1 for _ in f)
+        archivos.append((stat.st_mtime, stat.st_size, nlineas, nombre))
+    if not archivos:
+        print("Vacio: " + directorio)
+        return 0
+    archivos.sort(reverse=True)
+    print("=== Borradores en " + directorio + " ===")
+    print()
+    print("  Fecha            Tamaño   Lineas  Archivo")
+    print("  " + "-" * 62)
+    total_lineas = 0
+    for mtime, size, nlineas, nombre in archivos:
+        fecha = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")
+        size_kb = size / 1024.0
+        linea = "  " + fecha + "  " + str(round(size_kb, 1)).rjust(5) + "KB  " + str(nlineas).rjust(5) + "  " + nombre
+        print(linea)
+        total_lineas += nlineas
+    print()
+    print("Total: " + str(len(archivos)) + " archivos, " + str(total_lineas) + " lineas")
+    return 0
+
+
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print("Uso:")
         print("  logos-ingesta pegar <archivo>")
         print("  logos-ingesta revisar <archivo>")
+        print("  logos-ingesta listar [directorio]")
         return 1
 
     modo = sys.argv[1]
-    path = sys.argv[2]
+    path = sys.argv[2] if len(sys.argv) > 2 else None
 
     if modo == "pegar":
+        if path is None:
+            print("Falta <archivo>")
+            return 1
         return cmd_pegar(path)
     elif modo == "revisar":
+        if path is None:
+            print("Falta <archivo>")
+            return 1
         return cmd_revisar(path)
+    elif modo == "listar":
+        return cmd_listar(path)
     else:
-        print(f"Modo desconocido: {modo}")
-        print("Usar 'pegar' o 'revisar'.")
+        print("Modo desconocido: " + modo)
         return 1
 
 
