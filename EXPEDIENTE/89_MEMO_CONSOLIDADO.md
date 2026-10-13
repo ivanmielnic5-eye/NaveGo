@@ -1625,3 +1625,102 @@ presente sin clausula de seguridad.
   pendiente 0b".
 - 25.6: invariancia y fallo Q2 pasan a etapa 0b, no a etapa 1.
 - 25.7: reordenar. Primero 0b; despues etapa 1.
+
+---
+
+### 25.10 ETAPA 0b — EL SFT NO LEE v_max (FALLA B2)
+
+**Fecha:** 2026-10-13
+**Referencias:** anexo J (Claude), seccion 25.9.
+
+La etapa 0b se ejecuto con el adaptador de A2 congelado. Cuatro bloques,
+solo puntuar, sin entrenar:
+
+  B1 placebo: v visible, contrato SIN clausula de velocidad (100).
+  B2 v_max variable: contrato CON clausula, v_max en 5 valores (94).
+  B3 contrafactual: mismo d/T/v, cambia solo v_max (100).
+  B4 vecindad del fallo Q2 (30).
+
+### 25.10.1 Resultado
+
+  Bloque                                        SFT      BASE
+  B1 (d<T, v alta, SIN clausula)               1.000    0.080
+  B2 contra-prior (v moderada, v_max alto)     0.875    1.000
+  B3 pares correctos al cambiar v_max          0.960    ---
+  B4 vecindad                                  ---      ---
+
+  VEREDICTO 0b: FALLA B2.
+
+Criterios preregistrados (seccion 25.9):
+  - pasa B1 si acc >= 0.95: PASA (1.000).
+  - pasa B2 contra-prior si acc >= 0.90: FALLA (0.875).
+
+### 25.10.2 Lectura
+
+**El SFT no lee el v_max del contrato.** Usa la magnitud de `v` como
+pista. Cuando ve `v` moderada (por ejemplo 1.5) con `v_max` alto
+(por ejemplo 2.0), el correcto es `terminar` (el barco se mueve pero
+dentro del limite). El SFT falla en esos casos: dice `ir_a`.
+
+Traduccion: el modelo no compara `v` contra `v_max`. Mira `v` sola y
+aplica "si se mueve, no termino". Es una prior del mundo, no una
+lectura del contrato.
+
+**B1 pasa limpio.** Cuando el contrato NO menciona velocidad, el SFT
+la ignora (acc=1.000). No es ciego: distingue si la velocidad aparece
+o no en el contrato. Solo que cuando aparece, la usa mal.
+
+**B3 pasa casi limpio (0.960).** El SFT cambia decision en 48/50
+pares al cambiar `v_max`. Hay cierta lectura. Pero no la suficiente:
+falla en 3 casos de 24 contra-prior en B2. La lectura es parcial.
+
+**La base no es control util.** Colapsa a `terminar` en B2 y acierta
+1.000 por coincidencia con la mayoria. Ya lo dijo Claude en el
+anexo J: la metrica de titular debe ser el contraste dentro del SFT,
+no SFT vs base.
+
+### 25.10.3 Por que esto es evidencia valiosa
+
+El probe F2 original (seccion 25.2) tenia `v_max = 0.3` fijo, casi
+detenido. Con ese corte, dos explicaciones dan el mismo resultado:
+- Lectura de contrato: "el contrato dice v <= 0.3, y v = 4.29 > 0.3
+  -> ir_a".
+- Prior del mundo: "el barco se esta moviendo -> no termino".
+
+La etapa 0b separa esas dos explicaciones. Y el SFT cae del lado de
+la prior.
+
+**Sin la etapa 0b, la seccion 25.5 habria pasado a la etapa 1
+afirmando que el SFT "generaliza a una familia nueva". Eso era falso.**
+La metodologia de control detecto el autoengano antes de propagarlo.
+
+### 25.10.4 Consecuencias
+
+**1. El probe F2 queda reinterpretado.**
+La lectura fuerte ("el SFT lee el contrato") no era correcta. El SFT
+respeta parte del contrato (B1: ignora v si no se menciona), pero no
+compara `v` contra `v_max`.
+
+**2. El brazo H1a de la etapa 1 NO puede ser el adaptador de A2
+congelado.** Hay que entrenar LLM-A3 con `v_max` variable y casos
+contra-prior. Claude ya lo habia anticipado (anexo J): si 0b falla,
+el resultado del probe se reinterpreta como heuristica.
+
+**3. El metodo de control funciona.** La etapa 0b era un control
+barato (solo puntuar, sin entrenar). Detecto el problema antes de
+invertir en A3. Es el tipo de control que el proyecto necesita.
+
+**4. El B1 sigue siendo buena noticia.** El SFT distingue si la
+velocidad aparece en el contrato o no. No es ciego. Solo que cuando
+aparece, la usa mal.
+
+### 25.10.5 Regla de decision aplicada
+
+Segun la seccion 25.9:
+- "Falla B1 (usa la velocidad como senal de cautela) o B2 (usa la
+  magnitud de v e ignora v_max): el resultado del probe se
+  reinterpreta como heuristica."
+
+Se aplica el segundo caso: **FALLA B2**. El probe F2 se reinterpreta
+como heuristica. La etapa 1 exige entrenar LLM-A3 con `v_max` variable
+y placebo.
