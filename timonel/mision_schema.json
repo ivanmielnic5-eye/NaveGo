@@ -1,0 +1,58 @@
+{
+  "_comentario": "Schema de mision (F0). Referencia formal. Validador propio en mision_config.py.",
+  "schema_version": "1.0",
+  "required_top": [
+    "schema_version",
+    "mission_config_id",
+    "goal",
+    "control",
+    "limits",
+    "outcomes",
+    "restricciones_duras"
+  ],
+  "campos_valor": {
+    "goal.coordinates.x": {
+      "tipo": "numero_o_null",
+      "unidad": "m"
+    },
+    "goal.coordinates.z": {
+      "tipo": "numero_o_null",
+      "unidad": "m"
+    },
+    "goal.arrival_distance_threshold.valor": {
+      "tipo": "numero_o_null",
+      "unidad": "m",
+      "operador": "<"
+    },
+    "goal.arrival_speed_limit.valor": {
+      "tipo": "numero_o_null",
+      "unidad": "kn",
+      "operador": "<="
+    },
+    "control.braking_target_speed.valor": {
+      "tipo": "numero_o_null",
+      "unidad": "kn"
+    },
+    "limits.mission_time_limit_s": {
+      "tipo": "numero_o_null",
+      "unidad": "s"
+    },
+    "limits.limite_operativo_m": {
+      "tipo": "numero_o_null",
+      "unidad": "m"
+    }
+  },
+  "procedencias_validas": [
+    "heredado_codigo",
+    "experimento",
+    "director",
+    "normativa",
+    "inferido_de_artefacto"
+  ],
+  "estados_validos": [
+    "sin_definir",
+    "propuesto",
+    "aprobado_director"
+  ],
+  "garantia_dinamica_default": "sin_evidencia"
+}
