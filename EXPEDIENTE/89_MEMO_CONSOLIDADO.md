@@ -1552,3 +1552,76 @@ protocolo de esfuerzo humano de forma preregistrada.
 **Estado:** PROBE F2 ejecutado. SFT aporta sobre el base en F2.
 **Proximo paso:** etapa 1 de A3, previa consulta a Claude.
 **Regla:** calidad primero, performance despues.
+
+---
+
+### 25.9 CORRECCIONES TRAS LA REFORMULACION DE CLAUDE (anexo J)
+
+**Fecha:** 2026-10-13
+**Referencias:** anexo I (Claude), anexo J (Claude).
+
+Claude reformulo su lectura del probe al ver el contexto completo. Las
+correcciones son metodologicas, no invalidan el probe, pero debilitan
+la lectura fuerte.
+
+**Correccion principal: v_max fue constante (0.3 nudos).**
+0.3 nudos es casi detenido. Un modelo puede responder `ir_a` por una
+prior del mundo ("un barco que se mueve no termino"), no por leer la
+clausula de velocidad. El probe no distingue esas dos cosas.
+
+**Control decisivo que falta:** casos que contradicen la prior.
+Ejemplo: v=1.5 con v_max=2.0, d<T. Correcto: `terminar` (el barco se
+mueve pero esta dentro del limite). Si el modelo dice `ir_a`, usa la
+prior, no lee el contrato.
+
+**Correccion secundaria: la base no es control util.**
+Colapsa a `terminar` en los 4 cuadrantes (49/44/37/49 de 50). No
+resuelve la tarea de F2 en ningun cuadrante. La metrica de titular
+deberia ser el **contraste dentro del SFT** (mismo d, T, v; solo
+cambia v_max), no SFT vs base.
+
+**Cambio de brazo primario de H1b-interfaz.**
+Claude corrige su recomendacion anterior: el primario pasa a ser
+**LLM-A3** (entrenado con F-train y F-dev), no el adaptador A2
+congelado. Razon: P-text se desarrolla con F-train y F-dev; comparar
+al adaptador A2 (que solo vio F-train) contra P-text es asimetrico
+en contra del LLM.
+
+El adaptador A2 congelado queda como **brazo de H1a** (la lectura
+literal de "sin reentrenamiento", cero exposicion a parafrasis).
+
+**Etapa 0b — controles obligatorios antes de etapa 1.**
+Solo puntuar, sin entrenar. Adaptador A2 congelado:
+
+  B1 Placebo: v visible, SIN clausula de velocidad (100 contextos).
+     Criterio: exactitud >= 0.95, y en (d<T, v alta) tasa de
+     `terminar` >= 0.95.
+  B2 v_max variable: v_max en {0.3, 0.6, 1.0, 2.0, 4.0}, con casos
+     contra-prior (v moderada con v_max alto -> `terminar`).
+     Criterio: exactitud >= 0.95, y >= 0.90 en contra-prior.
+  Pares contrafacticos: mismo d, T, v; solo cambia v_max (~50 pares).
+     Metrica: fraccion de pares con cambio correcto.
+  Re-puntuado con orden invertido sobre probe + 0b. Invariancia.
+  Vecindad del fallo Q2 (~30 contextos). Descriptivo.
+  Checkpoints 50/100/150/154 sobre el probe. Descriptivo.
+
+**Regla de decision tras 0b:**
+- Pasa B1 y B2: A2 congelado es brazo H1a de etapa 1. El probe queda
+  como "lee la clausula con umbral variable (para este artefacto)".
+- Falla B1 o B2: el resultado del probe se reinterpreta como
+  heuristica. Etapa 1 exige entrenar LLM-A3 con v_max variable y
+  placebo.
+
+**Principio general para futuras familias:** cada familia nueva trae
+su placebo (la variable aparece en el estado, sin clausula en el
+contrato) y sus casos contra-prior. Para F3 (seguridad): obstaculo
+presente sin clausula de seguridad.
+
+**Correcciones a la redaccion del memo (aplicadas en 25.9):**
+- 25.2/25.3: la metrica de titular pasa a ser el contraste dentro
+  del SFT, no los 86 puntos vs base.
+- 25.5: "ya generaliza a una familia nueva" es demasiado fuerte.
+  Correccion: "generaliza a un conjunto adicional con umbral fijo;
+  pendiente 0b".
+- 25.6: invariancia y fallo Q2 pasan a etapa 0b, no a etapa 1.
+- 25.7: reordenar. Primero 0b; despues etapa 1.
