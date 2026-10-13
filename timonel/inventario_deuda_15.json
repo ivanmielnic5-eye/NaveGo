@@ -1,0 +1,36 @@
+{
+  "_comentario": "Literales 15.0 diferidos de F0. Cada uno con archivo, linea, semantica y fase prevista. Generado 2026-10-13 desde grep.",
+  "migrado": [
+    "generar_banco_A2.py"
+  ],
+  "diferidos": [
+    {"archivo": "acciones.py", "linea": 162, "semantica": "umbral_llegada", "fase": "F0-bloqueante1-parte3"},
+    {"archivo": "agente_llm.py", "linea": 44, "semantica": "fase_prompt", "fase": "F2-prompt"},
+    {"archivo": "analisis_radio_giro.py", "linea": 49, "semantica": "clasificar_familia_diagnostico", "fase": "historico"},
+    {"archivo": "diagnostico_cc003.py", "linea": 27, "semantica": "clasificar_familia_diagnostico", "fase": "historico"},
+    {"archivo": "diagnostico_cc003.py", "linea": 42, "semantica": "rango_muestreo", "fase": "historico"},
+    {"archivo": "diagnostico_cc003.py", "linea": 48, "semantica": "valor_viento", "fase": "historico"},
+    {"archivo": "diagnostico_cc003.py", "linea": 23, "semantica": "horizonte_temporal", "fase": "historico"},
+    {"archivo": "entrenador.py", "linea": 17, "semantica": "horizonte_temporal", "fase": "historico"},
+    {"archivo": "entrenador.py", "linea": 69, "semantica": "tol_dist_receta", "fase": "F1-evaluador"},
+    {"archivo": "entrenador.py", "linea": 76, "semantica": "umbral_llegada", "fase": "historico"},
+    {"archivo": "entrenador.py", "linea": 111, "semantica": "umbral_llegada", "fase": "historico"},
+    {"archivo": "entrenador_v2.py", "linea": 27, "semantica": "horizonte_temporal", "fase": "F1-evaluador"},
+    {"archivo": "entrenador_v2.py", "linea": 135, "semantica": "umbral_llegada", "fase": "F1-evaluador"},
+    {"archivo": "generar_cc003.py", "linea": 36, "semantica": "horizonte_temporal", "fase": "historico"},
+    {"archivo": "generar_cc003.py", "linea": 42, "semantica": "clasificar_familia_diagnostico", "fase": "historico"},
+    {"archivo": "generar_cc003.py", "linea": 60, "semantica": "rango_muestreo", "fase": "historico"},
+    {"archivo": "generar_cc003.py", "linea": 91, "semantica": "valor_viento", "fase": "historico"},
+    {"archivo": "generar_cc003.py", "linea": 144, "semantica": "umbral_llegada", "fase": "historico"},
+    {"archivo": "recetas_navegacion_v2.py", "linea": 203, "semantica": "umbral_llegada", "fase": "F0-bloqueante1-parte3"},
+    {"archivo": "timonel_python.py", "linea": 113, "semantica": "umbral_llegada", "fase": "F3-runtime"},
+    {"archivo": "timonel_python.py", "linea": 183, "semantica": "umbral_llegada", "fase": "F3-runtime"},
+    {"archivo": "timonel_python.py", "linea": 223, "semantica": "tol_dist_receta", "fase": "F3-runtime"},
+    {"archivo": "timonel_python.py", "linea": 228, "semantica": "umbral_llegada", "fase": "F3-runtime"},
+    {"archivo": "timonel_python.py", "linea": 241, "semantica": "tol_dist_receta", "fase": "F3-runtime"},
+    {"archivo": "variantes_prompt.py", "linea": 19, "semantica": "fase_prompt", "fase": "historico"},
+    {"archivo": "variantes_prompt.py", "linea": 58, "semantica": "admisible_prompt", "fase": "historico"},
+    {"archivo": "variantes_prompt.py", "linea": 121, "semantica": "admisible_prompt", "fase": "historico"},
+    {"archivo": "variantes_prompt.py", "linea": 189, "semantica": "admisible_prompt", "fase": "historico"}
+  ]
+}
