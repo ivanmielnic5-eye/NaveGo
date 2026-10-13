@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""logos-ingesta - Ingesta y revision de archivos.
+
+Uso:
+  logos-ingesta pegar <archivo>     Lee stdin (Ctrl+D para terminar),
+                                     agrega cabecera y guarda.
+  logos-ingesta revisar <archivo>   Cuenta lineas, lista encabezados,
+                                     detecta encabezados pegados.
+
+Cabecera: comentario HTML con fecha y hora.
+"""
+import sys
+import os
+from datetime import datetime
+
+CABECERA_TEMPLATE = "<!-- ingesta: {ts} -->\n"
+
+
+def cmd_pegar(path):
+    contenido = sys.stdin.read()
+    if not contenido.strip():
+        print("NADA: no pegaste contenido (o solo espacios).")
+        return 1
+
+    existe = os.path.exists(path)
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    cabecera = CABECERA_TEMPLATE.format(ts=ts)
+
+    modo = "a" if existe else "w"
+    with open(path, modo, encoding="utf-8") as f:
+        if existe:
+            f.write("\n\n")
+        f.write(cabecera)
+        f.write(contenido)
+        if not contenido.endswith("\n"):
+            f.write("\n")
+
+    with open(path, encoding="utf-8") as f:
+        lineas = sum(1 for _ in f)
+
+    if existe:
+        print(f"OK: agregado a {path} ({lineas} lineas en total)")
+    else:
+        print(f"OK: creado {path} ({lineas} lineas)")
+    return 0
+def cmd_revisar(path):
+    if not os.path.exists(path):
+        print(f"NO EXISTE: {path}")
+        return 1
+
+    with open(path, encoding="utf-8") as f:
+        lineas = f.readlines()
+
+    n = len(lineas)
+    print(f"Archivo: {path}")
+    print(f"Lineas: {n}")
+    print()
+
+    # Encabezados
+    print("Encabezados:")
+    hay = False
+    for i, ln in enumerate(lineas, 1):
+        s = ln.rstrip("\n")
+        if s.startswith("#"):
+            print(f"  [{i}] {s[:70]}")
+            hay = True
+    if not hay:
+        print("  (ninguno)")
+    print()
+
+    # Detectar encabezados pegados a parrafos (bug de hoy)
+    print("Encabezados pegados a texto:")
+    pegados = []
+    for i, ln in enumerate(lineas, 1):
+        # Bug real: linea NO empieza con # pero contiene "## "
+        s = ln.rstrip("\n")
+        if not s.startswith("#") and "## " in s:
+            pegados.append((i, s[:90]))
+    if pegados:
+        for i, s in pegados:
+            print(f"  [{i}] {s}")
+        print()
+        print(f"AVISO: {len(pegados)} encabezado(s) pegado(s). Usar")
+        print("  sed o python para insertar un salto de linea antes.")
+    else:
+        print("  (ninguno)")
+    print()
+
+    # Aviso si el archivo esta vacio
+    if n == 0:
+        print("AVISO: el archivo esta vacio.")
+        return 1
+
+    print("OK: revision completa.")
+    return 0
+
+
+def main():
+    if len(sys.argv) < 3:
+        print("Uso:")
+        print("  logos-ingesta pegar <archivo>")
+        print("  logos-ingesta revisar <archivo>")
+        return 1
+
+    modo = sys.argv[1]
+    path = sys.argv[2]
+
+    if modo == "pegar":
+        return cmd_pegar(path)
+    elif modo == "revisar":
+        return cmd_revisar(path)
+    else:
+        print(f"Modo desconocido: {modo}")
+        print("Usar 'pegar' o 'revisar'.")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
