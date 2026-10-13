@@ -240,6 +240,78 @@ def cmd_mover(origen, destino):
     return 0
 
 
+def cmd_estado():
+    import subprocess
+    root = _repo_root()
+    if root is None:
+        print("No pude encontrar el repo git.")
+        return 1
+
+    print("=== Estado del repo ===")
+    print("Repo: " + root)
+    print()
+
+    # HEAD vs origin
+    head = subprocess.run(
+        ["git", "-C", root, "rev-parse", "--short", "HEAD"],
+        capture_output=True, text=True
+    ).stdout.strip()
+    print("HEAD: " + head)
+
+    adelante = subprocess.run(
+        ["git", "-C", root, "rev-list", "--count", "@{upstream}..HEAD"],
+        capture_output=True, text=True
+    ).stdout.strip()
+    if adelante == "" or "fatal" in adelante.lower():
+        adelante = "0"
+    if adelante and adelante != "0":
+        print("AVISO: " + adelante + " commit(s) locales sin pushear")
+    else:
+        print("Sincronizado con origin")
+    print()
+
+    # Archivos modificados
+    status = subprocess.run(
+        ["git", "-C", root, "status", "--porcelain", "-uall"],
+        capture_output=True, text=True
+    ).stdout
+
+    if not status.strip():
+        print("Working tree limpio.")
+        return 0
+
+    lineas = status.strip().split("\n")
+    exp = [l for l in lineas if "EXPEDIENTE/" in l]
+    borr = [l for l in lineas if "borradores/" in l]
+    otros = [l for l in lineas if l not in exp and l not in borr]
+
+    print("Cambios sin commitear: " + str(len(lineas)) + " archivo(s)")
+    print()
+    if exp:
+        print("EXPEDIENTE/ (" + str(len(exp)) + "):")
+        for l in exp[:10]:
+            print("  " + l)
+        if len(exp) > 10:
+            print("  ... y " + str(len(exp) - 10) + " mas")
+        print()
+    if borr:
+        print("borradores/ (" + str(len(borr)) + "):")
+        for l in borr[:10]:
+            print("  " + l)
+        if len(borr) > 10:
+            print("  ... y " + str(len(borr) - 10) + " mas")
+        print()
+    if otros:
+        print("otros (" + str(len(otros)) + "):")
+        for l in otros[:10]:
+            print("  " + l)
+        if len(otros) > 10:
+            print("  ... y " + str(len(otros) - 10) + " mas")
+        print()
+
+    return 0
+
+
 def main():
     args = sys.argv[1:]
     if not args:
@@ -249,6 +321,7 @@ def main():
         print("  logos-ingesta listar [directorio]")
         print('  logos-ingesta commit [--push] <archivo> "mensaje"')
         print("  logos-ingesta mover <origen> <destino>")
+        print("  logos-ingesta estado")
         return 1
 
     modo = args[0]
@@ -271,6 +344,8 @@ def main():
             print("Falta <origen> y/o <destino>")
             return 1
         return cmd_mover(resto[0], resto[1])
+    elif modo == "estado":
+        return cmd_estado()
     elif modo == "commit":
         push = "--push" in resto
         limpio = [a for a in resto if a != "--push"]
