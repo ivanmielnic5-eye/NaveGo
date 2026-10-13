@@ -1,0 +1,16 @@
+{
+  "id": "ivnmielniczuk/timonel-0b-kaggle",
+  "title": "timonel-0b-kaggle",
+  "code_file": "timonel_0b_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "ivnmielniczuk/timonel-lora-a2",
+    "ivnmielniczuk/timonel-probe-0b"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
