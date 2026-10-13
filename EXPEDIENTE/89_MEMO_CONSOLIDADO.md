@@ -1724,3 +1724,75 @@ Segun la seccion 25.9:
 Se aplica el segundo caso: **FALLA B2**. El probe F2 se reinterpreta
 como heuristica. La etapa 1 exige entrenar LLM-A3 con `v_max` variable
 y placebo.
+
+---
+
+### 25.11 PASO 0c — DIAGNOSTICO DEL SESGO DE B2
+
+**Fecha:** 2026-10-13
+**Referencias:** seccion 25.10, anexo L (Claude).
+
+El paso 0c se ejecuto sin datos nuevos: se re-puntuo el banco 0b
+con el adaptador de A2 congelado, con orden normal y con orden
+invertido, y se desglosaron los errores de B2 por margen |v-v_max|.
+
+### 25.11.1 Resultado
+
+  Invariancia al orden: 321/324 = 0.991 (pasa >0.95).
+  B2 SFT (orden normal): acc = 0.883.
+  B2 contra-prior: acc = 0.875 (n=24). 21/24 correctos.
+  Errores contra-prior: 3.
+    margenes |v-v_max|: min=0.56 max=3.26 media=1.50.
+
+  VEREDICTO 0c: SESGO con margen grande.
+  El modelo falla lejos del limite, no solo en frontera.
+
+### 25.11.2 Lectura
+
+Los 3 errores de contra-prior tienen margen grande (min 0.56,
+max 3.26 nudos). No son ruido de frontera. Son sesgo.
+
+Ejemplo: v=0.74, v_max=4.0 -> correcto `terminar`, el modelo
+responde `ir_a`. No esta fallando por estar cerca del limite.
+Esta fallando porque ignora `v_max`.
+
+**Esto corrige mi lectura apresurada de la seccion 25.10.** Dije
+"el SFT no lee v_max, usa la magnitud de v". Eso era demasiado
+fuerte. La correccion de Claude (anexo L) es la correcta:
+
+- B1=1.000 descarta "v alta -> cautela siempre".
+- B3=0.960 muestra que la decision SI cambia al cambiar v_max.
+- Lo compatible: **lectura parcial con sesgo hacia `ir_a` cuando
+  v es moderada**, no ausencia de comparacion.
+
+El problema es el sesgo, no la capacidad. Importante para A3: hay
+que entrenar contra el sesgo, no ensenar la capacidad.
+
+### 25.11.3 Invariancia al orden
+
+321/324 = 0.991. Pasa limpio. Los 3 casos que cambian con orden
+invertido son ruido de frontera, no un problema sistematico de
+posicion. El prompt no tiene sesgo posicional.
+
+### 25.11.4 Implicaciones para A3
+
+El diseno de A3 etapa 1 (anexo L) ya incluia **>=40% de Q1 como
+contra-prior** en el train. El 0c confirma que ese diseno es
+obligatorio, no opcional:
+
+- Sin contra-prior explicito, el SFT mantiene el sesgo (v moderada
+  -> ir_a aunque v_max lo permita).
+- El sesgo no se corrige con mas datos generales; se corrige con
+  casos especificos donde v es moderada y v_max es alto.
+
+No cambia el plan de A3. Lo justifica mejor.
+
+### 25.11.5 Regla metodologica
+
+El paso 0c costo minutos (solo puntuar, sin entrenar, sin datos
+nuevos). Detecto la causa del fallo de B2 y corrigio la lectura
+apresurada de 25.10.
+
+**Patron:** antes de disenar un entrenamiento correctivo, agotar el
+diagnostico con los datos que ya existen. La mayoria de los errores
+se explican sin generar nada nuevo.
