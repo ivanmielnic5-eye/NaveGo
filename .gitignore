@@ -134,3 +134,7 @@ timonel/kaggle_eval_A2/huggingface_tokenizers_cache/
 # --- A2: probe (caches generados al correr) ---
 timonel/kaggle_probe_nb/unsloth_compiled_cache/
 timonel/kaggle_probe_nb_v2/unsloth_compiled_cache/
+
+# --- Caches de Unsloth y HuggingFace en cualquier subdirectorio ---
+**/unsloth_compiled_cache/
+**/huggingface_tokenizers_cache/
