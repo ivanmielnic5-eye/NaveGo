@@ -273,6 +273,23 @@ contraste con codigo, tests y comportamiento actual.
 - 29e6f60 (Track honesto) y 6b46436 (Doc 46 Fase 2) se vinculan
   al pendiente institucional "track honesto", NO a P18-P28.
 - Los mensajes de commit son pistas, no evidencia de cierre.
+### P29 — [LOGOS] logos-baseline y logos-reconcile no actualizan hash
+- Estado: PENDIENTE. Detectado: 2026-10-14 durante migracion authority.
+- Situacion: ninguna herramienta escribe reviewed_against_hash en
+  el MANIFEST. logos-baseline y logos-reconcile actualizan solo
+  reviewed_against_commit. logos-hash calcula pero no escribe.
+  Consecuencia: una fuente modificada queda STALE permanentemente
+  hasta editar el MANIFEST a mano.
+- Evidencia: gate BLOCKED tras commit d48543f. Comandos baseline y
+  reconcile aplicados. Hash en MANIFEST quedaba en 01225fa7...
+  mientras el real era 44be285e...
+- Accion: aplicar R-15 (pasar por expediente antes de tocar el
+  kernel). Redactar D-XXXX o propuesta. Corregir logos-baseline y
+  logos-reconcile para actualizar hash. Anadir tests.
+- Referencia: D-2026-0009 (estados de drift), D-2026-0010 (freshness
+  por hash), commit dd5a4b2 (fix manual).
+- Responsable: IA + Director (aprobacion).
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
