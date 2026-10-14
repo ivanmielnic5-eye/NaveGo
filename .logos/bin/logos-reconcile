@@ -21,6 +21,11 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+_LIB_DIR = Path(__file__).resolve().parent.parent / "lib"
+if str(_LIB_DIR) not in sys.path:
+    sys.path.insert(0, str(_LIB_DIR))
+from logos_hash_lib import hash_source, HashError
+
 
 EXIT_OK = 0
 EXIT_WARNING = 1
@@ -261,8 +266,18 @@ def command_mark_reviewed(args: argparse.Namespace) -> int:
     except RuntimeError as exc:
         return fail(str(exc))
 
-    old_value = source.get("reviewed_against_commit")
-    new_value = head
+    old_commit = source.get("reviewed_against_commit")
+    new_commit = head
+    old_hash = source.get("reviewed_against_hash")
+
+    # D-2026-0015 (fix P29): calcular hash real de la fuente.
+    try:
+        computed_hash, n_files, tipo = hash_source(source_path_raw)
+    except HashError as e:
+        return fail(f"no se puede hashear la fuente {args.source_type}: {e}")
+    if computed_hash is None:
+        return fail(f"la fuente {args.source_type} no se puede hashear ({tipo})")
+    new_hash = computed_hash
 
     print(f"[logos-reconcile] project: {project}")
     print(f"[logos-reconcile] source type: {args.source_type}")
@@ -270,20 +285,25 @@ def command_mark_reviewed(args: argparse.Namespace) -> int:
     print(f"[logos-reconcile] HEAD actual: {head}")
     print(
         "[logos-reconcile] reviewed_against_commit: "
-        f"{old_value if old_value is not None else '(ausente)'} -> {new_value}"
+        f"{old_commit if old_commit is not None else '(ausente)'} -> {new_commit}"
+    )
+    print(
+        "[logos-reconcile] reviewed_against_hash: "
+        f"{(old_hash[:16] + '...') if old_hash else '(ausente)'} -> {new_hash[:16]}..."
     )
     print(f"[logos-reconcile] trust: {trust_state}")
     print("")
 
-    if old_value == new_value:
+    if old_commit == new_commit and old_hash == new_hash:
         print(
             "[logos-reconcile] NOTA: la fuente ya estaba marcada contra "
-            f"HEAD actual ({new_value}). No hay nada que escribir."
+            f"HEAD actual ({new_commit}) y hash actual. No hay nada que escribir."
         )
         return trust_exit
 
     updated = json.loads(json.dumps(data))
-    updated["sources"][source_index]["reviewed_against_commit"] = new_value
+    updated["sources"][source_index]["reviewed_against_commit"] = new_commit
+    updated["sources"][source_index]["reviewed_against_hash"] = new_hash
     updated["sources"][source_index]["last_human_review"] = date.today().isoformat()
 
     before_text = manifest.read_text(encoding="utf-8")

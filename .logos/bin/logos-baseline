@@ -21,6 +21,11 @@ import sys
 import datetime
 from pathlib import Path
 
+_LIB_DIR = Path(__file__).resolve().parent.parent / "lib"
+if str(_LIB_DIR) not in sys.path:
+    sys.path.insert(0, str(_LIB_DIR))
+from logos_hash_lib import hash_source, HashError
+
 
 REPO = Path.cwd()
 MANIFEST = REPO / ".logos" / "MANIFEST.json"
@@ -48,15 +53,24 @@ def get_head():
 
 
 def update_baseline(manifest, project, head, reason, include_optional=False):
-    """Actualiza reviewed_against_commit y last_human_review de todas
+    """Actualiza reviewed_against_commit y reviewed_against_hash de todas
     las fuentes requeridas. Si include_optional=True, tambien las
-    opcionales. Devuelve lista de tipos actualizados."""
+    opcionales. Devuelve lista de tipos actualizados.
+
+    D-2026-0015:
+    - Calcula hash de cada fuente y lo escribe en reviewed_against_hash.
+    - Si alguna fuente falla al hashear (HashError), aborta SIN escribir
+      nada en el MANIFEST.
+    - last_human_review NO se actualiza: un baseline mecanico no es
+      revision humana explicita (criterio de Luna, D-2026-0015).
+    """
     required = set(manifest.get("required", []))
     optional = set(manifest.get("optional", []))
     targets = required | optional if include_optional else required
-    today = datetime.date.today().isoformat()
     updated = []
+    hashes = {}
 
+    targets_srcs = []
     for src in manifest["sources"]:
         if not src.get("authority"):
             continue
@@ -65,12 +79,27 @@ def update_baseline(manifest, project, head, reason, include_optional=False):
         stype = src.get("type")
         if stype not in targets:
             continue
+        targets_srcs.append((stype, src))
 
+    # Primera pasada: calcular hashes. Si algo falla, abortar antes de escribir.
+    for stype, src in targets_srcs:
+        path_raw = src.get("path")
+        if not isinstance(path_raw, str):
+            raise HashError(f"fuente {stype}: path invalido")
+        try:
+            h, n, tipo = hash_source(path_raw)
+        except HashError:
+            raise
+        if h is None:
+            raise HashError(f"fuente {stype}: no se pudo hashear ({tipo})")
+        hashes[stype] = {"hash": h, "tipo": tipo, "archivos": n}
+
+    # Segunda pasada: escribir solo si todo calculo bien.
+    for stype, src in targets_srcs:
         src["reviewed_against_commit"] = head
-        src["last_human_review"] = today
+        src["reviewed_against_hash"] = hashes[stype]["hash"]
         updated.append(stype)
 
-    # Registrar en historial del MANIFEST
     if "baseline_history" not in manifest:
         manifest["baseline_history"] = []
     manifest["baseline_history"].append({
@@ -79,6 +108,7 @@ def update_baseline(manifest, project, head, reason, include_optional=False):
         "head": head,
         "reason": reason,
         "updated_sources": updated,
+        "hashes": hashes,
     })
 
     return updated
@@ -124,7 +154,11 @@ def main():
     print(f"[logos-baseline] HEAD:    {head}")
     print(f"[logos-baseline] reason:  {args.reason}")
 
-    updated = update_baseline(manifest, args.project, head, args.reason, include_optional=args.include_optional)
+    try:
+        updated = update_baseline(manifest, args.project, head, args.reason, include_optional=args.include_optional)
+    except HashError as e:
+        print(f"[logos-baseline] BLOCKED: {e}")
+        return 2
 
     if not updated:
         print("[logos-baseline] AVISO: no hubo fuentes requeridas para actualizar.")
