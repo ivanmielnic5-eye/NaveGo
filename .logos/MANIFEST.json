@@ -43,8 +43,8 @@
         "freshness"
       ],
       "last_human_review": "2026-10-14",
-      "reviewed_against_commit": "c5fc7e2",
-      "reviewed_against_hash": "d0acbf4c5dea39eebba99e06a3b961a13d24886425a9415125db67c2474d448c"
+      "reviewed_against_commit": "3dae0de",
+      "reviewed_against_hash": "c7ce77f9f91b5e7bccecb66c86a8b66dfde1fc1b14218c7cc97a037bc6b09104"
     },
     {
       "type": "profile",
@@ -200,8 +200,8 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-14",
-      "reviewed_against_commit": "91c271b",
-      "reviewed_against_hash": "44be285e3e1db40d3779bffba9eb9aeabf79f654f3a9c75b6ea7614bcde8f28e"
+      "reviewed_against_commit": "3dae0de",
+      "reviewed_against_hash": "0be758311f48e1017705a31f7583dbd2e28276500fd5c9d7086d37a893bb1168"
     },
     {
       "type": "glossary",
