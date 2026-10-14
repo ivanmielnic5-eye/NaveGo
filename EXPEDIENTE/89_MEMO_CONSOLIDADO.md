@@ -2208,3 +2208,73 @@ enmascarando tokens invalidos en cada paso de generacion. Garantizan
 **Lo que NO resuelven:** la semantica de la conjuncion (eso lo hace
 Python, no el LLM) ni la extraccion correcta del valor en el texto
 (eso depende del SFT de A4).
+
+---
+
+### 29.13 CORRECCION DE LUNA AL CIERRE DE A3
+
+**Fecha:** 2026-10-14
+**Referencias:** borrador luna_cierre_a3.md.
+
+Luna corrigio la seccion 29.11. Las correcciones se preservan aca,
+sin reescribir la 29.11 (regla del proyecto: preservar historial).
+
+**Correccion 1: "heuristica estructural" es plausible, NO
+demostrada.**
+
+Los datos respaldan una asociacion entre presencia del conector y
+menor tasa de error. Pero no alcanzan para concluir que el modelo
+aprendio una heuristica estructural especifica.
+
+Razones:
+- Los 300 items NO son independientes: comparten formulaciones.
+- Solo 10 formulaciones tienen conector. Observar 0 errores en 10
+  formulaciones no demuestra que el conector garantice el
+  comportamiento.
+
+Redaccion correcta: **"Los errores residuales se concentran en
+formulaciones sin conector; la hipotesis de una heuristica
+estructural queda pendiente de una prueba controlada."**
+
+**Correccion 2: no llamar "ruido" a los errores sin demostrar que
+carecen de estructura.**
+
+Los 7 errores pueden tener estructura que todavia no vimos. Llamarlos
+"ruido residual" es prematuro.
+
+**Correccion 3: la prueba controlada que falta.**
+
+Generar pares equivalentes que difieran UNICAMENTE en el conector,
+con valores numericos y resto de la redaccion controlados. Comparar
+por par y por formulacion. Hasta entonces, la hipotesis queda
+pendiente.
+
+**Correccion 4: A4 debe distinguir tres estados, no un solo null.**
+
+Una mision F1 sin condicion de velocidad NO equivale a una F2 donde
+el modelo olvido extraerla. No deben compartir el mismo null sin
+informacion adicional.
+
+Tres estados posibles para cada campo:
+- **Ausente:** la restriccion no existe en el texto.
+- **Presente:** la restriccion esta y se extrajo el valor.
+- **Ambigua:** la restriccion esta pero no se puede extraer con
+  certeza.
+
+El contrato Intent actual no distingue estos tres casos. Hay que
+ajustarlo.
+
+**Correccion 5: Outlines + Pydantic es primera implementacion de
+referencia, no decision irreversible.**
+
+Probar compatibilidad con la version concreta de Unsloth/Transformers
+antes de integrarlo al entrenamiento LoRA.
+
+**Estado de A3 tras las correcciones:**
+
+- Senal existe (0.977 en F2).
+- Criterio preregistrado (0.99/0.97) NO alcanzado.
+- Causa: hipotesis plausible (estructura gramatical), pendiente de
+  prueba controlada.
+- No es fracaso: es caracterizacion con preguntas abiertas.
+- A3 se cierra con conclusion DESCRIPTIVA, no explicativa.
