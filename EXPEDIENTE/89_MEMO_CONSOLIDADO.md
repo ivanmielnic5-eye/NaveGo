@@ -1968,3 +1968,144 @@ Dos pistas en paralelo:
 **El punto de union:** si el LLM es buen interprete pero mal decisor,
 el circuito correcto es LLM interpreta + Python decide. Si es bueno
 en ambos, otra arquitectura. Eso hay que medirlo.
+
+---
+
+## 29. AUDITORIA DE ERRORES A3 — ESTADO ABIERTO
+
+**Fecha:** 2026-10-14
+**Referencias:** seccion 28, borradores luna_auditoria_a3.md,
+claude_auditoria_a3.md.
+
+### 29.1 Que se audito
+
+Se reevaluaron dos splits con logging individual:
+- fheld_f2: 300 items, 7 errores.
+- test_balanceado: 600 items, 4 errores.
+
+Para cada error: idx, label real, pred_fc (puntaje forzado),
+pred_gen (generacion libre), diff_lp, T, d, v, v_max.
+
+### 29.2 Los 11 errores
+
+**fheld_f2 (7):** todos real=ir_a, pred_fc=terminar.
+
+  idx    T     d     v     v_max  diff_lp  pred_gen
+  1      11   10.4  3.27   1.6     1.91   ir_a
+  50     11    1.8  1.18   1.0    18.08   terminar
+  91     17    2.5  3.40   1.6     2.91   ir_a
+  107    23    2.8  2.42   1.0    18.31   terminar
+  167    17    6.1  3.54   1.6    16.98   terminar
+  291    11    6.3  1.18   1.0    15.58   terminar
+  293    11    2.4  1.35   0.4     9.41   terminar
+
+**test_balanceado (4):**
+
+  idx    real       pred_fc   pred_gen   T    d    v     v_max  diff_lp
+  11     ir_a       terminar  ir_a       11   7.9  2.61   2.5     6.28
+  68     terminar   ir_a      ir_a       23   8.4  1.00   1.0   -10.56
+  245    ir_a       terminar  terminar   17   3.1  2.61   2.5     8.84
+  286    terminar   ir_a      ir_a       17   8.1  1.00   1.0    -6.13
+
+### 29.3 Patrones visibles
+
+- **9 de 11 errores son falso terminar** (direccion insegura).
+- **5 de 7 en f2 no estan en la frontera** (v - v_max de 0.95 a
+  1.94).
+- **Los 7 de f2 tienen v >= 1.18.**
+- **En 2 de los 7, pred_fc != pred_gen** (idx 1, 91). El puntaje
+  forzado y la generacion discrepan.
+- **Repeticion de combinaciones:** (T=11, v=1.18, v_max=1.0) en idx
+  50 y 291; (T=17, v_max=1.6) en idx 91 y 167. Falta template_id
+  para distinguir plantilla de combinacion.
+
+
+### 29.4 Correcciones a mi lectura inicial
+
+**Correccion 1: "el modelo aprendio < en lugar de <=" es FALSO.**
+
+Hay inconsistencia entre:
+- idx 68, 286 (v=1.00, v_max=1.0): dicen ir_a. Consistente con <.
+- idx 50, 291 (v=1.18, v_max=1.0): dicen terminar. Inconsistente
+  con <.
+
+Un umbral monotono en v no produce ambas cosas. Lo que se ve es
+frontera difusa, no regla estricta.
+
+Dos explicaciones posibles (sin descartar):
+- Fuera de distribucion: si el generador excluyo |v-v_max| < 0.05,
+  el caso v = v_max no se vio en entrenamiento.
+- Etiqueta ambigua: la redaccion puede decir "inferior a" (estricto)
+  o "no supere" (inclusivo). Si la formulacion no coincide con el
+  operador, la etiqueta esta mal.
+
+**Correccion 2: "el modelo ignora la clausula" es FALSO.**
+
+143 de 150 items ir_a de f2 (todos con d<T y v>v_max) estan bien. Si
+ignorara la clausula, diria siempre terminar y daria aprox 0%. Solo
+falla en 7.
+
+### 29.5 Hipotesis abiertas (Claude)
+
+1. **Numeros distractores.** El prompt puede tener un numero
+   irrelevante >= v que el modelo usa como v_max. Verificar: listar
+   todos los numeros del prompt en los errores.
+
+2. **Sobrecorreccion tras 0b.** Todos los errores tienen v >= 1.0,
+   la banda contra-prior de A3 (>=40% de Q1 con terminar). Si dentro
+   de v >= 1.0 la etiqueta se inclina a terminar, el modelo pudo
+   aprender "v moderada -> terminar" en lugar de "v <= v_max ->
+   terminar".
+
+### 29.6 Limitacion del registro
+
+Solo se guardaron los errores del puntaje forzado. Los casos con
+puntaje forzado correcto y generacion incorrecta son **invisibles**.
+Falta pred_gen en los 900 items.
+
+Con generacion, los conteos serian:
+- f2 = 5 errores (0.983)
+- balanceado = 3 errores (0.995)
+
+Las conclusiones no cambian, pero el comportamiento real es la
+generacion.
+
+### 29.7 Estado contra el criterio preregistrado
+
+Criterio preregistrado (seccion 24): >=0.99 por familia con limite
+inferior Wilson >=0.97.
+
+f2 en F-held: 0.977, Wilson aprox [0.953, 0.989]. **NO alcanza.**
+
+El parametrico (bancoA3) si cumple. La diferencia es F-held.
+
+**Se declara tal cual, sin recortar casos despues.**
+
+### 29.8 Lo que falta
+
+Para cerrar la auditoria:
+
+1. Correr pred_gen sobre los 900 items (no solo sobre los errores).
+2. Leer los prompts de los 11 errores.
+3. Verificar P(terminar | v>=1.0, d<T) en train.
+4. Verificar la redaccion de las formulaciones 9 y 44 (aparecen
+   repetidas).
+5. Revisar si |v-v_max| < 0.05 existe en train.
+6. Segunda semilla.
+
+### 29.9 Conclusion provisional
+
+- A3 muestra **senal** (0.977 en F2).
+- Pero **no alcanza el criterio preregistrado** (0.99 / 0.97).
+- La causa del 2.3% de error **no esta clara**:
+  - Puede ser fallo semantico real (no aplica la conjuncion).
+  - Puede ser artefacto de evaluacion (puntaje forzado).
+  - Puede ser problema de etiquetado.
+- **No se entrena A4 hasta separar estas causas.**
+
+### 29.10 Lo que NO se hace
+
+- No declarar A3 como hito.
+- No cambiar el criterio de exito.
+- No entrenar A4.
+- No descartar A3: hay senal, falta separar causas.
