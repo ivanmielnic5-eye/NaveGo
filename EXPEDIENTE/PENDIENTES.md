@@ -77,6 +77,33 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
 - Sin autoridad asignada todavia. Se retoma cuando logos-foco v1
   este funcionando y haya un caso real que lo justifique.
 
+
+### P11 — LOGOS v1.1 sin formalizar como D-XXXX
+- Estado: PENDIENTE. Reportado por el brief de arranque 2026-10-14.
+- Situacion: LOGOS v1.1 (logos-reconcile + drift detection +
+  logos-brief) esta implementado en el repo pero no fue
+  registrado como D-XXXX en el registro instituido.
+- Es el patron exacto que D-2026-0013 resuelve: trabajo hecho
+  sin cierre institucional.
+- Accion: redactar propuesta D-XXXX para LOGOS v1.1, referenciar
+  commits de implementacion, someter a aprobacion del Director.
+- Referencia: brief de arranque 2026-10-14, seccion 5.
+
+### P12 — Pendientes del brief de arranque (2026-10-14)
+- Estado: PENDIENTE. Items reportados por el brief en su seccion
+  7 ("Pendientes priorizados"). Son del proyecto NAVEGO, no del
+  hilo cerrado el 2026-10-14.
+- Items:
+  1. Track honesto — perdida por migracion Doc 46.
+  2. Field log no se escribe tras reinicio del celular.
+  3. Diseno pendiente: jerarquia de confianza de fuentes para
+     cartas nauticas.
+  4. Auto-commit WIP en logos-arranque.
+  5. Blender MCP — velas dinamicas + timon + mastil no rigido.
+- Accion: cada item se atiende por separado, con su propia
+  hipotesis o propuesta segun corresponda. Este bloque los
+  registra para que no se pierdan al regenerar el brief.
+- Referencia: brief de arranque 2026-10-14.
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
