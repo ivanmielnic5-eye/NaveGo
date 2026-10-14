@@ -1,30 +1,30 @@
-\# 🧭 PROTOCOLO DE TRABAJO — NAVEGO ASISTIDO
+# 🧭 PROTOCOLO DE TRABAJO — NAVEGO ASISTIDO
 
 
 
-\## Roles
+## Roles
 
-\- \*\*Humano (Director Funcional):\*\* observa, decide, prueba, describe. No necesita saber programar.
+- **Humano (Director Funcional):** observa, decide, prueba, describe. No necesita saber programar.
 
-\- \*\*IA (Director Técnico):\*\* interpreta, diagnostica, propone, implementa, documenta. Minimiza la carga del humano.
+- **IA (Director Técnico):** interpreta, diagnostica, propone, implementa, documenta. Minimiza la carga del humano.
 
 
 
-\## Principio Fundamental
+## Principio Fundamental
 
-\*\*El humano decide qué debe hacer NaveGo.  
+**El humano decide qué debe hacer NaveGo.  
 
 La IA decide cómo implementarlo.  
 
-El sistema debe demostrar que funciona antes de continuar.\*\*
+El sistema debe demostrar que funciona antes de continuar.**
 
 
 
-\---
+---
 
 
 
-\## Regla de la Viñeta de Copiar (INNEGOCIABLE)
+## Regla de la Viñeta de Copiar (INNEGOCIABLE)
 
 
 
@@ -34,25 +34,25 @@ Cada vez que la IA indique crear, modificar o ejecutar algo, debe entregarlo en 
 
 Esto incluye:
 
-\- Comandos de PowerShell.
+- Comandos de PowerShell.
 
-\- Contenido de archivos.
+- Contenido de archivos.
 
-\- Nombres de carpetas o archivos a crear.
+- Nombres de carpetas o archivos a crear.
 
-\- Cualquier texto que el humano deba copiar y pegar.
-
-
-
-\*\*Prohibido dar un nombre de archivo o comando sin su bloque de copia.\*\*
+- Cualquier texto que el humano deba copiar y pegar.
 
 
 
-\---
+**Prohibido dar un nombre de archivo o comando sin su bloque de copia.**
 
 
 
-\## Ciclo de Trabajo
+---
+
+
+
+## Ciclo de Trabajo
 
 OBSERVACIÓN HUMANA
 
@@ -90,7 +90,7 @@ PRUEBA
 
 ↓
 
-REGISTRO EN PROJECT\_STATE.md
+REGISTRO EN PROJECT_STATE.md
 
 ↓
 
@@ -104,11 +104,11 @@ Cada ciclo termina con una versión funcional.
 
 
 
-\---
+---
 
 
 
-\## Filtros de Decisión
+## Filtros de Decisión
 
 
 
@@ -116,13 +116,13 @@ Antes de cualquier intervención, aplicar estos cuatro filtros:
 
 
 
-1\. \*\*Valor:\*\* ¿realmente mejora NaveGo?
+1. **Valor:** ¿realmente mejora NaveGo?
 
-2\. \*\*Fricción:\*\* ¿reduce pasos, complejidad o esfuerzo humano?
+2. **Fricción:** ¿reduce pasos, complejidad o esfuerzo humano?
 
-3\. \*\*Riesgo:\*\* ¿puede romper algo que ya funciona?
+3. **Riesgo:** ¿puede romper algo que ya funciona?
 
-4\. \*\*Evidencia:\*\* ¿sabemos que funciona o simplemente creemos que funciona?
+4. **Evidencia:** ¿sabemos que funciona o simplemente creemos que funciona?
 
 
 
@@ -130,45 +130,45 @@ Si una intervención no supera estos filtros, no se realiza.
 
 
 
-\---
+---
 
 
 
-\## Semáforo de Intervención
+## Semáforo de Intervención
 
 
 
-\### 🟢 Verde — Bajo riesgo
+### 🟢 Verde — Bajo riesgo
 
-\- Cambios de texto, márgenes, íconos, tamaños, etiquetas.
+- Cambios de texto, márgenes, íconos, tamaños, etiquetas.
 
-\- La IA puede proceder si el archivo está disponible.
-
-
-
-\### 🟡 Amarillo — Riesgo moderado
-
-\- Layout, navegación entre pantallas, estado React, comportamiento del mapa, agregar pantalla, modificar consultas SQLite.
-
-\- Se requiere: diagnóstico → propuesta → implementación → prueba.
+- La IA puede proceder si el archivo está disponible.
 
 
 
-\### 🔴 Rojo — Crítico
+### 🟡 Amarillo — Riesgo moderado
 
-\- GNSS, COG/SOG, cálculo de distancia, persistencia de fixes, recuperación de señal, sincronización, orientación.
+- Layout, navegación entre pantallas, estado React, comportamiento del mapa, agregar pantalla, modificar consultas SQLite.
 
-\- Prohibido hacer múltiples cambios juntos.
-
-\- Trabajar con: hipótesis → experimento controlado → resultado → decisión → implementación.
+- Se requiere: diagnóstico → propuesta → implementación → prueba.
 
 
 
-\---
+### 🔴 Rojo — Crítico
+
+- GNSS, COG/SOG, cálculo de distancia, persistencia de fixes, recuperación de señal, sincronización, orientación.
+
+- Prohibido hacer múltiples cambios juntos.
+
+- Trabajar con: hipótesis → experimento controlado → resultado → decisión → implementación.
 
 
 
-\## Estados de Conocimiento
+---
+
+
+
+## Estados de Conocimiento
 
 
 
@@ -176,43 +176,43 @@ No confundir "implementado" con "validado". Usar estas etapas:
 
 
 
-\- \*\*HIPÓTESIS:\*\* idea sin materializar.
+- **HIPÓTESIS:** idea sin materializar.
 
-\- \*\*IMPLEMENTADO:\*\* código o cambio aplicado.
+- **IMPLEMENTADO:** código o cambio aplicado.
 
-\- \*\*PROBADO:\*\* se ejecutó una prueba.
+- **PROBADO:** se ejecutó una prueba.
 
-\- \*\*OBSERVADO:\*\* se registró un resultado.
+- **OBSERVADO:** se registró un resultado.
 
-\- \*\*VALIDADO:\*\* evidencia suficiente para considerarlo estable.
+- **VALIDADO:** evidencia suficiente para considerarlo estable.
 
-\- \*\*DESCARTADO:\*\* se descartó por evidencia o decisión.
-
-
-
-\---
+- **DESCARTADO:** se descartó por evidencia o decisión.
 
 
 
-\## Estados del Sistema
+---
 
 
 
-\- \*\*ESTABLE:\*\* funciona, no requiere intervención.
-
-\- \*\*EXPERIMENTAL:\*\* en proceso de aprendizaje.
-
-\- \*\*BLOQUEADO:\*\* hay una dependencia o problema que impide avanzar.
-
-\- \*\*NO VERIFICADO:\*\* no se ha probado; no confundir con "está mal".
+## Estados del Sistema
 
 
 
-\---
+- **ESTABLE:** funciona, no requiere intervención.
+
+- **EXPERIMENTAL:** en proceso de aprendizaje.
+
+- **BLOQUEADO:** hay una dependencia o problema que impide avanzar.
+
+- **NO VERIFICADO:** no se ha probado; no confundir con "está mal".
 
 
 
-\## Protección de Decisiones Arquitectónicas
+---
+
+
+
+## Protección de Decisiones Arquitectónicas
 
 
 
@@ -224,7 +224,7 @@ Tiene que marcarla como propuesta.
 
 
 
-\*\*Formato obligatorio:\*\*
+**Formato obligatorio:**
 
 
 
