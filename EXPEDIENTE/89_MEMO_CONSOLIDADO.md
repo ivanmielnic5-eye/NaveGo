@@ -2109,3 +2109,102 @@ Para cerrar la auditoria:
 - No cambiar el criterio de exito.
 - No entrenar A4.
 - No descartar A3: hay senal, falta separar causas.
+
+
+### 29.11 Cierre de la auditoria (2026-10-14)
+
+Analisis local completado con el script de verificacion de hipotesis.
+
+**Hallazgo principal: la hipotesis del conector SE CONFIRMA PARCIALMENTE.**
+
+  conector=True:   50 items, 0 errores, tasa = 0.000
+  conector=False: 250 items, 7 errores, tasa = 0.028
+
+Las 50 clausulas con conector gramatical ("y", "siempre que", "si")
+tienen **cero errores**. Las 250 sin conector tienen 7 errores
+(2.8%).
+
+**Pero el modelo NO falla en todas las clausulas sin conector.**
+Dentro de las 250 sin conector, 243 se clasifican correctamente. Los
+7 errores se concentran en 5 formulaciones especificas (fid 9, 44,
+47, 53, 55).
+
+**Los errores NO son sistematicos por valores numericos.**
+Comparando items que fallan y no fallan dentro de la misma
+formulacion:
+- fid=44: idx=293 (v=1.35, v_max=0.4) falla; fid=47 idx=289
+  (mismos v/v_max) no falla.
+- fid=53: idx=91 (v=3.4, v_max=1.6) falla; fid=53 idx=109
+  (v=2.68, v_max=1.6) no falla.
+- fid=9: idx=107 (v=2.42, v_max=1.0) falla; fid=9 idx=121
+  (v=2.03, v_max=1.6) no falla.
+
+**Conclusion:** el modelo aprendio una **heuristica estructural**, no
+una regla semantica. Cuando detecta el conector gramatical, activa el
+modo "esto es parte de la mision" (0% error). Cuando no lo detecta,
+hay una probabilidad baja (2.8%) de no integrar la clausula. Los
+errores restantes son **ruido residual** dentro de la zona donde el
+detector estructural es debil.
+
+**Implicacion para A4:**
+A4 cambia el problema: el LLM extrae campos (T, v, v_max), NO decide
+la conjuncion. Si no extrae v_max, el campo sale null y Python marca
+"missing_speed". La decision de la conjuncion queda en Python, exacta.
+A4 resuelve el problema por diseno, no porque el LLM interprete mejor.
+
+**Estado de A3:** cerrado analiticamente. La senal existe (0.977 en
+F2). El criterio preregistrado (0.99/0.97) no se alcanza. La causa
+esta localizada (heuristica estructural + ruido residual). No es un
+fracaso: es caracterizacion de una limitacion especifica.
+
+### 29.12 Referentes: comunicacion estructurada LLM-Python
+
+Panorama de librerias Python que implementan andamiaje para
+comunicacion con ordenes precisas. No es exhaustivo, es lo que
+existe hoy y podria inspirar el diseno de A4.
+
+**Generacion restringida (constrained decoding).** Fuerzan que la
+salida del LLM siga una gramatica formal (JSON Schema, regex, EBNF)
+enmascarando tokens invalidos en cada paso de generacion. Garantizan
+100% validez estructural.
+
+- **Outlines** (dottxt-ai): JSON Schema, regex, gramaticas Lark.
+  Integrado con Pydantic. Backends: llguidance, xgrammar.
+- **XGrammar**: JSON Schema, regex, EBNF. Backend de SGLang y vLLM.
+- **lm-format-enforcer**: FSM/gramatica por token. Garantiza 100%
+  JSON valido, elimina fugas de markdown.
+- **Guidance** (Microsoft): generacion guiada con gramaticas.
+- **LMQL**: query language para LLMs con constraints.
+
+**Validacion y parsing.**
+
+- **Instructor** (3M descargas/mes): Pydantic model define el schema,
+  valida la respuesta, reintenta automaticamente. Extractor resiliente
+  (maneja JSON malformado, markdown blocks, comas finales).
+- **Pydantic AI**: validacion type-safe en runtime.
+- **Marvin** (PrefectHQ): cast, classify, extract, generate con
+  Pydantic models.
+- **Guardrails AI**: validacion de schema, deteccion de PII, scoring
+  de alucinacion, retries.
+- **llmcast**: Pydantic templates con retries y token tracking.
+
+**Programacion declarativa.**
+
+- **DSPy** (Stanford): "program, don't prompt". Signatures tipadas,
+  modulos composicionales, optimizacion automatica de prompts.
+
+**Relevancia para NAVEGO:**
+
+1. **Outlines + XGrammar** es la opcion mas directa para A4: forzar
+   que el LLM genere el JSON de Intent con schema exacto. Elimina el
+   problema del "JSON invalido" y garantiza los campos requeridos.
+2. **Instructor** es la opcion mas robusta para validacion: define el
+   Intent con Pydantic, valida, reintenta si falla. Se integra con
+   Unsloth/HuggingFace local.
+3. **La combinacion Outlines (generacion) + Pydantic (validacion)**
+   cubre los dos problemas: estructura garantizada + validacion
+   semantica.
+
+**Lo que NO resuelven:** la semantica de la conjuncion (eso lo hace
+Python, no el LLM) ni la extraccion correcta del valor en el texto
+(eso depende del SFT de A4).
