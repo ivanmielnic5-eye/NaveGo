@@ -1,0 +1,37 @@
+{
+  "fecha": "2026-10-13T21:54:09.554572",
+  "seed": 20261014,
+  "autor_bruto": "Perplexity (sesion aislada)",
+  "consigna_sha256": "6ca5b526245f0d66e58edaa2bdd6d231e5949adeeb9da2a4e2d7e1574c128ab2",
+  "bruto_sha256": "5b6d7171d9617de7d4a0dc32ff113dfb3a8bbae2eae06168d24ebe8bf2693471",
+  "T_F1_NUEVOS": [
+    9.0,
+    13.0,
+    19.0,
+    21.0,
+    25.0,
+    27.0
+  ],
+  "T_F2_INTERP": [
+    11.0,
+    17.0,
+    23.0
+  ],
+  "V_MAX_F2_INTERP": [
+    0.4,
+    1.0,
+    1.6,
+    2.5
+  ],
+  "formulaciones_n": 60,
+  "files": {
+    "fheld_f2": {
+      "n": 300,
+      "sha256": "c890ad575036251b60c5d84c5e86325ab7b24278a7c57d5b5ac38f965a946811"
+    },
+    "fheld_f1": {
+      "n": 300,
+      "sha256": "31bed37ae2d156c16bca46398d03ac489b24b1efa0a48abe05f783e21c5f8fe3"
+    }
+  }
+}
