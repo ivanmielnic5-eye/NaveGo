@@ -104,6 +104,65 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
   hipotesis o propuesta segun corresponda. Este bloque los
   registra para que no se pierdan al regenerar el brief.
 - Referencia: brief de arranque 2026-10-14.
+
+### P13 — Renombrar PENDIENTES_NAVEGO.md a BITACORA_OPERATIVA_NAVEGO.md
+- Estado: PENDIENTE.
+- Situacion: el archivo ~/.logos/PENDIENTES_NAVEGO.md NO contiene
+  solo pendientes. Es una bitacora operativa cronologica con
+  pendientes, resueltos, descartes, hitos y bugs. El nombre miente.
+- Accion: renombrar a BITACORA_OPERATIVA_NAVEGO.md con backup
+  .pre-rename. Verificar que logos-brief no rompa (lo lee en
+  linea 186).
+- Referencia: consulta a Luna 2026-10-14.
+
+### P14 — Declarar bitacora en MANIFEST como historical no autoritativo
+- Estado: PENDIENTE.
+- Situacion: la bitacora aporta contexto historico, NO estado
+  vigente. R-18 (source of truth) exige declarar la autoridad.
+- Accion: agregar la bitacora al MANIFEST.json como source tipo
+  "historical" no autoritativo. EXPEDIENTE/PENDIENTES.md conserva
+  la autoridad sobre pendientes activos.
+- Referencia: criterios de Luna (2026-10-14), puntos 5 y 6.
+
+### P15 — Redisenar seccion 7 del brief
+- Estado: PENDIENTE.
+- Situacion: logos-brief seccion 7 lee solo PENDIENTES_NAVEGO.md
+  (linea 186) y toma los ultimos 5 headers ###. No lee
+  EXPEDIENTE/PENDIENTES.md. Resultado: brief desactualizado.
+- Accion: seccion 7 debe leer EXPEDIENTE/PENDIENTES.md como fuente
+  autoritativa (pendientes con ID) y la bitacora como contexto
+  historico validado por fecha, no como fuente de estado.
+- Referencia: consulta a Luna 2026-10-14.
+
+### P16 — Agregar seccion "Decisiones recientes" al brief
+- Estado: PENDIENTE.
+- Situacion: el brief no muestra las D-XXXX recientes. D-2026-0011
+  a 0014 son invisibles al arrancar un hilo nuevo.
+- Accion: nueva seccion con las ultimas 3-5 decisiones. Ordenar
+  por fecha, no por numero. Incluir id, titulo, estado, fecha,
+  referencia.
+- Referencia: criterios de Luna 2026-10-14, punto 4.
+
+### P17 — Regla de integridad en el brief
+- Estado: PENDIENTE.
+- Situacion: si una fuente falta o esta desactualizada, el brief
+  hoy no lo advierte. Presenta la foto del 02 oct como si fuera
+  vigente.
+- Accion: implementar regla de integridad. Si falta fuente, no se
+  puede leer, o esta desactualizada (por ejemplo, ultima
+  actualizacion > X dias), el brief debe declararlo explicitamente.
+  Nunca presentar como vigente lo que no lo es.
+- Referencia: criterios de Luna 2026-10-14, punto 7.
+
+### Nota — hallazgo de fecha desfasada en la bitacora
+- Detectado 2026-10-14: ediciones del 08 oct (Auto-commit WIP +
+  Blender MCP) quedaron bajo el header "2026-10-02 (cierre de
+  jornada)". El diff contra .pre-blender confirma 3 KB de
+  contenido agregado sin encabezado nuevo.
+- No es pendiente accionable por si mismo. Es evidencia del patron
+  que R3 previene (leer fuentes completas, no solo encabezados).
+- Al declarar la bitacora como historical (P14), este desfase
+  queda como parte del historico. No se corrige.
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
