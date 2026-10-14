@@ -163,6 +163,107 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
   que R3 previene (leer fuentes completas, no solo encabezados).
 - Al declarar la bitacora como historical (P14), este desfase
   queda como parte del historico. No se corrige.
+
+## PENDIENTES MIGRADOS DE LA BITACORA — 2026-10-14
+
+Los siguientes 11 items fueron detectados en la bitacora
+operativa entre el 25 y 26 de septiembre de 2026. Se migran aqui
+para que no se pierdan en el renombre de la bitacora (P13) ni en
+el rediseno del brief (P15). Todos con estado NO VERIFICADO:
+no se afirma que sigan abiertos ni que esten resueltos. Requieren
+contraste con codigo, tests y comportamiento actual.
+
+### P18 — [APP] Sesion se guarda sin confirmacion
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: al tocar "Finalizar" el Alert es informativo, no
+  permite cancelar. La sesion ya se cerro.
+- Accion: reproducir el flujo, inspeccionar persistencia/UI y
+  revisar tests. Cierre requiere validacion funcional del Director.
+- Responsable: IA (verificacion); Director (cierre).
+
+### P19 — [APP] "Referencia ya existe" sin referencia real
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: cartel dice que la referencia ya existe pero NO
+  aparece en el listado. Mapa no carga en detalle.
+- Accion: rastrear la comprobacion de existencia, reproducir el
+  caso, revisar tests de persistencia.
+- Responsable: IA (verificacion); Director (cierre).
+
+### P20 — [APP] Funcion deshacer (undo)
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: deshacer correccion de distancia o punto.
+- Accion: contrastar implementacion actual con comportamiento
+  esperado, acordar criterio de aceptacion, comprobar tests.
+- Responsable: IA + Director.
+
+### P21 — [APP] Borrado de multiples trayectos
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: hoy solo se borra un trayecto a la vez.
+- Accion: verificar interfaz, seleccion, borrado y persistencia;
+  comprobar tests y comportamiento real.
+- Responsable: IA + Director.
+
+### P22 — [APP] Logs [FILTER] condicionados a persist
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: en POST, [FILTER] se emite dentro de
+  persistFixResult con early-return. Regresion observable en logs.
+- Accion: inspeccionar las llamadas y determinar mediante tests
+  si el registro desaparece cuando no se persiste.
+- Responsable: IA.
+
+### P23 — [APP] Doble Date.now() en measuredAt
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: callback y persistFixResult calculan Date.now() por
+  separado. Si location.timestamp es null/0, difieren.
+- Accion: rastrear la generacion de la marca temporal, verificar
+  su semantica y revisar tests.
+- Responsable: IA.
+
+### P24 — [APP] Posible rechazo no gestionado en void persistFixResult
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: el callback hace void persistFixResult(...) sin
+  .catch. Puede escalar en RN.
+- Accion: seguir el flujo asincrono, inspeccionar el tratamiento
+  de errores, verificar el caso de rechazo.
+- Responsable: IA.
+
+### P25 — [HIGIENE] Revisar ~/recup_dir.*
+- Estado: NO VERIFICADO. Origen: 26-09-2026.
+- Situacion: ~1000 carpetas residuo de photorec (13 sep).
+  Ensucia find/grep recursivo. NO BORRAR sin inventario previo.
+- Accion: identificar origen, contenido, antiguedad y utilidad
+  antes de proponer limpieza. Filtro temporal: grep -v recup_dir.
+- Responsable: IA + Director.
+
+### P26 — [APP] Gaps chicos < 15 m se suman como observados
+- Estado: NO VERIFICADO. Origen: 25-09-2026.
+- Situacion: gaps < 15m deberian NO sumar distancia.
+- Candidato (pista, no prueba): commit 5251505 subio
+  GAP_THRESHOLD_MS a 15000.
+- Accion: contrastar comportamiento actual con el commit
+  candidato; probar gaps inferiores, iguales y superiores al
+  umbral. El commit NO es evidencia de cierre.
+- Responsable: IA + Director.
+
+### P27 — [LOGOS] logos-mem: leer hipotesis PROPUESTA y CONFIRMADA
+- Estado: NO VERIFICADO. Origen: 25-09-2026.
+- Situacion: logos-mem lee solo hipotesis EN_CURSO. Deberia leer
+  PROPUESTA y CONFIRMADA.
+- Accion: revisar implementacion y tests para ambos estados.
+  Comprobar comportamiento actual.
+- Responsable: IA (verificacion); Director (cierre).
+
+### P28 — [LOGOS] Test de regresion incidente 20/09 (H-2026-0019)
+- Estado: NO VERIFICADO. Origen: 25-09-2026.
+- Situacion: test de regresion del incidente multi-escritor.
+- Accion: localizar la hipotesis y la evidencia del incidente,
+  comprobar si existe el test y verificar su resultado actual.
+- Responsable: IA (verificacion); Director (cierre).
+
+### Reconciliacion de commits
+- 29e6f60 (Track honesto) y 6b46436 (Doc 46 Fase 2) se vinculan
+  al pendiente institucional "track honesto", NO a P18-P28.
+- Los mensajes de commit son pistas, no evidencia de cierre.
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
