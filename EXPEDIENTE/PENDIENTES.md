@@ -106,32 +106,41 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
 - Referencia: brief de arranque 2026-10-14.
 
 ### P13 — Renombrar PENDIENTES_NAVEGO.md a BITACORA_OPERATIVA_NAVEGO.md
-- Estado: PENDIENTE.
-- Situacion: el archivo ~/.logos/PENDIENTES_NAVEGO.md NO contiene
-  solo pendientes. Es una bitacora operativa cronologica con
-  pendientes, resueltos, descartes, hitos y bugs. El nombre miente.
-- Accion: renombrar a BITACORA_OPERATIVA_NAVEGO.md con backup
-  .pre-rename. Verificar que logos-brief no rompa (lo lee en
-  linea 186).
+- Estado: CERRADO (commit c5fc7e2, 2026-10-14).
+- Situacion: el archivo ~/.logos/PENDIENTES_NAVEGO.md NO contenia
+  solo pendientes. Era bitacora operativa cronologica con
+  pendientes, resueltos, descartes, hitos y bugs. El nombre mentia.
+- Resolucion: renombrado a ~/.logos/BITACORA_OPERATIVA_NAVEGO.md.
+  Backup: PENDIENTES_NAVEGO.md.pre-rename. logos-brief actualizado
+  con fallback entre nombre nuevo y viejo.
 - Referencia: consulta a Luna 2026-10-14.
 
 ### P14 — Declarar bitacora en MANIFEST como historical no autoritativo
-- Estado: PENDIENTE.
-- Situacion: la bitacora aporta contexto historico, NO estado
-  vigente. R-18 (source of truth) exige declarar la autoridad.
-- Accion: agregar la bitacora al MANIFEST.json como source tipo
-  "historical" no autoritativo. EXPEDIENTE/PENDIENTES.md conserva
-  la autoridad sobre pendientes activos.
+- Estado: CERRADO (commit c5fc7e2, 2026-10-14).
+- Situacion: la bitacora aportaba contexto historico, no estado
+  vigente. R-18 (source of truth) exigia declarar la autoridad.
+- Resolucion: MANIFEST actualizado.
+  Bitacora: type historical_bitacora, authority false, role
+  historical_log, path ~/.logos/BITACORA_OPERATIVA_NAVEGO.md.
+  Nueva source: EXPEDIENTE/PENDIENTES.md, type pending, authority
+  true, role singleton. 'pending' movido de optional[] a
+  required[].
+  Baseline posterior (commit 42ac0bf): 5 fuentes autoritativas
+  actualizadas a c5fc7e2.
 - Referencia: criterios de Luna (2026-10-14), puntos 5 y 6.
 
 ### P15 — Redisenar seccion 7 del brief
-- Estado: PENDIENTE.
-- Situacion: logos-brief seccion 7 lee solo PENDIENTES_NAVEGO.md
-  (linea 186) y toma los ultimos 5 headers ###. No lee
+- Estado: CERRADO PARCIAL (commit aa360a1, 2026-10-14).
+- Situacion: logos-brief seccion 7 leia solo PENDIENTES_NAVEGO.md
+  y tomaba los ultimos 5 headers ###. No leia
   EXPEDIENTE/PENDIENTES.md. Resultado: brief desactualizado.
-- Accion: seccion 7 debe leer EXPEDIENTE/PENDIENTES.md como fuente
-  autoritativa (pendientes con ID) y la bitacora como contexto
-  historico validado por fecha, no como fuente de estado.
+- Resolucion (parte 1): seccion 7 lee EXPEDIENTE/PENDIENTES.md y
+  filtra pendientes NO cerrados (excluye APROBADO, CERRADO,
+  RECHAZADO, DIFERIDO). Fallback a bitacora historica con aviso
+  explicito. Verificado: 22 pendientes activos listados.
+- Pendiente (parte 2): regla de integridad completa (P17) y la
+  bitacora como contexto historico validado por fecha. Va al hilo
+  nuevo.
 - Referencia: consulta a Luna 2026-10-14.
 
 ### P16 — Agregar seccion "Decisiones recientes" al brief
