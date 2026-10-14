@@ -341,6 +341,17 @@ contraste con codigo, tests y comportamiento actual.
 - Referencia: analisis 2026-10-14, consulta a Luna.
 - Responsable: IA + Director (aprobacion).
 
+### P32 — [LOGOS] Unificar hashing de logos-gate y detectar errores de recorrido
+- Estado: CERRADO (2026-10-14). Commit de implementacion: `e72a6e3`.
+- Resultado: `logos-gate` delega el hashing en `logos_hash_lib.py`. Los fallos de inspeccion, lectura, recorrido o ejecucion Git se propagan como `HashError`; el Gate clasifica los errores como `INVALID`, bloquea fuentes requeridas y advierte para las opcionales.
+- Evidencia reproducible: `.logos/tests/test_p32_hashing.py`; 16 pruebas pasaron despues del commit (`TEST_EXIT=0`). Compilacion (`PY_COMPILE=0`) y `git diff --check` (`DIFF_CHECK=0`) tambien pasaron.
+- Validaciones de integracion: fuente requerida con error -> `INVALID/BLOCKED`, codigo 2; fuente opcional con error -> `INVALID/WARNING`, codigo 1. Las pruebas de `logos-baseline` y `logos-reconcile` demostraron que un error de hashing no modifica el MANIFEST. El reemplazo atomico de `logos-reconcile` preserva el archivo anterior ante fallo simulado y limpia el temporal.
+- Correcciones verificadas: se distingue archivo Git realmente eliminado de error de acceso; `hash_source()` distingue ruta realmente inexistente de error de inspeccion. Se comprobo paridad en casos de archivo, directorio, symlink, repo Git y archivo eliminado.
+- Alcance excluido: P30 sigue separada; la correccion funcional de symlinks a directorios no forma parte de P32.
+- Limite documentado: `logos-baseline` se comprobo ante fallos durante el calculo de hashes, no ante un fallo durante su escritura final directa. Esa mejora de atomicidad queda fuera de P32.
+- Referencia: D-2026-0016, D-2026-0015, P30 y antecedentes de P31.
+- Responsable: IA (implementacion y pruebas); Director (autorizacion de cierre).
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
