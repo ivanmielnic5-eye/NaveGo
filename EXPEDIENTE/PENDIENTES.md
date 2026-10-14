@@ -42,20 +42,24 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
 - Accion: definir ubicacion autoritativa (verificar MANIFEST) y redactar.
 - Referencia: D-2026-0012, nivel B.6.
 
+
 ### P7 — Reparacion del bug en PROTOCOLO.md
-- Estado: PENDIENTE. Seccion "Proteccion de Decisiones Arquitectonicas" termina en "Formato obligatorio:" sin formato.
-- Accion: commit independiente. Documentar alcance exacto.
-- Referencia: hallazgo 2026-10-14.
+- Estado: CERRADO (commit 0409e8e).
+- Seccion "Proteccion de Decisiones Arquitectonicas" ahora incluye
+  "Formato obligatorio" completo (8 puntos, validados con Luna).
+- Referencia: D-2026-0013 (regla de no-olvido).
 
 ### P8 — Limpieza de escapes markdown en PROTOCOLO.md
-- Estado: PENDIENTE. Verificar primero si las barras invertidas son literales del archivo o efecto de representacion.
-- Accion: si son literales, corregir y validar en commit independiente.
-- Referencia: hallazgo 2026-10-14.
+- Estado: CERRADO (commit 822a4d8).
+- Escapes markdown eliminados (124 en total). CRLF -> LF.
+  232 lineas tocadas, sin cambio semantico.
+- Verificacion: 0 escapes restantes; archivo UTF-8 sin CRLF.
 
 ### P9 — R3 "Leer fuentes completas antes de planificar"
-- Estado: PENDIENTE. Agregar a PROTOCOLO.md en seccion nueva "Reglas metodologicas obligatorias".
-- Accion: redactar y agregar. Debe dejar explicito como actuar cuando no puedan leerse integramente.
-- Referencia: EXPEDIENTE/71 (leccion de metodo), criterios de Luna.
+- Estado: CERRADO (commit 30c77c6).
+- Seccion nueva "Reglas metodologicas obligatorias" en PROTOCOLO.md.
+- R3 unica regla de la seccion. R2 y R4 ya tratadas via D-2026-0014
+  y D-2026-0013 (sin duplicacion).
 
 ---
 
