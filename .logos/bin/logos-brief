@@ -233,9 +233,41 @@ def secciones_5_a_9(project, manifest):
             sec7.append("- (sin fuente de pendientes disponible)")
     sec7.append("")
 
+    # --- 7b. Decisiones recientes ---
+    sec_dec = []
+    sec_dec.append("## 8. Decisiones recientes")
+    sec_dec.append("")
+    decisiones_dir = REPO / ".logos" / "decisions"
+    if decisiones_dir.exists():
+        try:
+            items = []
+            for p in sorted(decisiones_dir.glob("D-*.json")):
+                try:
+                    d = json.loads(p.read_text(encoding="utf-8"))
+                    if d.get("estado") != "CONGELADA":
+                        continue
+                    items.append({
+                        "id": d.get("id", "?"),
+                        "titulo": d.get("titulo", "?"),
+                        "estado": d.get("estado", "?"),
+                        "fecha": d.get("fecha", "?"),
+                    })
+                except Exception:
+                    continue
+            items.sort(key=lambda x: (x["fecha"], x["id"]), reverse=True)
+            for d in items[:7]:
+                sec_dec.append(f"- {d['id']} ({d['fecha']}) {d['estado']}: {d['titulo']}")
+            if not items:
+                sec_dec.append("- (sin decisiones CONGELADAS en el registro)")
+        except Exception as e:
+            sec_dec.append(f"- (error leyendo decisiones: {e})")
+    else:
+        sec_dec.append("- (AVISO: .logos/decisions/ no existe)")
+    sec_dec.append("")
+
     # --- 8. Comandos operativos ---
     sec8 = []
-    sec8.append("## 8. Comandos operativos")
+    sec8.append("## 9. Comandos operativos")
     sec8.append("")
     sec8.append("Ver estado del contexto:")
     sec8.append("```")
@@ -264,7 +296,7 @@ def secciones_5_a_9(project, manifest):
 
     # --- 9. Reglas duras ---
     sec9 = []
-    sec9.append("## 9. Reglas duras de trabajo")
+    sec9.append("## 10. Reglas duras de trabajo")
     sec9.append("- Backup explicito .pre-<etapa> antes de tocar codigo.")
     sec9.append("- Un paso por vez. Verificar despues de cada cambio.")
     sec9.append("- Comandos con bloque de copiar/pegar claro.")
@@ -276,7 +308,7 @@ def secciones_5_a_9(project, manifest):
     sec9.append("- Verificar toda cita de LLM antes de apoyarse en ella.")
     sec9.append("")
 
-    return sec5, sec6, sec7, sec8, sec9
+    return sec5, sec6, sec7, sec_dec, sec8, sec9
 
 
 def seccion_10_simulador(project, manifest):
@@ -284,7 +316,7 @@ def seccion_10_simulador(project, manifest):
     sources = {s["type"]: s for s in manifest["sources"]}
     sim = sources.get("simulator_source")
     sec10 = []
-    sec10.append("## 10. Simulador Godot")
+    sec10.append("## 11. Simulador Godot")
     sec10.append("")
     if sim is None:
         sec10.append("- (simulator_source no declarado en el MANIFEST)")
@@ -452,9 +484,9 @@ def main():
     gate_result = run_gate(project)
 
     base = construir_secciones(project, manifest, gate_result, head, branch)
-    sec5, sec6, sec7, sec8, sec9 = secciones_5_a_9(project, manifest)
+    sec5, sec6, sec7, sec_dec, sec8, sec9 = secciones_5_a_9(project, manifest)
     sec10 = seccion_10_simulador(project, manifest)
-    base["ultimas"] = [sec5, sec6, sec7, sec8, sec9, sec10]
+    base["ultimas"] = [sec5, sec6, sec7, sec_dec, sec8, sec9, sec10]
 
     md_text = render_markdown(project, base)
     pegable_text = render_pegable(project, base)
