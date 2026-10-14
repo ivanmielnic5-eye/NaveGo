@@ -44,107 +44,19 @@ def is_ancestor(older, newer, repo_path=None):
         return False
 
 
-def _hash_file(path):
-    """SHA256 de archivo (D-2026-0010)."""
-    h = hashlib.sha256()
-    try:
-        with open(path, 'rb') as fh:
-            while True:
-                chunk = fh.read(65536)
-                if not chunk:
-                    break
-                h.update(chunk)
-    except (OSError, PermissionError):
-        return None
-    return h.hexdigest()
-
-
-def _hash_dir_standard(dirpath):
-    """SHA256 de directorio segun D-2026-0010."""
-    dirpath = os.path.abspath(dirpath)
-    entries = []
-    for root, dirs, files in os.walk(dirpath):
-        dirs[:] = [d for d in dirs if d != '.git']
-        for fname in files:
-            full = os.path.join(root, fname)
-            rel = os.path.relpath(full, dirpath)
-            entries.append((rel, full))
-    entries.sort(key=lambda e: e[0].encode('utf-8'))
-    h = hashlib.sha256()
-    for rel, full in entries:
-        if os.path.islink(full):
-            target = os.readlink(full)
-            h.update(rel.encode('utf-8'))
-            h.update(b'\x00')
-            h.update(b'LINK:' + target.encode('utf-8'))
-            h.update(b'\x00')
-            continue
-        try:
-            with open(full, 'rb') as fh:
-                content = fh.read()
-        except (OSError, PermissionError):
-            continue
-        h.update(rel.encode('utf-8'))
-        h.update(b'\x00')
-        h.update(str(len(content)).encode('utf-8'))
-        h.update(b'\x00')
-        h.update(content)
-    return h.hexdigest()
-
-
-def _hash_git_repo(repo_path):
-    """SHA256 de archivos trackeados por git (working tree)."""
-    repo_path = os.path.abspath(repo_path)
-    r = subprocess.run(
-        ['git', '-C', repo_path, 'ls-files', '-z'],
-        capture_output=True
-    )
-    if r.returncode != 0:
-        return None
-    files = [fb for fb in r.stdout.split(b'\x00') if fb]
-    files.sort()
-    h = hashlib.sha256()
-    for fbytes in files:
-        rel = fbytes.decode('utf-8', errors='replace')
-        full = os.path.join(repo_path, rel)
-        if os.path.islink(full):
-            target = os.readlink(full)
-            h.update(rel.encode('utf-8'))
-            h.update(b'\x00')
-            h.update(b'LINK:' + target.encode('utf-8'))
-            h.update(b'\x00')
-            continue
-        if not os.path.exists(full):
-            h.update(rel.encode('utf-8'))
-            h.update(b'\x00')
-            h.update(b'DELETED\x00')
-            continue
-        try:
-            with open(full, 'rb') as fh:
-                content = fh.read()
-        except (OSError, PermissionError):
-            continue
-        h.update(rel.encode('utf-8'))
-        h.update(b'\x00')
-        h.update(str(len(content)).encode('utf-8'))
-        h.update(b'\x00')
-        h.update(content)
-    return h.hexdigest()
+# Biblioteca compartida de hashing (D-2026-0010, P32).
+_HASH_LIB = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', 'lib')
+)
+if _HASH_LIB not in sys.path:
+    sys.path.insert(0, _HASH_LIB)
+from logos_hash_lib import HashError, hash_source
 
 
 def compute_source_hash(path):
-    """Devuelve el hash actual de una fuente segun su tipo.
-    Devuelve None si el path no existe o no se puede hashear."""
-    path = expand(path) if not os.path.isabs(os.path.expanduser(path)) else os.path.expanduser(path)
-    if not os.path.exists(path):
-        return None
-    if os.path.isfile(path):
-        return _hash_file(path)
-    if os.path.isdir(path):
-        if os.path.isdir(os.path.join(path, '.git')):
-            return _hash_git_repo(path)
-        return _hash_dir_standard(path)
-    return None
+    """Adaptador compatible: devuelve el hash o None si no existe."""
+    current_hash, _count, _kind = hash_source(expand(path))
+    return current_hash
 
 
 def classify_review(reviewed, head, repo_path):
@@ -339,17 +251,30 @@ if checks['manifest'] != 'BLOCKED':
         # Prioridad 1: reviewed_against_hash (D-2026-0010)
         reviewed_hash = src.get('reviewed_against_hash')
         if reviewed_hash is not None and reviewed_hash != '':
-            current_hash = compute_source_hash(src.get('path', ''))
+            hash_error = None
+            try:
+                current_hash = compute_source_hash(src.get('path', ''))
+            except HashError as e:
+                current_hash = None
+                hash_error = str(e)
+
             if current_hash is None:
                 state = 'INVALID'
-                ref = f'path_no_hashable'
+                ref = (
+                    f'hash_error:{hash_error[:120]}'
+                    if hash_error else 'path_no_hashable'
+                )
+                # Un fallo de hashing bloquea fuentes requeridas;
+                # las opcionales conservan el tratamiento de WARNING.
+                level = 'BLOCKED' if stype in required_types else 'WARNING'
             elif current_hash == reviewed_hash:
                 state = 'CURRENT'
                 ref = reviewed_hash[:16]
+                level = policy_for(state, stype in required_types)
             else:
                 state = 'STALE'
                 ref = f'{reviewed_hash[:8]}!={current_hash[:8]}'
-            level = policy_for(state, stype in required_types)
+                level = policy_for(state, stype in required_types)
             if level == 'BLOCKED':
                 drift_required.append(f'{stype}({state}:{ref})')
             elif level == 'WARNING':

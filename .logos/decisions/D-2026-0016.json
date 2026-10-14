@@ -1,0 +1,26 @@
+{
+  "id": "D-2026-0016",
+  "titulo": "Unificar el hashing de LOGOS Gate y propagar errores de recorrido",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-14",
+  "contexto": "La inspección posterior a D-2026-0015 identificó que logos-gate conserva funciones propias de hashing que omiten errores de lectura. Además, hash_directory_standard() en logos_hash_lib.py utiliza os.walk() sin onerror, por lo que puede omitir subdirectorios inaccesibles. Estas situaciones permiten calcular hashes incompletos y divergir entre herramientas. El alcance fue aprobado explícitamente por el Director el 2026-10-14.",
+  "decision": "Mantener .logos/lib/logos_hash_lib.py como implementación canónica de hashing para logos-hash, logos-baseline, logos-reconcile y logos-gate. Hacer que los errores de recorrido de directorios y de lectura se propaguen como HashError. Los fallos de git ls-files deben producir errores explícitos, no hashes parciales. Adaptar logos-gate para usar hash_source() y convertir HashError en estado INVALID con bloqueo efectivo. Preservar la semántica de hashing de D-2026-0010 y la equivalencia exigida por D-2026-0015. No cambiar la semántica actual de symlinks en este alcance: la corrección funcional de symlinks a directorios permanece en P30.",
+  "consecuencias": [
+    "Los cuatro consumidores utilizan una única implementación de hashing.",
+    "Los errores de recorrido, lectura o ejecución de Git no pueden producir un hash incompleto presentado como válido.",
+    "logos-gate clasifica como INVALID y bloquea cuando no puede calcular un hash íntegro.",
+    "Las operaciones que modifican el MANIFEST deben conservar la garantía de no realizar escrituras parciales si falla el cálculo de algún hash.",
+    "Se requieren pruebas reproducibles de paridad, errores de recorrido y lectura, clasificación del Gate y ausencia de escrituras parciales.",
+    "P30 continúa pendiente y fuera de este alcance."
+  ],
+  "criterio_revision": "Reabrir si la unificación cambia hashes válidos respecto de la semántica aprobada; si un error de lectura o recorrido permite aceptar una fuente como CURRENT; si el Gate no bloquea ante HashError; si se producen escrituras parciales; o si las pruebas revelan divergencias entre consumidores.",
+  "fuentes_verificadas": [
+    "D-2026-0010.json: contrato de hashing y freshness por contenido.",
+    "D-2026-0015.json: biblioteca compartida y criterios de fallo seguro.",
+    "EXPEDIENTE/PENDIENTES.md: P30 y antecedentes de P31.",
+    "Inspección de código del 2026-10-14: logos_hash_lib.py y logos-gate.",
+    "Aprobación explícita del Director en el hilo del 2026-10-14."
+  ],
+  "reversible": true,
+  "autor": "director"
+}
