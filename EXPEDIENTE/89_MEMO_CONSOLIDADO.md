@@ -1796,3 +1796,70 @@ apresurada de 25.10.
 **Patron:** antes de disenar un entrenamiento correctivo, agotar el
 diagnostico con los datos que ya existen. La mayoria de los errores
 se explican sin generar nada nuevo.
+
+---
+
+## 27. F-HELD GENERADO Y EVALUADO CON BASELINES
+
+**Fecha:** 2026-10-13
+**Referencias:** seccion 24 (protocolo A3), anexo L, borradores
+f0_diseno_v2.md, luna_criterio_contaminacion.md.
+
+### 27.1 Que es F-held
+
+600 items con formulaciones retenidas que ni P-text ni el LLM vieron
+durante su desarrollo.
+
+- Autor del bruto: Perplexity, sesion aislada (sin contexto del
+  proyecto).
+- Consigna sellada antes de generar (SHA256:
+  6ca5b526245f0d66e58edaa2bdd6d231e5949adeeb9da2a4e2d7e1574c128ab2).
+- Bruto sellado (SHA256:
+  5b6d7171d9617de7d4a0dc32ff113dfb3a8bbae2eae06168d24ebe8bf2693471).
+- 60 formulaciones de la clausula de velocidad, sin usar las 4
+  construcciones existentes.
+
+Estructura:
+
+- fheld_f2: 300 items (60 formulaciones x 5). Balance 150/150.
+- fheld_f1: 300 items (6 T nuevos x 50). Balance 150/150.
+
+T_F1_NUEVOS = {9, 13, 19, 21, 25, 27}.
+T_F2_INTERP = {11, 17, 23}.
+V_MAX_F2_INTERP = {0.4, 1.0, 1.6, 2.5}.
+
+### 27.2 Evaluacion con baselines
+
+  Modelo       F1 (T nuevos)  F2 (Perplexity)  Global
+  P-struct     300/300 (100%) 300/300 (100%)   600/600 (100%)
+  P-text       300/300 (100%) 150/300  (50%)   450/600  (75%)
+
+P-text: 0 parseos fallidos, pero no reconoce las 60 formulaciones
+nuevas. Al no encontrar v_max, cae al caso F1 y dice siempre
+`terminar` (porque todos los F2 tienen d < T). Acierta 150
+(terminar reales) y falla 150 (ir_a reales).
+
+### 27.3 Lectura
+
+- **El benchmark no esta techo-capped.** P-text no puede anticipar 60
+  variantes nuevas con reglas escritas a mano.
+- **Hay margen real para el LLM.** Si el SFT generaliza a
+  formulaciones nuevas, puede aportar valor medible sobre P-text.
+- **La cota superior sigue siendo P-struct (100%).** El LLM no puede
+  superarla (spec perfectamente parseada). La pregunta es si se
+  acerca.
+
+### 27.4 Proximo paso
+
+Entrenar LLM-A3 con banco A3 (1188 train / 352 val). Evaluar en los
+5 splits de bancoA3 y en los 2 splits de F-held. Comparar:
+
+- LLM-A3 vs P-text en F-held F2 (donde P-text falla).
+- LLM-A3 vs P-struct en bancoA3 y F-held.
+- LLM-A3 vs A2 congelado (transferencia de F1 a F2).
+
+### 27.5 Decisiones pendientes del Director
+
+- Subir banco A3 a Kaggle (dataset).
+- Entrenar SFT (1 semilla).
+- Guardar version antes de que cierre la sesion.
