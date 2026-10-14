@@ -1863,3 +1863,108 @@ Entrenar LLM-A3 con banco A3 (1188 train / 352 val). Evaluar en los
 - Subir banco A3 a Kaggle (dataset).
 - Entrenar SFT (1 semilla).
 - Guardar version antes de que cierre la sesion.
+
+---
+
+## 28. AUDITORIA DE F-HELD F2
+
+**Fecha:** 2026-10-14
+**Referencias:** seccion 27, borradores luna_observacion_a3.md,
+claude_observacion_a3.md.
+
+### 28.1 Que se audito
+
+Despues del resultado SFT 0.977 vs P-text 0.500 en fheld_f2, se
+verifico si el 0.500 era un bug o el comportamiento esperado.
+
+Se auditaron 300 items de fheld_f2:
+
+- Predicciones de P-text por item.
+- Matriz de confusion completa.
+- Coherencia entre v_max del prompt y v_max de la etiqueta.
+- Parseo de P-text (que extrae y que no).
+
+### 28.2 Resultado de la auditoria
+
+**P-text nunca reconocio las formulaciones de Perplexity:**
+
+  Parseos con v_max: 0 / 300
+  Parseos sin v_max: 300 / 300
+
+Las 4 regexes de P-text cubren F_train y F_dev. Ninguna coincide
+con las 60 formulaciones de Perplexity.
+
+**P-text cae al modo F1 (solo distancia).** Como todos los items de
+fheld_f2 tienen d < T (el generador los hace asi a proposito para
+aislar la clausula de velocidad), P-text dice siempre `terminar`.
+
+**Matriz de confusion:**
+
+  real=terminar, pred=terminar: 150
+  real=terminar, pred=ir_a    :   0
+  real=ir_a,     pred=terminar: 150
+  real=ir_a,     pred=ir_a    :   0
+
+  150 aciertos / 150 fallos = 0.500 exacto.
+
+**Coherencia prompt/etiqueta:** 0/300 incoherencias.
+
+### 28.3 Lectura
+
+El 0.500 de P-text es exactamente el comportamiento esperado de un
+parser que no reconoce las formulaciones nuevas y cae a un fallback.
+No es bug.
+
+La hipotesis de unidades (nudos vs m/s) no aplica. El prompt y la
+etiqueta usan la misma unidad en los 300 items.
+
+**Lo que la auditoria confirma:**
+
+- P-text no generaliza a formulaciones que no vio.
+- El LLM si generaliza (0.977).
+- La diferencia de 47.7 puntos es real, no artefacto.
+- El fallback de P-text no es ruido: dice siempre `terminar`, lo
+  cual es consistente con "no vi la clausula de velocidad".
+
+### 28.4 Encuadre
+
+**Este resultado es una pieza de la investigacion de roles, no una
+competencia entre LLM y Python.**
+
+Lo que se aprendio:
+
+- El LLM puede hacer algo que el parser no: interpretar
+  formulaciones no vistas.
+- El parser es determinista, rapido, auditable, pero no generaliza.
+- Ambos tienen roles distintos. No es "gana uno".
+
+La pregunta que abre: **como se complementan.** No "quien gana".
+
+El LLM no reemplaza al parser. El parser no reemplaza al LLM.
+**El circuito completo es lo que importa.**
+
+### 28.5 Lo que no se pudo auditar todavia
+
+- Los 7 errores individuales del SFT en fheld_f2. El eval guardo
+  solo agregados. Requiere re-correr con logging individual.
+- Los 4 errores en test_balanceado.
+- Las compuertas restantes: concordancia generacion vs puntaje
+  forzado, invariancia al orden.
+- Segunda semilla.
+
+### 28.6 Lo que sigue
+
+Dos pistas en paralelo:
+
+**Pista 1 (roles, offline):**
+- Definir el circuito: interprete -> verificador -> decisor.
+- Medir cada rol por separado.
+
+**Pista 2 (sistema real, online):**
+- El bridge NaveGo <-> Godot.
+- Las conducciones que ya llegan a Puerto Esperanza.
+- Pregunta: el LLM mejora, empeora o empata la conduccion.
+
+**El punto de union:** si el LLM es buen interprete pero mal decisor,
+el circuito correcto es LLM interpreta + Python decide. Si es bueno
+en ambos, otra arquitectura. Eso hay que medirlo.
