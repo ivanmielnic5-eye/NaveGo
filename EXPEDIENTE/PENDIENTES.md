@@ -59,6 +59,20 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
 
 ---
 
+
+### P10 — Marcacion visual de outputs por seccion
+- Estado: PENDIENTE. Idea del Director, no urgente.
+- Idea: que un hilo pueda marcar visualmente las partes de un
+  output para copiar solo lo necesario, no todo. Puede ser color,
+  separadores, etiquetas, lo que sea que ayude a golpe de vista.
+- Nota: si complica cualquier otra cosa, no se implementa.
+- Candidatos de aplicacion: logos-foco, logos-gate, cualquier
+  comando que devuelva bloques largos.
+- A definir: mecanismo, compatibilidad con copia/pegado, si va
+  solo en interactivo.
+- Sin autoridad asignada todavia. Se retoma cuando logos-foco v1
+  este funcionando y haya un caso real que lo justifique.
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
