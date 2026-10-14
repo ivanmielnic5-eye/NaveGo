@@ -26,6 +26,7 @@ Ultima actualizacion: 2026-10-08
 - D-2026-0012 - Auditar el Entrenador antes de entrenar con el (CONGELADA)
 - D-2026-0013 - Ningun pendiente que requiera aprobacion del Director queda olvidado por avance del workflow (CONGELADA)
 - D-2026-0014 - Verificar que las comparaciones internas sean justas antes de auditar (CONGELADA)
+- D-2026-0015 - Extraer logica de hashing a modulo compartido y fix del bug P29 (CONGELADA)
 
 ---
 

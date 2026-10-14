@@ -1,0 +1,30 @@
+{
+  "id": "D-2026-0015",
+  "titulo": "Extraer logica de hashing a modulo compartido y fix del bug P29",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-14",
+  "contexto": "Bug P29: logos-baseline y logos-reconcile solo actualizan reviewed_against_commit, no reviewed_against_hash. Consecuencia: fuente modificada queda STALE permanentemente hasta editar el MANIFEST a mano. Durante el hilo 2026-10-14 hubo que aplicar 4 fixes manuales al MANIFEST (commits dd5a4b2, fecbe01, fix post-P16, eb5a24a). El gate BLOCKED fue la evidencia. La logica de hashing vive solo en logos-hash (148 lineas). logos-reconcile tiene una implementacion parcial (sha256_file) que solo maneja archivos. logos-baseline no importa hashlib.",
+  "decision": "Arquitectura B: extraer hash_source() y dependencias de logos-hash a .logos/lib/logos_hash_lib.py. Los tres binarios (logos-hash, logos-baseline, logos-reconcile) importan de ahi. No se duplica codigo, no se importa desde el ejecutable logos-hash. La extraccion mantiene EQUIVALENCIA EXACTA con la semantica actual de logos-hash (test de paridad: mismos hashes antes/despues sobre fuentes reales). Decisiones operativas aprobadas: (1) FUENTE INEXISTENTE/ILEGIBLE/HASH NO CALCULABLE: BLOCKED, sin actualizar hashes, historial ni marcas. (2) CONDICION DE ESCRITURA: 'nada que escribir' solo si commit Y hash coinciden; si el hash difiere, actualiza hash aunque el commit no haya cambiado. (3) DRY-RUN: muestra diff de hash + commit + campos afectados, sin escribir. (4) BASELINE_HISTORY: registra hash por fuente junto con commit, fecha y operacion; entradas historicas se conservan, nunca se sobrescriben. Condiciones adicionales: (5) last_human_review NO se actualiza por calcular o registrar hash; solo cuando la operacion sea revision humana explicita. (6) SEMANTICA DE SYMLINKS: se mantiene la actual (equivalencia exacta): symlink a archivo se registra como metadata LINK:<target>; symlink a directorio se omite (P30 registra esa omision como hallazgo a corregir por separado). (7) NO SEGUIR ENLACES SILENCIOSAMENTE si permiten salir del ambito autorizado. (8) FALLA SEGURA: la biblioteca compartida PROPAGA errores de lectura que impidan calcular un hash integro (corrige P31 dentro de este alcance). Los consumidores bloquean ante esa excepcion, sin actualizaciones parciales del MANIFEST ni baseline_history. (9) TEST EXPLICITO de symlink a archivo (equivalencia) y de symlink a directorio (documenta la omision actual, referencia a P30).",
+  "consecuencias": [
+    "Los tres binarios consumen una unica implementacion de hashing",
+    "logos-baseline y logos-reconcile actualizan reviewed_against_hash ademas de reviewed_against_commit",
+    "El gate deja de quedar BLOCKED por hash desactualizado tras baseline/reconcile correctos",
+    "baseline_history pasa a registrar hash por fuente, no solo tipo",
+    "Se eliminan los fixes manuales al MANIFEST (4 en el hilo 2026-10-14)",
+    "P31 (errores de lectura silenciosos) se CORRIGE en esta D: la lib propaga, los consumidores bloquean. Requiere test de archivo ilegible -> BLOCKED sin escrituras parciales",
+    "P30 (symlink a directorio se pierde silenciosamente) queda fuera de esta D. La extraccion preserva la omision actual; su correccion funcional es P30, con tests propios",
+    "Se requieren 6 tests de regresion (criterio de aceptacion de Luna): (a) mismo commit+hash: no escribe; (b) mismo commit, hash distinto: actualiza hash; (c) commit distinto, hash igual: actualiza commit; (d) fuente inexistente/ilegible: bloquea sin escrituras parciales; (e) ARCHIVO/DIRECTORIO/REPO_GIT: mismo resultado en los 3 consumidores; (f) dry-run: informa sin alterar archivos ni historial. Mas el test explicito de symlink a archivo (equivalencia) y a directorio (documenta omision actual)"
+  ],
+  "criterio_revision": "Se reabre si: (a) la extraccion a modulo compartido rompe la semantica ya validada de logos-hash (comparacion de hashes identicos antes/despues); (b) aparece un caso donde un consumidor necesita semantica distinta (por ejemplo, excluir .git/ de manera diferente); (c) los tests de regresion revelan que el fix causa drift en fuentes que hoy no lo tienen; (d) se decide atacar P30 en el mismo alcance; (e) la propagacion de errores de lectura (fix P31) resulta impractica en algun caso real y obliga a repensar falla-segura.",
+  "fuentes_verificadas": [
+    "Bug P29 (EXPEDIENTE/PENDIENTES.md), detectado 2026-10-14",
+    "P30 y P31 (EXPEDIENTE/PENDIENTES.md), detectados 2026-10-14",
+    "4 fixes manuales en el hilo: commits dd5a4b2, fecbe01, fix post-P16 (2e03318), eb5a24a",
+    "Codigo actual: .logos/bin/logos-hash (148 lineas), .logos/bin/logos-baseline (147), .logos/bin/logos-reconcile (356)",
+    "Consulta a Luna 2026-10-14 (primera ronda): 11 condiciones + 4 decisiones operativas + 6 tests de regresion",
+    "Consulta a Luna 2026-10-14 (segunda ronda): ajustes al borrador (ID local, P31 dentro del alcance, P30 fuera, tests de symlink, secuencia de 2 commits)",
+    "R-15 del kernel multi-IA: ninguna IA modifica el kernel sin pasar por el expediente"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

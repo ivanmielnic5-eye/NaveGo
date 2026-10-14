@@ -298,7 +298,7 @@ contraste con codigo, tests y comportamiento actual.
   lectura silenciosos) - P31 se corrigio en este mismo fix
   (la lib propaga errores en vez de saltearlos).
 - Referencia: D-2026-0009, D-2026-0010, D-2026-0015 (borrador).
-- Propuesta formal: .logos/decisions/P29-hashing.borrador.json.
+- Decision formal: D-2026-0015 (CONGELADA).
 
 ### P30 — [LOGOS] Symlink a directorio se pierde en hash_directory_standard
 - Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
@@ -317,7 +317,12 @@ contraste con codigo, tests y comportamiento actual.
 - Responsable: IA + Director (aprobacion).
 
 ### P31 — [LOGOS] Errores de lectura se tragan silenciosamente en hashers
-- Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
+- Estado: CERRADO (commits 7eb1ee1 + 490cc98, 2026-10-14).
+- Resolucion: corregido dentro del fix P29. La biblioteca compartida
+  .logos/lib/logos_hash_lib.py PROPAGA errores de lectura en vez de
+  saltearlos silenciosamente. Los consumidores bloquean ante HashError.
+  Semantica previa (inaceptable): except (OSError, PermissionError):
+  continue. Semantica nueva: la excepcion sube, el consumidor decide.
 - Situacion: en hash_directory_standard y hash_directory_git de
   logos-hash, los bloques:
       except (OSError, PermissionError):
