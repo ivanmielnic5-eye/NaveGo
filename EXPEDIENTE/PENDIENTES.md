@@ -292,6 +292,42 @@ contraste con codigo, tests y comportamiento actual.
   por hash), commit dd5a4b2 (fix manual).
 - Responsable: IA + Director (aprobacion).
 
+### P30 — [LOGOS] Symlink a directorio se pierde en hash_directory_standard
+- Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
+- Situacion: en logos-hash, hash_directory_standard usa os.walk
+  con followlinks=False (default). Los symlinks a directorio NO se
+  recorren, pero tampoco se registran como metadata. Se pierden
+  silenciosamente del hash. Los symlinks a archivo SI se registran
+  como LINK:<target>. Inconsistencia.
+- Alcance: no se corrige en D-0015/P29 (esa mantiene equivalencia
+  exacta con comportamiento actual). Requiere decision propia.
+- Accion: disenar semantica. Opcion propuesta por Luna: registrar
+  el enlace como metadata LINK:<target> sin recorrer destino.
+  Anadir test de symlink a directorio que documente la omision
+  actual como referencia.
+- Referencia: analisis 2026-10-14, consulta a Luna.
+- Responsable: IA + Director (aprobacion).
+
+### P31 — [LOGOS] Errores de lectura se tragan silenciosamente en hashers
+- Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
+- Situacion: en hash_directory_standard y hash_directory_git de
+  logos-hash, los bloques:
+      except (OSError, PermissionError):
+          continue
+  saltean archivos ilegibles sin avisar. El hash resultante cambia
+  respecto al esperado, pero nadie lo detecta.
+- Alcance: DEBE corregirse en la D-0015 (parte del fix P29). La
+  biblioteca compartida debe PROPAGAR los errores de lectura que
+  impidan calcular un hash integro. Un hash silenciosamente
+  incompleto es peor que un fallo visible.
+- Accion: en logos_hash_lib.py, cualquier error de lectura que
+  impida hashear un archivo lanza excepcion. Los consumidores
+  bloquean ante ella (aplica el criterio 'falla segura').
+  Tests: fuente con archivo ilegible -> BLOCKED sin escrituras
+  parciales.
+- Referencia: analisis 2026-10-14, consulta a Luna.
+- Responsable: IA + Director (aprobacion).
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
