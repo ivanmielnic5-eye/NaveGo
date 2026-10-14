@@ -8,11 +8,11 @@
     "state",
     "profile",
     "protocol",
-    "decisions"
+    "decisions",
+    "pending"
   ],
   "optional": [
     "hypotheses",
-    "pending",
     "session_spec",
     "spec_capsule",
     "glossary",
@@ -172,11 +172,11 @@
       "reviewed_against_hash": "f15a16e85717cd32cf021dfee84b9fe63f9d8aa52e1f4ac7fee62d95f5b9ce97"
     },
     {
-      "type": "pending",
-      "path": "~/.logos/PENDIENTES_NAVEGO.md",
-      "authority": true,
-      "role": "singleton",
-      "description": "Pendientes operativos de NAVEGO.",
+      "type": "historical_bitacora",
+      "path": "~/.logos/BITACORA_OPERATIVA_NAVEGO.md",
+      "authority": false,
+      "role": "historical_log",
+      "description": "Bitacora operativa cronologica. Contexto historico, no autoritativa.",
       "generated_by": "manual",
       "validation_policy": [
         "exists",
@@ -186,6 +186,22 @@
       "last_human_review": "2026-10-02",
       "reviewed_against_commit": "05ecd2e",
       "reviewed_against_hash": "dfd2655aaebfaffb6d1ea7c3eb726bacf9db90304a24fb9eca03733f187b03d3"
+    },
+    {
+      "type": "pending",
+      "path": "EXPEDIENTE/PENDIENTES.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Registro institucional de pendientes activos.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "e6c7bdf",
+      "reviewed_against_hash": "01225fa7535ed0e63f5649b0c5c4c4be61b5874df55167145840a8642539ba8c"
     },
     {
       "type": "glossary",

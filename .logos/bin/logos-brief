@@ -183,7 +183,11 @@ def secciones_5_a_9(project, manifest):
     # --- 7. Pendientes priorizados ---
     sec7 = []
     sec7.append("## 7. Pendientes priorizados")
-    pend_path = os.path.expanduser("~/.logos/PENDIENTES_NAVEGO.md")
+    _bitacora_candidates = [
+        os.path.expanduser("~/.logos/BITACORA_OPERATIVA_NAVEGO.md"),
+        os.path.expanduser("~/.logos/PENDIENTES_NAVEGO.md"),
+    ]
+    pend_path = next((p for p in _bitacora_candidates if os.path.exists(p)), _bitacora_candidates[0])
     if os.path.exists(pend_path):
         try:
             with open(pend_path, encoding="utf-8") as f:
@@ -194,9 +198,9 @@ def secciones_5_a_9(project, manifest):
             for h in ultimos:
                 sec7.append(f"- {h[4:]}")  # quitar "### "
         except Exception:
-            sec7.append("- (no se pudo leer PENDIENTES_NAVEGO.md)")
+            sec7.append(f"- (no se pudo leer {os.path.basename(pend_path)})")
     else:
-        sec7.append("- (PENDIENTES_NAVEGO.md no existe)")
+        sec7.append(f"- ({os.path.basename(pend_path)} no existe)")
     sec7.append("")
 
     # --- 8. Comandos operativos ---
