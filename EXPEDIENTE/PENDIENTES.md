@@ -144,12 +144,14 @@ APROBADO | RECHAZADO | DIFERIDO (con motivo y condicion de revision).
 - Referencia: consulta a Luna 2026-10-14.
 
 ### P16 — Agregar seccion "Decisiones recientes" al brief
-- Estado: PENDIENTE.
-- Situacion: el brief no muestra las D-XXXX recientes. D-2026-0011
-  a 0014 son invisibles al arrancar un hilo nuevo.
-- Accion: nueva seccion con las ultimas 3-5 decisiones. Ordenar
-  por fecha, no por numero. Incluir id, titulo, estado, fecha,
-  referencia.
+- Estado: CERRADO (commit ce5afd9, 2026-10-14).
+- Situacion: el brief no mostraba las D-XXXX recientes.
+  D-2026-0011 a 0014 eran invisibles al arrancar un hilo nuevo.
+- Resolucion: nueva seccion 8 "Decisiones recientes". Lee
+  .logos/decisions/*.json, filtra estado CONGELADA, ordena por
+  (fecha, id) descendente, muestra hasta 7. Renumera secciones
+  posteriores (8->9, 9->10, 10->11).
+- Verificado: D-2026-0014 a D-2026-0008 visibles en el brief.
 - Referencia: criterios de Luna 2026-10-14, punto 4.
 
 ### P17 — Regla de integridad en el brief
