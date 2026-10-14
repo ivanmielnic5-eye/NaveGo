@@ -42,8 +42,8 @@
         "nonempty",
         "freshness"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "d0acbf4c5dea39eebba99e06a3b961a13d24886425a9415125db67c2474d448c"
     },
     {
@@ -58,8 +58,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "524c871e9008e21b8eee1e34d9bea370aaadb6a055b312eee251228fe5293a77"
     },
     {
@@ -74,8 +74,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "79315a09d652cef3809ac3cfcb81b8f4b387c1b1a134658f002d842de46bd8a8"
     },
     {
@@ -90,8 +90,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "3124412218c0b4756fb18fdde8fdc46d2fc2b09bae82d3fffe443b694532398d"
     },
     {
@@ -200,7 +200,7 @@
         "nonempty"
       ],
       "last_human_review": "2026-10-14",
-      "reviewed_against_commit": "e6c7bdf",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "01225fa7535ed0e63f5649b0c5c4c4be61b5874df55167145840a8642539ba8c"
     },
     {
@@ -459,6 +459,19 @@
         "simulator_source"
       ],
       "nota": "Cambio legitimo: se agrego el archivo de trabajo de Blender al repo del simulador."
+    },
+    {
+      "at": "2026-10-14T16:39:26-03:00",
+      "project": "NAVEGO",
+      "head": "c5fc7e2",
+      "reason": "verificacion post-migracion authority",
+      "updated_sources": [
+        "state",
+        "profile",
+        "protocol",
+        "decisions",
+        "pending"
+      ]
     }
   ]
 }
