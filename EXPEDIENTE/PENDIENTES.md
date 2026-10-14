@@ -276,21 +276,29 @@ contraste con codigo, tests y comportamiento actual.
   al pendiente institucional "track honesto", NO a P18-P28.
 - Los mensajes de commit son pistas, no evidencia de cierre.
 ### P29 — [LOGOS] logos-baseline y logos-reconcile no actualizan hash
-- Estado: PENDIENTE. Detectado: 2026-10-14 durante migracion authority.
-- Situacion: ninguna herramienta escribe reviewed_against_hash en
-  el MANIFEST. logos-baseline y logos-reconcile actualizan solo
-  reviewed_against_commit. logos-hash calcula pero no escribe.
-  Consecuencia: una fuente modificada queda STALE permanentemente
-  hasta editar el MANIFEST a mano.
-- Evidencia: gate BLOCKED tras commit d48543f. Comandos baseline y
-  reconcile aplicados. Hash en MANIFEST quedaba en 01225fa7...
-  mientras el real era 44be285e...
-- Accion: aplicar R-15 (pasar por expediente antes de tocar el
-  kernel). Redactar D-XXXX o propuesta. Corregir logos-baseline y
-  logos-reconcile para actualizar hash. Anadir tests.
-- Referencia: D-2026-0009 (estados de drift), D-2026-0010 (freshness
-  por hash), commit dd5a4b2 (fix manual).
-- Responsable: IA + Director (aprobacion).
+- Estado: CERRADO (commits 7eb1ee1 + 490cc98, 2026-10-14).
+- Situacion: ninguna herramienta escribia reviewed_against_hash.
+  Fuente modificada quedaba STALE permanentemente hasta fix manual.
+  4 fixes manuales durante el hilo (dd5a4b2, fecbe01, 2e03318,
+  eb5a24a).
+- Resolucion: extraccion de la logica de hashing a
+  .logos/lib/logos_hash_lib.py (143 lineas). Los tres binarios
+  (logos-hash, logos-baseline, logos-reconcile) importan de ahi.
+  - logos-hash: 148 -> 55 lineas.
+  - logos-baseline: 147 -> 181 lineas. Calcula y escribe hash.
+    baseline_history incluye hash por fuente. last_human_review NO
+    se actualiza (criterio de Luna).
+  - logos-reconcile: 356 -> 376 lineas. Escribe hash. 'nada que
+    escribir' solo si commit Y hash coinciden. Dry-run muestra
+    diff de hash.
+- Tests: paridad exacta de logos-hash antes/despues sobre 5
+  fuentes; 4 tests de regresion (mismo commit+hash, commit
+  distinto, hash distinto, fuente inexistente).
+- Pendiente separado: P30 (symlink a directorio), P31 (errores de
+  lectura silenciosos) - P31 se corrigio en este mismo fix
+  (la lib propaga errores en vez de saltearlos).
+- Referencia: D-2026-0009, D-2026-0010, D-2026-0015 (borrador).
+- Propuesta formal: .logos/decisions/P29-hashing.borrador.json.
 
 ### P30 — [LOGOS] Symlink a directorio se pierde en hash_directory_standard
 - Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
