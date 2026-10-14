@@ -1,0 +1,29 @@
+{
+  "id": "D-2026-0011",
+  "titulo": "Contrato Intent (A4) con estados por campo atomico",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-14",
+  "contexto": "El contrato Intent para A4 (commit ae462ef, 2026-10-14) consolidaba propuestas de Luna y Claude pero no distinguia casos semanticamente distintos: un campo podia estar ausente (no en el texto), presente (extraido con evidencia), ambiguo (varias interpretaciones) o conflictivo (valores incompatibles), y todos compartian el mismo null. La correccion de Luna del 2026-10-14 (EXPEDIENTE/89 linea 2264) marco que 'El contrato Intent actual no distingue estos tres casos. Hay que ajustarlo.' Ademas, el contrato no distinguia entre campo ausente (examinado, info no presente en el texto) y clave no emitida por el LLM (salida invalida respecto al esquema). Esa confusion podria derivar en que la fusion tratara una omision del modelo como permiso para usar defaults.",
+  "decision": "Adoptar estados por campo atomico en el schema del Intent. Enum: ausente | presente | ambigua | conflictivo. Reglas: (1) El estado es obligatorio en cada campo; una clave no emitida por el LLM es salida invalida, no equivale a estado=ausente. (2) value=null cuando el estado es ausente, ambigua o conflictivo; el valor solo se pobla si el estado es presente. (3) El LLM no convierte unidades: extrae value y unit tal como estan en el texto, y evidencia reproduce el fragmento fuente (no parafrasis). (4) goal.position se descompone en tres subcampos atomicos (x, z, place_name) cada uno con su propio estado: un place_name presente no implica x/z presentes. (5) Los issues conviven con los estados y no los reemplazan. Mapeo contractual: ausente genera issue de campo faltante solo si el campo es requerido en ese contexto; presente no genera issue por estado (el valor aun debe validarse); ambigua genera ambiguous_value; conflictivo genera conflicting_values; contradicciones transversales entre campos generan constraint_conflict. (6) La fusion hereda desde MisionConfig solo si el valor esta aprobado por el Director y la politica lo permite; nunca completa silenciosamente. (7) El decisor acepta solo EffectiveMissionConfig. (8) Misiones multi_step quedan fuera de A4 v1 y bloquean ejecucion.",
+  "consecuencias": [
+    "El contrato Intent pasa de BORRADOR a APROBADO; se registra como D-2026-0011",
+    "El schema JSON formal (seccion 4 del contrato) refleja los cuatro estados y el campo operator en cada valor numerico",
+    "La seccion 5 del contrato incluye tabla contractual estado -> issue, mas constraint_conflict como issue transversal",
+    "La seccion 9 del contrato reordena por dependencias: schema JSON, verificacion de preservacion, banco A4, auditoria de etiquetas, congelamiento",
+    "La auditoria de los 7 errores de A3 queda marcada como concluida, con referencia a evidencia en EXPEDIENTE/89",
+    "candidates[] (alternativas estructuradas para ambigua) queda diferido a v2 y fuera del alcance de A4 v1",
+    "Implementacion, schema JSON, banco y tests quedan como cambios tematicos posteriores, no parte de este commit"
+  ],
+  "criterio_revision": "Si durante la generacion del banco A4 o su auditoria aparecen casos donde (a) el cuarto estado conflictivo colisiona con ambigua sin distincion operativa medible, (b) se requiere representar alternativas estructuradas y candidates[] deja de poder diferirse, o (c) el mapeo estado->issue obliga a re-etiquetar ejemplos masivamente.",
+  "fuentes_verificadas": [
+    "timonel/borradores/contrato_intent.md (commit ae462ef, 2026-10-14)",
+    "timonel/borradores/luna_contrato_intent.md (2026-10-14)",
+    "timonel/borradores/claude_contrato_intent.md (2026-10-14)",
+    "EXPEDIENTE/89_MEMO_CONSOLIDADO.md, linea 2264 (correccion de Luna sobre tres estados)",
+    "Consulta a Luna v2 (validacion del schema con estados por campo atomico), 2026-10-14",
+    "Consulta a Luna v3 (decisiones de cierre: candidates[] diferido, conflictivo incluido, secuencia operativa), 2026-10-14",
+    "Consulta a Luna v4 (aplicacion del diff, mapeo estado->issue, contenido del D-XXXX), 2026-10-14"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

@@ -22,6 +22,7 @@ Ultima actualizacion: 2026-10-08
 
 - D-2026-0009 - Semantica de reviewed_against_commit y estados del Gate (CONGELADA)
 - D-2026-0010 - Freshness de fuentes por hash de contenido (CONGELADA)
+- D-2026-0011 - Contrato Intent (A4) con estados por campo atomico (CONGELADA)
 
 ---
 
