@@ -221,12 +221,73 @@ Una IA no puede cambiar una decisión arquitectónica simplemente porque encuent
 
 
 Tiene que marcarla como propuesta.
-
-
-
 **Formato obligatorio:**
 
 
 
 
+Cuando una IA detecta que una decisión arquitectónica debería
+cambiar, o cuando propone crear, sustituir o derogar una decisión
+arquitectónica, no la modifica directamente. Redacta una propuesta
+con este formato:
 
+1. **Identificación local.** Identificador estable local (por
+   ejemplo `D-A.borrador`), título corto. NO reserva un número
+   `D-AAAA-NNNN` que parezca una decisión instituida. El número
+   definitivo se asigna al aprobar e incorporar al registro
+   canónico.
+
+2. **Estado del borrador.** Siempre `BORRADOR — NO EN REGISTRO
+   CANÓNICO` mientras no exista aprobación explícita del Director.
+   Este estado es del documento, no de la decisión. R-17 no es una
+   restricción de vocabulario: prohíbe que la IA convierta su
+   propuesta en decisión. Una IA no puede escribir `PROPUESTA`
+   como estado en el registro canónico.
+
+3. **Ubicación del borrador.** Fuera del registro canónico (por
+   ejemplo `timonel/borradores/`). Se admite Markdown para
+   borradores discursivos; el registro canónico exige JSON según
+   el esquema vigente de `.logos/decisions/`. Todos los campos
+   obligatorios deben quedar cubiertos antes de promover.
+
+4. **Contenido mínimo.**
+   - `contexto`: qué motivó la propuesta, con referencias a memos,
+     evidencia o incidentes.
+   - `decision`: qué se propone exactamente, en términos
+     verificables.
+   - `consecuencias`: qué cambia si se aprueba; qué NO cambia.
+   - `criterio_revision`: bajo qué condiciones se reabre la
+     decisión.
+   - `fuentes_verificadas`: referencias rastreables.
+
+5. **Trazabilidad de origen.** La propuesta mantiene vínculo
+   explícito con el hallazgo, memo o incidente que la motivó. Ese
+   vínculo nunca se pierde, ni en el borrador ni en el registro
+   canónico.
+
+6. **Registro y recordatorio obligatorio en
+   `EXPEDIENTE/PENDIENTES.md`.** Toda propuesta elevada al Director
+   se registra con asunto, estado, responsable y condición de
+   resolución o revisión. El registro no basta: mientras no exista
+   resolución explícita, el pendiente debe reaparecer
+   automáticamente en el mecanismo de arranque del workflow (por
+   ejemplo `logos-arranque` o `logos-brief`) hasta que el Director
+   lo cierre o lo difiera con condición de revisión. El avance del
+   workflow no puede hacerlo desaparecer.
+
+7. **Cierre.** Solo el Director marca el resultado, con tres
+   estados posibles:
+   - `APROBADO`: se registra la decisión y se continúa según
+     corresponda.
+   - `RECHAZADO`: se registra el rechazo. El borrador NO se borra;
+     queda como constancia de que se evaluó.
+   - `DIFERIDO`: se conserva como pendiente, con motivo y
+     condición de revisión explícitos.
+   El silencio nunca equivale a aprobación.
+
+8. **Trazabilidad de edición.** Se registra: ruta del borrador,
+   ruta canónica tras aprobar, fecha, responsable de la aprobación,
+   commit que incorpora la decisión aprobada y, cuando
+   corresponda, commit que implementa sus consecuencias. Aprobar
+   una norma no demuestra que esté implementada: son hitos
+   diferentes. No inventar el hash antes de que exista.
