@@ -291,3 +291,47 @@ con este formato:
    corresponda, commit que implementa sus consecuencias. Aprobar
    una norma no demuestra que esté implementada: son hitos
    diferentes. No inventar el hash antes de que exista.
+
+---
+
+## Reglas metodológicas obligatorias
+
+Estas reglas son precondiciones del trabajo, no filtros de decisión.
+Aplican antes de cualquier plan, propuesta o cambio arquitectónico.
+
+### R3 — Leer las fuentes completas antes de planificar
+
+Antes de redactar un plan que dependa de documentos previos, leer
+esas fuentes **completas**. Las primeras líneas no alcanzan: los
+estados, los resultados y las políticas operativas suelen estar al
+final del documento.
+
+**Fundamento:** EXPEDIENTE/71 (lección del memo 70, escrito con
+lectura parcial). Se repitió el patrón en los memos 84-86
+(auditoría sin verificar comparaciones justas, corregido en el 87).
+Estos documentos fundamentan la regla; no son la regla en sí.
+
+**Cómo aplicarla:**
+
+1. Leer el documento entero si su extensión lo permite.
+2. Si es extenso, no basta con buscar marcadores: localizar los
+   bloques pertinentes, leerlos completos y revisar sus
+   referencias antes de planificar. Marcadores de referencia:
+   `CONFIRMED`, `PENDIENTE`, `BLOQUEANTE`, `RESUELTO`, `ABIERTO`,
+   `CORRECCIÓN`, `PARCIALMENTE OBSOLETO`, `DECISIÓN`, `EXCEPCIÓN`,
+   `RESTRICCIÓN`, `RIESGO`, `CRITERIO`, `NO HACER`. Buscar
+   variantes y equivalentes: la ausencia de coincidencias no
+   demuestra que no existan restricciones relevantes.
+3. Si no puede completarse la lectura, registrar qué fuente y qué
+   partes se revisaron, qué quedó pendiente y por qué. Puede
+   elaborarse un plan preliminar, pero debe identificarse como tal.
+
+**Consecuencia:** un plan basado en lectura parcial es una
+**observación**, no una conclusión. No puede presentar una
+afirmación como confirmada ni fundamentar una decisión definitiva.
+Remitir a la sección "Estados de Conocimiento" del mismo protocolo:
+una lectura parcial no habilita el estado VALIDADO.
+
+**Requisito:** esta regla no prohíbe trabajar ante limitaciones de
+lectura. Exige transparentar la cobertura documental y no afirmar
+más de lo que la evidencia permite.
