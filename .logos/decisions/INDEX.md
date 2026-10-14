@@ -23,6 +23,9 @@ Ultima actualizacion: 2026-10-08
 - D-2026-0009 - Semantica de reviewed_against_commit y estados del Gate (CONGELADA)
 - D-2026-0010 - Freshness de fuentes por hash de contenido (CONGELADA)
 - D-2026-0011 - Contrato Intent (A4) con estados por campo atomico (CONGELADA)
+- D-2026-0012 - Auditar el Entrenador antes de entrenar con el (CONGELADA)
+- D-2026-0013 - Ningun pendiente que requiera aprobacion del Director queda olvidado por avance del workflow (CONGELADA)
+- D-2026-0014 - Verificar que las comparaciones internas sean justas antes de auditar (CONGELADA)
 
 ---
 

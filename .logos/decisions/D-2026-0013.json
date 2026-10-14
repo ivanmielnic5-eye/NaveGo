@@ -1,0 +1,26 @@
+{
+  "id": "D-2026-0013",
+  "titulo": "Ningun pendiente que requiera aprobacion del Director queda olvidado por avance del workflow",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-14",
+  "contexto": "Regla adoptada por el Director el 2026-10-14 durante el hilo FOCO contrato_intent. Origen: se detecto que el workflow permite avanzar con hallazgos normativos sin cierre formal (caso de los memos 84-88 sobre auditoria del Entrenador, que quedaron sin D asociada durante dias). La propuesta de Luna sobre 'todo hallazgo normativo se cierra' fue aceptada por el Director y ampliada: la regla aplica a toda propuesta que requiera aprobacion del Director, no solo a hallazgos normativos. Es permanente y de gobernanza de LOGOS/NAVEGO. Complementa R-17 (una IA no convierte propuesta en decision) y R-19 (incertidumbre explicita) del kernel multi-IA.",
+  "decision": "Regla permanente: ninguna propuesta que requiera aprobacion del Director puede quedar olvidada por el mero avance del workflow. Mientras no exista aprobacion explicita, debe quedar una instancia recordatoria visible, rastreable y pendiente de resolucion, que identifique: (1) el asunto, (2) su estado actual, (3) la accion necesaria para resolverlo. Todo pendiente termina en uno de cuatro estados posibles: (a) APROBADO: se registra la decision y se continua segun corresponda. (b) RECHAZADO: se registra el rechazo y se cierra el pendiente. (c) DIFERIDO: se conserva como pendiente, con su motivo y condicion de revision explicitos. (d) SIN RESPUESTA: se mantiene pendiente indefinidamente; el silencio nunca equivale a aprobacion. La IA debe detectar, registrar y recordar estos pendientes, pero no puede aprobarlos ni descartarlos en nombre del Director. Regla correlativa: se propone agregar R-21 al kernel multi-IA con la version concisa de esta norma, con referencia cruzada a esta D.",
+  "consecuencias": [
+    "Toda propuesta presentada al Director queda en un registro de pendientes hasta su resolucion explicita",
+    "El silencio del Director no cierra un pendiente: lo mantiene abierto",
+    "La IA no puede marcar como aprobado, rechazado o diferido ningun pendiente por inferencia ni por paso de tiempo",
+    "Se necesita un mecanismo (manual o automatizado) que liste los pendientes abiertos al inicio de cada sesion, con su estado y accion necesaria",
+    "El mecanismo puede ser tan simple como un archivo markdown versionado en el repo; la forma definitiva se decide aparte",
+    "Esta misma D queda en estado PENDIENTE hasta que el Director la apruebe explicitamente",
+    "La regla se aplica retroactivamente a propuestas pendientes previas si las hubiera (verificar en el registro)"
+  ],
+  "criterio_revision": "Si el registro de pendientes se vuelve inmanejable (por volumen) o si el mecanismo elegido no se mantiene actualizado. Tambien si aparece evidencia de que el Director prefiere otro mecanismo de cierre (por ejemplo, aprobacion tacita con timeout, en cuyo caso la regla deberia modificarse explicitamente, no violarse).",
+  "fuentes_verificadas": [
+    "Hilo de conversacion 2026-10-14 (Director enuncia la regla como permanente)",
+    "Criterios de Luna (2026-10-14): complementa R-17, no duplica; R-NN concisa + D fundamentada con referencia cruzada",
+    "protocols.json del kernel multi-IA (R-17 NO AUTOESCRITURA, R-19 INCERTIDUMBRE EXPLICITA)",
+    "Caso origen: memos 84-88 sobre auditoria del Entrenador (hallazgo normativo sin cierre formal)"
+  ],
+  "reversible": false,
+  "autor": "director"
+}
