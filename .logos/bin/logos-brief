@@ -183,20 +183,54 @@ def secciones_5_a_9(project, manifest):
     # --- 7. Pendientes priorizados ---
     sec7 = []
     sec7.append("## 7. Pendientes priorizados")
-    pend_path = os.path.expanduser("~/.logos/PENDIENTES_NAVEGO.md")
-    if os.path.exists(pend_path):
+    pend_institucional = REPO / "EXPEDIENTE" / "PENDIENTES.md"
+    if pend_institucional.exists():
         try:
-            with open(pend_path, encoding="utf-8") as f:
+            with open(pend_institucional, encoding="utf-8") as f:
                 lines = f.readlines()
-            # Buscar headers de nivel ### y tomar los ultimos 5
-            headers = [l.strip() for l in lines if l.startswith("### ")]
-            ultimos = headers[-5:] if len(headers) > 5 else headers
-            for h in ultimos:
-                sec7.append(f"- {h[4:]}")  # quitar "### "
-        except Exception:
-            sec7.append("- (no se pudo leer PENDIENTES_NAVEGO.md)")
+            bloques = []
+            current = None
+            for l in lines:
+                if l.startswith("### P") and len(l) > 5 and l[5:6].isdigit():
+                    if current:
+                        bloques.append(current)
+                    current = [l.rstrip()]
+                elif current is not None:
+                    current.append(l.rstrip())
+            if current:
+                bloques.append(current)
+            abiertos = []
+            for b in bloques:
+                estado_line = next((ln for ln in b[:4] if "Estado:" in ln), "")
+                if any(s in estado_line for s in ("CERRADO", "APROBADO", "RECHAZADO", "DIFERIDO")):
+                    continue
+                abiertos.append(b[0][4:])
+            if abiertos:
+                for h in abiertos:
+                    sec7.append(f"- {h}")
+            else:
+                sec7.append("- (sin pendientes abiertos en registro institucional)")
+        except Exception as e:
+            sec7.append(f"- (error leyendo EXPEDIENTE/PENDIENTES.md: {e})")
     else:
-        sec7.append("- (PENDIENTES_NAVEGO.md no existe)")
+        _bitacora_candidates = [
+            os.path.expanduser("~/.logos/BITACORA_OPERATIVA_NAVEGO.md"),
+            os.path.expanduser("~/.logos/PENDIENTES_NAVEGO.md"),
+        ]
+        bit_path = next((p for p in _bitacora_candidates if os.path.exists(p)), _bitacora_candidates[0])
+        sec7.append("- (AVISO: EXPEDIENTE/PENDIENTES.md no existe; leyendo bitacora historica)")
+        if os.path.exists(bit_path):
+            try:
+                with open(bit_path, encoding="utf-8") as f:
+                    lines = f.readlines()
+                headers = [l.strip() for l in lines if l.startswith("### ")]
+                ultimos = headers[-5:] if len(headers) > 5 else headers
+                for h in ultimos:
+                    sec7.append(f"- {h[4:]}")
+            except Exception:
+                sec7.append(f"- (no se pudo leer {os.path.basename(bit_path)})")
+        else:
+            sec7.append("- (sin fuente de pendientes disponible)")
     sec7.append("")
 
     # --- 8. Comandos operativos ---

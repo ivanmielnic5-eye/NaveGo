@@ -8,11 +8,11 @@
     "state",
     "profile",
     "protocol",
-    "decisions"
+    "decisions",
+    "pending"
   ],
   "optional": [
     "hypotheses",
-    "pending",
     "session_spec",
     "spec_capsule",
     "glossary",
@@ -42,8 +42,8 @@
         "nonempty",
         "freshness"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "d0acbf4c5dea39eebba99e06a3b961a13d24886425a9415125db67c2474d448c"
     },
     {
@@ -58,8 +58,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "524c871e9008e21b8eee1e34d9bea370aaadb6a055b312eee251228fe5293a77"
     },
     {
@@ -74,8 +74,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "79315a09d652cef3809ac3cfcb81b8f4b387c1b1a134658f002d842de46bd8a8"
     },
     {
@@ -90,8 +90,8 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-02",
-      "reviewed_against_commit": "05ecd2e",
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
       "reviewed_against_hash": "3124412218c0b4756fb18fdde8fdc46d2fc2b09bae82d3fffe443b694532398d"
     },
     {
@@ -172,11 +172,11 @@
       "reviewed_against_hash": "f15a16e85717cd32cf021dfee84b9fe63f9d8aa52e1f4ac7fee62d95f5b9ce97"
     },
     {
-      "type": "pending",
-      "path": "~/.logos/PENDIENTES_NAVEGO.md",
-      "authority": true,
-      "role": "singleton",
-      "description": "Pendientes operativos de NAVEGO.",
+      "type": "historical_bitacora",
+      "path": "~/.logos/BITACORA_OPERATIVA_NAVEGO.md",
+      "authority": false,
+      "role": "historical_log",
+      "description": "Bitacora operativa cronologica. Contexto historico, no autoritativa.",
       "generated_by": "manual",
       "validation_policy": [
         "exists",
@@ -186,6 +186,22 @@
       "last_human_review": "2026-10-02",
       "reviewed_against_commit": "05ecd2e",
       "reviewed_against_hash": "dfd2655aaebfaffb6d1ea7c3eb726bacf9db90304a24fb9eca03733f187b03d3"
+    },
+    {
+      "type": "pending",
+      "path": "EXPEDIENTE/PENDIENTES.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Registro institucional de pendientes activos.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-10-14",
+      "reviewed_against_commit": "c5fc7e2",
+      "reviewed_against_hash": "01225fa7535ed0e63f5649b0c5c4c4be61b5874df55167145840a8642539ba8c"
     },
     {
       "type": "glossary",
@@ -443,6 +459,19 @@
         "simulator_source"
       ],
       "nota": "Cambio legitimo: se agrego el archivo de trabajo de Blender al repo del simulador."
+    },
+    {
+      "at": "2026-10-14T16:39:26-03:00",
+      "project": "NAVEGO",
+      "head": "c5fc7e2",
+      "reason": "verificacion post-migracion authority",
+      "updated_sources": [
+        "state",
+        "profile",
+        "protocol",
+        "decisions",
+        "pending"
+      ]
     }
   ]
 }
