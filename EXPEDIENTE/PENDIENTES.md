@@ -352,6 +352,15 @@ contraste con codigo, tests y comportamiento actual.
 - Referencia: D-2026-0016, D-2026-0015, P30 y antecedentes de P31.
 - Responsable: IA (implementacion y pruebas); Director (autorizacion de cierre).
 
+### P33 — [NAVEGO] Validar y registrar memo técnico Polaris–Timonel (2026-10-15)
+- Estado: APROBADO (2026-10-15, Director). Memo validado e incorporado al expediente.
+- Fuente: timonel/borradores/MEMO_TECNICO_NAVEGO_POLARIS_TIMONEL_2026-10-15.md
+- SHA-256 de la fuente: 19a5f2b7ded04f59556e86c9bf7697a2f5a47bce395bee4bfa80680aa7a19e86
+- Objetivo: contrastar las observaciones de Polaris, la telemetría, el controlador activo y la participación del LLM con la evidencia disponible y los memos 89 y 90.
+- Acción: realizar revisión técnica cruzada, documentar discrepancias y límites de evidencia, y proponer si corresponde promover el memo al expediente como documento nuevo y enlazarlo desde el mapa de arquitectura.
+- Criterio de aceptación: revisión documentada, hash de la fuente preservado y resolución expresa del Director sobre el estado del pendiente.
+- Responsable: IA prepara el contraste; el Director decide APROBADO, RECHAZADO o DIFERIDO.
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
