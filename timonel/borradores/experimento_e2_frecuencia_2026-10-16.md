@@ -131,3 +131,34 @@ Antes de correr E2 se acordó (con Luna): si 2500 no cumple criterios, probar 40
 - diagnostico_timon_python_godot_2026-10-16.md
 - ficha_p37_beneteau_2026-10-16.md (sección 3.2)
 - P39 (deadlock, resuelto)
+
+---
+
+## 10. Confirmación de la interpretación del paper (Luna, 2026-10-16)
+
+Luna accedió al PDF original y confirmó que los 60-155 s son del **rumbo objetivo táctico**, no del timón.
+
+**Tabla de mecanismos del SeaLeon (extraída del paper):**
+
+| Mecanismo | Intervalo |
+|---|---|
+| Lectura del compás | 0.5 s |
+| Control del timón | 1 s |
+| Lectura de la veleta | 5 s |
+| Lectura del GPS | 10 s |
+| Selección del rumbo objetivo | 60 s |
+| Rumbo táctico en ceñida (experimental) | Hasta 155 s |
+
+**Separación de conceptos para NAVEGO:**
+
+| Campo | Qué gobierna | Escala |
+|---|---|---|
+| `INTERVALO_S` (actual 3.0) | Control del timón | ~1 s |
+| `periodo_actualizacion_rumbo_objetivo` (nuevo) | Selección de rumbo táctico | 60-155 s |
+| Frecuencias de sensores (compás, GPS, veleta) | Adquisición | 0.5-10 s |
+
+**Sin confundir:** E2 midió `INTERVALO_S` (control de timón). El paper mide `periodo_actualizacion_rumbo_objetivo` (táctica). Son mecanismos distintos.
+
+**Pendiente:** cuando Timonel incorpore navegación a vela (Fase 2), medir `periodo_actualizacion_rumbo_objetivo` y sus métricas asociadas (duración de bordada, viradas, VMG).
+
+**Corrección aplicada:** la sección 4.4 anterior decía "60-155 s del paper" sin distinguir. Ahora la distinción está explícita.
