@@ -64,8 +64,13 @@ def escribir_comando(timon, timon_ms, avance, avance_ms, fuente, nota):
         f.flush()
     print(f"[timonel] comando escrito: {entry}")
 
-def timon_python(px, pz, hdg, meta_x=36.0, meta_z=-6.0):
-    """Devuelve (timon, avance). Ley de control con freno al llegar."""
+def timon_python(px, pz, hdg, speed_ms=0.0, meta_x=36.0, meta_z=-6.0):
+    """Devuelve (timon, avance). Ley de control con freno al llegar.
+
+    speed_ms: velocidad del barco en m/s. Se usa para evitar deadlock
+    cuando el barco arranca muy desalineado. Sin velocidad, el timon
+    no tiene efectividad y el barco no gira. Ver P39.
+    """
     dx = meta_x - px
     dz = meta_z - pz
     dist = math.hypot(dx, dz)
@@ -84,9 +89,12 @@ def timon_python(px, pz, hdg, meta_x=36.0, meta_z=-6.0):
     else:
         timon = 0
 
-    # Avance: solo si esta razonablemente alineado
+    # Avance: regla normal + excepcion para deadlock (P39)
+    UMBRAL_VEL_MS = 0.3  # ~0.6 kn
     if abs(delta) > 45:
-        avance = 0
+        # Muy desalineado. Si esta quieto, avanzar para ganar timon.
+        # Si ya tiene velocidad, esperar a que el timon lo alinee.
+        avance = 1 if speed_ms < UMBRAL_VEL_MS else 0
     else:
         avance = 1
 
@@ -180,8 +188,11 @@ def main():
                 escribir_comando(0, 0, 0, 0, "fase1", "quieto")
             elif muestras:
                 u = muestras[-1]
+                vx = u.get("vel_x", 0.0)
+                vz = u.get("vel_z", 0.0)
+                speed_ms = math.hypot(vx, vz)
                 timon, avance = timon_python(u.get("pos_x", 0), u.get("pos_z", 0),
-                                             u.get("hdg_deg", 0))
+                                             u.get("hdg_deg", 0), speed_ms)
                 timon_ms = 1500
                 avance_ms = 1500
                 escribir_comando(timon, timon_ms, avance, avance_ms,

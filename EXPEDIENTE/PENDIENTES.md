@@ -408,6 +408,17 @@ contraste con codigo, tests y comportamiento actual.
 - Criterio de aceptación: tabla con columna adicional "modelo elegido" por fila.
 - Responsable: IA propone; Director decide.
 
+### P39 — [TIMONEL] Deadlock de arranque cuando heading está muy desalineado
+- Estado: PENDIENTE. Detectado 2026-10-16 durante E2.
+- Fuente: experimento_e2_frecuencia.py + timonel.py:75-93
+- Situación: si el barco arranca con heading muy distinto al rumbo a la meta (delta > 45°), timon_python decide avance=0. Sin avance, el timón no tiene efectividad por velocidad. Sin giro, nunca se alinea. Deadlock: el barco queda inmóvil hasta timeout.
+- Evidencia: 30 corridas con dist_recorrida = 0.00 m desde (0,0) hacia (36,-6).
+- Impacto: cualquier corrida que arranque mal alineada reproduce el bug. Bloquea E2 (frecuencia de decisión) y cualquier comparación que use arranque aleatorio.
+- Opciones: (a) avanzar aunque esté desalineado cuando speed≈0 (para ganar timón); (b) lógica de bordeo tipo dead zone (paper SeaLeon); (c) declarar estado inicial alineado como precondición.
+- Acción: decidir el enfoque, implementar, agregar test que verifique salida del deadlock.
+- Responsable: IA propone; Director decide.
+- Referencia: ficha_p37_beneteau_2026-10-16.md sección 3.3 (dead zone).
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
