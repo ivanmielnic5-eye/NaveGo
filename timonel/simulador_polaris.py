@@ -10,6 +10,10 @@ timon y avance son float en [-1.0, 1.0]. timon_ms y avance_ms son int (milisegun
 
 import math
 import random
+import os
+import time
+import json
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -21,15 +25,52 @@ from typing import Optional
 GRAVITY = 9.8
 DT = 1.0 / 60.0
 
-MASS = 3500.0
+MASS = 8000.0
 SIZE_X = 4.0
 SIZE_Y = 1.0
 SIZE_Z = 8.0
-CENTER_OF_MASS_OFFSET = (0.0, -1.5, 0.0)
+CENTER_OF_MASS_OFFSET = (0.0, -1.2, 0.0)
 
 FLOAT_FORCE = 120.0
 FORWARD_DRAG = 0.0134
 LATERAL_DRAG = 0.05           # bajado de 0.15 para permitir deriva por viento
+
+# Flotabilidad (malla de 168 puntos, mismo modelo que Godot float_cube.gd)
+import json as _json
+_HULL_PATH = Path(__file__).parent / "hull_mesh.json"
+with open(_HULL_PATH) as _f:
+    _HULL_DATA = _json.load(_f)
+HULL_POINTS = [(p["pos"][0], p["pos"][1], p["pos"][2], p["area"]) for p in _HULL_DATA]
+
+RHO_AGUA = 1025.0         # kg/m^3 (agua salada, mismo que Godot)
+C_VERT = 18300.0          # N*s/m, amortiguacion vertical total
+INERCIA_PITCH = 53333.0   # kg*m^2 (MASS=8000 * (4^2+8^2)/12)
+C_PITCH = 68700.0         # N*m*s/rad
+LINEAR_DAMP = 0.05        # amortiguacion lineal del motor
+NIVEL_AGUA = 0.0          # nivel base sin olas
+INERCIA_ROLL = 43333.0    # kg*m^2 (MASS=8000 * (1^2+8^2)/12)
+C_ROLL = 45800.0          # N*m*s/rad
+
+# Olas (mismo modelo que ~/interfaz/scripts/water.gd)
+WAVE1_AMP = 0.5;  WAVE1_LEN = 30.0;  WAVE1_DIR_DEG = 90.0;  WAVE1_SPD = 3.0
+WAVE2_AMP = 0.25; WAVE2_LEN = 18.0;  WAVE2_DIR_DEG = 135.0; WAVE2_SPD = 2.2
+WAVE3_AMP = 0.15; WAVE3_LEN = 12.0;  WAVE3_DIR_DEG = 45.0;  WAVE3_SPD = 1.8
+WAVE4_AMP = 0.08; WAVE4_LEN = 6.0;   WAVE4_DIR_DEG = 200.0; WAVE4_SPD = 1.2
+
+def altura_agua(x, z, t):
+    h = NIVEL_AGUA
+    for amp, lon, d, sp in [
+        (WAVE1_AMP, WAVE1_LEN, WAVE1_DIR_DEG, WAVE1_SPD),
+        (WAVE2_AMP, WAVE2_LEN, WAVE2_DIR_DEG, WAVE2_SPD),
+        (WAVE3_AMP, WAVE3_LEN, WAVE3_DIR_DEG, WAVE3_SPD),
+        (WAVE4_AMP, WAVE4_LEN, WAVE4_DIR_DEG, WAVE4_SPD),
+    ]:
+        if amp == 0.0:
+            continue
+        k = 2.0 * math.pi / lon
+        rad = math.radians(d)
+        h += amp * math.sin(k * (x * math.cos(rad) + z * math.sin(rad)) - k * sp * t)
+    return h
 WATER_ANGULAR_DRAG = 0.005
 
 # Fisica avanzada (ver EXPEDIENTE/58: informe LLM Notebook)
@@ -82,8 +123,12 @@ class Barco:
     # (el ABC no necesita roll/pitch — viento=0, olas=0)
     yaw: float = 0.0
 
-    # Velocidad angular (rad/s) — solo yaw
+    # Velocidad angular (rad/s) — yaw, pitch
     yaw_rate: float = 0.0
+    pitch: float = 0.0
+    pitch_rate: float = 0.0
+    roll: float = 0.0
+    roll_rate: float = 0.0
 
     # Comandos activos
     timon_activo: float = 0.0
@@ -263,7 +308,46 @@ class Barco:
         self.pos_z += self.vel_z * dt
         self.yaw += self.yaw_rate * dt
 
-        # 7. Tiempo
+        # 7. Flotabilidad (168 puntos, modelo Arquimedes como Godot)
+        # F_i = rho * g * area_i * depth_i
+        # Torque por offset local (aprox. small angle para pitch/roll)
+        cos_y = math.cos(self.yaw)
+        sin_y = math.sin(self.yaw)
+        sin_p = math.sin(self.pitch)
+        sin_r = math.sin(self.roll)
+
+        F_total_y = 0.0
+        torque_pitch = 0.0
+        torque_roll = 0.0
+        F_drag_y = -C_VERT * self.vel_y  # damping global vertical
+
+        for lx, ly, lz, area in HULL_POINTS:
+            x_w = self.pos_x + lx * cos_y + lz * sin_y
+            z_w = self.pos_z + lx * sin_y - lz * cos_y
+            y_local = ly + lz * sin_p - lx * sin_r
+            y_w = self.pos_y + y_local
+            h_w = altura_agua(x_w, z_w, self.t)
+            depth = h_w - y_w
+            if depth > 0.0:
+                F_i = RHO_AGUA * GRAVITY * area * depth
+                F_total_y += F_i
+                torque_pitch += lz * F_i
+                torque_roll += -lx * F_i
+
+        F_total_y += F_drag_y
+
+        self.vel_y += (F_total_y / MASS - GRAVITY) * dt
+        self.pos_y += self.vel_y * dt
+
+        self.pitch_rate += torque_pitch / INERCIA_PITCH * dt
+        self.pitch_rate *= (1.0 - C_PITCH * dt / INERCIA_PITCH)
+        self.pitch += self.pitch_rate * dt
+
+        self.roll_rate += torque_roll / INERCIA_ROLL * dt
+        self.roll_rate *= (1.0 - C_ROLL * dt / INERCIA_ROLL)
+        self.roll += self.roll_rate * dt
+
+        # 8. Tiempo
         self.t += dt
 
 
@@ -276,7 +360,12 @@ import time
 import json
 from pathlib import Path
 
-GODOT_DIR = Path.home() / ".local/share/godot/app_userdata/interfaz/timonel"
+# Rutas: si NAVEGO_RUN_DIR esta definida, escribir en carpeta aislada.
+_run_dir = os.environ.get("NAVEGO_RUN_DIR", "")
+if _run_dir:
+    GODOT_DIR = Path(_run_dir)
+else:
+    GODOT_DIR = Path.home() / ".local/share/godot/app_userdata/interfaz/timonel"
 TELEMETRIA = GODOT_DIR / "telemetria.jsonl"
 COMANDOS = GODOT_DIR / "comandos.jsonl"
 
@@ -330,8 +419,8 @@ class Runner:
             "awa_deg": 0.0,
             "dist_a_meta": round(b.dist_a_meta(), 2),
             "progreso": 0.0,
-            "roll_deg": 0.0,
-            "pitch_deg": 0.0,
+            "roll_deg": round(math.degrees(b.roll), 2),
+            "pitch_deg": round(math.degrees(b.pitch), 2),
             "yaw_deg": round(math.degrees(b.yaw), 2),
         }
         self._telemetria_fh.write(json.dumps(linea) + "\n")

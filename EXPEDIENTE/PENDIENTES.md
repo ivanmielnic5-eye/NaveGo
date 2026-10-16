@@ -361,6 +361,53 @@ contraste con codigo, tests y comportamiento actual.
 - Criterio de aceptación: revisión documentada, hash de la fuente preservado y resolución expresa del Director sobre el estado del pendiente.
 - Responsable: IA prepara el contraste; el Director decide APROBADO, RECHAZADO o DIFERIDO.
 
+### P34 — [SIM] Divergencia de física Python vs Godot
+- Estado: PENDIENTE. Detectado 2026-10-15.
+- Fuente: timonel/borradores/divergencia_fisica_python_godot_2026-10-15.md
+- Situación: dos implementaciones de física coexisten (Python: 12 probes, drag lateral 0.05; Godot: 168 puntos de malla, drag lateral 1.20). Timonel entrena contra Python pero opera contra Godot. El drag angular diverge ×70.
+- Objetivo: declarar modelo canónico, diseñar mecanismo de paridad, agregar campo `modelo_fisico` al contrato de datos.
+- Acción: revisar divergencia completa, aprobar declaración de modelo canónico, diseñar test de paridad.
+- Criterio de aceptación: campo `modelo_fisico` obligatorio en contrato de datos + test de paridad documentado.
+- Responsable: IA prepara propuesta; Director decide APROBADO/RECHAZADO/DIFERIDO.
+
+### P35 — [SIM] Paridad activa entre simuladores Python y Godot
+- Estado: PENDIENTE. Detectado 2026-10-15 (derivado de P34).
+- Fuente: timonel/borradores/divergencia_fisica_python_godot_2026-10-15.md
+- Situación: Python y Godot implementan la misma física con parámetros distintos (12 vs 168 puntos de flotabilidad; drag lateral 0.05 vs 1.20; drag angular 0.005 vs 0.35). No hay mecanismo que detecte cuándo divergen.
+- Objetivo: (1) fuente única de parámetros físicos en JSON compartido; (2) test de paridad activo que corra el mismo input en ambos simuladores y reporte OK/WARNING/INCOMPATIBLE; (3) check de integridad en el arranque de cada corrida.
+- Política de severidad: WARNING por defecto. INCOMPATIBLE solo cuando la divergencia invalida específicamente la variable que la corrida quiere medir. No bloquear por defecto — las diferencias pueden ser experimentales.
+- Acción: diseñar el contrato de parámetros compartidos, el test de paridad y el check de arranque. Sin implementación hasta aprobación del Director.
+- Criterio de aceptación: los tres mecanismos definidos y validados con al menos una corrida comparada entre ambos simuladores.
+- Regla de aislamiento (agregada 2026-10-15 tras Experimento 0): el runner headless y todo test automatizado deben escribir en carpeta aislada por corrida (`~/.logos/runs/<run_id>/` o equivalente). Prohibido sobreescribir archivos de sesión activa. Verificado empíricamente: un test headless dejó `timonel/telemetria.jsonl` en 0 bytes.
+- Precondición: el runner headless de Godot es habilitador del test de paridad. Sin runner automatizable, la paridad no se puede verificar de forma continua.
+- Responsable: IA prepara propuesta; Director decide APROBADO/RECHAZADO/DIFERIDO.
+
+### P36 — [SIM] Velas en simulador Python
+- Estado: PENDIENTE. Detectado 2026-10-15 tras contraste de cobertura.
+- Fuente: timonel/borradores/contraste_cobertura_python_godot_2026-10-15.md
+- Situación: Godot tiene velas (Vela_Mayor, Foque) que modulan el viento según ángulo. Python aplica viento pleno sin modelar velas. No es impedimento técnico — es alcance postergado.
+- Objetivo: implementar `vela_mayor_deg` y `vela_foque_deg` en `Barco`, con la misma fórmula que `wind.gd:69-74`. Habilita la Fase 2 del curriculum (uso de velas) en Python.
+- Acción: diseñar los campos, aplicar la fórmula de efectividad por ángulo, agregar torque de yaw por diferencia de empuje proa/popa, prueba de humo.
+- Criterio de aceptación: barco con velas a 0° no recibe empuje de viento; velas perpendiculares al viento reciben empuje máximo; el controlador puede moverlas.
+- Responsable: IA implementa; Director aprueba cierre.
+
+### P37 — [DOC] Referencia externa Beneteau First Class 8
+- Estado: PENDIENTE. Detectado 2026-10-15 (recomendación de Luna).
+- Referencia: "A Hardware-in-the-Loop Simulator to Optimize Autonomous Sailboat Performance in Real Ocean Conditions" (MDPI, 2023).
+- URL: https://www.mdpi.com/2077-1312/11/6/1104
+- Objetivo: verificar si el paper publica ecuaciones, coeficientes, ensayos de tanque y registros de navegación recuperables para anclar la física de Polaris en evidencia externa.
+- Acción: descargar el paper, inspeccionar secciones de modelo físico y validación, registrar qué es reutilizable y qué es específico del Beneteau.
+- Criterio de aceptación: ficha del paper con secciones de modelo, validación y aplicabilidad. Si los datos no son recuperables, declararlo y cerrar sin extender la búsqueda.
+- Responsable: IA analiza; Director decide si la referencia se incorpora.
+
+### P38 — [E1] Actualizar contraste de cobertura con decisiones de modelo canónico
+- Estado: PENDIENTE. Detectado 2026-10-15.
+- Fuente: timonel/borradores/contraste_cobertura_python_godot_2026-10-15.md
+- Situación: la tabla de cobertura muestra que Python y Godot representan fenómenos distintos. Antes de elegir un modelo para cada pregunta experimental, la tabla queda como referencia.
+- Acción: cuando se decida qué modelo usar para cada comparación (velas, roll, prop_walk, casco), actualizar la tabla con la decisión y su justificación.
+- Criterio de aceptación: tabla con columna adicional "modelo elegido" por fila.
+- Responsable: IA propone; Director decide.
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
