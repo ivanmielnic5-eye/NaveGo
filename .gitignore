@@ -138,3 +138,16 @@ timonel/kaggle_probe_nb_v2/unsloth_compiled_cache/
 # --- Caches de Unsloth y HuggingFace en cualquier subdirectorio ---
 **/unsloth_compiled_cache/
 **/huggingface_tokenizers_cache/
+
+# --- A3: outputs descargados de Kaggle (~1.8 GB, regenerables) ---
+timonel/kaggle_a3_descarga/outputs_A3/
+timonel/kaggle_a3_descarga/timonel_lora_banco_A3/
+
+# --- A3: LoRA final (168 MB, duplicado con descarga/ y regenerable) ---
+timonel/kaggle_lora_a3/adapter_model.safetensors
+
+# --- Caché de Kotlin compiler (Android) ---
+android/.kotlin/
+
+# --- Logs scratch (headers "SCRATCH — NO COMMITEAR") ---
+timonel/borradores/_log_*.md
