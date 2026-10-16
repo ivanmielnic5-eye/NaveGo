@@ -419,6 +419,74 @@ contraste con codigo, tests y comportamiento actual.
 - Responsable: IA propone; Director decide.
 - Referencia: ficha_p37_beneteau_2026-10-16.md sección 3.3 (dead zone).
 
+### P40 — [LOGOS] Herramientas A3/F-held con paths internos rotos
+- Estado: PENDIENTE. Detectado 2026-10-16 durante limpieza de working tree.
+- Fuente: timonel/baseline_ptext.py, timonel/auditar_fheld.py
+- Situación: ambos scripts asumen layout antiguo (bancoA3/, fheld/). Los datasets hoy viven en timonel/kaggle_a3_dataset/ y timonel/kaggle_fheld_dataset/. No corren tal cual. Quedaron fuera del commit de limpieza para no presentar herramientas defectuosas como listas.
+- Acción: ajustar paths, verificar ejecución sobre el layout actual, documentar dependencias y modo de uso.
+- Criterio de aceptación: ambos scripts corren sin edición manual sobre el layout actual y producen el resultado esperado sobre los datasets versionados.
+- Responsable: IA implementa; Director aprueba cierre.
+- Referencia: commit f06e387 (limpieza git 2026-10-16).
+
+### P41 — [DOC] Destino de reglas_documentacion.md
+- Estado: PENDIENTE. Detectado 2026-10-16 durante limpieza de working tree.
+- Fuente: timonel/borradores/reglas_documentacion.md
+- Situación: borrador de reglas operativas (dos niveles de archivo, caducidad de borradores, automatización). Redundante con reglas vigentes en el brief y con la separación borradores/EXPEDIENTE ya operativa. Puede tener valor como antecedente histórico.
+- Acción propuesta por la IA: archivar como histórico, con cabecera "ESTADO: HISTÓRICO — NO NORMATIVO. Fecha de clasificación: 2026-10-16. Motivo: borrador operativo sustituido por reglas vigentes. Uso permitido: consulta histórica; no constituye fuente de instrucciones operativas." Ubicación a definir sin crear categoría documental nueva.
+- Acción: Director decide si aprueba la propuesta, la modifica o la rechaza.
+- Criterio de aceptación: decisión registrada; si se aprueba, documento archivado con la marca correspondiente.
+- Responsable: IA propone; Director decide.
+
+### P42 — [LOGOS] Metadata chica de kaggle_lora_a3 sin versionar
+- Estado: PENDIENTE. Detectado 2026-10-16 durante limpieza de working tree.
+- Fuente: timonel/kaggle_lora_a3/ (adapter_config.json, dataset-metadata.json, README.md, chat_template.jinja, tokenizer_config.json)
+- Situación: el adapter_model.safetensors está ignorado por .gitignore (147). Los .json/.md chicos del directorio quedan visibles pero sin commitear. Guardan procedencia y configuración del adapter final.
+- Acción: decidir si se versionan (para trazabilidad) o quedan fuera. Si se versionan, evaluar si mantener también copia en timonel_lora_banco_A3/ o consolidar en una sola ubicación canónica.
+- Criterio de aceptación: decisión registrada; si es versionar, archivos en commit acotado.
+- Responsable: IA propone; Director decide.
+
+### P43 — [LOGOS] Root of trust ausente para NAVEGO
+- Estado: PENDIENTE. Detectado 2026-10-16 durante reconciliaciones P39 y simulator_source.
+- Fuente: .logos/bin/logos-reconcile (WARNING: /home/ivan/.logos/trust/NAVEGO.json no existe)
+- Situación: las operaciones mark-reviewed funcionaron pero emitieron WARNING por falta del archivo de trust. El mecanismo de root of trust está previsto pero no configurado para NAVEGO.
+- Acción: determinar si el trust es requisito operativo o aspiracional; si es requisito, configurarlo; si no, ajustar la salida de logos-reconcile para que no emita WARNING sobre algo no exigido.
+- Criterio de aceptación: mark-reviewed sin WARNING en próxima operación; o decisión explícita de diferir.
+- Responsable: IA propone; Director decide.
+
+### P44 — [LOGOS] logos-brief lee HEAD desactualizado
+- Estado: PENDIENTE. Detectado 2026-10-16 al regenerar BRIEF_NAVEGO.
+- Fuente: .logos/bin/logos-brief (función get_head, línea 43)
+- Situación: el brief se genera con el HEAD previo al commit que lo incorpora. Es un problema de huevo-y-gallina al versionar un archivo autogenerado. Cosmético pero real: el brief queda un commit atrás cada vez que se commitea.
+- Acción: evaluar si es aceptable como está, si conviene regenerar tras cada commit, o si el brief no debería versionarse.
+- Criterio de aceptación: decisión registrada sobre el desfase.
+- Responsable: IA propone; Director decide.
+
+### P45 — [DOC] Tratamiento de BRIEF_NAVEGO.md autogenerado
+- Estado: PENDIENTE. Detectado 2026-10-16 durante limpieza de working tree.
+- Fuente: EXPEDIENTE/BRIEF_NAVEGO.md, EXPEDIENTE/BRIEF_NAVEGO_pegable.txt
+- Situación: son artefactos generados por logos-brief. Versionados hoy. Se desactualizan con cada commit no relacionado. Regenerarlos cada vez ensucia el working tree.
+- Acción: decidir entre (a) dejarlos versionados y aceptar el desfase, (b) agregarlos a .gitignore y generar on-demand, (c) regenerar como último paso antes de cada push.
+- Criterio de aceptación: decisión registrada y aplicada.
+- Responsable: IA propone; Director decide.
+- Relación: P44 (origen del desfase).
+
+### P46 — [LOGOS] Destino de .logos/dsh-output/
+- Estado: PENDIENTE. Detectado 2026-10-16 durante limpieza de working tree.
+- Fuente: .logos/dsh-output/ (24 logs, sep 25-26)
+- Situación: logs de sesiones de diseño y análisis de septiembre. Preservados localmente sin commitear y sin ignorar. Su estatus (evidencia institucional vs scratch vs descarte) no está definido.
+- Acción: clasificar cada log; decidir si van al repo, se preservan fuera, o se descartan.
+- Criterio de aceptación: decisión por log o por criterio general documentado.
+- Responsable: IA clasifica; Director decide.
+
+### P47 — [HIGIENE] Limpieza física de artefactos Kaggle A3
+- Estado: PENDIENTE. Detectado 2026-10-16 post-limpieza git.
+- Fuente: timonel/kaggle_a3_descarga/ (~1,8 GB), timonel/kaggle_lora_a3/ (177 MB)
+- Situación: artefactos locales que ocupan ~2 GB en disco. Identificadas 3 copias idénticas del adapter final (hash a3d27bfc...) y 8 tokenizers idénticos (hash 6b9e4e7f...). Los 6 optimizer.pt y los 5 adapters intermedios son únicos. Análisis completo realizado, sin decisión de limpieza física.
+- Acción: decidir qué consolidar, qué preservar fuera de git, qué archivar. Requiere protocolo de backup .pre-* y verificación previa.
+- Criterio de aceptación: decisión registrada con lista explícita de archivos a consolidar/preservar/descartar.
+- Responsable: IA propone; Director aprueba.
+- Referencia: hashes verificados 2026-10-16 (Luna + DeepSeek).
+
 ## REGLAS DE ESTE REGISTRO
 
 1. Un pendiente no se cierra por silencio ni por paso de tiempo.
