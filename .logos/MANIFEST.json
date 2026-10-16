@@ -376,9 +376,9 @@
         "exists",
         "readable"
       ],
-      "last_human_review": "2026-10-08",
-      "reviewed_against_commit": "f1ab9f6",
-      "reviewed_against_hash": "6b110d01bc538669945b8016ed020dc736ae6cfa6ede33c025f60db7c8d87cbc"
+      "last_human_review": "2026-10-16",
+      "reviewed_against_commit": "39630d6",
+      "reviewed_against_hash": "9a6e50eb7299b7ae6ba17f2d55d34b5756e52d43c9a873b637361fc5cc67c09e"
     },
     {
       "type": "manual_arranque",
