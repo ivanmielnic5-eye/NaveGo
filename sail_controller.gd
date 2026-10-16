@@ -48,8 +48,8 @@ func _process(delta):
 	# Vela Mayor: Q / E
 	if _vela_mayor != null:
 		var dir_m : float = 0.0
-		if Input.is_key_pressed(KEY_Q): dir_m = 1.0
-		if Input.is_key_pressed(KEY_E): dir_m = -1.0
+		if TestInput.pressed(KEY_Q): dir_m = 1.0
+		if TestInput.pressed(KEY_E): dir_m = -1.0
 		if abs(dir_m) > 0.01:
 			_angulo_mayor += dir_m * paso
 			_angulo_mayor = clamp(_angulo_mayor, -angulo_maximo, angulo_maximo)
@@ -60,8 +60,8 @@ func _process(delta):
 	# Foque: Z / X
 	if _foque != null:
 		var dir_f : float = 0.0
-		if Input.is_key_pressed(KEY_Z): dir_f = 1.0
-		if Input.is_key_pressed(KEY_X): dir_f = -1.0
+		if TestInput.pressed(KEY_Z): dir_f = 1.0
+		if TestInput.pressed(KEY_X): dir_f = -1.0
 		if abs(dir_f) > 0.01:
 			_angulo_foque += dir_f * paso
 			_angulo_foque = clamp(_angulo_foque, -angulo_maximo, angulo_maximo)

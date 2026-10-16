@@ -35,9 +35,9 @@ func _process(delta):
 	if _timon == null:
 		return
 	var direccion : float = 0.0
-	if Input.is_key_pressed(KEY_A):
+	if TestInput.pressed(KEY_A):
 		direccion = 1.0
-	if Input.is_key_pressed(KEY_D):
+	if TestInput.pressed(KEY_D):
 		direccion = -1.0
 	if invertir:
 		direccion = -direccion

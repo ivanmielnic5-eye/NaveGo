@@ -20,7 +20,13 @@ func _ready() -> void:
 
 func start_logging() -> void:
 	start_unix_ms = int(Time.get_unix_time_from_system() * 1000)
-	filepath = "user://ground_truth_%d.jsonl" % start_unix_ms
+	# Si NAVEGO_RUN_DIR está definida, escribir en carpeta aislada de corrida.
+	# Si no, comportamiento normal (user://).
+	var run_dir := OS.get_environment("NAVEGO_RUN_DIR")
+	if run_dir != "":
+		filepath = run_dir + "/ground_truth.jsonl"
+	else:
+		filepath = "user://ground_truth_%d.jsonl" % start_unix_ms
 	file = FileAccess.open(filepath, FileAccess.WRITE)
 	if file == null:
 		push_warning("[GroundTruth] No se pudo abrir archivo.")

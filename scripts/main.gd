@@ -71,14 +71,14 @@ func _physics_process(delta):
 	var apply_torque = Vector3.ZERO
 	var forward = -sailboat.global_transform.basis.z
 
-	if Input.is_key_pressed(KEY_W):
+	if TestInput.pressed(KEY_W):
 		apply_force += forward * force
-	if Input.is_key_pressed(KEY_S):
+	if TestInput.pressed(KEY_S):
 		apply_force += -forward * force# A/D ahora los maneja rudder_controller.gd
 # 
-# 	if Input.is_key_pressed(KEY_A):
+# 	if TestInput.pressed(KEY_A):
 # 		apply_torque += Vector3.UP * torque
-# 	if Input.is_key_pressed(KEY_D):
+# 	if TestInput.pressed(KEY_D):
 # 		apply_torque += -Vector3.UP * torque
 
 	if apply_force != Vector3.ZERO:

@@ -33,10 +33,20 @@ func _ready() -> void:
         push_warning("[Timonel] Sailboat no encontrado.")
         return
 
-    var dir_path := "user://timonel"
-    DirAccess.make_dir_recursive_absolute(dir_path)
-    telemetry_path = dir_path + "/telemetria.jsonl"
-    command_path = dir_path + "/comandos.jsonl"
+    var run_dir := OS.get_environment("NAVEGO_RUN_DIR")
+    var dir_path := ""
+    if run_dir != "":
+        # Modo test headless: escribir en carpeta aislada de corrida.
+        DirAccess.make_dir_recursive_absolute(run_dir)
+        dir_path = run_dir
+        telemetry_path = dir_path + "/telemetria.jsonl"
+        command_path = dir_path + "/comandos.jsonl"
+    else:
+        # Comportamiento normal.
+        dir_path = "user://timonel"
+        DirAccess.make_dir_recursive_absolute(dir_path)
+        telemetry_path = dir_path + "/telemetria.jsonl"
+        command_path = dir_path + "/comandos.jsonl"
 
     telemetry_file = FileAccess.open(telemetry_path, FileAccess.WRITE)
     if telemetry_file == null:

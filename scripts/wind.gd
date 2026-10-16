@@ -26,6 +26,20 @@ var sail_controller: Node = null
 var time: float = 0.0
 
 func _ready() -> void:
+	# Override por variables de entorno (modo headless).
+	var env_strength := OS.get_environment("NAVEGO_WIND_STRENGTH")
+	var env_dir := OS.get_environment("NAVEGO_WIND_DIR_DEG")
+	var env_gust := OS.get_environment("NAVEGO_WIND_GUST")
+	if env_strength != "":
+		wind_strength = float(env_strength)
+		print("[Wind] Override strength por env: ", wind_strength)
+	if env_dir != "":
+		wind_direction_deg = float(env_dir)
+		print("[Wind] Override direccion por env: ", wind_direction_deg)
+	if env_gust != "":
+		gust_amplitude = float(env_gust)
+		print("[Wind] Override gust_amplitude por env: ", gust_amplitude)
+
 	target = get_node_or_null(target_path) as RigidBody3D
 	if target == null:
 		push_warning("[Wind] Target no encontrado.")
