@@ -1,0 +1,17 @@
+{
+  "id": "ivnmielniczuk/timonel-eval-a3-kaggle",
+  "title": "timonel-eval-a3-kaggle",
+  "code_file": "timonel_eval_A3_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "ivnmielniczuk/timonel-banco-a3",
+    "ivnmielniczuk/timonel-fheld",
+    "ivnmielniczuk/timonel-lora-a3"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

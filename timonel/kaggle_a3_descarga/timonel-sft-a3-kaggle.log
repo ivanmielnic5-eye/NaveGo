@@ -1,0 +1,167 @@
+[{"stream_name":"stderr","time":5.716922358,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":5.716971177,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":6.534394549,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.534427406,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.534437659,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.534440519,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":7.142963102,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.14299478,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.143001393,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.143006018,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":10.419352999000001,"data":"\u001b[?25l     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/79.7 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m79.7/79.7 kB\u001b[0m \u001b[31m2.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":13.563605037,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/30.0 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.7/30.0 MB\u001b[0m \u001b[31m50.9 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m6.3/30.0 MB\u001b[0m \u001b[31m96.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m10.1/30.0 MB\u001b[0m \u001b[31m97.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m13.6/30.0 MB\u001b[0m \u001b[31m115.7 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m17.8/30.0 MB\u001b[0m \u001b[31m110.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━\u001b[0m \u001b[32m21.5/30.0 MB\u001b[0m \u001b[31m111.6 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━\u001b[0m \u001b[32m23.1/30.0 MB\u001b[0m \u001b[31m120.2 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━\u001b[0m \u001b[32m25.2/30.0 MB\u001b[0m \u001b[31m90.5 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━\u001b[0m \u001b[32m26.2/30.0 MB\u001b[0m \u001b[31m65.9 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m30.0/30.0 MB\u001b[0m \u001b[31m69.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m30.0/30.0 MB\u001b[0m \u001b[31m69.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m30.0/30.0 MB\u001b[0m \u001b[31m69.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m30.0/30.0 MB\u001b[0m \u001b[31m40.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.124359398,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/43.1 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m6.0/43.1 MB\u001b[0m \u001b[31m179.4 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m8.4/43.1 MB\u001b[0m \u001b[31m184.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m11.5/43.1 MB\u001b[0m \u001b[31m108.2 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m16.8/43.1 MB\u001b[0m \u001b[31m101.4 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m19.9/43.1 MB\u001b[0m \u001b[31m115.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━\u001b[0m \u001b[32m26.4/43.1 MB\u001b[0m \u001b[31m137.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━\u001b[0m \u001b[32m29.4/43.1 MB\u001b[0m \u001b[31m136.6 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━\u001b[0m \u001b[32m32.5/43.1 MB\u001b[0m \u001b[31m111.8 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━\u001b[0m \u001b[32m36.7/43.1 MB\u001b[0m \u001b[31m102.2 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━\u001b[0m \u001b[32m41.5/43.1 MB\u001b[0m \u001b[31m128.7 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m43.1/43.1 MB\u001b[0m \u001b[31m131.5 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m43.1/43.1 MB\u001b[0m \u001b[31m131.5 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m43.1/43.1 MB\u001b[0m \u001b[31m131.5 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m43.1/43.1 MB\u001b[0m \u001b[31m131.5 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m43.1/43.1 MB\u001b[0m \u001b[31m42.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.12445965,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/73.8 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m73.8/73.8 kB\u001b[0m \u001b[31m4.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.174913768,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/945.8 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m945.8/945.8 kB\u001b[0m \u001b[31m38.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.225815677,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/2.4 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m2.4/2.4 MB\u001b[0m \u001b[31m169.8 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m2.4/2.4 MB\u001b[0m \u001b[31m68.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.378590654,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/3.3 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.0/3.3 MB\u001b[0m \u001b[31m271.3 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.7/3.3 MB\u001b[0m \u001b[31m25.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m3.3/3.3 MB\u001b[0m \u001b[31m32.6 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.3/3.3 MB\u001b[0m \u001b[31m26.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.429607191,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/3.6 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m3.5/3.6 MB\u001b[0m \u001b[31m251.7 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.6/3.6 MB\u001b[0m \u001b[31m101.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.480556879,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/216.9 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m216.9/216.9 kB\u001b[0m \u001b[31m12.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.531278526,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/3.4 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m3.4/3.4 MB\u001b[0m \u001b[31m178.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.4/3.4 MB\u001b[0m \u001b[31m86.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":14.581804842,"data":"\u001b[?25h\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/230.5 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m230.5/230.5 kB\u001b[0m \u001b[31m13.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":47.370631267,"data":"\u001b[?25h🦥 Unsloth: Will patch your computer to enable 2x faster free finetuning.\n"}
+,{"stream_name":"stdout","time":80.396614718,"data":"🦥 Unsloth Zoo will now patch everything to make training faster!\n"}
+,{"stream_name":"stdout","time":88.119012051,"data":"==((====))==  Unsloth 2026.10.5: Fast Llama patching. Transformers: 5.16.1.\n"}
+,{"stream_name":"stdout","time":88.119043046,"data":"   \\\\   /|    Tesla T4. Num GPUs = 2. Max memory: 14.562 GB. Platform: Linux.\n"}
+,{"stream_name":"stdout","time":88.119050177,"data":"O^O/ \\_/ \\    Torch: 2.11.0+cu128. CUDA: 7.5. CUDA Toolkit: 12.8. Triton: 3.6.0\n"}
+,{"stream_name":"stdout","time":88.119056144,"data":"\\        /    Bfloat16 = FALSE. FA [Xformers = 0.0.35. FA2 = False]\n"}
+,{"stream_name":"stdout","time":88.119061861,"data":" \"-____-\"     Free license: http://github.com/unslothai/unsloth\n"}
+,{"stream_name":"stdout","time":88.119067715,"data":"Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!\n"}
+,{"stream_name":"stderr","time":91.837789426,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":91.837847883,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":92.040502844,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":92.040556126,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":92.040560802,"data":"\n"}
+,{"stream_name":"stderr","time":92.040564327,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":92.040568573,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":92.341881329,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":92.544499839,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":92.544548654,"data":"\n"}
+,{"stream_name":"stderr","time":92.544556292,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":116.059501847,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":116.059572913,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":116.266012546,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":116.266040747,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":116.266051831,"data":"\n"}
+,{"stream_name":"stderr","time":116.266054891,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/constants.py:299: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.\n"}
+,{"stream_name":"stderr","time":116.266058238,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":116.591459287,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":116.79401145,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":116.794052147,"data":"\n"}
+,{"stream_name":"stderr","time":116.794056543,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stdout","time":132.014524515,"data":"Unsloth: Not splitting across GPUs; the model fits on cuda:0 with room to train. Pass device_map = \"unsloth_balanced\" to split it anyway.\n"}
+,{"stream_name":"stderr","time":139.189661015,"data":"Unsloth: Will load unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit as a legacy tokenizer.\n"}
+,{"stream_name":"stderr","time":139.189698516,"data":"\n"}
+,{"stream_name":"stderr","time":139.189703169,"data":"Unsloth: Will load unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit as a legacy tokenizer.\n"}
+,{"stream_name":"stderr","time":144.316783619,"data":"Unsloth 2026.10.5 patched 32 layers with 32 QKV layers, 32 O layers and 32 MLP layers.\n"}
+,{"stream_name":"stderr","time":144.316873567,"data":"\n"}
+,{"stream_name":"stderr","time":144.317112549,"data":"Unsloth 2026.10.5 patched 32 layers with 32 QKV layers, 32 O layers and 32 MLP layers.\n"}
+,{"stream_name":"stdout","time":147.321106047,"data":"TRAIN_PATH = /kaggle/input/datasets/ivnmielniczuk/timonel-banco-a3/train_sft.jsonl\n"}
+,{"stream_name":"stdout","time":147.321138358,"data":"VAL_PATH   = /kaggle/input/datasets/ivnmielniczuk/timonel-banco-a3/val_sft.jsonl\n"}
+,{"stream_name":"stdout","time":147.515662567,"data":"Train: 1188 | Val: 352\n"}
+,{"stream_name":"stdout","time":147.51568871,"data":"\n"}
+,{"stream_name":"stdout","time":147.515695152,"data":"System: Sos el timonel de un velero autonomo. Respondes UNICAMENTE con el JSON pedido, s\n"}
+,{"stream_name":"stdout","time":147.515700348,"data":"User (primeros 200): === PROPOSITO ===\n"}
+,{"stream_name":"stdout","time":147.515722225,"data":"Llevar el barco hasta la meta.\n"}
+,{"stream_name":"stdout","time":147.515725328,"data":"La mision se considera completa cuando la distancia a la meta es\n"}
+,{"stream_name":"stdout","time":147.515727862,"data":"menor que 8.0 metros.\n"}
+,{"stream_name":"stdout","time":147.515730149,"data":"\n"}
+,{"stream_name":"stdout","time":147.515732473,"data":"=== ESTADO ACTUAL ===\n"}
+,{"stream_name":"stdout","time":147.515734712,"data":"- Distancia a la meta: 5.7 metros\n"}
+,{"stream_name":"stdout","time":147.515737001,"data":"- Veloc\n"}
+,{"stream_name":"stdout","time":147.515739227,"data":"Assistant: {\"accion\": \"terminar\"}\n"}
+,{"stream_name":"stdout","time":148.177160476,"data":"--- Primeros 600 chars del primer ejemplo ---\n"}
+,{"stream_name":"stdout","time":148.177193393,"data":"\u003c|begin_of_text|\u003e\u003c|start_header_id|\u003esystem\u003c|end_header_id|\u003e\n"}
+,{"stream_name":"stdout","time":148.177200462,"data":"\n"}
+,{"stream_name":"stdout","time":148.17720454,"data":"Cutting Knowledge Date: December 2023\n"}
+,{"stream_name":"stdout","time":148.177208684,"data":"Today Date: 26 July 2024\n"}
+,{"stream_name":"stdout","time":148.177212566,"data":"\n"}
+,{"stream_name":"stdout","time":148.177217252,"data":"Sos el timonel de un velero autonomo. Respondes UNICAMENTE con el JSON pedido, sin texto adicional.\u003c|eot_id|\u003e\u003c|start_header_id|\u003euser\u003c|end_header_id|\u003e\n"}
+,{"stream_name":"stdout","time":148.177223256,"data":"\n"}
+,{"stream_name":"stdout","time":148.177227117,"data":"=== PROPOSITO ===\n"}
+,{"stream_name":"stdout","time":148.177232277,"data":"Llevar el barco hasta la meta.\n"}
+,{"stream_name":"stdout","time":148.177236313,"data":"La mision se considera completa cuando la distancia a la meta es\n"}
+,{"stream_name":"stdout","time":148.177240238,"data":"menor que 8.0 metros.\n"}
+,{"stream_name":"stdout","time":148.177244142,"data":"\n"}
+,{"stream_name":"stdout","time":148.177247832,"data":"=== ESTADO ACTUAL ===\n"}
+,{"stream_name":"stdout","time":148.177251662,"data":"- Distancia a la meta: 5.7 metros\n"}
+,{"stream_name":"stdout","time":148.177255525,"data":"- Velocidad: 0.52 nudos\n"}
+,{"stream_name":"stdout","time":148.177272319,"data":"\n"}
+,{"stream_name":"stdout","time":148.177279686,"data":"=== ACCIONES DISPONIBLES ===\n"}
+,{"stream_name":"stdout","time":148.177282564,"data":"- ir_a: seguir navegando hacia la meta.\n"}
+,{"stream_name":"stdout","time":148.177285179,"data":"- terminar: declarar la mision como c\n"}
+,{"stream_name":"stdout","time":148.845613229,"data":"Unsloth: transformers renamed `push_to_hub_token` to `hub_token`. Forwarding your value to `hub_token` - update your code when convenient. If you also passed `hub_token` as None, that is its default here and cannot be distinguished from leaving it unset, so `push_to_hub_token` was used; drop `push_to_hub_token` to keep it.\n"}
+,{"stream_name":"stdout","time":148.845644689,"data":"Unsloth: We found double BOS tokens - we shall remove one automatically.\n"}
+,{"stream_name":"stdout","time":151.102010098,"data":"Unsloth: We found double BOS tokens - we shall remove one automatically.\n"}
+,{"stream_name":"stdout","time":153.45360088,"data":"[OK] train_on_responses_only aplicado\n"}
+,{"stream_name":"stderr","time":153.525696464,"data":"Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.\n"}
+,{"stream_name":"stderr","time":153.525763565,"data":"\n"}
+,{"stream_name":"stderr","time":153.525770264,"data":"Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.\n"}
+,{"stream_name":"stdout","time":153.530985698,"data":"--- ej 0: 8 tokens supervisados de 228\n"}
+,{"stream_name":"stdout","time":153.531005224,"data":"SUPERVISADO: '{\"accion\": \"ir_a\"}\u003c|eot_id|\u003e'\n"}
+,{"stream_name":"stdout","time":153.531011358,"data":"--- ej 1: 8 tokens supervisados de 228\n"}
+,{"stream_name":"stdout","time":153.531015298,"data":"SUPERVISADO: '{\"accion\": \"terminar\"}\u003c|eot_id|\u003e'\n"}
+,{"stream_name":"stdout","time":153.531019661,"data":"Referencia: si la decision fuera azar, loss medio ~ ln2/N = 0.0866\n"}
+,{"stream_name":"stdout","time":153.531025643,"data":"ENMASCARAMIENTO OK\n"}
+,{"stream_name":"stdout","time":153.531029421,"data":"\n"}
+,{"stream_name":"stdout","time":153.531033118,"data":"[COMPUERTA] Enmascaramiento: PASO\n"}
+,{"stream_name":"stderr","time":154.744722059,"data":"==((====))==  Unsloth - 2x faster free finetuning | Num GPUs used = 1\n"}
+,{"stream_name":"stderr","time":154.744760445,"data":"   \\\\   /|    Num examples = 1,188 | Num Epochs = 3 | Total steps = 300\n"}
+,{"stream_name":"stderr","time":154.744764184,"data":"O^O/ \\_/ \\    Batch size per device = 2 | Gradient accumulation steps = 4\n"}
+,{"stream_name":"stderr","time":154.744767156,"data":"\\        /    Data Parallel GPUs = 1 | Total batch size (2 x 4 x 1) = 8\n"}
+,{"stream_name":"stderr","time":154.74476975,"data":" \"-____-\"     Trainable parameters = 41,943,040 of 8,072,204,288 (0.52% trained)\n"}
+,{"stream_name":"stderr","time":154.744772245,"data":"\n"}
+,{"stream_name":"stderr","time":154.744774471,"data":"==((====))==  Unsloth - 2x faster free finetuning | Num GPUs used = 1\n"}
+,{"stream_name":"stderr","time":154.744777333,"data":"   \\\\   /|    Num examples = 1,188 | Num Epochs = 3 | Total steps = 300\n"}
+,{"stream_name":"stderr","time":154.744780778,"data":"O^O/ \\_/ \\    Batch size per device = 2 | Gradient accumulation steps = 4\n"}
+,{"stream_name":"stderr","time":154.744798309,"data":"\\        /    Data Parallel GPUs = 1 | Total batch size (2 x 4 x 1) = 8\n"}
+,{"stream_name":"stderr","time":154.744803311,"data":" \"-____-\"     Trainable parameters = 41,943,040 of 8,072,204,288 (0.52% trained)\n"}
+,{"stream_name":"stdout","time":156.061604381,"data":"Unsloth: Will smartly offload gradients to save VRAM!\n"}
+,{"stream_name":"stdout","time":167.192820758,"data":"Unsloth: Double buffering enabled (parallel H2D + compute) for backward pass.\n"}
+,{"stream_name":"stderr","time":502.538502414,"data":"Unsloth: Not an error, but `num_items_in_batch` could not be counted for LlamaForCausalLM's labels, so each micro-batch loss is a mean.\n"}
+,{"stream_name":"stderr","time":502.538565619,"data":"Using gradient accumulation will be very slightly less accurate.\n"}
+,{"stream_name":"stderr","time":502.538571106,"data":"Read more on gradient accumulation issues here: https://unsloth.ai/blog/gradient\n"}
+,{"stream_name":"stderr","time":502.5385748,"data":"\n"}
+,{"stream_name":"stderr","time":502.538578099,"data":"Unsloth: Not an error, but `num_items_in_batch` could not be counted for LlamaForCausalLM's labels, so each micro-batch loss is a mean.\n"}
+,{"stream_name":"stderr","time":502.538590733,"data":"Using gradient accumulation will be very slightly less accurate.\n"}
+,{"stream_name":"stderr","time":502.538606735,"data":"Read more on gradient accumulation issues here: https://unsloth.ai/blog/gradient\n"}
+,{"stream_name":"stderr","time":611.104473692,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-50/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":611.104529802,"data":"\n"}
+,{"stream_name":"stderr","time":611.104537465,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-50/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1062.894339944,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-100/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1062.894383163,"data":"\n"}
+,{"stream_name":"stderr","time":1062.894387554,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-100/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1511.610438636,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-150/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1511.610491257,"data":"\n"}
+,{"stream_name":"stderr","time":1511.610498855,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-150/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1963.282778295,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-200/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":1963.282816058,"data":"\n"}
+,{"stream_name":"stderr","time":1963.282821447,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-200/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":2412.608211735,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-250/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":2412.608246418,"data":"\n"}
+,{"stream_name":"stderr","time":2412.60825244,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-250/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":2857.157486353,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-300/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":2857.157528671,"data":"\n"}
+,{"stream_name":"stderr","time":2857.157537707,"data":"Unsloth: Restored added_tokens_decoder metadata in outputs_A3/checkpoint-300/tokenizer_config.json.\n"}
+,{"stream_name":"stdout","time":2857.965698566,"data":"TrainOutput(global_step=300, training_loss=0.01338292447918017, metrics={'train_runtime': 2701.7193, 'train_samples_per_second': 0.888, 'train_steps_per_second': 0.111, 'total_flos': 2.4513524389822464e+16, 'train_loss': 0.01338292447918017, 'epoch': 2.0134680134680134})\n"}
+,{"stream_name":"stderr","time":2858.682031717,"data":"Unsloth: Restored added_tokens_decoder metadata in timonel_lora_banco_A3/tokenizer_config.json.\n"}
+,{"stream_name":"stderr","time":2858.682063576,"data":"\n"}
+,{"stream_name":"stderr","time":2858.682070654,"data":"Unsloth: Restored added_tokens_decoder metadata in timonel_lora_banco_A3/tokenizer_config.json.\n"}
+,{"stream_name":"stdout","time":2858.783152295,"data":"total 180788\r\n"}
+,{"stream_name":"stdout","time":2858.783179979,"data":"drwxr-xr-x 2 root root      4096 Oct 14 01:50 .\r\n"}
+,{"stream_name":"stdout","time":2858.783186434,"data":"drwxr-xr-x 6 root root      4096 Oct 14 01:50 ..\r\n"}
+,{"stream_name":"stdout","time":2858.783191859,"data":"-rw-r--r-- 1 root root      1312 Oct 14 01:50 adapter_config.json\r\n"}
+,{"stream_name":"stdout","time":2858.783197143,"data":"-rw------- 1 root root 167832240 Oct 14 01:50 adapter_model.safetensors\r\n"}
+,{"stream_name":"stdout","time":2858.783215248,"data":"-rw-r--r-- 1 root root      4568 Oct 14 01:50 chat_template.jinja\r\n"}
+,{"stream_name":"stdout","time":2858.783220098,"data":"-rw-r--r-- 1 root root      5262 Oct 14 01:50 README.md\r\n"}
+,{"stream_name":"stdout","time":2858.783228492,"data":"-rw-r--r-- 1 root root     50697 Oct 14 01:50 tokenizer_config.json\r\n"}
+,{"stream_name":"stdout","time":2858.783232301,"data":"-rw-r--r-- 1 root root  17209920 Oct 14 01:50 tokenizer.json\r\n"}
+,{"stream_name":"stderr","time":2864.11897957,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2864.119004395,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2864.277740013,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2864.27776709,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2865.043526291,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":2865.156237108,"data":"[NbConvertApp] Writing 169169 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":2867.730234755,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2868.300058125,"data":"[NbConvertApp] Writing 427261 bytes to __results__.html\n"}
+]
