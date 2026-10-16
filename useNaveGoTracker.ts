@@ -576,7 +576,11 @@ export function useNaveGoTracker() {
             distanceInterval: 0,
           },
           (loc) => {
-            if (isRecordingRef.current) return;
+            // Fix 2026-10-16: NO apagar el watch liviano cuando arranca la grabación.
+            // El polling de la Task no está publicando ubicación en release, así que
+            // el watch liviano tiene que seguir como fallback para que el puntito
+            // azul no quede congelado al dar INICIAR TRAYECTO.
+            // if (isRecordingRef.current) return;
             setLivePosition({
               lat: loc.coords.latitude,
               lon: loc.coords.longitude,
