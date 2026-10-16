@@ -1,0 +1,53 @@
+========================================================================
+VERIFICACION H-2026-0014 .. H-2026-0018
+Fuente: docs/gnss/gnss_simulado.jsonl
+Fixes cargados: 62
+========================================================================
+
+### H-2026-0014 — accuracy constante en 4.5
+  Valores unicos de accuracy : [4.5]
+  Fixes con accuracy == 4.5  : 62/62
+  Config sigma_m             : 3.0 (sigma*1.5 = 4.5)
+  => CONFIRMADA: los 62 fixes tienen accuracy = 4.5 exactamente; coincide con sigma_m*1.5 = 4.5
+
+### H-2026-0016 — latencia pura receivedAt - measuredAt = 300 ms
+  Valores unicos de latencia : [300]
+  Config latency_ms          : 300
+  => CONFIRMADA: los 62 fixes tienen receivedAt - measuredAt = 300 ms exactos
+
+### H-2026-0018 — 0 o 1 spike > 50 m entre fixes consecutivos
+  Config spike.probability   : 0.01
+  Esperado en 62 fixes        : 0.62 spikes
+  Mediana de salto           : 5.16 m
+  Spikes > 50 m           : 2
+     fix #25: salto 179.42 m
+     fix #26: salto 178.33 m
+  => REFUTADA: 2 spikes > 50 m: fix#25=179.4m, fix#26=178.3m
+
+### H-2026-0017 — distancia perpendicular media ~ sigma = 3.0 m
+  Recta de referencia        : fix#1 -> fix#62
+  Distancia perpendicular    : media 5.025 m, sd 16.926 m
+  Min / Max                  : 0.000 / 136.182 m
+  Sigma configurado          : 3.0 m
+  Rango de falsacion         : [2.0, 4.5] m
+  => REFUTADA: media perpendicular 5.025 m fuera de [2.0, 4.5] m (sigma=3.0)
+
+### H-2026-0015 — heading congelado post-corte (fix 31..62)
+  Corte configurado          : inicio 30s, duracion 12s
+  Fixes pre-corte            : 30 (ultimo #30)
+  Fixes post-corte           : 32 (primero #31)
+  Headings unicos pre-corte  : 30 -> [0.0, 170.999971802955, 170.999972606287, 170.999973334695, 170.999973410137, 170.999973741284] ...
+  Headings unicos post-corte : 1 -> [171.000046245753]
+  => CONFIRMADA: los 32 fixes post-corte tienen heading identico = 171.000046245753 (1 valor unico); el simulador no inyecta jitter post-recuperacion
+
+========================================================================
+RESUMEN
+========================================================================
+  H-2026-0014  CONFIRMADA  los 62 fixes tienen accuracy = 4.5 exactamente; coincide con sigma_m*1.5 = 4.5
+  H-2026-0015  CONFIRMADA  los 32 fixes post-corte tienen heading identico = 171.000046245753 (1 valor unico); el simulador no inyecta jitter post-recuperacion
+  H-2026-0016  CONFIRMADA  los 62 fixes tienen receivedAt - measuredAt = 300 ms exactos
+  H-2026-0017  REFUTADA    media perpendicular 5.025 m fuera de [2.0, 4.5] m (sigma=3.0)
+  H-2026-0018  REFUTADA    2 spikes > 50 m: fix#25=179.4m, fix#26=178.3m
+------------------------------------------------------------------------
+  CONFIRMADA: 3, REFUTADA: 2
+========================================================================

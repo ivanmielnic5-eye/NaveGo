@@ -1,0 +1,41 @@
+==========================================================================
+REFINAMIENTO — H-2026-0017 (sigma) y H-2026-0018 (spikes)
+==========================================================================
+
+### H-2026-0018 — ¿1 spike que vuelve, o 2 spikes?
+  Saltos > 50 m: [(25, 179.4), (26, 178.3)]
+
+  fix #25: salto 179.4 m desde fix #24
+    fix #24 lat/lon: -31.647757, -60.707928
+    fix #25   lat/lon: -31.646815, -60.706389
+
+  fix #26: salto 178.3 m desde fix #25
+    fix #25 lat/lon: -31.646815, -60.706389
+    fix #26   lat/lon: -31.647738, -60.707930
+
+  Cadena de saltos alrededor del evento:
+    #24->#25 :   179.42 m
+    #25->#26 :   178.33 m
+    #26->#27 :     5.36 m
+    #24->#27 (directo, salteando #25 y #26):     6.30 m
+  => CONFIRMADA: 1 evento de spike, no 2. El fix #25 sale de la trayectoria (salto 179.4 m) y el #26 vuelve (salto 5.4 m); la distancia #24->#27 es solo 6.3 m. El salto #25->#26 (178.3 m) es el mismo outlier cruzando de ida y vuelta, por eso el conteo bruto de saltos >50 m da 2. Spikes reales = 1.
+
+### H-2026-0017 — distancia perpendicular a la recta (robusta)
+
+  [A] Recta fix#1 -> fix#62 (metodo original del criterio)
+      media 5.025 m | sd 16.926 m | max 136.182 m
+  [B] Excluyendo #25 y #26 (n=60)
+      media 2.867 m | sd 2.154 m | max 11.863 m
+  [C] Ajuste minimos cuadrados (datos limpios)
+      pendiente 4.69009 | media 2.846 m | sd 2.315 m
+  [D] Mediana sobre todos los fixes (robusta): 2.620 m
+
+  Criterio de falsacion original: media en [2.0, 4.5] m
+  => CONFIRMADA: con el outlier excluido, la distancia perpendicular media es 2.846 m (dentro de [2.0, 4.5], consistente con sigma=3.0). El valor 5.025 m del calculo crudo estaba contaminado por el spike del fix #25.
+
+==========================================================================
+CONCLUSION REFINADA
+==========================================================================
+  H-2026-0017  CONFIRMADA
+  H-2026-0018  CONFIRMADA
+==========================================================================

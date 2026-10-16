@@ -1,0 +1,24 @@
+MECANISMO DETALLADO — H-0015 (heading) y H-0018 (spike)
+======================================================================
+Ground truth lineas validas: 2235 (1 truncada al final, ignorada)
+elapsed_s max GT: 74.455 s
+
+COG ground truth: min=0.000000 max=171.000046 sd=7.227671
+  => COG ~171.0 durante TODA la corrida (trayectoria recta).
+     El heading congelado post-corte NO es un artefacto del corte:
+     es el COG constante de una recta, y el simulador lo repite sin ruido.
+
+Corte GNSS:
+  fix#30 t=29.392s
+  fix#31 t=42.590s
+  gap    =13.198s
+  Config: start_s=30, duration_s=12 -> 30..42s  (coincide)
+
+Speed por fix (pre vs post corte):
+  pre-corte  : unicos=30 min=0.0142191732 max=1.3381812572
+  post-corte : unicos=1 valor=1.3382881880
+  => post-corte speed tambien queda CONGELADO en un unico valor
+     (mas fuerte que lo que decia H-0015: congela speed Y heading)
+
+Heading post-corte:
+  unicos=1 valor=171.000046245753
