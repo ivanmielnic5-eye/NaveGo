@@ -24,7 +24,7 @@ REGLAS DURAS DE TRABAJO (no negociables)
 
 # Brief de arranque — NAVEGO
 
-Generado: 2026-10-09T22:17:21-03:00
+Generado: 2026-10-16T12:00:00-03:00
 
 ---
 
@@ -32,13 +32,13 @@ Generado: 2026-10-09T22:17:21-03:00
 - Proyecto: NAVEGO
 - Repo: /home/ivan/navego_recuperado
 - Rama: experimento-v4-admin
-- HEAD: a984d4b
+- HEAD: f613209
 - Nombre: NaveGo
 - Tipo: navigation
 
 ## 2. Estado del contexto
-- gate_status: WARNING
-- drift: WARNING (optional: simulator_source(STALE:6b110d01!=d4b93f07))
+- gate_status: READY
+- drift: OK
 
 ## 3. Mision y fase
 - Objetivo: Sistema de navegacion autonomo, offline, soberano
@@ -63,8 +63,8 @@ Pendiente (bugs finos):
 ## 5. Trabajo activo
 - Hipotesis: H-2026-0023
   Cierre del hito de background: bugs finos + recuperacion del track honesto
-- Proximo paso: Fix de SOG en reposo, reconectar getGapsSince al polling, y cierre de LOGOS v1.1
-- Ultima decision: Implementacion de LOGOS v1.1 (logos-reconcile + drift detection + logos-brief). Pendiente: registrar formalmente como D-XXXX en el registro instituido (ubicacion por confirmar).
+- Proximo paso: Hilo nuevo: (1) logos-foco v1 con validacion sobre mision_config; (2) reconciliar P18-P28 (verificar 11 items contra codigo actual); (3) P16/P17 (secciones nuevas del brief). Ver EXPEDIENTE/PENDIENTES.md.
+- Ultima decision: D-2026-0014 (CONGELADA, 2026-10-14): comparaciones justas antes de auditar. Bloque de gobernanza D-2026-0011 a 0014 cerrado. Migracion de authority completada (P13/P14/P15, merge 91c271b).
 
 ## 6. Restricciones activas
 - No tocar GNSS sin hipotesis previa
@@ -76,13 +76,43 @@ Pendiente (bugs finos):
 - R-18: source of truth
 
 ## 7. Pendientes priorizados
-- Track honesto — pérdida por migración Doc 46
-- Field log no se escribe tras reinicio del celular
-- Diseño pendiente: jerarquía de confianza de fuentes para cartas náuticas
-- Auto-commit WIP en logos-arranque
-- Blender MCP — velas dinamicas + timon + mastil no rigido
+- P4 — R-21 (kernel multi-IA): version concisa de D-B
+- P5 — R-22 (kernel multi-IA): version concisa de D-C
+- P6 — Procedimiento vinculado a D-A
+- P10 — Marcacion visual de outputs por seccion
+- P11 — LOGOS v1.1 sin formalizar como D-XXXX
+- P12 — Pendientes del brief de arranque (2026-10-14)
+- P17 — Regla de integridad en el brief
+- P18 — [APP] Sesion se guarda sin confirmacion
+- P19 — [APP] "Referencia ya existe" sin referencia real
+- P20 — [APP] Funcion deshacer (undo)
+- P21 — [APP] Borrado de multiples trayectos
+- P22 — [APP] Logs [FILTER] condicionados a persist
+- P23 — [APP] Doble Date.now() en measuredAt
+- P24 — [APP] Posible rechazo no gestionado en void persistFixResult
+- P25 — [HIGIENE] Revisar ~/recup_dir.*
+- P26 — [APP] Gaps chicos < 15 m se suman como observados
+- P27 — [LOGOS] logos-mem: leer hipotesis PROPUESTA y CONFIRMADA
+- P28 — [LOGOS] Test de regresion incidente 20/09 (H-2026-0019)
+- P30 — [LOGOS] Symlink a directorio se pierde en hash_directory_standard
+- P34 — [SIM] Divergencia de física Python vs Godot
+- P35 — [SIM] Paridad activa entre simuladores Python y Godot
+- P36 — [SIM] Velas en simulador Python
+- P37 — [DOC] Referencia externa Beneteau First Class 8
+- P38 — [E1] Actualizar contraste de cobertura con decisiones de modelo canónico
+- P39 — [TIMONEL] Deadlock de arranque cuando heading está muy desalineado
 
-## 8. Comandos operativos
+## 8. Decisiones recientes
+
+- D-2026-0016 (2026-10-14) CONGELADA: Unificar el hashing de LOGOS Gate y propagar errores de recorrido
+- D-2026-0015 (2026-10-14) CONGELADA: Extraer logica de hashing a modulo compartido y fix del bug P29
+- D-2026-0014 (2026-10-14) CONGELADA: Verificar que las comparaciones internas sean justas antes de auditar
+- D-2026-0013 (2026-10-14) CONGELADA: Ningun pendiente que requiera aprobacion del Director queda olvidado por avance del workflow
+- D-2026-0012 (2026-10-14) CONGELADA: Auditar el Entrenador antes de entrenar con el
+- D-2026-0011 (2026-10-14) CONGELADA: Contrato Intent (A4) con estados por campo atomico
+- D-2026-0010 (2026-10-08) CONGELADA: Freshness de fuentes por hash de contenido
+
+## 9. Comandos operativos
 
 Ver estado del contexto:
 ```
@@ -108,7 +138,7 @@ unset EXPO_PUBLIC_GNSS_TASK_PRODUCER
 npx expo run:android --variant release
 ```
 
-## 9. Reglas duras de trabajo
+## 10. Reglas duras de trabajo
 - Backup explicito .pre-<etapa> antes de tocar codigo.
 - Un paso por vez. Verificar despues de cada cambio.
 - Comandos con bloque de copiar/pegar claro.
@@ -119,13 +149,13 @@ npx expo run:android --variant release
 - El sistema NO MIENTE. No inventa datos.
 - Verificar toda cita de LLM antes de apoyarse en ella.
 
-## 10. Simulador Godot
+## 11. Simulador Godot
 
 - Path: ~/interfaz/
 - Rama: experimento-godot
-- HEAD: e30c123
-- Ultimo commit: e30c123 Blender: archivo de trabajo de Polaris con velas separadas (hace 20 horas)
-- reviewed_against_hash: 6b110d01bc538669...
+- HEAD: dd5754e
+- Ultimo commit: dd5754e Ajustar wind_strength a 3.5 en main.tscn (hace 14 horas)
+- reviewed_against_hash: 9a6e50eb7299b7ae...
 
 Hipotesis del simulador (domain=simulator):
 - (ninguna registrada todavia)
