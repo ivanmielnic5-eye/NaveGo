@@ -1,0 +1,61 @@
+La velocidad no excederá {vmax} nudos
+El barco mantendrá una velocidad igual o inferior a {vmax} nudos
+La velocidad no será superior a {vmax} nudos
+El buque navegará a {vmax} nudos como velocidad máxima
+La velocidad de avance quedará limitada a {vmax} nudos
+El barco no alcanzará una velocidad superior a {vmax} nudos
+La velocidad de navegación no rebasará {vmax} nudos
+El buque se desplazará a una velocidad de {vmax} nudos o menos
+La velocidad no podrá ser mayor que {vmax} nudos
+El barco operará dentro del límite de {vmax} nudos
+La velocidad de travesía no excederá {vmax} nudos
+El buque conservará una velocidad inferior o igual a {vmax} nudos
+La velocidad no sobrepasará {vmax} nudos
+El barco navegará por debajo de {vmax} nudos o exactamente a esa velocidad
+La velocidad de avance se mantendrá en {vmax} nudos o menos
+El buque no superará el tope de {vmax} nudos
+La velocidad quedará contenida dentro de {vmax} nudos
+El barco respetará un límite de velocidad de {vmax} nudos
+La velocidad no irá más allá de {vmax} nudos
+El buque avanzará sin rebasar {vmax} nudos
+Si la velocidad es de {vmax} nudos o menos, la condición se cumple
+En caso de que la velocidad sea igual o inferior a {vmax} nudos, se considera válida
+Si el barco navega a {vmax} nudos como máximo, se cumple la restricción
+Cuando la velocidad no sea mayor que {vmax} nudos, se acepta
+Si la velocidad de navegación se mantiene en {vmax} nudos o por debajo, la condición queda satisfecha
+En caso de que el buque avance a una velocidad de {vmax} nudos o inferior, se cumple el requisito
+Si la velocidad no rebasa {vmax} nudos, la misión mantiene esta condición
+Cuando el barco vaya a {vmax} nudos o menos, la restricción está cumplida
+Si la velocidad queda dentro del límite de {vmax} nudos, se considera aceptable
+En caso de que la velocidad no exceda {vmax} nudos, la condición se satisface
+Si el buque navega a una velocidad igual o menor que {vmax} nudos, se cumple el criterio
+Cuando la velocidad de avance no sobrepase {vmax} nudos, la restricción es válida
+Si la velocidad se mantiene en {vmax} nudos o menos, la condición queda cubierta
+En caso de que el barco no vaya más rápido que {vmax} nudos, se cumple el requisito
+Si la velocidad de travesía es de {vmax} nudos o inferior, la condición se considera cumplida
+Cuando el buque opere a {vmax} nudos como máximo, la restricción queda satisfecha
+Si la velocidad no va por encima de {vmax} nudos, se cumple la condición
+En caso de que la velocidad quede limitada a {vmax} nudos, la misión cumple este criterio
+Si el barco avanza sin rebasar {vmax} nudos, la condición es válida
+Cuando la velocidad no sea superior a {vmax} nudos, el requisito queda cumplido
+No vayas a más de {vmax} nudos
+Evita superar {vmax} nudos
+Mantén la velocidad en {vmax} nudos o menos
+No navegues por encima de {vmax} nudos
+No rebases {vmax} nudos
+Ve a {vmax} nudos como máximo
+No aceleres por encima de {vmax} nudos
+Mantente dentro de {vmax} nudos
+No pases de {vmax} nudos
+Lleva el barco a {vmax} nudos o menos
+No excedas {vmax} nudos
+No vayas más rápido que {vmax} nudos
+Limita la velocidad a {vmax} nudos
+No sobrepases {vmax} nudos
+Mantén el barco a {vmax} nudos o por debajo
+No te pases de {vmax} nudos
+No dejes que la velocidad supere {vmax} nudos
+No avances a una velocidad mayor que {vmax} nudos
+Evita que el barco vaya más rápido que {vmax} nudos
+No dejes que la velocidad vaya más allá de {vmax} nudos
+Mantén la velocidad de navegación dentro de {vmax} nudos
