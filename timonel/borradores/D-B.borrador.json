@@ -1,0 +1,26 @@
+{
+  "id": "D-2026-0013 (a confirmar)",
+  "titulo": "Ningun pendiente que requiera aprobacion del Director queda olvidado por avance del workflow",
+  "estado": "BORRADOR — NO EN REGISTRO CANONICO",
+  "fecha": "2026-10-14",
+  "contexto": "Regla adoptada por el Director el 2026-10-14 durante el hilo FOCO contrato_intent. Origen: el workflow permite avanzar con hallazgos normativos sin cierre formal (caso memos 84-88 sobre auditoria del Entrenador). La propuesta de Luna 'todo hallazgo normativo se cierra' fue aceptada por el Director y ampliada: la regla aplica a toda propuesta que requiera aprobacion del Director. Es permanente y de gobernanza de LOGOS/NAVEGO. Complementa R-17 (no autoescritura) y R-19 (incertidumbre explicita) del kernel multi-IA.",
+  "decision": "Regla permanente: ninguna propuesta que requiera aprobacion del Director puede quedar olvidada por el mero avance del workflow. Mientras no exista aprobacion explicita, queda una instancia recordatoria visible, rastreable y pendiente, que identifique: (1) asunto, (2) estado actual, (3) accion necesaria. Todo pendiente termina en: (a) APROBADO: se registra y continua. (b) RECHAZADO: se registra y cierra. (c) DIFERIDO: se conserva con motivo y condicion de revision. (d) SIN RESPUESTA: pendiente indefinido; silencio NO equivale a aprobacion. La IA detecta, registra y recuerda; no aprueba ni descarta en nombre del Director. Regla correlativa propuesta: agregar R-21 al kernel multi-IA con version concisa y referencia cruzada.",
+  "consecuencias": [
+    "Toda propuesta al Director queda en registro de pendientes hasta resolucion explicita",
+    "Silencio del Director NO cierra pendiente: lo mantiene abierto",
+    "La IA no marca estados por inferencia ni paso de tiempo",
+    "Se necesita mecanismo que liste pendientes abiertos al inicio de cada sesion",
+    "El mecanismo puede ser un archivo markdown versionado; forma definitiva se decide aparte",
+    "Esta misma regla queda pendiente hasta aprobacion explicita del Director",
+    "Se aplica retroactivamente a propuestas pendientes previas (verificar)"
+  ],
+  "criterio_revision": "Si el registro se vuelve inmanejable por volumen o no se mantiene actualizado. Tambien si el Director prefiere otro mecanismo (por ejemplo, aprobacion tacita con timeout, que exigiria modificar la regla explicitamente, no violarla).",
+  "fuentes_verificadas": [
+    "Hilo de conversacion 2026-10-14 (Director enuncia la regla como permanente)",
+    "Criterios de Luna: complementa R-17; R-NN concisa + D fundamentada con referencia cruzada",
+    "protocols.json del kernel multi-IA (R-17, R-19)",
+    "Caso origen: memos 84-88 sobre auditoria del Entrenador"
+  ],
+  "reversible": false,
+  "autor": "director"
+}

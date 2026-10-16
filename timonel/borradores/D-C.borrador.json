@@ -1,0 +1,24 @@
+{
+  "id": "D-C (numero a asignar al aprobar)",
+  "titulo": "Verificar que las comparaciones internas sean justas antes de auditar",
+  "estado": "BORRADOR — NO EN REGISTRO CANONICO",
+  "fecha": "2026-10-14",
+  "contexto": "El memo 87 (correccion del diagnostico del Entrenador) reconoce un error simetrico: el Entrenador v1 medía mal porque comparaba recetas de duraciones distintas, y nosotros analizamos mal porque no verificamos la semantica de las recetas antes de concluir. Luna lo habia advertido en su respuesta al memo 86 y no se escucho lo suficiente. La regla nueva quedo escrita en el memo 87 pero sin formalizar. Aplica a toda auditoria futura, no solo al Entrenador.",
+  "decision": "Regla obligatoria: antes de auditar cualquier sistema, verificar que las comparaciones internas sean metodologicamente justas. Condiciones verificables de justicia: (1) UNIDAD DE COMPARACION: las acciones, recetas o alternativas comparadas deben tener el mismo horizonte, misma duracion efectiva, misma dotacion de recursos y misma metrica de cierre. Si sus duraciones o alcances efectivos difieren, la comparacion no es valida. (2) MISMA REFERENCIA DE VERDAD: todas las alternativas se evaluan contra el mismo criterio externo verificable. (3) SIMETRIA DE CONTINUACION: si una alternativa termina antes que el horizonte, se aplica a todas la misma politica neutra de continuacion hasta el horizonte. (4) AISLAMIENTO DE VARIABLES: si se atribuye una diferencia a una variable, verificar que las demas esten controladas o que su efecto se haya medido por separado. (5) REGISTRO PREVIO: el disenio de la comparacion (unidades, referencia, continuacion, variables) se registra ANTES de ejecutar, no despues. (6) CONSECUENCIA: si las condiciones no se cumplen, la auditoria no se realiza o se declara parcial con su limite explicito. Un resultado obtenido con comparacion injusta no puede elevarse como hallazgo; se marca como observacion sujeta a re-auditoria.",
+  "consecuencias": [
+    "Toda auditoria futura (Entrenador, modelo, banco, oraculo, workflow) verifica justicia de comparacion antes de ejecutarse",
+    "Auditorias pasadas con comparacion injusta se marcan como observaciones, no como hallazgos (memo 86 ya lo hizo con su banner PARCIALMENTE OBSOLETO)",
+    "El procedimiento vinculado debe incluir el checklist de las 6 condiciones como paso previo obligatorio",
+    "Esta regla se propone tambien como R-NN en el kernel multi-IA (version concisa, referencia cruzada a esta D), despues de aprobacion",
+    "Aplica retroactivamente al analisis del memo 84 (40% error del Entrenador) — verificar si esa conclusion tambien estaba afectada por comparacion injusta o si el test del 84 era justo"
+  ],
+  "criterio_revision": "Se reabre si: (a) las 6 condiciones resultan excesivas para auditorias simples y se propone un subconjunto; (b) aparece un tipo de auditoria donde las condiciones no aplican (por ejemplo, comparaciones no experimentales sino historicas); (c) el kernel incorpora la regla como R-NN y la version concisa diverge del texto de la D.",
+  "fuentes_verificadas": [
+    "EXPEDIENTE/87_CORRECCION_BUG_ENTRENADOR.md (2026-10-11), seccion 5 (leccion metodologica)",
+    "EXPEDIENTE/86_AUDITORIA_COMPLETA_ORACULO.md (banner PARCIALMENTE OBSOLETO)",
+    "Respuesta de Luna al memo 86 (citada en 87)",
+    "Criterios de Luna (2026-10-14): definir justas con condiciones verificables; R-NN transversal; D con fundamento y alcance"
+  ],
+  "reversible": true,
+  "autor": "director"
+}

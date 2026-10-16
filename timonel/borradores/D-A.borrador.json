@@ -1,0 +1,27 @@
+{
+  "id": "D-A (numero a asignar al aprobar)",
+  "titulo": "Auditar el Entrenador antes de entrenar con el",
+  "estado": "BORRADOR — NO EN REGISTRO CANONICO",
+  "fecha": "2026-10-14",
+  "contexto": "Los memos 84, 85, 86 documentan el hallazgo inicial (40-67% de error en corregir_rumbo, 100% en frenar). El memo 87 corrige: era un bug del Entrenador v1 (cada receta corria hasta terminar o timeout; comparacion injusta entre recetas de duraciones distintas). El memo 88 propone v2 con continuacion comun, aun sin implementar. La regla 'auditar el Entrenador antes de entrenar' aparece en la firma de los memos 84, 85, 86 pero nunca fue formalizada. Sin formalizacion, un investigador nuevo puede entrenar contra etiquetas no verificadas, repitiendo el ciclo.",
+  "decision": "Regla obligatoria: antes de cualquier entrenamiento futuro, auditar el Entrenador sobre los casos concretos que alimentaran ese entrenamiento. Niveles: (A) OPERATIVOS. (1) OBJETO REPRODUCIBLE: identificar la version o commit del Entrenador, el hash o version del conjunto de contextos a usar, y la configuracion exacta con que se corre la auditoria. El conjunto debe poder reproducirse. (2) REFERENCIA DE VERDAD INDEPENDIENTE: la auditoria no valida las etiquetas del Entrenador contra si mismo; debe contrastarse contra una referencia externa verificable (por ejemplo, simulacion completa, banco etiquetado por humano, o criterio fisico definido). Sin referencia independiente, la auditoria no cuenta como tal. (3) CRITERIO DE APROBACION PREVIO: antes de ejecutar la auditoria, el procedimiento vinculado debe definir que condiciones hacen al Entrenador apto para ese entrenamiento (margen minimo entre acciones ganadoras, consistencia bajo horizontes extendidos, independencia del viento, etc.), los umbrales concretos y como se combinan. No es aceptable definir el criterio despues de ver los resultados. (4) EVIDENCIA REGISTRADA: registrar todos los artefactos (tests ejecutados, JSONs de resultado, metricas, criterio aplicado, configuracion). Sin evidencia registrada, la auditoria no se considera realizada. (5) CONSECUENCIA: si la auditoria falla o no se realiza, el entrenamiento no se inicia. Es bloqueo operativo, no documental. (B) GOBERNANZA. (6) PROCEDIMIENTO VINCULADO: el metodo detallado (que se simula, con que horizontes, con que metrica de comparacion) vive en un documento versionado vinculado a esta decision. La decision fija el principio; el procedimiento puede evolucionar sin reabrir la decision. El procedimiento se ubica en el lugar que el MANIFEST declare como autoritativo (a verificar; no se crea .logos/procedures/ unilateralmente).",
+  "consecuencias": [
+    "Ningun entrenamiento futuro (SFT, fases 2-7, re-entrenamientos) se inicia sin auditoria previa del Entrenador sobre los casos a usar",
+    "El banco CC002 no se re-etiqueta por esta decision; la regla es hacia adelante",
+    "Se necesita un procedimiento versionado vinculado con el metodo detallado; su ubicacion se decide aparte",
+    "El workflow de entrenamiento debera consultar esta decision y bloquear si falta evidencia (integracion futura)",
+    "Auditorias donde el Entrenador no participa como fuente de etiquetas (por ejemplo, RL con recompensa directa) quedan explicitamente EXCLUIDAS, con justificacion registrada; no es una excepcion tacita",
+    "La referencia de verdad independiente puede requerir construccion previa (no existe hoy como artefacto), en cuyo caso la primera auditoria bajo esta regla tiene costo adicional"
+  ],
+  "criterio_revision": "Se reabre si: (a) la aplicacion resulta impracticable por costo de la referencia independiente; (b) el Entrenador cambia de version y la regla necesita re-verificar el metodo; (c) el conjunto de datos cambia y los contextos auditados dejan de ser representativos; (d) la configuracion del entrenamiento cambia; (e) el criterio de etiquetado del Entrenador cambia; (f) el procedimiento vinculado evoluciona hacia un metodo que la decision no preveia. Cualquiera de los seis dispara revision; no basta con que la auditoria haya pasado una vez.",
+  "fuentes_verificadas": [
+    "EXPEDIENTE/84_AUDITORIA_ORACULO.md (2026-10-11)",
+    "EXPEDIENTE/85_HOJA_DE_RUTA_Y_AUDITORIA.md (2026-10-11)",
+    "EXPEDIENTE/86_AUDITORIA_COMPLETA_ORACULO.md (2026-10-11, parcialmente obsoleto por 87)",
+    "EXPEDIENTE/87_CORRECCION_BUG_ENTRENADOR.md (2026-10-11)",
+    "EXPEDIENTE/88_DISENO_ENTRENADOR_V2.md (2026-10-11, propuesta sin implementar)",
+    "Criterios de Luna (2026-10-14): referencia de verdad independiente, objeto reproducible, criterio previo, exclusion justificada, campos de gobernanza, procedimiento vinculado verificado contra MANIFEST"
+  ],
+  "reversible": true,
+  "autor": "director"
+}
