@@ -53,6 +53,8 @@ interface Props {
   gapActive?: boolean;
   gapMarkers?: Array<{startLat:number;startLon:number;endLat:number;endLon:number;durationMs:number}>;
   autoFollow?: boolean;
+  // Rotacion de la camara en grados (0 = norte arriba).
+  bearing?: number;
 }
 
 function aGeoJSON(puntos: Punto[]) {
@@ -79,7 +81,7 @@ async function copiarFuente(modulo: any, subcarpeta: string, archivo: string) {
 }
 
 export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
-  { trackPoints, referencePoints, userPos, absolute, initialCenter, initialZoom, showUserLocation = true, gapActive = false, gapMarkers = [], autoFollow = false },
+  { trackPoints, referencePoints, userPos, absolute, initialCenter, initialZoom, showUserLocation = true, gapActive = false, gapMarkers = [], autoFollow = false, bearing },
   ref
 ) {
   const [uri, setUri] = useState<string | null>(null);
@@ -195,21 +197,47 @@ export const MapaOffline = forwardRef<any, Props>(function MapaOffline(
 
   useEffect(() => {
     if (!userPos || !cameraRef.current?.jumpTo) return;
+    const bearingValue = bearing ?? 0;
+    // Solo rotamos cuando el bearing es distinto de 0 (course-up activo).
+    // En portrait o landscape sin course-up, bearing es 0 y usamos jumpTo como antes.
+    const rotationActive = bearing !== undefined && bearing !== 0;
+
     if (autoFollow) {
       if (!yaCentroRef.current) {
-        // Primera centrada: zoom 16
-        try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude], zoom: 16 }); } catch (e) {}
+        // Primera centrada: zoom 16, con bearing si esta definido
+        try {
+          cameraRef.current.jumpTo({
+            center: [userPos.longitude, userPos.latitude],
+            zoom: 16,
+            bearing: bearingValue,
+          });
+        } catch (e) {}
         yaCentroRef.current = true;
+      } else if (rotationActive) {
+        // Course-up activo: easeTo anima centro + bearing juntos
+        try {
+          cameraRef.current.easeTo({
+            center: [userPos.longitude, userPos.latitude],
+            bearing: bearingValue,
+            duration: 400,
+          });
+        } catch (e) {}
       } else {
-        // Seguimiento continuo: solo cambia el centro, respeta el zoom del usuario
+        // Sin course-up (bearing=0 o undefined): jumpTo instantaneo como antes
         try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude] }); } catch (e) {}
       }
     } else if (!yaCentroRef.current) {
       // Vista de referencia: centra una sola vez y queda estatica
-      try { cameraRef.current.jumpTo({ center: [userPos.longitude, userPos.latitude], zoom: 16 }); } catch (e) {}
+      try {
+        cameraRef.current.jumpTo({
+          center: [userPos.longitude, userPos.latitude],
+          zoom: 16,
+          bearing: bearingValue,
+        });
+      } catch (e) {}
       yaCentroRef.current = true;
     }
-  }, [userPos, autoFollow]);
+  }, [userPos, autoFollow, bearing]);
 
 
   // FIX: recentrar cuando initialCenter llegue después del montaje (reference detail)

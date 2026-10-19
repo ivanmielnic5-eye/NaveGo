@@ -366,6 +366,7 @@ function AppContent() {
       gapMarkers={tracker.gapMarkers}
       autoFollow={true}
       absolute
+      bearing={courseUpActive ? (tracker.currentCog ?? 0) : 0}
     />
 
       <TouchableOpacity style={[glass.mapControl, styles.landscapeCenterButton]} onPress={handleCenterMap}>
@@ -420,6 +421,7 @@ function AppContent() {
       gapMarkers={tracker.gapMarkers}
       autoFollow={true}
             absolute
+            bearing={0}
           />
     <TouchableOpacity style={[glass.mapControl, styles.centerButton]} onPress={handleCenterMap}><Text style={styles.centerButtonText}>CENTRAR</Text></TouchableOpacity>
     </View>
