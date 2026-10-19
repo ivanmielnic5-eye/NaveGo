@@ -31,7 +31,7 @@ export interface ProcessState {
 export type GapAction = 'NONE' | 'OPEN' | 'CLOSE';
 
 /** Motivo de rechazo para navegacion (no para persistencia). */
-export type RejectReason = 'ACCURACY' | 'MIN_DELTA' | null;
+export type RejectReason = 'ACCURACY' | 'MIN_DELTA' | 'GHOST_JUMP' | null;
 
 /** Calidad del fix (se persiste en la DB). */
 export type FixQuality = 'GOOD' | 'SUSPECT' | 'REJECTED';

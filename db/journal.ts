@@ -566,7 +566,7 @@ export async function getProcessedPointsSince(
   return await db.getAllAsync<ProcessedPointRow>(
     `SELECT pp.id, pp.sequence_no, pp.timestamp, pp.lat, pp.lon,
             pp.sog, pp.cog, pp.distance_delta, pp.quality,
-            pp.has_new_point, gf.accuracy
+            pp.has_new_point, pp.reject_reason, gf.accuracy
      FROM processed_points pp
      LEFT JOIN gps_fixes gf
        ON gf.session_id = pp.session_id AND gf.sequence_no = pp.sequence_no
