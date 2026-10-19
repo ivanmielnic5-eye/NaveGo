@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["NaveGoNativeModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.navegonative.NaveGoNativeModule"]
+  }
+}
