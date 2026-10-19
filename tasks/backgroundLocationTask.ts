@@ -20,6 +20,7 @@ import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as SQLite from 'expo-sqlite';
 import { processBatchInDb, type OrchestratorInput } from '../tracker/orchestrator';
+import { BACKGROUND_TEST_ENABLED } from '../devConfig';
 
 export const BACKGROUND_LOCATION_TASK = 'NAVEGO_BACKGROUND_LOCATION';
 
@@ -41,16 +42,22 @@ TaskManager.defineTask(BACKGROUND_LOCATION_TASK, async ({ data, error }) => {
   try {
     const db = await SQLite.openDatabaseAsync('navego.db', { useNewConnection: true });
 
-    let targetSession = await db.getFirstAsync<{ id: string; title: string }>(
-      `SELECT id, title FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
-    );
-    let selectedBy = 'TASK_TEST_ACTIVE';
-    if (!targetSession) {
-      targetSession = await db.getFirstAsync<{ id: string; title: string }>(
-        `SELECT id, title FROM sessions WHERE title != 'TASK_TEST' AND status = 'ACTIVE' ORDER BY start_time DESC LIMIT 1`,
-      );
-      selectedBy = 'PRODUCTION_ACTIVE';
-    }
+      let targetSession: { id: string; title: string } | null = null;
+      let selectedBy = 'PRODUCTION_ACTIVE';
+
+      if (BACKGROUND_TEST_ENABLED) {
+        targetSession = await db.getFirstAsync<{ id: string; title: string }>(
+          `SELECT id, title FROM sessions WHERE title = 'TASK_TEST' AND status = 'ACTIVE' LIMIT 1`,
+        );
+        if (targetSession) selectedBy = 'TASK_TEST_ACTIVE';
+      }
+
+      if (!targetSession) {
+        targetSession = await db.getFirstAsync<{ id: string; title: string }>(
+          `SELECT id, title FROM sessions WHERE title != 'TASK_TEST' AND status = 'ACTIVE' ORDER BY start_time DESC LIMIT 1`,
+        );
+        selectedBy = 'PRODUCTION_ACTIVE';
+      }
 
     // [PIPE][TASK] — instrumentacion Fase 1: seleccion de sesion
     const counters = await db.getFirstAsync<{ n_active: number; n_task_test_active: number }>(
