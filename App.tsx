@@ -214,7 +214,7 @@ function AppContent() {
   const nodeLabel = tracker.syncOk === true ? 'NODO' : tracker.syncOk === false ? 'SIN NODO' : 'NODO...';
 
   const phoneIsHorizontal = accelerometerZ > 0.7;
-  const courseUpActive = isLandscape && phoneIsHorizontal && tracker.smoothedCog !== null && Number(tracker.currentSog || 0) > 0.5;
+  const courseUpActive = isLandscape && phoneIsHorizontal && navStatus === 'CONFIABLE' && Number(tracker.currentSog || 0) > 0.5;
 
   const handleToggleRecord = () => tracker.togglePause();
   const handleReset = () => {
@@ -333,10 +333,6 @@ function AppContent() {
       <ReferenceDetailScreen
       routeId={selectedRouteId}
       onBack={() => setScreen('history')}
-      onUse={() => {
-        setSelectedRouteId(selectedRouteId);
-        setScreen('hud');
-      }}
       />
       </SafeAreaView>
     );
@@ -379,7 +375,7 @@ function AppContent() {
       <View style={[glass.statusChip, styles.landscapeOrientationBadge]}>
       <OrientationIndicator
       isCourseUp={courseUpActive}
-      cog={tracker.smoothedCog ?? null}
+      cog={tracker.currentCog ?? null}
       />
       </View>
 

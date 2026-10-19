@@ -1,12 +1,14 @@
 ﻿import React, { useState } from 'react';
+import type { ComponentProps } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, fonts, glass, spacing, radii } from './theme';
 import { createNaveGoAdapterState } from './cockpit/adapters/navego/NaveGoProjectAdapter';
 
 type ModuleKey = 'estado' | 'trabajo' | 'evidencia' | 'archivos' | 'accion';
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
 
-const modules: { key: ModuleKey; label: string; icon: string }[] = [
+const modules: { key: ModuleKey; label: string; icon: IoniconName }[] = [
   { key: 'estado', label: 'Estado', icon: 'pulse' },
   { key: 'trabajo', label: 'Trabajo', icon: 'flask' },
   { key: 'evidencia', label: 'Evidencia', icon: 'eye' },
