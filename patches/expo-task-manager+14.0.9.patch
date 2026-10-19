@@ -1,0 +1,14 @@
+--- a/node_modules/expo-task-manager/android/src/main/java/expo/modules/taskManager/TaskManagerInternalModule.java	2026-10-19 16:29:58.198714727 -0300
++++ b/node_modules/expo-task-manager/android/src/main/java/expo/modules/taskManager/TaskManagerInternalModule.java	2026-10-19 16:19:40.035725556 -0300
+@@ -61,7 +61,10 @@
+   @Override
+   public void onDestroy() {
+     mUIManager.unregisterLifecycleEventListener(this);
+-    mTaskService.setTaskManager(null, getAppScopeKey(), getAppUrl());
++    // FIX Expo d104b65: NO borrar el TaskManager aqui.
++    // Si lo borramos, la task sigue registrada en el repositorio pero no recibe eventos.
++    // El TaskService se encarga de liberar el manager cuando la app realmente se cierra.
++    // mTaskService.setTaskManager(null, getAppScopeKey(), getAppUrl());
+   }
+ 
+   //endregion
