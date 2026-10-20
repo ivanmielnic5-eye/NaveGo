@@ -248,3 +248,70 @@ El núcleo no auto-ajusta: auto-informa."
 2. Si hay conflicto, marcar como PROPUESTA y no modificar el kernel.
 3. Incorporar solo lo que sea compatible sin romper.
 4. Dejar el resto como roadmap.
+
+## Anexo operativo P48 — ciclo de vida de pendientes LOGOS
+
+**Estado:** procedimiento operativo específico de P48. Este anexo no declara validado el workflow consolidado completo ni modifica el kernel institucional.
+
+### Principios obligatorios
+
+1. La IA inspecciona, propone y aporta evidencia; el Director decide.
+2. Aceptar la implementación no equivale a aceptar el cierre.
+3. No hay aprobación por silencio, cierre automático ni commit automático.
+4. Las pruebas y los mensajes de consola son evidencia; no reemplazan la revisión del diff ni la decisión humana.
+5. No se mezclan cambios ajenos. Si Gate no está READY o una prueba falla, se detiene el flujo.
+6. La raíz de confianza ausente debe permanecer como advertencia visible. No se crea ni se declara verificada por inferencia.
+
+### Secuencia operativa
+
+**1. Inspeccionar sin modificar**
+
+    python3 .logos/bin/logos-pendiente inspeccionar P48
+
+Revisar la sección completa, Gate y estado de Git. Resolver primero cualquier conflicto o cambio ajeno que pudiera quedar incluido en la operación.
+
+**2. Registrar una decisión explícita**
+
+    python3 .logos/bin/logos-pendiente decision P48 --fase implementacion --decision ACEPTO --nota "Justificación"
+
+Las fases admitidas son `implementacion` y `cierre`; las decisiones son `ACEPTO` y `RECHAZO`. Este comando escribe en `EXPEDIENTE/PENDIENTES.md`, pero no actualiza el MANIFEST. Revisar inmediatamente el diff y preservar el historial. No repetir una decisión si ya está registrada.
+
+**3. Ejecutar las verificaciones**
+
+    python3 .logos/bin/logos-pendiente verificar P48 --test .logos/tests/test_logos_pendiente.py --test .logos/tests/test_logos_p48_guards.py
+
+Cada prueba debe terminar correctamente. La verificación también debe confirmar el estado del Gate. No avanzar si hay errores o si la salida no permite confirmar el resultado.
+
+**4. Revisar la reconciliación antes de ejecutarla**
+
+Para el registro de pendientes:
+
+    python3 .logos/bin/logos-pendiente reconciliar-pendientes --dry-run
+
+Para documentar este workflow, si su fuente está registrada en el MANIFEST:
+
+    ./.logos/bin/logos-reconcile mark-reviewed workflow --dry-run
+
+Examinar el diff propuesto. La reconciliación real es una operación separada y solo se realiza con autorización explícita, después de revisar su alcance.
+
+La advertencia `trust: ABSENT` significa que la raíz de confianza no existe y no está verificada. Solo puede reconocerse como advertencia conocida cuando la herramienta confirma explícitamente que aplicó `mark-reviewed`. Cualquier otro error, resultado ambiguo o Gate distinto de READY obliga a detenerse e investigar.
+
+**5. Preparar únicamente los archivos autorizados**
+
+    python3 .logos/bin/logos-pendiente preparar P48 --test .logos/tests/test_logos_pendiente.py --test .logos/tests/test_logos_p48_guards.py --path .logos/bin/logos-pendiente --path .logos/bin/logos-ingesta --path .logos/bin/logos-arranque --path .logos/tests/test_logos_pendiente.py --path .logos/tests/test_logos_p48_guards.py --path EXPEDIENTE/03_WORKFLOW.md --path EXPEDIENTE/PENDIENTES.md
+
+`preparar` no crea commits. Antes de ejecutar, confirmar que el Gate esté READY y que los archivos preparados previamente estén dentro de la lista permitida. Después, revisar `git diff --cached --name-only`, `git diff --cached --check` y el diff preparado completo. No confirmar cambios que no fueron revisados.
+
+**6. Cerrar solo con una segunda decisión humana**
+
+El cierre requiere una decisión de fase `cierre` con `ACEPTO`, registrada por separado, además de las pruebas, el Gate READY y la confirmación textual exacta:
+
+    python3 .logos/bin/logos-pendiente cerrar P48 --confirm "CERRAR P48" --test .logos/tests/test_logos_pendiente.py --test .logos/tests/test_logos_p48_guards.py
+
+Este comando no crea commits. Si falla la reconciliación o el Gate, se debe comprobar el contenido actual antes de cualquier restauración. Si hay cambios concurrentes, no se sobrescriben: se informa el conflicto y se preserva la evidencia para resolución humana.
+
+### Resultado y evidencia
+
+Registrar los comandos ejecutados, sus códigos de salida, los resultados de las pruebas, el Gate final, el diff reconciliado y las advertencias no resueltas. La raíz de confianza ausente permanece explícita hasta que el Director decida cómo resolverla.
+
+Este anexo describe el procedimiento de P48; no constituye una decisión de cierre de P48 ni una aprobación global del documento de workflow.

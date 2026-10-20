@@ -54,11 +54,27 @@ def main():
     except Exception as e:
         gate_raw = f"ERROR consultando gate: {e}"
 
-    # 2. Regenerar brief
+    # 2. Regenerar brief: un fallo impide generar contexto potencialmente obsoleto.
     try:
-        subprocess.run([str(BRIEF), "NAVEGO"], capture_output=True, text=True, cwd=str(REPO))
-    except Exception:
-        pass
+        r = subprocess.run(
+            [str(BRIEF), "NAVEGO"],
+            capture_output=True, text=True, cwd=str(REPO)
+        )
+    except Exception as e:
+        print(f"ERROR: no se pudo ejecutar logos-brief: {e}", file=sys.stderr)
+        return 2
+
+    if r.returncode != 0:
+        print(
+            f"ERROR: logos-brief terminó con código {r.returncode}; "
+            "se cancela la generación del contexto.",
+            file=sys.stderr
+        )
+        if r.stdout.strip():
+            print(r.stdout.rstrip(), file=sys.stderr)
+        if r.stderr.strip():
+            print(r.stderr.rstrip(), file=sys.stderr)
+        return 2
 
     # 3. Leer brief generado
     brief_text = ""

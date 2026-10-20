@@ -1,0 +1,475 @@
+#!/usr/bin/env python3
+"""Coordinador explícito del ciclo de vida de pendientes LOGOS."""
+import argparse
+import datetime
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+PENDING = ROOT / "EXPEDIENTE/PENDIENTES.md"
+GATE = ROOT / ".logos/bin/logos-gate"
+RECONCILE = ROOT / ".logos/bin/logos-reconcile"
+
+
+def git(*args):
+    return subprocess.run(
+        ["git", "-C", str(ROOT), *args],
+        capture_output=True, text=True
+    )
+
+
+def bounds(text, pending_id):
+    lines = text.splitlines()
+    starts = [
+        i for i, line in enumerate(lines)
+        if line.startswith("### ")
+        and line[4:].split()[0] == pending_id
+    ]
+    if len(starts) != 1:
+        raise ValueError(
+            f"{pending_id}: se esperaba una sección; "
+            f"encontradas {len(starts)}"
+        )
+    start = starts[0]
+    end = next(
+        (i for i in range(start + 1, len(lines))
+         if lines[i].startswith("### ")),
+        len(lines)
+    )
+    return lines, start, end
+
+
+def section(text, pending_id):
+    lines, start, end = bounds(text, pending_id)
+    return "\n".join(lines[start:end])
+
+
+def replace_section(text, pending_id, new_lines):
+    lines, start, end = bounds(text, pending_id)
+    return "\n".join(lines[:start] + new_lines + lines[end:]) + "\n"
+
+
+def gate_status():
+    try:
+        result = subprocess.run(
+            [str(GATE), "NAVEGO", "--json"],
+            cwd=ROOT, capture_output=True, text=True
+        )
+        data = json.loads(result.stdout)
+        return data.get("status", "UNKNOWN"), data.get("reasons", [])
+    except (OSError, json.JSONDecodeError) as exc:
+        return "ERROR", [str(exc)]
+
+
+def reconciliation_result_ok(result, output, dry_run=False):
+    trust_absent = "[logos-reconcile] trust: ABSENT" in output
+    updated = "UPDATED: MANIFEST modificado correctamente" in output
+
+    if dry_run:
+        if "DRY-RUN:" not in output:
+            print("ABORTADO: logos-reconcile no confirmó DRY-RUN.")
+            return False
+        if result.returncode == 0:
+            return True
+        if result.returncode == 1 and trust_absent:
+            print("AVISO: DRY-RUN válido con raíz de confianza ausente.")
+            return True
+        print(f"ABORTADO: DRY-RUN terminó con código {result.returncode} sin advertencia reconocida.")
+        return False
+
+    if updated and result.returncode == 0:
+        return True
+
+    documented_warning = (
+        updated
+        and result.returncode == 1
+        and trust_absent
+        and "NOTA: exit code = 1 indica WARNING" in output
+        and "El mark-reviewed se aplicó correctamente." in output
+    )
+    if documented_warning:
+        print("AVISO: MANIFEST actualizado; la raíz de confianza sigue AUSENTE y NO verificada.")
+        return True
+
+    print(
+        f"ABORTADO: logos-reconcile terminó con código {result.returncode}; "
+        "resultado no confirmado."
+    )
+    return False
+
+
+def reconcile_pending():
+    try:
+        result = subprocess.run(
+            [str(RECONCILE), "mark-reviewed", "pending"],
+            cwd=ROOT, capture_output=True, text=True
+        )
+    except OSError as exc:
+        print(f"ERROR: no se pudo ejecutar logos-reconcile: {exc}")
+        return False
+
+    output = result.stdout + result.stderr
+    if output:
+        print(output, end="" if output.endswith("\n") else "\n")
+    return reconciliation_result_ok(result, output)
+
+
+def restore_pending_if_unchanged(expected, original):
+    try:
+        current = PENDING.read_text(encoding="utf-8")
+    except OSError as exc:
+        print(f"ERROR: no se pudo verificar PENDIENTES.md: {exc}")
+        return False
+
+    if current != expected:
+        print(
+            "CONFLICTO: PENDIENTES.md cambió durante la operación; "
+            "no se sobrescriben los cambios concurrentes."
+        )
+        return False
+
+    try:
+        PENDING.write_text(original, encoding="utf-8")
+    except OSError as exc:
+        print(f"ERROR: no se pudo restaurar PENDIENTES.md: {exc}")
+        return False
+
+    return True
+
+
+def run_tests(test_files):
+    ok = True
+    test_root = (ROOT / ".logos/tests").resolve()
+    for value in test_files:
+        path = (ROOT / value).resolve()
+        if not path.is_relative_to(test_root) or path.suffix != ".py":
+            print(f"RECHAZADO: ruta de prueba no permitida: {value}")
+            ok = False
+            continue
+        if not path.is_file():
+            print(f"NO EXISTE la prueba: {value}")
+            ok = False
+            continue
+        print(f"\n=== PRUEBA {path.relative_to(ROOT)} ===")
+        result = subprocess.run([sys.executable, str(path)], cwd=ROOT)
+        print(f"TEST_EXIT={result.returncode}")
+        ok = ok and result.returncode == 0
+    return ok
+
+
+def cmd_inspeccionar(args):
+    text = PENDING.read_text(encoding="utf-8")
+    print(section(text, args.pending_id))
+    status, reasons = gate_status()
+    print(f"\nGATE_STATUS={status}")
+    for reason in reasons:
+        print(f"Razon: {reason}")
+    result = git("status", "--short")
+    print("\n=== ESTADO GIT ===")
+    print(result.stdout or "(sin cambios)")
+    print("Solo lectura: no se modificaron archivos.")
+    return 0
+
+
+def cmd_verificar(args):
+    tests_ok = run_tests(args.test)
+    diff = git("diff", "--check")
+    print(f"\nDIFF_CHECK_EXIT={diff.returncode}")
+    if diff.stdout:
+        print(diff.stdout)
+    if diff.stderr:
+        print(diff.stderr)
+
+    status, reasons = gate_status()
+    print(f"GATE_STATUS={status}")
+    for reason in reasons:
+        print(f"Razon: {reason}")
+
+    if not tests_ok:
+        print("VERIFICACION BLOQUEADA: falló una prueba.")
+        return 2
+    if diff.returncode != 0:
+        print("VERIFICACION BLOQUEADA: git diff --check falló.")
+        return 3
+    if status != "READY":
+        print("VERIFICACION BLOQUEADA: Gate no está READY.")
+        return 4
+
+    print("VERIFICACION OK. Sin cierre ni commit automático.")
+    return 0
+
+
+def cmd_decision(args):
+    if not args.nota.strip():
+        print("ABORTADO: falta la justificación.")
+        return 2
+
+    text = PENDING.read_text(encoding="utf-8")
+    lines, start, end = bounds(text, args.pending_id)
+    block = lines[start:end]
+    if any(line.startswith("- Estado: CERRADO") for line in block):
+        print("ABORTADO: el pendiente ya está cerrado.")
+        return 2
+
+    fase = {
+        "implementacion": "implementación",
+        "cierre": "cierre",
+    }[args.fase]
+    prefix = f"- Decisión del Director ({fase}):"
+    fecha = datetime.date.today().isoformat()
+    record = f"{prefix} {args.decision} ({fecha}): {args.nota.strip()}"
+
+    if record in block:
+        print("Esta decisión ya está registrada; no se duplicó.")
+        return 0
+
+    block.append(record)
+    updated = chr(10).join(lines[:start] + block + lines[end:]) + chr(10)
+    compile(updated, str(PENDING), "exec") if False else None
+
+    import difflib
+    before = chr(10).join(lines[start:end]) + chr(10)
+    after = chr(10).join(block) + chr(10)
+    print("=== CAMBIO PROPUESTO EN EL EXPEDIENTE ===")
+    print("".join(difflib.unified_diff(
+        before.splitlines(True), after.splitlines(True),
+        fromfile=args.pending_id + ":antes",
+        tofile=args.pending_id + ":despues",
+    )))
+    PENDING.write_text(updated, encoding="utf-8")
+    print("Decisión agregada al historial. No se actualizó el MANIFEST.")
+    print("Revise el diff y use reconciliar-pendientes --dry-run antes de confirmar.")
+    return 0
+
+def cmd_reconciliar(args):
+    if args.dry_run:
+        command = [str(RECONCILE), "mark-reviewed", "pending", "--dry-run"]
+    else:
+        if args.confirm != "RECONCILIAR pending":
+            print('ABORTADO: use --confirm "RECONCILIAR pending".')
+            return 2
+        command = [str(RECONCILE), "mark-reviewed", "pending"]
+
+    try:
+        result = subprocess.run(
+            command, cwd=ROOT, capture_output=True, text=True
+        )
+    except OSError as exc:
+        print(f"ERROR: no se pudo ejecutar logos-reconcile: {exc}")
+        return 3
+
+    output = result.stdout + result.stderr
+    if output:
+        print(output, end="" if output.endswith("\n") else "\n")
+
+    if not reconciliation_result_ok(result, output, dry_run=args.dry_run):
+        return 3
+    if args.dry_run:
+        return 0
+
+    status, reasons = gate_status()
+    print(f"GATE_STATUS={status}")
+    for reason in reasons:
+        print(f"Razon: {reason}")
+    return 0 if status == "READY" else 4
+
+
+def cmd_preparar(args):
+    allowed = set()
+    for value in args.path:
+        path = Path(value)
+        if path.is_absolute() or ".." in path.parts:
+            print(f"RECHAZADO: ruta no permitida: {value}")
+            return 2
+        full = (ROOT / path).resolve()
+        if not full.is_relative_to(ROOT) or not full.is_file():
+            print(f"RECHAZADO: no es un archivo del repo: {value}")
+            return 2
+        allowed.add(full.relative_to(ROOT).as_posix())
+
+    if not run_tests(args.test):
+        print("ABORTADO: falló alguna prueba.")
+        return 3
+
+    diff = git("diff", "--check")
+    if diff.returncode:
+        print("ABORTADO: git diff --check falló.")
+        print(diff.stdout, diff.stderr)
+        return 3
+
+    staged_diff = git("diff", "--cached", "--check")
+    if staged_diff.returncode:
+        print("ABORTADO: git diff --cached --check falló.")
+        print(staged_diff.stdout, staged_diff.stderr)
+        return 3
+
+    status, reasons = gate_status()
+    if status != "READY":
+        print(f"ABORTADO: Gate={status}.")
+        for reason in reasons:
+            print(f"Razon: {reason}")
+        return 4
+
+    staged = set(git("diff", "--cached", "--name-only").stdout.splitlines())
+    outside = staged - allowed
+    if outside:
+        print("ABORTADO: hay archivos preparados fuera del alcance:")
+        for value in sorted(outside):
+            print(f"  {value}")
+        return 5
+
+    result = git("add", "--", *sorted(allowed))
+    if result.returncode:
+        print(result.stderr)
+        return 6
+
+    staged_after = set(git("diff", "--cached", "--name-only").stdout.splitlines())
+    outside_after = staged_after - allowed
+    if outside_after:
+        print("ALERTA: archivos fuera del alcance preparados:")
+        for value in sorted(outside_after):
+            print(f"  {value}")
+        return 7
+
+    print("Archivos preparados para revisión; no se creó ningún commit.")
+    print(git("diff", "--cached", "--stat").stdout)
+    return 0
+
+
+def cmd_cerrar(args):
+    expected = f"CERRAR {args.pending_id}"
+    if args.confirm != expected:
+        print(f'ABORTADO: confirmación requerida: --confirm "{expected}"')
+        return 2
+
+    original = PENDING.read_text(encoding="utf-8")
+    block = section(original, args.pending_id)
+    if "- Decisión del Director (cierre): ACEPTO " not in block:
+        print("ABORTADO: falta ACEPTO explícito para el cierre.")
+        return 2
+    if "- Estado: CERRADO" in block:
+        print("El pendiente ya está cerrado.")
+        return 0
+
+    status, reasons = gate_status()
+    if status != "READY":
+        print(f"ABORTADO: Gate previo={status}.")
+        for reason in reasons:
+            print(f"Razon: {reason}")
+        return 3
+    if not run_tests(args.test):
+        print("ABORTADO: falló alguna prueba.")
+        return 4
+    diff = git("diff", "--check")
+    if diff.returncode:
+        print("ABORTADO: git diff --check falló.")
+        return 4
+
+    staged_diff = git("diff", "--cached", "--check")
+    if staged_diff.returncode:
+        print("ABORTADO: git diff --cached --check falló.")
+        print(staged_diff.stdout, staged_diff.stderr)
+        return 4
+
+    lines, start, end = bounds(original, args.pending_id)
+    changed = lines[start:end]
+    states = [
+        i for i, line in enumerate(changed)
+        if line.startswith("- Estado:")
+    ]
+    if len(states) != 1:
+        print("ABORTADO: no hay un único campo Estado.")
+        return 4
+    changed[states[0]] = (
+        f"- Estado: CERRADO ({datetime.date.today().isoformat()}; "
+        "pruebas verificadas por el coordinador)."
+    )
+    updated_text = chr(10).join(lines[:start] + changed + lines[end:]) + chr(10)
+    PENDING.write_text(updated_text, encoding="utf-8")
+
+    if not reconcile_pending():
+        if not restore_pending_if_unchanged(updated_text, original):
+            print("ABORTADO: no se pudo restaurar sin riesgo de pisar cambios.")
+            return 5
+        reconcile_pending()
+        print("ABORTADO: falló la reconciliación; se restauró el expediente original.")
+        return 5
+
+    status, reasons = gate_status()
+    if status != "READY":
+        if not restore_pending_if_unchanged(updated_text, original):
+            print("ABORTADO: Gate final no READY; existe conflicto y no se restauró.")
+            for reason in reasons:
+                print(f"Razon: {reason}")
+            return 6
+
+        restored_reconcile = reconcile_pending()
+        restored_status, restored_reasons = gate_status()
+        print(f"ABORTADO: Gate final={status}; expediente original restaurado.")
+
+        if not restored_reconcile or restored_status != "READY":
+            print(
+                "ADVERTENCIA: la restauración se escribió, pero su reconciliación "
+                f"o Gate no quedó confirmado (reconciliación={restored_reconcile}, "
+                f"Gate={restored_status})."
+            )
+            for reason in restored_reasons:
+                print(f"Razon restauración: {reason}")
+        for reason in reasons:
+            print(f"Razon: {reason}")
+        return 6
+
+    print(f"CERRADO: {args.pending_id}. Gate final READY.")
+    print("No se creó ningún commit.")
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p = sub.add_parser("inspeccionar")
+    p.add_argument("pending_id")
+    p.set_defaults(func=cmd_inspeccionar)
+
+    p = sub.add_parser("decision")
+    p.add_argument("pending_id")
+    p.add_argument("--fase", choices=["implementacion", "cierre"], required=True)
+    p.add_argument("--decision", choices=["ACEPTO", "RECHAZO"], required=True)
+    p.add_argument("--nota", required=True)
+    p.set_defaults(func=cmd_decision)
+
+    p = sub.add_parser("reconciliar-pendientes")
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--confirm")
+    p.set_defaults(func=cmd_reconciliar)
+
+    for name, handler in (
+        ("verificar", cmd_verificar),
+        ("preparar", cmd_preparar),
+    ):
+        p = sub.add_parser(name)
+        p.add_argument("pending_id")
+        p.add_argument("--test", action="append", required=True)
+        if name == "preparar":
+            p.add_argument("--path", action="append", required=True)
+        p.set_defaults(func=handler)
+
+    p = sub.add_parser("cerrar")
+    p.add_argument("pending_id")
+    p.add_argument("--confirm", required=True)
+    p.add_argument("--test", action="append", required=True)
+    p.set_defaults(func=cmd_cerrar)
+
+    args = parser.parse_args()
+    try:
+        return args.func(args)
+    except (OSError, ValueError) as error:
+        print(f"ERROR: {error}")
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

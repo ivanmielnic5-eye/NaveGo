@@ -174,7 +174,7 @@ def cmd_commit(archivo, mensaje, push=False):
         print("ERROR en git add:")
         print(add.stderr)
         return 1
-    commit = subprocess.run(["git", "-C", root, "commit", "-m", mensaje], capture_output=True, text=True)
+    commit = subprocess.run(["git", "-C", root, "commit", "--only", "-m", mensaje, "--", abs_archivo], capture_output=True, text=True)
     if commit.returncode != 0:
         print("ERROR en git commit:")
         print(commit.stderr)
