@@ -1,0 +1,12 @@
+{
+  "traj_id": "recta_const_5kn",
+  "seed": 8100,
+  "T0_ms": 1790279042897,
+  "gnss_cfg": {
+    "noise_sigma_m": 3.0,
+    "cut_windows": []
+  },
+  "events": [],
+  "fixes_sha256": "c29f571c4c2f8d2b38e943ca9d610a82279f425c5bfa5ebbc634ff08ce392068",
+  "fixes_path": "fixes/fixes_recta_const_5kn_s3.0_8100.jsonl"
+}

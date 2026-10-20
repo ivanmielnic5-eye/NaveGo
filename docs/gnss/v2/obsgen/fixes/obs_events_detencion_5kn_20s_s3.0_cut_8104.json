@@ -1,0 +1,29 @@
+{
+  "traj_id": "detencion_5kn_20s",
+  "seed": 8104,
+  "T0_ms": 1790279042897,
+  "gnss_cfg": {
+    "noise_sigma_m": 3.0,
+    "cut_windows": [
+      {
+        "start_s": 210,
+        "duration_s": 5
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "cut",
+      "start_s": 210,
+      "duration_s": 5,
+      "advance_m": 12.86
+    },
+    {
+      "type": "missing_fix",
+      "timestamp_expected": 1790279252897,
+      "reason": "cut"
+    }
+  ],
+  "fixes_sha256": "a9c2a13685117cb8e2045f001e9d7f721028cde4d4c1769fc4984718d990ebea",
+  "fixes_path": "fixes/fixes_detencion_5kn_20s_s3.0_cut_8104.jsonl"
+}

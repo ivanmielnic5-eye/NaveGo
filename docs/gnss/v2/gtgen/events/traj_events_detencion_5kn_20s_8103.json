@@ -1,0 +1,24 @@
+{
+  "traj_id": "detencion_5kn_20s",
+  "seed": 8103,
+  "duration_s": 300,
+  "events": [
+    {
+      "type": "speed_change",
+      "t_s": 0,
+      "v_old_ms": null,
+      "v_new_ms": 2.572228
+    },
+    {
+      "type": "stop",
+      "t_start_s": 200,
+      "t_end_s": 220
+    },
+    {
+      "type": "speed_change",
+      "t_s": 220,
+      "v_old_ms": 0.0,
+      "v_new_ms": 2.572228
+    }
+  ]
+}
