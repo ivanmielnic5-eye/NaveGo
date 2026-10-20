@@ -90,3 +90,5 @@ Ver eval/run_all.py. Por ahora, no ejecutar.
 
 Este pipeline se apoya en la auditoría de V1. Cualquier divergencia con
 los informes de V1 se reporta como hallazgo, no como bug de V2.
+
+> *Nota (2026-10-20): Se añadió la Sección 14 en HALLAZGOS_FASE_A_v1.md documentando el desacople entre el watchdog y el umbral adaptativo mediante un barrido de cortes (2s a 30s).*

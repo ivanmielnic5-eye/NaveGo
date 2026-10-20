@@ -412,3 +412,39 @@ fueron commiteados ni pusheados.
 No atribuir al commit 7b17426 lo que solo existe localmente. La
 publicacion de estos cambios requiere un nuevo commit + push, con
 aprobacion explicita separada.
+
+## 14. Interacción entre el watchdog y el umbral adaptativo: barrido de duración de cortes
+
+### 14.1 Contexto y origen de los datos
+Este apartado documenta un barrido exploratorio (Fase A) sobre la duración de los cortes de señal, ejecutado con 30 semillas (8100 a 8129), navegación recta a 5 nudos y ruido posicional de 1.0 m. 
+**Nota sobre trazabilidad:** Los datos absolutos de distancia para cada método no fueron impresos en la salida de la terminal (solo se reportaron las diferencias y el DiD). Los archivos JSON crudos generados durante esta prueba se almacenaron temporalmente en `/tmp` y fueron eliminados. Para auditar los valores absolutos, será necesario volver a ejecutar el script de barrido con persistencia de datos.
+
+### 14.2 Tabla de resultados observados
+Los resultados reportados (en metros) son:
+
+| Duración del corte | % detección visual (watchdog B) | B pierde (S6'-S6) | DiD (B-A) | Observación |
+| :--- | :--- | :--- | :--- | :--- |
+| 2 s | 0% | +1.09 | +0.03 ± 0.08 | Falla el umbral y el watchdog. |
+| 5 s | 0% | +2.12 | +11.57 ± 2.80 | Falla el umbral y el watchdog. |
+| 10 s | 0% | +4.35 | +28.32 ± 0.39 | Falla el umbral y el watchdog. |
+| 14 s | 0% | +5.72 | +38.59 ± 0.58 | Falla el umbral y el watchdog. |
+| 16 s | **100%** | +6.63 | +43.48 ± 0.50 | El watchdog detecta el gap, pero el filtro suma la distancia. |
+| 20 s | **100%** | +8.20 | +53.75 ± 0.34 | El watchdog detecta el gap, pero el filtro suma la distancia. |
+| 30 s | **100%** | +12.15 | +79.39 ± 0.55 | El watchdog detecta el gap, pero el filtro suma la distancia. |
+
+### 14.3 Hipótesis de desacople: Detección visual vs. Contabilización de distancia
+El hallazgo central sugiere una inconsistencia de diseño entre dos mecanismos que operan de forma independiente en el método B:
+1. **El watchdog** (basado en `receivedAt`) abre un `gap_event` cuando el intervalo entre recepciones supera los 15 segundos. Esto explica por qué el porcentaje de detección pasa de 0% a 100% en el corte de 16s.
+2. **El umbral adaptativo de `processFix`** (basado en `measuredAt`, velocidad y precisión) evalúa el salto geométrico del fix. 
+
+Para una embarcación a velocidad constante, el desplazamiento durante el corte crece como \(v \cdot \Delta t\). Sin embargo, el umbral adaptativo de B se calcula como `max(15, speed * dt * 2.0 + accuracy * 3.0)`. Al tener un factor multiplicador por 2.0 sobre la velocidad y el tiempo, el umbral crece el doble de rápido que el salto real. Por lo tanto, **el salto queda por debajo del umbral y es aceptado**, sumando la distancia no observada, aun cuando visualmente el watchdog haya detectado y dibujado la interrupción.
+
+### 14.4 Comprobaciones necesarias antes de generalizar
+No se debe afirmar que C_v2 es robusto frente a entregas irregulares hasta tanto:
+- Se verifique que la implementación de C_v2 utilice estrictamente `measuredAt` en su criterio temporal (`dt > 2s`) y no `receivedAt`.
+- Se diseñen y prueben escenarios con latencia variable (`latency_jitter_ms`) y entregas agrupadas (`batch_delivery_s`) que pongan a prueba esta distinción.
+
+### 14.5 Limitaciones de este barrido
+- Solo se evaluó una trayectoria recta a 5 nudos con ruido posicional gaussiano de 1.0 m.
+- No se aplicaron controles emparejados con latencia o pérdida de paquetes.
+- Los resultados demuestran un comportamiento en este simulador específico y no se extrapolan automáticamente a todas las condiciones de navegación real.

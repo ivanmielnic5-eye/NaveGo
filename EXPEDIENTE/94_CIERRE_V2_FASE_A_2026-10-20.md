@@ -145,3 +145,5 @@ Distincion local vs publicado:
 - Working tree local: C7/C8 PASS, corrida 121820. NO commiteado.
 - El pendiente #1 original quedo resuelto a nivel working tree. Su
   publicacion requiere commit + push con aprobacion separada.
+
+> *Nota (2026-10-20): Se añadió la Sección 14 en HALLAZGOS_FASE_A_v1.md documentando el desacople entre el watchdog y el umbral adaptativo mediante un barrido de cortes (2s a 30s).*
