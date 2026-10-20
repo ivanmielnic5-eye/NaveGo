@@ -448,3 +448,21 @@ No se debe afirmar que C_v2 es robusto frente a entregas irregulares hasta tanto
 - Solo se evaluó una trayectoria recta a 5 nudos con ruido posicional gaussiano de 1.0 m.
 - No se aplicaron controles emparejados con latencia o pérdida de paquetes.
 - Los resultados demuestran un comportamiento en este simulador específico y no se extrapolan automáticamente a todas las condiciones de navegación real.
+
+## 15. Implementación exploratoria del modelo de ruido AR(1)
+
+### 15.1 Contexto y motivación
+El análisis de tracks reales (velero y lancha) reveló que la autocorrelación de los errores GNSS tiene memoria temporal (cercana a 0.95 en el track del velero Nola), a diferencia del modelo IID (ruido blanco) que utilizaba el simulador originalmente. Para acercar el laboratorio a la realidad sin romper la retrocompatibilidad, se modificó `tools/gnss_simulator.py` para aceptar un parámetro opcional `noise_model` ("IID" o "AR1") y `noise_rho`.
+
+### 15.2 Resultados de la validación empírica
+Se ejecutó una simulación de 300 observaciones (1 Hz) para contrastar ambos modelos con una semilla fija y un σ configurado de 1.0 m.
+
+| Configuración | Autocorrelación observada | Desviación estándar observada |
+| :--- | :--- | :--- |
+| IID, σ = 1.0 m | -0.011 | 0.983 m |
+| AR(1), ρ = 0.95 | 0.924 | 0.821 m |
+
+### 15.3 Precisión estadística y límites del resultado
+- **Autocorrelación:** El modelo AR(1) demuestra empíricamente una dependencia temporal fuerte, coherente con la memoria del ruido real. El valor observado (0.924) se encuentra dentro del margen de error estadístico esperado para 300 muestras con un ρ teórico de 0.95.
+- **Desviación estándar:** La expectativa teórica indicaba que la desviación estándar (con la innovación escalada por \(\sigma_\eta = \sigma\sqrt{1-\rho^2}\)) debía estabilizarse cerca de 1.0 m. El valor observado fue 0.821 m. Esta discrepancia podría estar asociada al régimen transitorio (inicialización en cero del estado AR-1), pero **esta explicación no ha sido verificada matemáticamente en esta corrida**. Se registra la diferencia como un hallazgo pendiente de calibración y auditoría del generador de ruido.
+- **Alcance:** La incorporación de AR(1) dota al laboratorio de una herramienta configurable para pruebas de estrés con ruido temporalmente correlacionado. No se declara que el simulador en su conjunto esté "validado industrialmente" ni que AR(1) sea el único modelo universal del error GNSS.
