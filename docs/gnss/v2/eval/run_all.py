@@ -27,6 +27,7 @@ import datetime
 import json
 import os
 import statistics
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,6 +42,9 @@ GT_DIR = os.path.join(BASE, 'gtgen', 'trajectories')
 TRAJ_EVENTS_DIR = os.path.join(BASE, 'gtgen', 'events')
 FIXES_DIR = os.path.join(BASE, 'obsgen', 'fixes')
 OUT_BASE = os.path.join(BASE, 'results')
+REPO_ROOT = os.path.abspath(os.path.join(BASE, '..', '..', '..'))
+V1_DIRS = ['docs/gnss/exp_dist', 'docs/gnss/exp_ruido_vs_gap',
+           'docs/gnss/exp_gaps_avance']
 
 SEEDS = list(range(8100, 8105))
 
@@ -310,19 +314,43 @@ def _criteria_bloqueantes(rows, aggregates):
         c6['detail'] = detail[:10]
     crit['C6_rama_speed_baja'] = c6
 
-    # C7: recuperacion - se valida en test_recovery.py, aca SKIP
-    crit['C7_recuperacion'] = {
-        'name': 'Recuperacion tras rechazos (N=1,2,3,5)',
-        'status': 'SKIP',
-        'detail': ['ver tests/test_recovery.py'],
-    }
+    # C7: recuperacion tras rechazos (integra test_recovery.py como subprocess)
+    c7 = {'name': 'Recuperacion tras rechazos (N=1,2,3,5)',
+          'status': 'SKIP', 'detail': []}
+    rec_test = os.path.join(BASE, 'tests', 'test_recovery.py')
+    if not os.path.exists(rec_test):
+        c7['detail'] = ['no existe ' + rec_test]
+    else:
+        r7 = subprocess.run([sys.executable, rec_test],
+                            capture_output=True, text=True, cwd=REPO_ROOT)
+        if r7.returncode == 0:
+            c7['status'] = 'PASS'
+            c7['detail'] = ['test_recovery.py exit 0']
+        else:
+            c7['status'] = 'FAIL'
+            tail = (r7.stdout or '').strip().split('\n')[-3:]
+            c7['detail'] = ['exit ' + str(r7.returncode)] + tail
+    crit['C7_recuperacion'] = c7
 
-    # C8: V1 intacto - no evaluable desde el script, SKIP
-    crit['C8_v1_intacto'] = {
-        'name': 'V1 intacto (git status exp_*)',
-        'status': 'SKIP',
-        'detail': ['verificar con git status post-corrida'],
-    }
+    # C8: V1 intacto (git status --porcelain sobre V1_DIRS)
+    c8 = {'name': 'V1 intacto (git status exp_*)',
+          'status': 'SKIP', 'detail': []}
+    try:
+        r8 = subprocess.run(['git', 'status', '--porcelain'] + V1_DIRS,
+                            capture_output=True, text=True, cwd=REPO_ROOT)
+        if r8.returncode != 0:
+            c8['status'] = 'FAIL'
+            c8['detail'] = ['git fallo: ' + (r8.stderr or '').strip()[:200]]
+        elif (r8.stdout or '').strip():
+            c8['status'] = 'FAIL'
+            c8['detail'] = (r8.stdout or '').strip().split('\n')[:5]
+        else:
+            c8['status'] = 'PASS'
+            c8['detail'] = ['git status vacio en V1_DIRS']
+    except Exception as e:
+        c8['status'] = 'FAIL'
+        c8['detail'] = ['excepcion: ' + str(e)]
+    crit['C8_v1_intacto'] = c8
 
     return crit
 
@@ -438,6 +466,9 @@ def run(phase, scenarios_filter=None, methods_filter=None):
     if missing:
         print('Revisar missing: %d combinaciones' % len(missing))
 
+    n_fail = sum(1 for v in crit.values() if v.get('status') == 'FAIL')
+    return 0 if n_fail == 0 else 1
+
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
@@ -445,4 +476,4 @@ if __name__ == '__main__':
     p.add_argument('--scenarios', nargs='+', default=None)
     p.add_argument('--methods', nargs='+', default=None)
     args = p.parse_args()
-    run(args.phase, args.scenarios, args.methods)
+    sys.exit(run(args.phase, args.scenarios, args.methods))

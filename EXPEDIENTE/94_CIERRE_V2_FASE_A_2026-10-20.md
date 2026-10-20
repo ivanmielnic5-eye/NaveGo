@@ -9,7 +9,7 @@ ground truth, no un algoritmo; 160 corridas con B_m constante).
 
 ## Que se hizo
 
-Pipeline V2 completo, 9 archivos bajo docs/gnss/v2/:
+Pipeline V2 completo, 10 archivos bajo docs/gnss/v2/:
 - gtgen/gen_traj.py + events_schema.md: generador de GT y etiquetas
   de trayectoria. 4 trayectorias (recta_const_5kn, detencion_5kn_20s,
   lenta_1ms, virada_5kn_90_150s).
@@ -82,7 +82,11 @@ Ambas corridas preservadas. No se sobrescriben.
 - C_v2 agregado a methods.py como variante experimental (Opcion A:
   solo dt>2s). C_orig conservado como referencia historica.
 
-## Estado al cierre
+## Estado al cierre del 2026-10-20 (snapshot historico, no actualizado)
+
+NOTA HISTORICA: este bloque registra el estado al momento del primer
+cierre. Ver "Actualizacion 2026-10-20 12:18" al final para el estado
+posterior (C7 y C8 PASS en corrida v2_20261020_121820).
 
 - Fase A: 5/5 criterios evaluables aprobados (C1, C3, C4, C5, C6).
 - C7 (recuperacion) y C8 (V1 intacto): diferidos explicitamente. NO
@@ -94,8 +98,10 @@ Ambas corridas preservadas. No se sobrescriben.
 
 ## Pendientes para proxima sesion
 
-1. Integrar C7 (test_recovery.py) y C8 (git status V1) como criterios
-   automatizados en run_all.py.
+1. [RESUELTO a nivel working tree, pendiente de publicacion]
+   Integrar C7 (test_recovery.py) y C8 (git status V1) como criterios
+   automatizados en run_all.py. Ver "Actualizacion 2026-10-20 12:18"
+   al final.
 2. Disenar control S6' sin corte (misma trayectoria, seed, sigma, con
    las mismas observaciones fuera de la ventana de corte) para aislar
    causalidad del +29.4m en S6.
@@ -118,3 +124,24 @@ El problema de medir bien no es solo el manejo de gaps: sumar
 distancias entre puntos GPS ruidosos infla el recorrido por diseno
 geometrico. Eso es el proximo problema a resolver, y es mas grande
 que el track honesto.
+
+## Actualizacion 2026-10-20 12:18
+
+Continuacion post-cierre. Se integraron C7 y C8 en run_all.py como
+criterios automatizados. Corrida de referencia: v2_20261020_121820
+(n_rows: 440, n_missing: 0, exit code: 0, 7/7 PASS).
+
+Estado actual (working tree, NO publicado):
+- Fase A: 7/7 criterios evaluables PASS (incluye C7 y C8).
+- C7 PASS: test_recovery.py exit 0, corrido como subprocess desde
+  run_all.py.
+- C8 PASS: git status --porcelain vacio sobre V1_DIRS.
+- Corridas preservadas: 040923, 042653, 121614 (fallida por bug C.1),
+  121820 (referencia).
+
+Distincion local vs publicado:
+- Commit 7b17426 en origin/v2-track-honesto: pipeline V2 hasta 042653,
+  C7/C8 SKIP.
+- Working tree local: C7/C8 PASS, corrida 121820. NO commiteado.
+- El pendiente #1 original quedo resuelto a nivel working tree. Su
+  publicacion requiere commit + push con aprobacion separada.

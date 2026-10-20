@@ -306,7 +306,11 @@ C_pair_v2 no se presenta como ganadora ni como solucion recomendada para
 produccion. Queda registrada como linea experimental futura, a evaluar
 en Fase B o en una corrida dedicada, con su propia aprobacion explicita.
 
-## 12. Estado de Fase A - criterios diferidos
+## 12. Estado de Fase A al cierre del 2026-10-20 (corrida v2_20261020_042653)
+
+NOTA HISTORICA: esta seccion registra el estado al momento del primer
+cierre de Fase A. Ver seccion 13 para la actualizacion posterior
+(corrida v2_20261020_121820, C7 y C8 PASS).
 
 Criterios evaluables aprobados en la corrida v2_20261020_042653:
 
@@ -359,3 +363,52 @@ Proxima reanudacion: pendiente de decision del Director. Pasos posibles
    batch_delivery_s, cortes 30s/60s.
 
 Ninguno de estos pasos se ejecuta sin aprobacion explicita del Director.
+
+## 13. Actualizacion post-cierre (2026-10-20 12:18)
+
+Continuacion de la sesion del 2026-10-20. Se integraron C7 y C8 en
+run_all.py como criterios automatizados. Corrida de referencia:
+v2_20261020_121820 (n_rows: 440, n_missing: 0, exit code: 0, 7/7 PASS).
+
+### Criterios C7 y C8 - PASS en la corrida de referencia
+
+- C7 (Recuperacion tras rechazos, N = 1, 2, 3, 5): PASS
+  Detail: test_recovery.py exit 0 (corrido como subprocess desde
+  run_all.py, cwd=REPO_ROOT).
+
+- C8 (V1 intacto): PASS
+  Detail: git status --porcelain vacio sobre V1_DIRS (exp_dist,
+  exp_ruido_vs_gap, exp_gaps_avance), corrido como subprocess desde
+  run_all.py.
+
+C7 y C8 quedaron integrados en run_all.py como criterios automatizados
+que hacen fallar la corrida (exit code != 0) si no pasan. Antes de la
+integracion, run_all.py devolvia siempre exit code 0.
+
+### Corridas preservadas (historial completo)
+
+- v2_20261020_040923: corrida inicial, 385 filas. C1 y C5 FAIL por
+  criterios originales (C1 umbral 0.5m mas fino que el sesgo geodesico
+  de -0.864m; C5 err_m_B absoluto sin descontar ruido geometrico base).
+- v2_20261020_042653: 440 filas con C_v2 agregado. C1 y C5 reformulados
+  PASS. C7 y C8 SKIP (aun no integrados). Es la corrida historica
+  referenciada por la seccion 12.
+- v2_20261020_121614: 440 filas. C7 SKIP por bug en path
+  (BASE/../tests/ inexistente); C8 FAIL por bug en REPO_ROOT
+  (3 niveles en lugar de 4, git status desde docs/). Bug introducido
+  durante la integracion C.1, no en el codigo original. Preservada
+  como evidencia del fallo intermedio.
+- v2_20261020_121820: corrida de referencia, 7/7 PASS.
+
+### Estado local vs estado publicado
+
+El commit 7b17426 en origin/v2-track-honesto (rama publicada el
+2026-10-20 antes de esta continuacion) contiene el pipeline V2 hasta
+la corrida v2_20261020_042653 y C7/C8 como SKIP. Los cambios
+posteriores (integracion C7/C8 en run_all.py, corrida
+v2_20261020_121820) estan en el working tree local y todavia NO
+fueron commiteados ni pusheados.
+
+No atribuir al commit 7b17426 lo que solo existe localmente. La
+publicacion de estos cambios requiere un nuevo commit + push, con
+aprobacion explicita separada.
