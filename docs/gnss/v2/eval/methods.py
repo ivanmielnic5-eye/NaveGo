@@ -3,7 +3,7 @@
 Metodos A, B, C para V2 - Componente C de V2.
 
 A  - filtro historico (15 m + 0,8 m)
-B  - produccion real (orchestrator.ts + processFix.ts), PENDIENTE_DE_VERIFICACION
+B  - produccion real (orchestrator.ts + processFix.ts), VERIFICADO F.4/F.5
 C  - clasificador experimental con accion
 
 Variantes C:

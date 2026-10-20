@@ -8,7 +8,7 @@ Pipeline experimental para comparar tres métodos de filtrado de distancia
 GNSS bajo condiciones controladas y reproducibles:
 
 - A  — filtro histórico (umbral fijo 15 m + delta mínimo 0,8 m)
-- B  — producción real (`orchestrator.ts` + `processFix.ts`), PENDIENTE_DE_VERIFICACION
+- B  — producción real (`orchestrator.ts` + `processFix.ts`), VERIFICADO F.4/F.5 (límites en SOG/COG)
 - C  — clasificador experimental (ΔreceivedAt > 2 s) OR (speed <= 0.3 m/s)
        con acción operativa (C.5.1: abre gap_event en GAP_REAL)
 
@@ -35,7 +35,7 @@ GNSS bajo condiciones controladas y reproducibles:
    - Watchdog de B usa receivedAt.
    - processFix.dtSec de B usa measuredAt.
    - Vinculación fix↔GT usa measuredAt (nunca receivedAt).
-5. B PENDIENTE_DE_VERIFICACION: las zonas F.4 (processFix.ts 200-280)
+5. B VERIFICADO (F.4/F.5): las zonas F.4 (processFix.ts 200-280)
    y F.5 (useNaveGoTracker.ts inline) están marcadas con TODO(F.4) /
    TODO(F.5) en eval/methods.py. No se declara que B reproduce
    producción hasta cerrar esas verificaciones.
