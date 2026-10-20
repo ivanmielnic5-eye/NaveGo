@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Context Gate. Uso: logos-gate [PROYECTO] [--json]"""
 import json, os, sys, subprocess, hashlib, datetime
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'lib'))
+from logos_trust_lib import verify_manifest_trust
 
 REPO = os.getcwd()
 MANIFEST = os.path.join(REPO, '.logos/MANIFEST.json')
@@ -322,6 +324,14 @@ if checks['manifest'] != 'BLOCKED':
         checks['drift'] = 'OK'
 else:
     checks['drift'] = 'SKIP'
+
+# 3c. Root of trust v1: fail-closed. READY exige referencia externa válida.
+trust_state, trust_detail = verify_manifest_trust(PROYECTO, MANIFEST, REPO)
+if trust_state == "VERIFIED":
+    checks['trust'] = 'OK'
+else:
+    checks['trust'] = 'BLOCKED'
+    reasons.append('root_of_trust:' + trust_detail)
 
 # 4. Status final
 if any(v == 'BLOCKED' for v in checks.values()) or reasons:

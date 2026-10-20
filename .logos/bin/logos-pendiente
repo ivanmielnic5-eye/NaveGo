@@ -65,6 +65,9 @@ def gate_status():
 
 def reconciliation_result_ok(result, output, dry_run=False):
     trust_absent = "[logos-reconcile] trust: ABSENT" in output
+    if trust_absent:
+        print("ABORTADO: raíz de confianza ausente; reconciliación rechazada por política fail-closed.", file=sys.stderr)
+        return False
     updated = "UPDATED: MANIFEST modificado correctamente" in output
 
     if dry_run:

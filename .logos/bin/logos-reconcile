@@ -19,6 +19,9 @@ import sys
 import tempfile
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'lib'))
+from logos_trust_lib import verify_manifest_trust
 from typing import Any
 
 _LIB_DIR = Path(__file__).resolve().parent.parent / "lib"
@@ -144,39 +147,13 @@ def trust_path(project: str) -> Path:
 
 
 def verify_root_of_trust(project: str, manifest: Path) -> tuple[str, int]:
-    """
-    Verifica el root of trust si existe.
-    Devuelve (estado, exit_code_sugerido):
-        - ("VERIFIED", 0)    → trust existe y hash coincide
-        - ("ABSENT", 1)      → trust no existe (WARNING, no bloquea)
-        - lanza RuntimeError → trust existe pero hash no coincide (BLOCKED)
-    """
-    trust = trust_path(project)
-    if not trust.exists():
-        warn(f"root of trust no existe: {trust}")
-        return "ABSENT", EXIT_WARNING
-
-    data = load_json(trust, "root of trust")
-    approved_hash = data.get("approved_manifest_sha256")
-    approved_commit = data.get("approved_manifest_commit")
-
-    if not isinstance(approved_hash, str) or not approved_hash:
-        raise RuntimeError("root of trust no contiene approved_manifest_sha256 válido")
-    if not isinstance(approved_commit, str) or not approved_commit:
-        raise RuntimeError("root of trust no contiene approved_manifest_commit válido")
-
-    current_hash = sha256_file(manifest)
-    if current_hash != approved_hash:
-        raise RuntimeError(
-            "el MANIFEST actual no coincide con approved_manifest_sha256; "
-            "no se marca ninguna fuente"
-        )
-
-    print(
-        "[logos-reconcile] root of trust: OK "
-        f"(approved_manifest_commit={approved_commit})"
-    )
+    """Fail closed unless the external root pins this exact MANIFEST and an ancestor commit."""
+    state, detail = verify_manifest_trust(project, manifest, manifest.resolve().parent.parent)
+    if state != "VERIFIED":
+        raise RuntimeError(detail)
+    print(f"[logos-reconcile] {detail}")
     return "VERIFIED", EXIT_OK
+
 
 
 def render_manifest(data: dict[str, Any], trailing: str = "\n") -> str:

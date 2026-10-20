@@ -271,6 +271,7 @@ class ConsumerFailureTests(unittest.TestCase):
                 ".logos/bin/logos-gate",
                 ".logos/bin/validate-manifest",
                 ".logos/lib/logos_hash_lib.py",
+                ".logos/lib/logos_trust_lib.py",
             ):
                 shutil.copy2(ROOT / relative, root / relative)
 
@@ -341,6 +342,43 @@ class ConsumerFailureTests(unittest.TestCase):
                 json.dumps(manifest, indent=2), encoding="utf-8"
             )
 
+            # Crear la aprobación para el manifiesto de este repo temporal.
+            run_git(root, "init", "-q")
+            run_git(root, "config", "user.name", "LOGOS Tests")
+            run_git(root, "config", "user.email", "logos-tests@example.invalid")
+            run_git(root, "add", ".logos/MANIFEST.json")
+            run_git(root, "commit", "-q", "-m", "test: approve temporary manifest")
+            approved_commit = run_git(root, "rev-parse", "HEAD").stdout.strip()
+            approved_hash = hashlib.sha256(
+                (root / ".logos/MANIFEST.json").read_bytes()
+            ).hexdigest()
+
+            # La confianza temporal queda fuera del repositorio de prueba.
+            test_home = pathlib.Path(tempfile.mkdtemp(prefix="p32-gate-home-"))
+            os.chmod(test_home, 0o700)
+            trust_dir = test_home / ".logos" / "trust"
+            trust_dir.mkdir(parents=True, mode=0o700)
+            trust_dir.chmod(0o700)
+            trust_file = trust_dir / "NAVEGO.json"
+            trust_file.write_text(
+                json.dumps({
+                    "schema_version": "1.0",
+                    "project": "NAVEGO",
+                    "approved_manifest_commit": approved_commit,
+                    "approved_manifest_sha256": approved_hash,
+                }, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            trust_file.chmod(0o600)
+
+            test_env = os.environ.copy()
+            test_env["HOME"] = str(test_home)
+            test_env.pop("PYTHONPATH", None)
+            test_env.pop("PYTHONHOME", None)
+            for key in list(test_env):
+                if key.startswith("GIT_"):
+                    test_env.pop(key, None)
+
             blocked = blocked_pending if required_failure else blocked_simulator
             os.chmod(blocked, 0)
             try:
@@ -354,9 +392,13 @@ class ConsumerFailureTests(unittest.TestCase):
                     cwd=root,
                     capture_output=True,
                     text=True,
+                    env=test_env,
                 )
             finally:
-                os.chmod(blocked, 0o700)
+                try:
+                    os.chmod(blocked, 0o700)
+                finally:
+                    shutil.rmtree(test_home, ignore_errors=True)
 
             self.assertEqual(
                 process.returncode, expected_code,
@@ -499,6 +541,10 @@ class ConsumerFailureTests(unittest.TestCase):
             before = manifest_path.read_bytes()
             os.chmod(blocked, 0)
             try:
+                # LOGOS TEST: dependencia de confianza aislada
+                trust_lib_path = pathlib.Path(root) / '.logos' / 'lib' / 'logos_trust_lib.py'
+                trust_lib_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / ".logos/lib/logos_trust_lib.py", trust_lib_path)
                 process = subprocess.run(
                     [
                         sys.executable,
@@ -539,6 +585,10 @@ class AtomicWriteTests(unittest.TestCase):
                 spec = importlib.util.spec_from_loader(name, loader)
                 self.assertIsNotNone(spec)
                 module = importlib.util.module_from_spec(spec)
+                # LOGOS TEST: dependencia de confianza para loader
+                atomic_trust_lib = pathlib.Path(loader.path).resolve().parents[1] / 'lib' / 'logos_trust_lib.py'
+                atomic_trust_lib.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / ".logos/lib/logos_trust_lib.py", atomic_trust_lib)
                 loader.exec_module(module)
             finally:
                 sys.path[:] = old_path

@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""Administración explícita de la raíz de confianza v1 de LOGOS.
+
+Comandos: inspeccionar, preparar (no escribe), aprobar.
+Una re-aprobación de una raíz existente exige --reaprobar y una confirmación
+más específica. No realiza commits ni actualiza el MANIFEST automáticamente.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+from datetime import datetime
+
+REPO = Path.cwd().resolve()
+MANIFEST = REPO / ".logos" / "MANIFEST.json"
+VALIDATOR = REPO / ".logos" / "bin" / "validate-manifest"
+
+# Import from the repository's shared LOGOS library, independent of cwd elsewhere.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
+from logos_trust_lib import trust_path, verify_manifest_trust  # noqa: E402
+
+
+def run_git(*args: str) -> str:
+    r = subprocess.run(["git", "-C", str(REPO), *args], capture_output=True, text=True)
+    if r.returncode:
+        raise RuntimeError((r.stderr or r.stdout or "git falló").strip())
+    return r.stdout.strip()
+
+
+def manifest_state() -> tuple[str, str]:
+    if not MANIFEST.is_file():
+        raise RuntimeError(f"MANIFEST ausente: {MANIFEST}")
+    diff = subprocess.run(
+        ["git", "-C", str(REPO), "diff", "--quiet", "HEAD", "--", ".logos/MANIFEST.json"],
+        check=False,
+    )
+    if diff.returncode != 0:
+        raise RuntimeError("MANIFEST tiene cambios staged o sin stage; primero hay que revisarlo y persistirlo en Git")
+    validator = subprocess.run(
+        [str(VALIDATOR), str(MANIFEST)], cwd=REPO, capture_output=True, text=True
+    )
+    if validator.returncode != 0:
+        raise RuntimeError(
+            "validate-manifest no aprobó el MANIFEST; no se puede confiar en él.\n"
+            + (validator.stdout or "") + (validator.stderr or "")
+        )
+    head = run_git("rev-parse", "HEAD")
+    digest = hashlib.sha256(MANIFEST.read_bytes()).hexdigest()
+    return head, digest
+
+
+def cmd_inspeccionar(args: argparse.Namespace) -> int:
+    state, detail = verify_manifest_trust(args.project, MANIFEST, REPO)
+    print(f"Proyecto: {args.project}")
+    print(f"MANIFEST: {MANIFEST}")
+    print(f"Estado: {state}")
+    print(f"Detalle: {detail}")
+    try:
+        print(f"HEAD: {run_git('rev-parse', 'HEAD')}")
+        print(f"SHA-256 MANIFEST: {hashlib.sha256(MANIFEST.read_bytes()).hexdigest()}")
+    except Exception as exc:
+        print(f"Diagnóstico adicional: {exc}")
+    return 0 if state == "VERIFIED" else 2
+
+
+def cmd_preparar(args: argparse.Namespace) -> int:
+    head, digest = manifest_state()
+    print("PROPUESTA DE RAÍZ DE CONFIANZA — NO SE ESCRIBIÓ NINGÚN ARCHIVO")
+    print(f"Proyecto: {args.project}")
+    print(f"approved_manifest_commit: {head}")
+    print(f"approved_manifest_sha256: {digest}")
+    print(f"Destino: {trust_path(args.project)}")
+    print("La aprobación y escritura requieren el comando 'aprobar' con confirmación explícita.")
+    return 0
+
+
+def cmd_aprobar(args: argparse.Namespace) -> int:
+    phrase = (
+        f"REAPROBAR RAIZ DE CONFIANZA {args.project}"
+        if args.reaprobar else f"APROBAR RAIZ DE CONFIANZA {args.project}"
+    )
+    if args.confirm != phrase:
+        raise RuntimeError(f'confirmación incorrecta. Se requiere: --confirm "{phrase}"')
+    head, digest = manifest_state()
+    dest = trust_path(args.project)
+    trust_dir = dest.parent
+    if trust_dir.is_symlink():
+        raise RuntimeError("el directorio de confianza es un enlace simbólico; abortado")
+    if dest.is_symlink():
+        raise RuntimeError("el archivo de confianza es un enlace simbólico; abortado")
+    if dest.exists() and not args.reaprobar:
+        raise RuntimeError("ya existe una raíz; no se sobrescribe sin --reaprobar y confirmación específica")
+    if not dest.exists() and args.reaprobar:
+        raise RuntimeError("--reaprobar requiere una raíz previa existente")
+
+    trust_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+    os.chmod(trust_dir, 0o700)
+    if dest.exists():
+        backup_dir = Path.home() / "backups" / f"LOGOS_TRUST_PRE_REAPPROVAL_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        backup_dir.mkdir(parents=True, exist_ok=False)
+        shutil.copy2(dest, backup_dir / dest.name)
+        print(f"Respaldo de raíz anterior: {backup_dir / dest.name}")
+
+    data = {
+        "schema_version": "1.0",
+        "project": args.project,
+        "approved_manifest_commit": head,
+        "approved_manifest_sha256": digest,
+    }
+    fd, temp_name = tempfile.mkstemp(prefix=f".{args.project}.", suffix=".tmp", dir=str(trust_dir))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as stream:
+            json.dump(data, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+        os.chmod(temp_name, 0o600)
+        os.replace(temp_name, dest)
+        os.chmod(dest, 0o600)
+    finally:
+        if os.path.exists(temp_name):
+            os.unlink(temp_name)
+
+    state, detail = verify_manifest_trust(args.project, MANIFEST, REPO)
+    if state != "VERIFIED":
+        try:
+            dest.unlink()
+        except OSError:
+            pass
+        raise RuntimeError(f"la verificación posterior falló; archivo retirado: {detail}")
+    print(f"APROBADA Y VERIFICADA: {dest}")
+    print(detail)
+    print(f"approved_manifest_sha256: {digest}")
+    print(f"approved_manifest_commit: {head}")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Inspección y aprobación humana de la raíz de confianza LOGOS v1.")
+    sub = parser.add_subparsers(dest="command", required=True)
+    for name, handler in (("inspeccionar", cmd_inspeccionar), ("preparar", cmd_preparar)):
+        p = sub.add_parser(name)
+        p.add_argument("project")
+        p.set_defaults(handler=handler)
+    p = sub.add_parser("aprobar")
+    p.add_argument("project")
+    p.add_argument("--confirm", required=True)
+    p.add_argument("--reaprobar", action="store_true")
+    p.set_defaults(handler=cmd_aprobar)
+    args = parser.parse_args()
+    try:
+        return args.handler(args)
+    except Exception as exc:
+        print(f"ABORTADO: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

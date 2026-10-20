@@ -118,7 +118,7 @@ class PendingCoordinatorTests(unittest.TestCase):
         with mock.patch.object(APP.subprocess, "run", return_value=result):
             self.assertFalse(APP.reconcile_pending())
 
-    def test_reconcile_accepts_documented_missing_trust_warning(self):
+    def test_reconcile_rejects_missing_trust_even_if_manifest_updated(self):
         result = SimpleNamespace(
             returncode=1,
             stdout=(
@@ -130,7 +130,7 @@ class PendingCoordinatorTests(unittest.TestCase):
             stderr="",
         )
         with mock.patch.object(APP.subprocess, "run", return_value=result):
-            self.assertTrue(APP.reconcile_pending())
+            self.assertFalse(APP.reconcile_pending())
 
     def test_restore_refuses_concurrent_change(self):
         with tempfile.TemporaryDirectory(prefix="logos-pending-rollback-") as tmp:
