@@ -301,20 +301,16 @@ contraste con codigo, tests y comportamiento actual.
 - Decision formal: D-2026-0015 (CONGELADA).
 
 ### P30 — [LOGOS] Symlink a directorio se pierde en hash_directory_standard
-- Estado: PENDIENTE. Detectado: 2026-10-14 durante analisis P29.
-- Situacion: en logos-hash, hash_directory_standard usa os.walk
-  con followlinks=False (default). Los symlinks a directorio NO se
-  recorren, pero tampoco se registran como metadata. Se pierden
-  silenciosamente del hash. Los symlinks a archivo SI se registran
-  como LINK:<target>. Inconsistencia.
-- Alcance: no se corrige en D-0015/P29 (esa mantiene equivalencia
-  exacta con comportamiento actual). Requiere decision propia.
-- Accion: disenar semantica. Opcion propuesta por Luna: registrar
-  el enlace como metadata LINK:<target> sin recorrer destino.
-  Anadir test de symlink a directorio que documente la omision
-  actual como referencia.
-- Referencia: analisis 2026-10-14, consulta a Luna.
-- Responsable: IA + Director (aprobacion).
+- Estado: CERRADO (2026-10-19; correccion implementada y pruebas aprobadas).
+- Hallazgo: hash_directory_standard omitía enlaces simbolicos a directorios del hash estandar.
+- Resolucion: .logos/lib/logos_hash_lib.py registra cada enlace como LINK:<target> sin recorrer su destino.
+- Prueba P30: .logos/tests/test_p30_hashing.py — 1/1 aprobada.
+- Regresion P32: .logos/tests/test_p32_hashing.py — 16/16 aprobadas.
+- Controles previos: git diff --check sin errores; logos-gate informo READY antes de esta actualizacion. Revalidar ambos despues del cambio.
+- Efecto: cambia el hash estandar de directorios con estos enlaces; el hashing Git no se modifico.
+- Alcance: correccion independiente de P29, P31 y P32.
+- Referencias: D-2026-0015, .logos/tests/test_p30_hashing.py y .logos/tests/test_p32_hashing.py.
+- Responsable: IA (implementacion y pruebas); Director (autorizacion de cierre).
 
 ### P31 — [LOGOS] Errores de lectura se tragan silenciosamente en hashers
 - Estado: CERRADO (commits 7eb1ee1 + 490cc98, 2026-10-14).

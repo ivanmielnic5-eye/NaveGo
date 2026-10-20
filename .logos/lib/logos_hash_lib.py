@@ -52,7 +52,20 @@ def hash_directory_standard(dirpath):
     for root, dirs, files in os.walk(
         dirpath, onerror=raise_walk_error
     ):
-        dirs[:] = [d for d in dirs if d != '.git']
+        # P30: registrar enlaces simbolicos a directorios
+        # sin recorrer sus destinos.
+        kept_dirs = []
+        for dirname in dirs:
+            full_dir = os.path.join(root, dirname)
+            if dirname == '.git':
+                continue
+            if os.path.islink(full_dir):
+                rel = os.path.relpath(full_dir, dirpath)
+                entries.append((rel, full_dir))
+                continue
+            kept_dirs.append(dirname)
+        dirs[:] = kept_dirs
+
         for fname in files:
             full = os.path.join(root, fname)
             rel = os.path.relpath(full, dirpath)
