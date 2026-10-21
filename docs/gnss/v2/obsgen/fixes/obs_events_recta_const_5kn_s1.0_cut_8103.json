@@ -1,0 +1,29 @@
+{
+  "traj_id": "recta_const_5kn",
+  "seed": 8103,
+  "T0_ms": 1790279042897,
+  "gnss_cfg": {
+    "noise_sigma_m": 1.0,
+    "cut_windows": [
+      {
+        "start_s": 150,
+        "duration_s": 10
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "cut",
+      "start_s": 150,
+      "duration_s": 10,
+      "advance_m": 25.72
+    },
+    {
+      "type": "missing_fix",
+      "timestamp_expected": 1790279192897,
+      "reason": "cut"
+    }
+  ],
+  "fixes_sha256": "32af964e2c3fe3b9b384d373b1b7d415eff5ff81732d2543d34ec68f6b930c4c",
+  "fixes_path": "fixes/fixes_recta_const_5kn_s1.0_cut_8103.jsonl"
+}

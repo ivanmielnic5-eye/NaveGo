@@ -1,0 +1,13 @@
+{
+  "traj_id": "recta_const_5kn",
+  "seed": 8101,
+  "duration_s": 300,
+  "events": [
+    {
+      "type": "speed_change",
+      "t_s": 0,
+      "v_old_ms": null,
+      "v_new_ms": 2.572228
+    }
+  ]
+}

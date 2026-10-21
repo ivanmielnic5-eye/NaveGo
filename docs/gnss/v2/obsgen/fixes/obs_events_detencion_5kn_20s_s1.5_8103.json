@@ -1,0 +1,12 @@
+{
+  "traj_id": "detencion_5kn_20s",
+  "seed": 8103,
+  "T0_ms": 1790279042897,
+  "gnss_cfg": {
+    "noise_sigma_m": 1.5,
+    "cut_windows": []
+  },
+  "events": [],
+  "fixes_sha256": "4ebfaa2448ff980ce3881d6eb867134c8d970fe140bbfd6c18a2e1e1b177713b",
+  "fixes_path": "fixes/fixes_detencion_5kn_20s_s1.5_8103.jsonl"
+}
