@@ -12,6 +12,7 @@ Salidas por trayectoria:
 NO ejecutar sin autorizacion explicita del Director.
 """
 import json
+import hashlib
 import math
 import os
 
@@ -22,6 +23,27 @@ KNOT_TO_MS = 1.0 / 1.94384
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT_GT = os.path.join(BASE, "trajectories")
 OUT_EVENTS = os.path.join(BASE, "events")
+
+
+def _dataset_id():
+    value = os.environ.get("NAVEGO_DATASET_ID", "").strip()
+    if value and (len(value) > 64 or value.startswith(".") or any(
+            not (ch.isascii() and (ch.isalnum() or ch in "._-")) for ch in value)):
+        raise ValueError("NAVEGO_DATASET_ID inválido; usá letras, números, punto, guion o guion bajo (máx. 64)")
+    return value
+
+
+def _dataset_suffix():
+    value = _dataset_id()
+    return ("_" + value) if value else ""
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _emit_step(elapsed_s, v_ms, cog_deg, hdg_deg, pos_x, pos_y):
@@ -106,8 +128,8 @@ def gen_virada_5kn_90_150s(seed, turn_start_s=140, turn_duration_s=20,
             hdg = 90.0 + angle_deg
         rad = math.radians(hdg)
         rows.append(_emit_step(t, v_ms, hdg, hdg, x, y))
-        x += v_ms * math.cos(rad)
-        y += v_ms * math.sin(rad)
+        x += v_ms * math.sin(rad)
+        y += v_ms * math.cos(rad)
     return rows, {"traj_id": "virada_5kn_90_150s", "seed": seed,
                   "duration_s": DURATION_S, "events": events}
 
@@ -128,11 +150,27 @@ def write_trajectory(traj_id, seed):
     rows, meta = TRAJECTORIES[traj_id](seed)
     os.makedirs(OUT_GT, exist_ok=True)
     os.makedirs(OUT_EVENTS, exist_ok=True)
-    gt_path = os.path.join(OUT_GT, "gt_" + traj_id + "_" + str(seed) + ".jsonl")
-    ev_path = os.path.join(OUT_EVENTS, "traj_events_" + traj_id + "_" + str(seed) + ".json")
+    dataset_id = _dataset_id()
+    suffix = ("_" + dataset_id) if dataset_id else ""
+    gt_path = os.path.join(OUT_GT, "gt_" + traj_id + suffix + "_" + str(seed) + ".jsonl")
+    ev_path = os.path.join(OUT_EVENTS, "traj_events_" + traj_id + suffix + "_" + str(seed) + ".json")
+    if os.path.exists(gt_path) or os.path.exists(ev_path):
+        raise FileExistsError(
+            "Se protege el dataset existente; no se sobrescribe: " + gt_path + " / " + ev_path
+            + ". Usá un NAVEGO_DATASET_ID nuevo para generar otra copia."
+        )
     with open(gt_path, "w") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
+    gt_sha256 = _sha256_file(gt_path)
+    generator_sha256 = _sha256_file(__file__)
+    meta["dataset_id"] = dataset_id or None
+    meta["provenance"] = {
+        "schema_version": 1,
+        "dataset_id": dataset_id or None,
+        "gt_sha256": gt_sha256,
+        "generator_sha256": generator_sha256,
+    }
     with open(ev_path, "w") as f:
         json.dump(meta, f, indent=2)
     return gt_path, ev_path

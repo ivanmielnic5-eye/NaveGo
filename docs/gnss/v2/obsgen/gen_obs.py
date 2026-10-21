@@ -22,6 +22,32 @@ TRAJ_EVENTS_DIR = os.path.join(BASE, "..", "gtgen", "events")
 OUT_FIXES = os.path.join(BASE, "fixes")
 
 
+def _dataset_id():
+    value = os.environ.get("NAVEGO_DATASET_ID", "").strip()
+    if value and (len(value) > 64 or value.startswith(".") or any(
+            not (ch.isascii() and (ch.isalnum() or ch in "._-")) for ch in value)):
+        raise ValueError("NAVEGO_DATASET_ID inválido; usá letras, números, punto, guion o guion bajo (máx. 64)")
+    return value
+
+
+def _dataset_suffix():
+    value = _dataset_id()
+    return ("_" + value) if value else ""
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _sha256_json(value):
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def _gnss_tag(cfg):
     parts = ["s" + str(cfg["noise_sigma_m"])]
     if cfg.get("speed_sigma_ms", 0.0) > 0:
@@ -87,17 +113,41 @@ def _build_obs_events(traj_id, seed, cfg, t0_ms):
 
 
 def gen_one(traj_id, seed, cfg, initial_lat=-31.648, initial_lon=-60.708):
-    gt_path = os.path.join(GT_DIR, "gt_" + traj_id + "_" + str(seed) + ".jsonl")
+    dataset_id = _dataset_id()
+    suffix = ("_" + dataset_id) if dataset_id else ""
+    gt_path = os.path.join(GT_DIR, "gt_" + traj_id + suffix + "_" + str(seed) + ".jsonl")
     if not os.path.exists(gt_path):
         raise FileNotFoundError("GT faltante: " + gt_path + ". Correr gen_traj.py primero.")
 
+    gt_events_path = os.path.join(
+        TRAJ_EVENTS_DIR, "traj_events_" + traj_id + suffix + "_" + str(seed) + ".json"
+    )
+    if not os.path.exists(gt_events_path):
+        raise RuntimeError("Metadatos de procedencia GT ausentes: " + gt_events_path)
+    with open(gt_events_path, encoding="utf-8") as f:
+        gt_meta = json.load(f)
+    gt_provenance = gt_meta.get("provenance", {})
+    if gt_meta.get("traj_id") != traj_id or gt_meta.get("seed") != seed:
+        raise RuntimeError("Identidad GT no coincide con trayectoria/semilla solicitadas")
+    if gt_meta.get("dataset_id") != (dataset_id or None):
+        raise RuntimeError("Dataset ID de GT no coincide con NAVEGO_DATASET_ID")
+    if gt_provenance.get("gt_sha256") != _sha256_file(gt_path):
+        raise RuntimeError("Hash GT ausente o distinto del registrado en traj_events")
+    if not gt_provenance.get("generator_sha256"):
+        raise RuntimeError("Hash del generador GT ausente; la procedencia no es verificable")
     tag = _gnss_tag(cfg)
     os.makedirs(OUT_FIXES, exist_ok=True)
-    fixes_path = os.path.join(OUT_FIXES, "fixes_" + traj_id + "_" + tag + "_" + str(seed) + ".jsonl")
-    scen_path = os.path.join(OUT_FIXES, "_scenario_" + traj_id + "_" + tag + "_" + str(seed) + ".json")
-    obs_events_path = os.path.join(OUT_FIXES, "obs_events_" + traj_id + "_" + tag + "_" + str(seed) + ".json")
+    fixes_path = os.path.join(OUT_FIXES, "fixes_" + traj_id + suffix + "_" + tag + "_" + str(seed) + ".jsonl")
+    scen_path = os.path.join(OUT_FIXES, "_scenario_" + traj_id + suffix + "_" + tag + "_" + str(seed) + ".json")
+    obs_events_path = os.path.join(OUT_FIXES, "obs_events_" + traj_id + suffix + "_" + tag + "_" + str(seed) + ".json")
+    if any(os.path.exists(p) for p in (fixes_path, scen_path, obs_events_path)):
+        raise FileExistsError(
+            "Se protege el dataset existente; no se sobrescribe: " + fixes_path
+            + ". Usá un NAVEGO_DATASET_ID nuevo para generar otra copia."
+        )
 
     scenario = _build_scenario(traj_id, seed, cfg, initial_lat, initial_lon)
+    scenario["dataset_id"] = dataset_id or None
     with open(scen_path, "w") as f:
         json.dump(scenario, f, indent=2)
 
@@ -113,6 +163,17 @@ def gen_one(traj_id, seed, cfg, initial_lat=-31.648, initial_lon=-60.708):
     obs_events = _build_obs_events(traj_id, seed, cfg, t0)
     obs_events["fixes_sha256"] = fix_hash
     obs_events["fixes_path"] = os.path.relpath(fixes_path, BASE)
+    obs_events["dataset_id"] = dataset_id or None
+    obs_events["provenance"] = {
+        "schema_version": 1,
+        "dataset_id": dataset_id or None,
+        "gt_sha256": _sha256_file(gt_path),
+        "gt_generator_sha256": gt_provenance["generator_sha256"],
+        "obs_generator_sha256": _sha256_file(__file__),
+        "simulator_sha256": _sha256_file(SIM_PATH),
+        "effective_scenario": scenario,
+        "effective_scenario_sha256": _sha256_json(scenario),
+    }
     with open(obs_events_path, "w") as f:
         json.dump(obs_events, f, indent=2)
 

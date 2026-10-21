@@ -60,7 +60,7 @@ def run(gt_path, scenario_path, out_path):
             continue
 
         sigma_lat, sigma_lon = noise_to_latlon(sigma_m, lat0)
-        base_dlat, base_dlon = meters_to_latlon(m["pos_x"], m["pos_z"], lat0)
+        base_dlat, base_dlon = meters_to_latlon(m["pos_x"], m["pos_y"], lat0)
         if noise_model == "AR1":
             sigma_eta_lat = sigma_lat * math.sqrt(1.0 - noise_rho**2)
             sigma_eta_lon = sigma_lon * math.sqrt(1.0 - noise_rho**2)

@@ -23,12 +23,14 @@ La salida va a docs/gnss/v2/results/v2_<timestamp>/
 """
 import argparse
 import csv
+import hashlib
 import datetime
 import json
 import os
 import statistics
 import subprocess
 import sys
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -36,6 +38,8 @@ sys.path.insert(0, HERE)
 from methods import METHODS  # noqa: E402
 from metrics import (evaluate_file, load_json, load_jsonl,
                      sha256_of_file)  # noqa: E402
+from provenance import (capture_runtime_snapshot, create_manifest,
+                        validate_manifest, ProvenanceError)  # noqa: E402
 
 BASE = os.path.dirname(HERE)                # docs/gnss/v2
 GT_DIR = os.path.join(BASE, 'gtgen', 'trajectories')
@@ -45,6 +49,21 @@ OUT_BASE = os.path.join(BASE, 'results')
 REPO_ROOT = os.path.abspath(os.path.join(BASE, '..', '..', '..'))
 V1_DIRS = ['docs/gnss/exp_dist', 'docs/gnss/exp_ruido_vs_gap',
            'docs/gnss/exp_gaps_avance']
+
+def _dataset_id():
+    value = os.environ.get("NAVEGO_DATASET_ID", "").strip()
+    if value and (len(value) > 64 or value.startswith(".") or any(
+            not (ch.isascii() and (ch.isalnum() or ch in "._-")) for ch in value)):
+        raise ValueError("NAVEGO_DATASET_ID inválido; usá letras, números, punto, guion o guion bajo (máx. 64)")
+    return value
+
+
+DATASET_ID = _dataset_id()
+DATASET_SUFFIX = ("_" + DATASET_ID) if DATASET_ID else ""
+_OBS_GEN_DIR = os.path.join(BASE, "obsgen")
+if _OBS_GEN_DIR not in sys.path:
+    sys.path.insert(0, _OBS_GEN_DIR)
+from gen_obs import PHASE_A_CFGS as _PHASE_A_CFGS, _build_scenario as _build_effective_scenario  # noqa: E402
 
 SEEDS = list(range(8100, 8105))
 
@@ -83,7 +102,7 @@ def _paths(escenario_id, traj_id, seed):
     # porque _gnss_tag() genera un tag a partir de la config, no del cfg_key.
     # Buscamos por glob de prefijo para tolerar diferencias de tag.
     import glob
-    pat = os.path.join(FIXES_DIR, 'fixes_' + traj_id + '_*_' + str(seed) + '.jsonl')
+    pat = os.path.join(FIXES_DIR, 'fixes_' + traj_id + DATASET_SUFFIX + '_*_' + str(seed) + '.jsonl')
     candidates = sorted(glob.glob(pat))
     fixes = None
     obs_events = None
@@ -102,7 +121,7 @@ def _paths(escenario_id, traj_id, seed):
             break
     if fixes is None:
         return None
-    gt = os.path.join(GT_DIR, 'gt_' + traj_id + '_' + str(seed) + '.jsonl')
+    gt = os.path.join(GT_DIR, 'gt_' + traj_id + DATASET_SUFFIX + '_' + str(seed) + '.jsonl')
     if not os.path.exists(gt):
         return None
     return fixes, gt, obs_events
@@ -385,7 +404,285 @@ def _write_csv(path, rows):
             w.writerow(row)
 
 
-def run(phase, scenarios_filter=None, methods_filter=None):
+def _check_setup(matrix, allow_legacy=False):
+    """Read-only startup check-in. Returns a structured report and allow flag."""
+    import glob
+
+    def file_sha256(path):
+        digest = hashlib.sha256()
+        with open(path, "rb") as f:
+            for block in iter(lambda: f.read(1024 * 1024), b""):
+                digest.update(block)
+        return digest.hexdigest()
+
+    def canonical_json_sha256(value):
+        payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def is_sha256(value):
+        return isinstance(value, str) and len(value) == 64 and all(
+            char in "0123456789abcdef" for char in value.lower()
+        )
+
+    def rel(path):
+        try:
+            return os.path.relpath(path, REPO_ROOT)
+        except ValueError:
+            return str(path)
+
+    errors = []
+    legacy = []
+    groups = []
+    scenarios = []
+    total_groups = len(matrix) * len(SEEDS)
+    current_sources = {
+        "gt_generator": os.path.join(BASE, "gtgen", "gen_traj.py"),
+        "obs_generator": os.path.join(BASE, "obsgen", "gen_obs.py"),
+        "simulator": os.path.join(REPO_ROOT, "tools", "gnss_simulator.py"),
+        "evaluator": __file__,
+    }
+    current_hashes = {key: file_sha256(path) for key, path in current_sources.items() if os.path.isfile(path)}
+
+    print("\n=== CHECK-IN DE ARRANQUE — NAVEGO GNSS V2 ===")
+    print("Dataset ID: %s" % (DATASET_ID if DATASET_ID else "LEGACY (sin namespace)"))
+    print("Modo: solo lectura; no genera datos, no ejecuta métodos y no escribe resultados.")
+    print("Fuentes actuales (SHA-256):")
+    for key, digest in current_hashes.items():
+        print("  %s: %s" % (key, digest))
+
+    if not matrix:
+        errors.append("La selección de escenarios está vacía.")
+
+    for scenario_id, traj_id in matrix:
+        cfg = _PHASE_A_CFGS.get(scenario_id)
+        if cfg is None:
+            errors.append("%s: falta configuración declarada en PHASE_A_CFGS" % scenario_id)
+            continue
+        expected_cfg_scenario = _build_effective_scenario(traj_id, SEEDS[0], cfg, -31.648, -60.708)
+        expected_cfg_scenario["dataset_id"] = DATASET_ID or None
+        gnss = expected_cfg_scenario.get("gnss", {})
+        cuts = cfg.get("cut_windows", [])
+        print(
+            "[SETUP] %s | traj=%s | seeds=%d..%d | sigma_m=%s | model=%s | rho=%s | "
+            "speed_sigma_ms=%s | latency_ms=%s | cuts=%s | spikes=%s"
+            % (
+                scenario_id, traj_id, SEEDS[0], SEEDS[-1],
+                gnss.get("noise_sigma_m", "DESCONOCIDO"),
+                gnss.get("noise_model", "IID (predeterminado del simulador si se omite)"),
+                gnss.get("noise_rho", 0.0), gnss.get("speed_sigma_ms", 0.0),
+                gnss.get("latency_ms", "DESCONOCIDO"), cuts,
+                gnss.get("spikes", {"probability": 0.0, "min_jump_m": 0, "max_jump_m": 0}),
+            )
+        )
+        scenario_summary = {
+            "scenario": scenario_id,
+            "trajectory": traj_id,
+            "declared_gnss_cfg": cfg,
+            "effective_gnss": gnss,
+            "seeds": list(SEEDS),
+        }
+        scenarios.append(scenario_summary)
+
+        for seed in SEEDS:
+            group_errors = []
+            group_legacy = []
+            pattern = os.path.join(FIXES_DIR, "fixes_" + traj_id + DATASET_SUFFIX + "_*_" + str(seed) + ".jsonl")
+            matches = []
+            for candidate in sorted(glob.glob(pattern)):
+                candidate_obs = candidate.replace("fixes_", "obs_events_", 1).removesuffix(".jsonl") + ".json"
+                if not os.path.isfile(candidate_obs):
+                    continue
+                try:
+                    candidate_meta = load_json(candidate_obs)
+                    if _cfg_key_from_obs(candidate_meta, traj_id) == scenario_id:
+                        matches.append((candidate, candidate_obs, candidate_meta))
+                except Exception as exc:
+                    group_errors.append("metadatos obs_events ilegibles: %s" % exc)
+
+            if len(matches) != 1:
+                errors.append("%s/seed=%s: se esperaba un único par fixes/obs_events y se encontraron %d" % (scenario_id, seed, len(matches)))
+                continue
+
+            fixes_path, obs_path, obs_meta = matches[0]
+            gt_path = os.path.join(GT_DIR, "gt_" + traj_id + DATASET_SUFFIX + "_" + str(seed) + ".jsonl")
+            gt_events_path = os.path.join(TRAJ_EVENTS_DIR, "traj_events_" + traj_id + DATASET_SUFFIX + "_" + str(seed) + ".json")
+            if not os.path.isfile(gt_path) or not os.path.isfile(gt_events_path):
+                errors.append("%s/seed=%s: falta GT o metadatos de trayectoria para dataset=%s" % (scenario_id, seed, DATASET_ID or "LEGACY"))
+                continue
+
+            try:
+                gt_meta = load_json(gt_events_path)
+            except Exception as exc:
+                errors.append("%s/seed=%s: metadatos GT ilegibles: %s" % (scenario_id, seed, exc))
+                continue
+
+            actual_fix_hash = file_sha256(fixes_path)
+            actual_gt_hash = file_sha256(gt_path)
+            expected_scenario = _build_effective_scenario(traj_id, seed, cfg, -31.648, -60.708)
+            expected_scenario["dataset_id"] = DATASET_ID or None
+
+            # Configuration and file identity mismatches are always hard failures.
+            if obs_meta.get("traj_id") != traj_id or obs_meta.get("seed") != seed:
+                group_errors.append("identidad de trayectoria/semilla incorrecta en obs_events")
+            if obs_meta.get("dataset_id") != (DATASET_ID or None):
+                group_errors.append("dataset_id de obs_events no coincide con el solicitado")
+            if obs_meta.get("gnss_cfg") != cfg:
+                group_errors.append("gnss_cfg de obs_events no coincide con la configuración declarada")
+            recorded_fix_value = str(obs_meta.get("fixes_path", ""))
+            # gen_obs.py registra la ruta relativa a <repo>/docs/gnss/v2/obsgen,
+            # por ejemplo "fixes/fixes_...jsonl". BASE aquí es gnss/v2, por eso
+            # la ruta debe resolverse desde el directorio padre de FIXES_DIR.
+            if os.path.isabs(recorded_fix_value):
+                recorded_fix_path = os.path.abspath(recorded_fix_value)
+            else:
+                recorded_fix_path = os.path.abspath(
+                    os.path.join(os.path.dirname(FIXES_DIR), recorded_fix_value)
+                )
+            if recorded_fix_path != os.path.abspath(fixes_path):
+                group_errors.append("fixes_path registrado no apunta al archivo seleccionado")
+            if obs_meta.get("fixes_sha256") != actual_fix_hash:
+                group_errors.append("SHA-256 de fixes no coincide con obs_events")
+            if gt_meta.get("traj_id") != traj_id or gt_meta.get("seed") != seed:
+                group_errors.append("identidad de trayectoria/semilla incorrecta en traj_events")
+            if gt_meta.get("dataset_id") != (DATASET_ID or None):
+                group_errors.append("dataset_id de traj_events no coincide con el solicitado")
+
+            duration = int(expected_scenario.get("duration_s", 0))
+            cut_seconds = {
+                second
+                for cut in cuts
+                for second in range(int(cut.get("start_s", 0)), int(cut.get("start_s", 0)) + int(cut.get("duration_s", 0)))
+            }
+            expected_fix_count = duration - len(cut_seconds)
+            with open(fixes_path, encoding="utf-8") as f:
+                n_fixes = sum(1 for line in f if line.strip())
+            with open(gt_path, encoding="utf-8") as f:
+                n_gt = sum(1 for line in f if line.strip())
+            if n_fixes != expected_fix_count:
+                group_errors.append("cantidad fixes=%d; esperada=%d" % (n_fixes, expected_fix_count))
+            if n_gt != duration:
+                group_errors.append("cantidad GT=%d; esperada=%d" % (n_gt, duration))
+
+            gt_prov = gt_meta.get("provenance")
+            obs_prov = obs_meta.get("provenance")
+            if not isinstance(gt_prov, dict):
+                group_legacy.append("traj_events sin procedencia del productor GT")
+            else:
+                recorded_gt_hash = gt_prov.get("gt_sha256")
+                producer_gt_hash = gt_prov.get("generator_sha256")
+                if not recorded_gt_hash or not producer_gt_hash:
+                    group_legacy.append("procedencia GT incompleta (falta hash GT o del generador)")
+                if recorded_gt_hash and not is_sha256(recorded_gt_hash):
+                    group_errors.append("formato inválido de hash GT en traj_events")
+                elif recorded_gt_hash and recorded_gt_hash != actual_gt_hash:
+                    group_errors.append("SHA-256 de GT no coincide con traj_events")
+                if producer_gt_hash and not is_sha256(producer_gt_hash):
+                    group_errors.append("formato inválido de hash del generador GT")
+                if gt_prov.get("dataset_id") != (DATASET_ID or None):
+                    group_errors.append("dataset_id de procedencia GT no coincide")
+
+            if not isinstance(obs_prov, dict):
+                group_legacy.append("obs_events sin procedencia del generador de observaciones/simulador")
+            else:
+                required_keys = (
+                    "gt_sha256", "gt_generator_sha256", "obs_generator_sha256",
+                    "simulator_sha256", "effective_scenario", "effective_scenario_sha256",
+                )
+                missing_keys = [key for key in required_keys if key not in obs_prov]
+                if missing_keys:
+                    group_legacy.append("procedencia obs incompleta: falta " + ", ".join(missing_keys))
+                if obs_prov.get("dataset_id") != (DATASET_ID or None):
+                    group_errors.append("dataset_id de procedencia obs no coincide")
+                for hash_key in (
+                    "gt_sha256", "gt_generator_sha256", "obs_generator_sha256",
+                    "simulator_sha256", "effective_scenario_sha256",
+                ):
+                    if hash_key in obs_prov and not is_sha256(obs_prov.get(hash_key)):
+                        group_errors.append("formato inválido de hash en procedencia obs: " + hash_key)
+                if "gt_sha256" in obs_prov and obs_prov.get("gt_sha256") != actual_gt_hash:
+                    group_errors.append("hash GT en procedencia obs no coincide con la entrada actual")
+                if isinstance(gt_prov, dict) and "gt_generator_sha256" in obs_prov:
+                    if obs_prov.get("gt_generator_sha256") != gt_prov.get("generator_sha256"):
+                        group_errors.append("huella del productor GT no enlaza obs_events con traj_events")
+                if "effective_scenario" in obs_prov and obs_prov.get("effective_scenario") != expected_scenario:
+                    group_errors.append("escenario efectivo registrado no coincide con configuración/declaración/dataset ID")
+                if "effective_scenario" in obs_prov and "effective_scenario_sha256" in obs_prov:
+                    if obs_prov.get("effective_scenario_sha256") != canonical_json_sha256(obs_prov["effective_scenario"]):
+                        group_errors.append("hash canónico del escenario efectivo no coincide")
+
+            if group_errors:
+                errors.extend("%s/seed=%s: %s" % (scenario_id, seed, msg) for msg in group_errors)
+            if group_legacy:
+                legacy.extend("%s/seed=%s: %s" % (scenario_id, seed, msg) for msg in group_legacy)
+
+            groups.append({
+                "scenario": scenario_id,
+                "trajectory": traj_id,
+                "seed": seed,
+                "fixes_path": rel(fixes_path),
+                "fixes_sha256": actual_fix_hash,
+                "n_fixes": n_fixes,
+                "gt_path": rel(gt_path),
+                "gt_sha256": actual_gt_hash,
+                "n_gt": n_gt,
+                "obs_events_path": rel(obs_path),
+                "gt_producer_sha256": (gt_prov or {}).get("generator_sha256") if isinstance(gt_prov, dict) else None,
+                "obs_producer_sha256": (obs_prov or {}).get("obs_generator_sha256") if isinstance(obs_prov, dict) else None,
+                "simulator_sha256": (obs_prov or {}).get("simulator_sha256") if isinstance(obs_prov, dict) else None,
+                "integrity_errors": list(group_errors),
+                "legacy_warnings": list(group_legacy),
+            })
+
+    status = "PASS"
+    if errors:
+        status = "BLOCKED_INTEGRITY_ERROR"
+    elif legacy and allow_legacy:
+        status = "LEGACY_EXPLICIT_OVERRIDE"
+    elif legacy:
+        status = "BLOCKED_LEGACY_PROVENANCE"
+
+    report = {
+        "schema_version": 1,
+        "status": status,
+        "dataset_id": DATASET_ID or None,
+        "phase": "A",
+        "selected_scenarios": [item[0] for item in matrix],
+        "seeds": list(SEEDS),
+        "current_source_sha256": current_hashes,
+        "verified_input_groups": len(groups),
+        "expected_input_groups": total_groups,
+        "integrity_errors": errors,
+        "legacy_provenance_warnings": legacy,
+        "groups": groups,
+        "declared_setup": scenarios,
+        "legacy_override_requested": bool(allow_legacy),
+    }
+    allowed = (not errors) and (not legacy or allow_legacy)
+
+    print("[CHECK-IN] Pares de entrada examinados: %d/%d" % (len(groups), total_groups))
+    print("[CHECK-IN] Errores de integridad/configuración: %d" % len(errors))
+    print("[CHECK-IN] Advertencias de procedencia histórica incompleta: %d" % len(legacy))
+    for msg in errors[:10]:
+        print("  [ERROR] " + msg)
+    if len(errors) > 10:
+        print("  ... y %d errores más" % (len(errors) - 10))
+    for msg in legacy[:10]:
+        print("  [LEGACY] " + msg)
+    if len(legacy) > 10:
+        print("  ... y %d advertencias de procedencia más" % (len(legacy) - 10))
+
+    if errors:
+        print("[CHECK-IN BLOCKED] Hay inconsistencias de integridad/configuración; el override no las saltea.")
+    elif legacy and not allow_legacy:
+        print("[CHECK-IN BLOCKED] Procedencia histórica incompleta. Para usar esos datos deliberadamente, hace falta --allow-legacy-inputs.")
+    elif legacy and allow_legacy:
+        print("[CHECK-IN LEGACY OVERRIDE] Integridad de archivos/configuración coherente; productor histórico no acreditado. Se deja constancia en summary.json.")
+    else:
+        print("[CHECK-IN PASS] Configuración, hashes de entrada y cadena de productores verificados.")
+    return {"allowed": allowed, "report": report}
+
+
+def run(phase, scenarios_filter=None, methods_filter=None, allow_legacy_inputs=False):
     if phase != 'A':
         raise SystemExit('Solo Fase A implementada. Fase B es trabajo futuro.')
 
@@ -402,8 +699,21 @@ def run(phase, scenarios_filter=None, methods_filter=None):
     else:
         methods_use = ALL_METHODS
 
+    checkin = _check_setup(matrix, allow_legacy=allow_legacy_inputs)
+    if not checkin["allowed"]:
+        raise SystemExit(2)
+
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     out_dir = os.path.join(OUT_BASE, 'v2_' + timestamp)
+    try:
+        runtime_snapshot = capture_runtime_snapshot(
+            Path(REPO_ROOT),
+            run_id=os.path.basename(out_dir),
+            phase=phase,
+            command=sys.argv,
+        )
+    except (ProvenanceError, OSError) as exc:
+        raise SystemExit('[PROVENANCE START FAIL] ' + str(exc))
     os.makedirs(out_dir, exist_ok=True)
 
     rows = []
@@ -450,6 +760,7 @@ def run(phase, scenarios_filter=None, methods_filter=None):
                     for m in missing],
         'aggregates': aggregates,
         'criteria': crit,
+        'setup_checkin': checkin['report'],
     }
 
     with open(os.path.join(out_dir, 'summary.json'), 'w') as f:
@@ -458,6 +769,23 @@ def run(phase, scenarios_filter=None, methods_filter=None):
     with open(os.path.join(out_dir, 'detail.jsonl'), 'w') as f:
         for r in rows:
             f.write(json.dumps(r) + '\n')
+
+    manifest_path = Path(out_dir) / 'provenance_manifest.json'
+    try:
+        create_manifest(
+            Path(out_dir), manifest_path, Path(REPO_ROOT),
+            runtime_snapshot=runtime_snapshot,
+        )
+        provenance_errors = validate_manifest(manifest_path, Path(REPO_ROOT))
+        if provenance_errors:
+            for error in provenance_errors:
+                print('[PROVENANCE ERROR] ' + error, file=sys.stderr)
+            raise ProvenanceError('La validación final del manifiesto no pasó')
+        print('[PROVENANCE PASS] Manifiesto verificado: ' + str(manifest_path))
+    except (ProvenanceError, OSError, ValueError) as exc:
+        print('[PROVENANCE FAIL] ' + str(exc), file=sys.stderr)
+        print('[PROVENANCE FAIL] Se conservaron las salidas experimentales para diagnóstico.', file=sys.stderr)
+        raise SystemExit(2)
 
     print('\n=== RESUMEN CRITERIOS BLOQUEANTES ===')
     for k, v in crit.items():
@@ -475,5 +803,14 @@ if __name__ == '__main__':
     p.add_argument('--phase', choices=['A'], default='A')
     p.add_argument('--scenarios', nargs='+', default=None)
     p.add_argument('--methods', nargs='+', default=None)
+    p.add_argument('--check-setup', action='store_true',
+                   help='Ejecuta solo el check-in; no corre métodos ni escribe resultados.')
+    p.add_argument('--allow-legacy-inputs', action='store_true',
+                   help='Excepción explícita para datos históricos sin hashes de productor; no saltea errores de integridad/configuración.')
     args = p.parse_args()
-    sys.exit(run(args.phase, args.scenarios, args.methods))
+    if args.check_setup:
+        selected = ([m for m in PHASE_A_MATRIX if m[0] in args.scenarios]
+                    if args.scenarios else PHASE_A_MATRIX)
+        result = _check_setup(selected, allow_legacy=args.allow_legacy_inputs)
+        raise SystemExit(0 if result["allowed"] else 2)
+    sys.exit(run(args.phase, args.scenarios, args.methods, args.allow_legacy_inputs))
