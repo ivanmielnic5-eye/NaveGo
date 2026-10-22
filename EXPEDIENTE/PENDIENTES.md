@@ -441,13 +441,13 @@ contraste con codigo, tests y comportamiento actual.
 - Criterio de aceptación: decisión registrada; si es versionar, archivos en commit acotado.
 - Responsable: IA propone; Director decide.
 
-### P43 — [LOGOS] Root of trust ausente para NAVEGO
-- Estado: PENDIENTE. Detectado 2026-10-16 durante reconciliaciones P39 y simulator_source.
-- Fuente: .logos/bin/logos-reconcile (WARNING: /home/ivan/.logos/trust/NAVEGO.json no existe)
-- Situación: las operaciones mark-reviewed funcionaron pero emitieron WARNING por falta del archivo de trust. El mecanismo de root of trust está previsto pero no configurado para NAVEGO.
-- Acción: determinar si el trust es requisito operativo o aspiracional; si es requisito, configurarlo; si no, ajustar la salida de logos-reconcile para que no emita WARNING sobre algo no exigido.
-- Criterio de aceptación: mark-reviewed sin WARNING en próxima operación; o decisión explícita de diferir.
-- Responsable: IA propone; Director decide.
+### P43 — [LOGOS] Root of trust para NAVEGO
+- Estado: CERRADO (2026-10-22, decisión del Director).
+- Situación inicial (2026-10-16): trust/NAVEGO.json ausente; logos-reconcile emitía WARNING en mark-reviewed.
+- Resolución: trust creado y sincronizado con el MANIFEST vigente tras reaprobación autorizada por el Director. Gate READY el 2026-10-22. Verificado con `mark-reviewed pending --dry-run` el 2026-10-22: `trust: VERIFIED`, sin WARNING.
+- Evidencia: commits fc29dcb (workflow con acentos), 0ca4cec (MANIFEST actualizado), eef703e (bitácora activos); approved_manifest_sha256=7d2b13c7...; backup previo en /home/ivan/backups/LOGOS_TRUST_PRE_REAPPROVAL_20261022_143028/.
+- Referencias: CT-01 (EXPEDIENTE/99), BITACORA_ACTIVOS (EXPEDIENTE/100), hilo del 2026-10-22.
+- Responsable: IA (verificación); Director (autorización de cierre).
 
 ### P44 — [LOGOS] logos-brief lee HEAD desactualizado
 - Estado: PENDIENTE. Detectado 2026-10-16 al regenerar BRIEF_NAVEGO.
