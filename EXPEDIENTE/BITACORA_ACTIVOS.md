@@ -112,7 +112,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-03 | GNSS 2do plano | O3 | F4 | 8 tests GNSS, exp_dist/2/3, bitácora cierre 21-10 con sha256_resultados.txt, ANALISIS_TCL_FIELD_01.md | El más formalizado |
 | A-04 | Track Honesto | O2 | F2 | CT-01, EXPEDIENTE/50 (bug 6%), exp_gaps_avance, exp_ruido_vs_gap | Pendiente criterio cierre |
 | A-05 | Cartografía | O2 | F2 | En A-01 | Sin test offline por función |
-| A-06 | Guardado/export | O1 | F1 | Sin test específico localizado | Antecedente de fallo |
+| A-06 | Guardado/export | O2 | F2 | db/exportToGodot.ts (exportSessionToGodotJson: lat_raw, lon_raw, timestamp, heading, filtrando quality='GOOD') | Export a JSON para Godot funcional; sin export GPX/KML para usuario; sin test E2E de guardar+reabrir+exportar |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos | Checkpoint, no auditoría completa |
 | A-08 | Gobernanza | O3 | F3 | Commits, PENDIENTES.md, 03_WORKFLOW.md reconciliado | P43 obsoleto, mark-reviewed pendiente |
 | A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, agente_llm.py+13 backups, sft_dataset/, banco_cc002/cc003, lora_*, kaggle_*, pruebas_dsh/, timonel/corridas/ (18 corridas 04-10), timonel.py con MISION; EXPEDIENTE/96 (13 experimentos oct), EXPEDIENTE/95 | Tests mezclados con scripts (1/6 con assert); memo 96 declara falta de metadata/hash por experimento |
@@ -123,7 +123,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-14 | Commodities | - | - | Pendiente iteración 2 | No atribuir como propio |
 | A-15 | Infraestructura | O4 | F3 | Git remoto, build_release_*.log, backups | Restauración no probada |
 | A-16 | Know-how | O3 | F2 | Expedientes 00-99, commits, CT-01 | Recuperabilidad parcial |
-| A-17 | Ojo de Gaia | O1 | F1 | Por verificar iteración 2 | Proyecto incipiente |
+| A-17 | Ojo de Gaia | - | - | Fuera de alcance de esta auditoría | Proyecto anterior. Decisión del Director (2026-10-22): no inventariar ahora |
 | A-18 | Automatización push | O0 | F0 | Deshabilitado por decisión | Opción futura |
 
 ### 3.3 Reglas de completado
@@ -182,8 +182,8 @@ Registrar por separado: horas activas de Iván; horas de desarrollador humano; u
 - **~1500 untracked** en `docs/gnss/v2/obsgen/fixes/`. No borrar ni añadir en bloque.
 - **Informe de distancia:** `EXPEDIENTE/51`, `EXPEDIENTE/94`, `docs/gnss/exp_dist/INFORME_DISTANCIA.md` en pausa/revisión.
 - **Push automático:** no activado por decisión.
-- **A-06 (guardado/export):** sin test específico.
-- **A-17 (Ojo de Gaia):** sin inventario.
+- **A-06 (guardado/export):** `exportToGodot.ts` funcional para export JSON hacia Godot; sin export GPX/KML para usuario; sin test E2E de guardar+reabrir+exportar.
+- **A-17 (Ojo de Gaia):** fuera de alcance de esta auditoría por decisión del Director (2026-10-22). Proyecto anterior; no se inventaría ahora.
 - **A-09 (Timonel):** 1/6 tests con assert; el resto son scripts de experimento.
 - **A-10 (Simulador/Polaris):** evidencia distribuida en `timonel/`, `~/.logos/runs/`, `EXPEDIENTE/95-96`, `timonel/corridas/`. Consolidar en un lugar canónico y declarar hash de experimento queda para iteración 2.
 
