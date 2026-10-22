@@ -231,9 +231,9 @@ no tienen autoridad normativa.
 
 **HISTORICO — DEFINICIONES NO VIGENTES; NO UTILIZAR COMO PROTOCOLO ACTIVO**
 
-- R-16 Todo cambio de capa debe tener evidencia de la medicion previa.
-- R-17 El nucleo propone, el humano decide. Nunca auto-cambio silencioso.
-- R-18 La auto-observacion no interfiere con la operacion normal.
+- R-16 Todo cambio de capa debe tener evidencia de la medición previa.
+- R-17 El núcleo propone, el humano decide. Nunca auto-cambio silencioso.
+- R-18 La auto-observación no interfiere con la operación normal.
 - R-19 Un cambio de capa es reversible.
 - R-20 Un cambio de capa es REVERSIBLE + REGISTRADO.
 
