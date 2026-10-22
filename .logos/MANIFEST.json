@@ -200,9 +200,9 @@
         "readable",
         "nonempty"
       ],
-      "last_human_review": "2026-10-19",
-      "reviewed_against_commit": "975e048",
-      "reviewed_against_hash": "342211c94213a6d1f5d2cffd87bc4d20e9c61378432d2caafae82814abb567b7"
+      "last_human_review": "2026-10-22",
+      "reviewed_against_commit": "5964547",
+      "reviewed_against_hash": "f164f5f3defd3bfc53485ada09130e329b04572af14947b493256887860eb80f"
     },
     {
       "type": "glossary",
