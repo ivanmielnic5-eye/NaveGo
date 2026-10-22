@@ -17,6 +17,7 @@ import { SessionDetailScreen } from './SessionDetailScreen';
 import { ReferenceDetailScreen } from './ReferenceDetailScreen';
 import { getReferenceRoutePoints } from './db/journal';
 import { CockpitScreen } from './CockpitScreen';
+import { VesselScreen } from './VesselScreen';
 import { MapaOffline } from './components/MapaOffline';
 
 const darkMapStyle = [
@@ -107,7 +108,7 @@ function AppContent() {
   const mapRef = useRef<any>(null);
   const [mapReady, setMapReady] = useState(false);
 
-  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference' | 'cockpit'>('hud');
+  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference' | 'cockpit' | 'vessel'>('hud');
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [referencePoints, setReferencePoints] = useState<{ latitude: number; longitude: number }[]>([]);
@@ -352,6 +353,15 @@ function AppContent() {
     );
   }
 
+  if (screen === 'vessel') {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <StatusBar style="light" />
+      <VesselScreen onBack={() => setScreen('hud')} />
+      </SafeAreaView>
+    );
+  }
+
   if (isLandscape) {
     return (
       <View style={styles.landscapeContainer}>
@@ -504,7 +514,7 @@ function AppContent() {
 
     <View style={styles.dockBar}>
     {floatingActions.map((item) => (
-      <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === 'history') setScreen('history'); }}>
+      <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === 'history') setScreen('history'); if (item.key === 'vessel') setScreen('vessel'); }}>
       <Ionicons name={item.icon} size={22} color={item.key === 'history' ? colors.navigateCyan : colors.textSecondary} />
       <Text style={styles.dockLabel}>{item.label}</Text>
       </TouchableOpacity>
