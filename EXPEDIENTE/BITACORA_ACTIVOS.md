@@ -15,7 +15,7 @@
 
 **LOGOS kernel está en O4/F4** pero solo cubre gobernanza, no producto.
 
-**Simulador/Polaris tiene evidencia real (O3/F4)**: misión Puerto Esperanza hardcodeada en `timonel/timonel.py:181` (36, -6); 4 corridas con `ground_truth.jsonl` en `~/.logos/runs/`; 18 corridas con resúmenes en `timonel/corridas/` (2026-10-04); telemetría en `pruebas_dsh/`; 13 experimentos indexados en `EXPEDIENTE/96`; informe consolidado en `EXPEDIENTE/95`. No es solo "declaración del Director".
+**Simulador/Polaris tiene evidencia real y abundante (O3/F4)**: misión Puerto Esperanza hardcodeada en `timonel/timonel.py:181` (36, -6); 4 runs completos con `ground_truth.jsonl`, `resultado.json`, `runner.log` y `telemetria.jsonl` en `~/.logos/runs/`; **1043 archivos** (corridas + resúmenes) en `timonel/corridas/` (2026-10-04); telemetría en `pruebas_dsh/`; 13+ experimentos indexados en `EXPEDIENTE/96`; informe consolidado en `EXPEDIENTE/95`. No es solo "declaración del Director". Ver Anexo B para inventario completo.
 
 **El bache sin costura:** el puente entre campo (viajes, corridas) y código (tests que vinculen viaje ↔ versión ↔ criterio) es parcial. GNSS lo tiene; NaveGo app no lo tiene end-to-end; Timonel tiene datasets y corridas pero tests mezclados con scripts.
 
@@ -100,7 +100,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-04 | Track Honesto | O2 | F2 | CT-01, EXPEDIENTE/50 (bug 6%), exp_gaps_avance, exp_ruido_vs_gap |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos |
 | A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, timonel/corridas/ (18), EXPEDIENTE/96 (13 experimentos), EXPEDIENTE/95 |
-| A-10 | Simulador/Polaris | O3 | F4 | timonel.py:181 (Puerto Esperanza 36,-6), ~/.logos/runs/ (4 ground_truth), timonel/corridas/ (18), EXPEDIENTE/96 (13 experimentos), EXPEDIENTE/95 |
+| A-10 | Simulador/Polaris | O3 | F4 | timonel.py:181 (Puerto Esperanza 36,-6), ~/.logos/runs/ (4 runs completos), timonel/corridas/ (1043 archivos), EXPEDIENTE/96 (13+ experimentos), EXPEDIENTE/95 |
 | A-15 | Infraestructura | O4 | F3 | Git remoto, build_release_*.log, backups |
 
 ### 3.2 Tabla completa (18 activos)
@@ -116,7 +116,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos | Checkpoint, no auditoría completa |
 | A-08 | Gobernanza | O3 | F3 | Commits, PENDIENTES.md, 03_WORKFLOW.md reconciliado | P43 obsoleto, mark-reviewed pendiente |
 | A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, agente_llm.py+13 backups, sft_dataset/, banco_cc002/cc003, lora_*, kaggle_*, pruebas_dsh/, timonel/corridas/ (18 corridas 04-10), timonel.py con MISION; EXPEDIENTE/96 (13 experimentos oct), EXPEDIENTE/95 | Tests mezclados con scripts (1/6 con assert); memo 96 declara falta de metadata/hash por experimento |
-| A-10 | Simulador/Polaris | O3 | F4 | Mision hardcodeada en timonel/timonel.py:181 (Puerto Esperanza en 36,-6); ~/.logos/runs/ (4 corridas con ground_truth.jsonl); timonel/corridas/ (18 corridas 2026-10-04); pruebas_dsh/20261015_123336/; EXPEDIENTE/96 (memo indice 13 experimentos oct); EXPEDIENTE/95 (informe consolidado 21-10); memo 15-10 | Evidencia distribuida, no consolidada en un solo lugar. Memo 96 declara falta de metadata/hash por experimento |
+| A-10 | Simulador/Polaris | O3 | F4 | Mision hardcodeada en timonel/timonel.py:181 (Puerto Esperanza en 36,-6); ~/.logos/runs/ (4 runs completos con comandos_in, ground_truth, resultado, runner.log, telemetria); timonel/corridas/ (1043 archivos: corridas + resumenes 2026-10-04); pruebas_dsh/20261015_123336/; EXPEDIENTE/96 (memo indice 13+ experimentos oct); EXPEDIENTE/95 (informe consolidado 21-10); memo 15-10 | Evidencia abundante pero distribuida. Ver Anexo B para inventario consolidado. Memo 96 declara falta de metadata/hash por experimento |
 | A-11 | Taller multi-IA | O2 | F2 | 09_PROTOCOLO_MULTI_IA.md, agente_llm.py | Interfaz no inspeccionada |
 | A-12 | Datos GNSS | O3 | F4 | docs/gnss/v2/gtgen/, obsgen/, ground_truth_*.jsonl | Calidad varía por dataset |
 | A-13 | Estudios distancia | O3 | F3 | exp_dist/2/3, exp_gaps_avance, exp_ruido_vs_gap, HALLAZGOS_FASE_A_v1.md | Algunas conclusiones en pausa |
@@ -270,3 +270,66 @@ No se propone implantar CMMI o COBIT completos.
 
 > me gustaría que hagamos los pasos metodológicos y analíticos de una auto auditoría general para comprobar la salud, la dinámica general y cómo y cuáles son los mecanismos más honestos y equilibrados para tener una veheduría justa. Contemplando tiempo de todo lo que se hizo desde su inicio. Tanto para Navego que comenzó a existir como desarrollo de una aplicación y Luego surgió la necesidad de desarrollar Logos para que el sistema tuviera orden y organización más allá de los proyectos que se ejecuten. Pero estamos hablando de aproximadamente 3 meses desde sus inicios en windows todavía. Y ahora tenemos un sistema que va de a poco autoconociéndose. Con varios proyectos con un desarrollo incipiente, con comoditys ya instalados, con un know house ya funcional y con taller de investigación propio(con interfaz usuario/pc/i.a's). Con simuladores reales y sintéticos en interfaz. más allá de todo lo que se ubique en una zona de constante testeo para validar cada una de sus instancias. Pero también con un sistema que tiene un método como filosofía que lo hace único en su operatividad que también es científica en su método poperiano de validación y búsqueda constante de evidencias para ser falseada u evidencia actual. Nacida y concebida con sistema de encriptado y de seguimiento para tener una auditoría y trazabilidad chequeables y auditables (sha 256). Con ya un compendio de desarrollos implementados sistema de hud de navegación con sog, cog, distancia y varias utilidades más, en la app con track de grabado y seguimiento, con mapas que se integran a un sistema de código abierto. funcionando todo offline. Con varios visores independientes portrait, landscape de seguimiento rotativo. Guardado de trayectos en mapa con los waypoint, que pueden superponerse a el mapa en curso real vigente en diferentes colores. Funcionando en segundo plano o a prueba de cierres hasta que el usuario decide conscientemente cerrar la sesión. Testeo múltiples con viajes de 560 kms sin cierre, ni pérdida de gnss en todo el trayecto. El simulador tiene un bridge testeado que múltiples veces fue comandado con perfecto posicionamiento con el Timonel. Fue testeado múltiples veces llevando el Velero Polaris, del simulador desde distancias de más de 500 mts hasta el punto de llegada (Puerto Esperanza). Más un sinnúmero de experimentos trazables y chequeables. Y una interfaz con todas las I.A's con conexión via internet del mercado. Con repositorio de backup en Githube. con todo para implementar push automatizados, que por desición del Director todavía no se implementa. Con la honestidad del dato, de la evidencia por sobre el relato y con la honestidad de decir siempre lo que se registra y lo que no. Y un sin fin de microdesarrollos que algunos serán tan importantes como lo antes mecionado. Así que esto es no sólo para justipreciar la auditoría con sus pros y contras, flaquezas y fortalezas, presente y potencial. Sino que también nos sirva para avaluar, no solo evaluar, sino avaluar, ponerle un "precio" para nosotros, para que nosotros sepamos que herramienta tenemos y como podríamos mensurarlo. Cuál es la escalabilidad y cómo consideramos la arquitectura de Logos y su constelación en general. Cada palabra que digo debe quedar asentada y tenemos que tener un nuevo espacio que es la contabilidad de los activos que consideramos activos y cómo lo mensuramos según los canones actuales en desarrollo de I +D o recomiéndenme el formato de cómo se audita y contabilizan estos vienes y servicios o desarrollos, cuáles activos tenemos implementados y no lo estamos viendo. Armemos una bitácora para que no se nos haga ahora pesado el arranque.. no quiero más de una o dos iteraciones para arrancar.
 
+---
+
+## Anexo B — Inventario de evidencia del simulador
+
+**Fecha de consolidación:** 2026-10-22
+**Propósito:** consolidar en un solo lugar la evidencia dispersa del simulador. No crea nueva evidencia, no la interpreta; solo la lista con rutas y volúmenes reales.
+
+### B.1 — Runs de simulación (`~/.logos/runs/`)
+
+| Run | Tipo | Archivos | Tamaño ground_truth |
+|---|---|---|---|
+| `20261015_195114_test` | Completo | comandos_in, comandos, ground_truth, resultado, runner.log, telemetria | 119 KB |
+| `20261015_202610_test` | Completo | comandos_in, comandos, ground_truth, resultado, runner.log, telemetria | 210 KB |
+| `20261015_203108_test` | Completo | comandos_in, comandos, ground_truth, resultado, runner.log, telemetria | 204 KB |
+| `20261015_203702_test` | Completo | comandos_in, comandos, ground_truth, resultado, runner.log, telemetria | 205 KB |
+| `_caso_a0` | Parcial | solo comandos_in | — |
+| `_caso_a0_limpio` | Parcial | solo comandos_in | — |
+| `_caso_a0_sin_viento` | Parcial | solo comandos_in | — |
+| `_smoke_test` | Parcial | solo comandos_in | — |
+
+**Total:** 4 runs completos (con telemetría y resultado) + 4 parciales.
+
+### B.2 — Corridas de Timonel (`timonel/corridas/`)
+
+- **1043 archivos** (corridas `corrida_*.json` + resúmenes `resumen_*.json`)
+- Fecha: 2026-10-04
+- Rango de tamaños: 639 B a 4.6 KB por corrida
+
+### B.3 — Pruebas DSH (`timonel/pruebas_dsh/`)
+
+- `20261015_123336/` con `telemetria.jsonl.antes` y `telemetria.durante.jsonl`
+
+### B.4 — Documentos de experimentos (`timonel/borradores/`)
+
+20+ archivos `.md`, incluyendo:
+- `experimento_0_godot_headless_2026-10-15.md`
+- `experimento_1_comparacion_python_godot_2026-10-15.md`
+- `experimento_e2_frecuencia_2026-10-16.md`
+- `divergencia_fisica_python_godot_2026-10-15.md`
+- `flotabilidad_python_2026-10-15.md`
+- `contraste_cobertura_python_godot_2026-10-15.md`
+- `auditoria_viento_python_godot_2026-10-16.md`
+- `diagnostico_timon_python_godot_2026-10-16.md`
+- `ficha_p37_beneteau_2026-10-16.md`
+- `contrato_intent.md`
+- `f0_diseno.md`, `f0_diseno_v2.md`
+- `alexa_multiagente.md`
+- Y otros (ver `timonel/borradores/` completo)
+
+### B.5 — Memos y consolidados (`EXPEDIENTE/`)
+
+- `96_MEMO_EXPERIMENTOS_OCTUBRE_2026-10-15_16.md` (79 líneas) — índice de 13 experimentos, declara falta de metadata/hash por experimento
+- `95_INFORME_CONSOLIDADO_TIMONEL_COPILOTO.md` (119 líneas) — síntesis de arquitectura y estado
+
+### B.6 — Lo que falta consolidar
+
+- **Hash de experimento:** ninguno de los 13 experimentos declara hash de dataset+configuración+código. El memo 96 lo marca como faltante.
+- **Consolidación canónica:** la evidencia está dispersa en 5 ubicaciones. Un lugar canónico único (probablemente `~/.logos/runs/` con subcarpetas) unificaría.
+- **Metadata por experimento:** N, semillas, comando exacto, versión de código. El memo 96 lo declara para cada uno.
+
+---
+
+*Este anexo no crea evidencia nueva. Consolida la existente. Cualquier hash o metadata pendiente se declara como deuda, no se inventa.*
