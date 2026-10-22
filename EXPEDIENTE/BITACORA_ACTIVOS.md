@@ -15,7 +15,7 @@
 
 **LOGOS kernel está en O4/F4** pero solo cubre gobernanza, no producto.
 
-**Simulador/Polaris tiene evidencia real (O3/F3)**: 4 corridas con `ground_truth.jsonl` en `~/.logos/runs/`, telemetría en `pruebas_dsh/`, memo técnico, 17 expedientes. No es solo "declaración del Director".
+**Simulador/Polaris tiene evidencia real (O3/F4)**: misión Puerto Esperanza hardcodeada en `timonel/timonel.py:181` (36, -6); 4 corridas con `ground_truth.jsonl` en `~/.logos/runs/`; 18 corridas con resúmenes en `timonel/corridas/` (2026-10-04); telemetría en `pruebas_dsh/`; 13 experimentos indexados en `EXPEDIENTE/96`; informe consolidado en `EXPEDIENTE/95`. No es solo "declaración del Director".
 
 **El bache sin costura:** el puente entre campo (viajes, corridas) y código (tests que vinculen viaje ↔ versión ↔ criterio) es parcial. GNSS lo tiene; NaveGo app no lo tiene end-to-end; Timonel tiene datasets y corridas pero tests mezclados con scripts.
 
@@ -99,8 +99,8 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-03 | GNSS 2do plano | O3 | F4 | 8 tests GNSS, exp_dist/2/3, bitácora 21-10 sha256 |
 | A-04 | Track Honesto | O2 | F2 | CT-01, EXPEDIENTE/50 (bug 6%), exp_gaps_avance, exp_ruido_vs_gap |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos |
-| A-09 | Timonel | O2 | F2 | simulador_polaris.py+11 backups, sft_dataset, banco_cc002/cc003, lora_*, kaggle_*, pruebas_dsh/ |
-| A-10 | Simulador/Polaris | O3 | F3 | ~/.logos/runs/ (4 corridas ground_truth), pruebas_dsh/20261015_123336/, memo 15-10, logs/regression_*, 17 expedientes |
+| A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, timonel/corridas/ (18), EXPEDIENTE/96 (13 experimentos), EXPEDIENTE/95 |
+| A-10 | Simulador/Polaris | O3 | F4 | timonel.py:181 (Puerto Esperanza 36,-6), ~/.logos/runs/ (4 ground_truth), timonel/corridas/ (18), EXPEDIENTE/96 (13 experimentos), EXPEDIENTE/95 |
 | A-15 | Infraestructura | O4 | F3 | Git remoto, build_release_*.log, backups |
 
 ### 3.2 Tabla completa (18 activos)
@@ -115,8 +115,8 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-06 | Guardado/export | O1 | F1 | Sin test específico localizado | Antecedente de fallo |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos | Checkpoint, no auditoría completa |
 | A-08 | Gobernanza | O3 | F3 | Commits, PENDIENTES.md, 03_WORKFLOW.md reconciliado | P43 obsoleto, mark-reviewed pendiente |
-| A-09 | Timonel | O2 | F2 | simulador_polaris.py+11 backups, agente_llm.py+13 backups, sft_dataset/, banco_cc002/cc003, lora_*, kaggle_*, pruebas_dsh/ | Tests mezclados con scripts (1/6 con assert) |
-| A-10 | Simulador/Polaris | O3 | F3 | ~/.logos/runs/ (4 corridas ground_truth.jsonl), pruebas_dsh/20261015_123336/, memo 15-10, logs/regression_*, 17 expedientes | Sin test E2E de 500m→Puerto Esperanza |
+| A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, agente_llm.py+13 backups, sft_dataset/, banco_cc002/cc003, lora_*, kaggle_*, pruebas_dsh/, timonel/corridas/ (18 corridas 04-10), timonel.py con MISION; EXPEDIENTE/96 (13 experimentos oct), EXPEDIENTE/95 | Tests mezclados con scripts (1/6 con assert); memo 96 declara falta de metadata/hash por experimento |
+| A-10 | Simulador/Polaris | O3 | F4 | Mision hardcodeada en timonel/timonel.py:181 (Puerto Esperanza en 36,-6); ~/.logos/runs/ (4 corridas con ground_truth.jsonl); timonel/corridas/ (18 corridas 2026-10-04); pruebas_dsh/20261015_123336/; EXPEDIENTE/96 (memo indice 13 experimentos oct); EXPEDIENTE/95 (informe consolidado 21-10); memo 15-10 | Evidencia distribuida, no consolidada en un solo lugar. Memo 96 declara falta de metadata/hash por experimento |
 | A-11 | Taller multi-IA | O2 | F2 | 09_PROTOCOLO_MULTI_IA.md, agente_llm.py | Interfaz no inspeccionada |
 | A-12 | Datos GNSS | O3 | F4 | docs/gnss/v2/gtgen/, obsgen/, ground_truth_*.jsonl | Calidad varía por dataset |
 | A-13 | Estudios distancia | O3 | F3 | exp_dist/2/3, exp_gaps_avance, exp_ruido_vs_gap, HALLAZGOS_FASE_A_v1.md | Algunas conclusiones en pausa |
@@ -185,6 +185,7 @@ Registrar por separado: horas activas de Iván; horas de desarrollador humano; u
 - **A-06 (guardado/export):** sin test específico.
 - **A-17 (Ojo de Gaia):** sin inventario.
 - **A-09 (Timonel):** 1/6 tests con assert; el resto son scripts de experimento.
+- **A-10 (Simulador/Polaris):** evidencia distribuida en `timonel/`, `~/.logos/runs/`, `EXPEDIENTE/95-96`, `timonel/corridas/`. Consolidar en un lugar canónico y declarar hash de experimento queda para iteración 2.
 
 ---
 
