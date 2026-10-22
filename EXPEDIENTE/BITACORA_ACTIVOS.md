@@ -145,7 +145,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | Deuda técnica | fallos priorizados; huérfanos clasificados; docs sin drift | AMARILLO: Track Honesto, P43, ~1500 untracked |
 | Trazabilidad | commit↔cambio↔decisión↔prueba; real vs sintético; hashes | VERDE resellado 22-10 / AMARILLO historia total |
 
-**Semáforo global: AMARILLO** — evidencia suficiente para no ser gris, insuficiente para verde por brechas de formalización en A-04/A-06/A-17.
+**Semáforo global: AMARILLO** — evidencia suficiente para no ser gris, insuficiente para verde por brecha de formalización en A-04 (Track Honesto, pendiente criterio de cierre).
 
 ## 5. Avalúo
 
@@ -200,8 +200,6 @@ Registrar por separado: horas activas de Iván; horas de desarrollador humano; u
 - Contrastar `~/.logos/runs/*/ground_truth.jsonl` con versión de simulador y resultado de Puerto Esperanza.
 - Verificar `timonel/corridas/` (contenido no inspeccionado).
 - Ejecutar `mark-reviewed` y registrar salida (P43).
-- Verificar A-06 (guardar/exportar) contra versión actual.
-- Inventariar A-17 (Ojo de Gaia).
 - Clasificar `~/.logos/runs/` (¿son las corridas a Puerto Esperanza?).
 - Actualizar semáforo con datos de iteración 2.
 
