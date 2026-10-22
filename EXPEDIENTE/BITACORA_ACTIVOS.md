@@ -174,7 +174,47 @@ Registrar por separado: horas activas de Iván; horas de desarrollador humano; u
 - Activo reproducido con alcance conocido: intervalo y nivel de confianza.
 - No sumar horas, valor estratégico, probabilidad y precios de mercado en un total único.
 
+### 5.4 Avalúo por módulo (borrador, confianza baja)
+
+**Nota de honestidad:** todo avalúo de etapa temprana tiene confianza baja. Los intervalos son amplios porque la mayoría de los activos no tienen comparable directo. No hay mercado para "NaveGo" ni para "LOGOS" como productos separados; el valor está en la combinación.
+
+#### Metodología
+
+| Método | Qué mide | Qué NO mide |
+|---|---|---|
+| Costo de reposición | Esfuerzo para reconstruir equivalente hoy | No mide mercado ni ingresos |
+| Comparables de mercado | Precio de productos/servicios similares | No mide lo que NaveGo/LOGOS harían distinto |
+| Valor de opción | Qué habilita a futuro | Es potencial, no realizado |
+| Valor de evidencia | Fuerza de las afirmaciones sobre el activo | Factor de confianza, no dinero |
+
+#### Módulos y avalúo
+
+| Módulo | Qué es | Valor actual (evidencia) | Costo reposición | Comparables | Valor potencial (si auditado y aprobado) |
+|---|---|---|---|---|---|
+| NaveGo app | App náutica offline-first, HUD, track, mapas, waypoints | O3/F3. Producto probado en campo (560 km, 39k fixes). Sin test E2E. | $24k–96k | Navionics $50–100/año; Savvy Navvy $100–200/año | O4/F5. Suscripción $50–100/año con base de usuarios |
+| LOGOS | Gobernanza, MANIFEST, Gate, trust, SHA-256, protocolos | O4/F4. Gate READY, trust verificado, 5 tests propios. Solo gobernanza, no producto. | $16k–64k | MLOps/gobernanza IA (Weights&Biases, Arize) sin comparable exacto | Licencia $10k–50k/año a empresas; consultoría $100–200/h |
+| Timonel | Agente LLM, SFT/LoRA, bancos de evaluación, decisiones náuticas | O3/F3. 18 corridas, 13 experimentos indexados, 1/6 tests con assert. | $8k–48k | Consultoría IA $100–200/h; fine-tuning $500–2000/proyecto | Licencia $500–2000/mes; consultoría $100–200/h |
+| Simulador (Godot+Polaris+Python) | Entorno de simulación de vela, física, bridge, Puerto Esperanza | O3/F4. Misión hardcodeada (36,-6), 4 ground_truth, 18 corridas, 13 experimentos. | $8k–48k | Simuladores náuticos profesionales $500–2000/año | Licencia $500–2000/año; servicio $5k–20k/proyecto |
+| Taller multi-IA | Interfaz con múltiples IAs, orquestación | O2/F2. 09_PROTOCOLO_MULTI_IA.md, agente_llm.py. | $4k–16k | Orquestación IAs $20–200/mes | Licencia $200–1000/mes; integración $2k–10k |
+| Datos GNSS + ground truth | Datasets reales/sintéticos, 39k fixes, 13 experimentos | O3/F4. gtgen/, obsgen/, sha256_resultados.txt. | $4k–16k | Datasets etiquetados $500–5000 | Licencia $1k–5k a investigadores |
+| Estudios de distancia | Metodología A/B/C, experimentos, informes | O3/F3. exp_dist/2/3, exp_gaps_avance, exp_ruido_vs_gap. | $4k–16k | Conocimiento técnico documentado | Consultoría $100–200/h; valor reputacional (paper) |
+
+#### Total (intervalo, no suma simple)
+
+- **Costo de reposición del conjunto:** $64k–288k USD (suma de módulos, sin sinergias).
+- **Valor potencial con auditado y aprobado:** $20k–80k/año en licencias + consultoría, dependiendo de base de usuarios y clientes.
+- **Valor de opción (no monetario):** soberanía offline, track honesto, gobernanza auditable. Diferenciadores no cubiertos por comparables.
+
+#### Lo que NO se puede valuar
+
+- **Know-how acumulado:** 3 meses de trabajo intensivo no se reponen solo con horas. La arquitectura ya validada, los errores ya cometidos, las decisiones ya tomadas — no tienen comparable de mercado.
+- **Valor de evidencia:** SHA-256, trust, 13 experimentos indexados. Vale más que un producto sin evidencia, pero no se puede medir en dólares.
+- **Sinergia entre módulos:** NaveGo + LOGOS + Timonel + Simulador no valen lo mismo separados que juntos. El conjunto es mayor que la suma.
+
+**Confianza del avalúo: baja.** Los intervalos son amplios y los supuestos están declarados. Cualquier decisión de inversión o venta requiere una valoración profesional con datos de mercado reales.
+
 ---
+
 
 ## 6. Deuda conocida
 
