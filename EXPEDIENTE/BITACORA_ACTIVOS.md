@@ -97,7 +97,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 |---|---|---|---|---|
 | A-01 | NaveGo app | O3 | F3 | logs/viaje_*, regression_2026-09-27/30, db_export, test_fase2 |
 | A-03 | GNSS 2do plano | O3 | F4 | 8 tests GNSS, exp_dist/2/3, bitácora 21-10 sha256 |
-| A-04 | Track Honesto | O2 | F2 | CT-01, EXPEDIENTE/50 (bug 6%), exp_gaps_avance, exp_ruido_vs_gap |
+| A-04 | Track Honesto | O3 | F4 | test_ref_route_no_gap.py: GREEN (230 puntos; gap GT declarado 30 m; divergencia 2.072 m < tolerancia 8 m); EXPEDIENTE/50 (viaje real ida/vuelta); CT-01; exp_gaps_avance; exp_ruido_vs_gap |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos |
 | A-09 | Timonel | O3 | F3 | simulador_polaris.py+11 backups, timonel/corridas/ (18), EXPEDIENTE/96 (13 experimentos), EXPEDIENTE/95 |
 | A-10 | Simulador/Polaris | O3 | F4 | timonel.py:181 (Puerto Esperanza 36,-6), ~/.logos/runs/ (4 runs completos), timonel/corridas/ (1043 archivos), EXPEDIENTE/96 (13+ experimentos), EXPEDIENTE/95 |
@@ -110,7 +110,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | A-01 | NaveGo app | O3 | F3 | logs/viaje_* (ida+vuelta+sha256), regression_2026-09-27/, regression_2026-09-30_BASE.log, db_export_2026-09-30/, test_fase2_2026-09-30/ | Sin test E2E único |
 | A-02 | HUD (SOG/COG/dist) | O3 | F2 | Incluido en A-01 | Sin test específico |
 | A-03 | GNSS 2do plano | O3 | F4 | 8 tests GNSS, exp_dist/2/3, bitácora cierre 21-10 con sha256_resultados.txt, ANALISIS_TCL_FIELD_01.md | El más formalizado |
-| A-04 | Track Honesto | O2 | F2 | CT-01, EXPEDIENTE/50 (bug 6%), exp_gaps_avance, exp_ruido_vs_gap | Pendiente criterio cierre |
+| A-04 | Track Honesto | O3 | F4 | test_ref_route_no_gap.py: GREEN (230 puntos; gap GT declarado 30 m; divergencia 2.072 m < tolerancia 8 m); EXPEDIENTE/50 (viaje real ida/vuelta); CT-01; exp_gaps_avance; exp_ruido_vs_gap | F5 pendiente: CI. Validación limitada a este fixture/escenario. El runner comprueba que el avance GT declarado supera la tolerancia; no regenera ni recalcula el fixture en cada ejecución. |
 | A-05 | Cartografía | O2 | F2 | En A-01 | Sin test offline por función |
 | A-06 | Guardado/export | O2 | F2 | db/exportToGodot.ts (exportSessionToGodotJson: lat_raw, lon_raw, timestamp, heading, filtrando quality='GOOD') | Export a JSON para Godot funcional; sin export GPX/KML para usuario; sin test E2E de guardar+reabrir+exportar |
 | A-07 | LOGOS kernel | O4 | F4 | Gate READY 22-10, trust, 5 tests logos | Checkpoint, no auditoría completa |
@@ -145,7 +145,7 @@ Una IA que propuso una teoría no cuenta como revisora independiente. En cuestio
 | Deuda técnica | fallos priorizados; huérfanos clasificados; docs sin drift | AMARILLO: Track Honesto, P43, ~1500 untracked |
 | Trazabilidad | commit↔cambio↔decisión↔prueba; real vs sintético; hashes | VERDE resellado 22-10 / AMARILLO historia total |
 
-**Semáforo global: AMARILLO** — evidencia suficiente para no ser gris, insuficiente para verde por brecha de formalización en A-04 (Track Honesto, pendiente criterio de cierre).
+**Semáforo global: AMARILLO** — evidencia suficiente para no ser gris; A-04 tiene una validación automatizada local del escenario (230 puntos, gap GT declarado de 30 m y divergencia de 2.072 m frente a tolerancia de 8 m), pero falta CI (F5) y cobertura automatizada integral de los escenarios de Track Honesto.
 
 ## 5. Avalúo
 
