@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "manifest_version": "1.0.0",
   "project": "NAVEGO",
-  "updated_at": "2026-09-22T12:03:27-03:00",
+  "updated_at": "2026-10-22T05:44:58Z",
   "fail_closed": true,
   "required": [
     "state",
@@ -26,7 +26,8 @@
     "decision_manifest",
     "decision_gate",
     "simulator_source",
-    "manual_arranque"
+    "manual_arranque",
+    "timonel_context"
   ],
   "sources": [
     {
@@ -246,7 +247,7 @@
       ],
       "reviewed_against_commit": "05ecd2e",
       "last_human_review": "2026-10-02",
-      "reviewed_against_hash": "5465b5da8f462ffa1b852dcc7905d8341bb8b335276e0fc2d5f29fe4a1f45ae5"
+      "reviewed_against_hash": "6f1d8645ab07db7549ca37de4f529beb49c2ab4f4f73749022693f50713e471a"
     },
     {
       "type": "workflow",
@@ -393,6 +394,22 @@
         "nonempty"
       ],
       "reviewed_against_hash": "0add5ab0830c628fd4ba34ae5000c3f35bab220b4aaa4184abd0ab5d38f7f44d"
+    },
+    {
+      "type": "timonel_context",
+      "path": "EXPEDIENTE/98_CONTEXTO_ARRANQUE_TIMONEL.md",
+      "authority": true,
+      "role": "singleton",
+      "description": "Puerta de entrada para Timonel. Referencia a 95, 96 y documentos de control.",
+      "generated_by": "manual",
+      "validation_policy": [
+        "exists",
+        "readable",
+        "nonempty"
+      ],
+      "last_human_review": "2026-10-22",
+      "reviewed_against_commit": "b9cc6fc",
+      "reviewed_against_hash": "31141074b6d504920393544e1fa42591a4bf12c159bcab94ed32667465531e5b"
     }
   ],
   "consistency_rules": [
