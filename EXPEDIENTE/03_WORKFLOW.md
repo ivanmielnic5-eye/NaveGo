@@ -221,13 +221,25 @@ Esta auto-lectura se registra como SYSTEM_EVENT.
 Si la propuesta es aceptada, se registra como DECISION.
 Si cambia la capa, se registra como HISTORY.
 
-## 6. Reglas nuevas para sumar
+## 6. Reglas R-16 a R-20 — Referencia normativa
 
-R-16 Todo cambio de capa debe tener evidencia de la medición previa.
-R-17 El núcleo propone, el humano decide. Nunca auto-cambio silencioso.
-R-18 La auto-observación no interfiere con la operación normal.
-R-19 Un cambio de capa es reversible.
-R-20 Un cambio de capa es REVERSIBLE + REGISTRADO.
+**Fuente autoritativa:** `~/.logos/core/protocol/protocols.json`.
+
+Este archivo no duplica el texto normativo vigente. Las definiciones
+historicas que siguen se conservan exclusivamente para trazabilidad y
+no tienen autoridad normativa.
+
+**HISTORICO — DEFINICIONES NO VIGENTES; NO UTILIZAR COMO PROTOCOLO ACTIVO**
+
+- R-16 Todo cambio de capa debe tener evidencia de la medicion previa.
+- R-17 El nucleo propone, el humano decide. Nunca auto-cambio silencioso.
+- R-18 La auto-observacion no interfiere con la operacion normal.
+- R-19 Un cambio de capa es reversible.
+- R-20 Un cambio de capa es REVERSIBLE + REGISTRADO.
+
+Las definiciones autoritativas de estos identificadores son las registradas
+en `protocols.json`. Ante cualquier discrepancia, consultar esa fuente y no
+este bloque historico.
 
 ## 7. Frase para el expediente
 
