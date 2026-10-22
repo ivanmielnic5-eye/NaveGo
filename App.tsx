@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useRef, useState, memo } from 'react';
 import { LogBox } from 'react-native';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // import MapView, { Polyline } from 'react-native-maps';
@@ -514,10 +514,27 @@ function AppContent() {
 
     <View style={styles.dockBar}>
     {floatingActions.map((item) => (
-      <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === 'history') setScreen('history'); if (item.key === 'vessel') setScreen('vessel'); }}>
-      <Ionicons name={item.icon} size={22} color={item.key === 'history' ? colors.navigateCyan : colors.textSecondary} />
-      <Text style={styles.dockLabel}>{item.label}</Text>
-      </TouchableOpacity>
+      <Pressable 
+        key={item.key} 
+        style={styles.dockItemTouchable} 
+        onPress={() => { 
+          if (item.key === 'history') setScreen('history'); 
+          if (item.key === 'vessel') setScreen('vessel'); 
+        }}
+      >
+        {({ pressed }) => (
+          <>
+            <Ionicons 
+              name={item.icon} 
+              size={22} 
+              color={pressed || screen === item.key ? colors.navigateCyan : 'rgba(0, 217, 255, 0.5)'} 
+            />
+            <Text style={[styles.dockLabel, { color: pressed || screen === item.key ? colors.navigateCyan : 'rgba(0, 217, 255, 0.5)' }]}>
+              {item.label}
+            </Text>
+          </>
+        )}
+      </Pressable>
     ))}
     </View>
 

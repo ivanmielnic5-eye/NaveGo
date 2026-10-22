@@ -26,11 +26,13 @@ export function VesselScreen({ onBack }: Props) {
   const [motor, setMotor] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [initialData, setInitialData] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
       try {
         const v = await getVessel(db);
+        setInitialData(v);
         if (v) {
           setNombre(v.nombre ?? '');
           setTipo(v.tipo ?? '');
@@ -55,6 +57,19 @@ export function VesselScreen({ onBack }: Props) {
     return isNaN(n) ? null : n;
   };
 
+  const isDirty = () => {
+    if (!initialData) return true;
+    return (
+      (nombre.trim() || null) !== initialData.nombre ||
+      (tipo.trim() || null) !== initialData.tipo ||
+      (modelo.trim() || null) !== initialData.modelo ||
+      parseNum(eslora) !== initialData.eslora ||
+      parseNum(manga) !== initialData.manga ||
+      parseNum(calado) !== initialData.calado ||
+      (motor.trim() || null) !== initialData.motor
+    );
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -67,6 +82,7 @@ export function VesselScreen({ onBack }: Props) {
         calado: parseNum(calado),
         motor: motor.trim() || null,
       });
+      setInitialData(await getVessel(db));
       Alert.alert('Guardado', 'Ficha de embarcación actualizada.');
     } catch (err) {
       console.warn('[VESSEL] Error al guardar:', err);
@@ -161,11 +177,14 @@ export function VesselScreen({ onBack }: Props) {
       />
 
       <TouchableOpacity
-        style={[styles.saveButton, saving && { opacity: 0.6 }]}
+        style={[
+          styles.saveButton, 
+          (!isDirty() || saving) && { opacity: 0.4, backgroundColor: 'transparent', borderColor: colors.textSecondary }
+        ]}
         onPress={handleSave}
-        disabled={saving}
+        disabled={!isDirty() || saving}
       >
-        <Text style={styles.saveText}>
+        <Text style={[styles.saveText, (!isDirty() || saving) && { color: colors.textSecondary }]}>
           {saving ? 'GUARDANDO…' : 'GUARDAR'}
         </Text>
       </TouchableOpacity>
