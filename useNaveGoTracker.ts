@@ -437,15 +437,26 @@ export function useNaveGoTracker() {
           BACKGROUND_LOCATION_TASK,
         );
         console.log('[TRACKER] useEffect Task: hasStarted=' + hasStarted);
-        if (hasStarted) {
-          console.log('[TRACKER] Task background ya estaba activa');
-          return;
+        const bgPermission = await Location.getBackgroundPermissionsAsync();
+        console.log('[TRACKER] permiso background actual=' + bgPermission.status);
+
+        if (bgPermission.status !== 'granted') {
+          console.log('[TRACKER] useEffect Task: pidiendo permiso background');
+          const requestedPermission = await Location.requestBackgroundPermissionsAsync();
+          console.log('[TRACKER] resultado permiso background=' + requestedPermission.status);
+          if (requestedPermission.status !== 'granted') {
+            console.warn('[TRACKER] permiso background no concedido; no se reinicia la Task');
+            return;
+          }
         }
 
-        console.log('[TRACKER] useEffect Task: pidiendo permiso background');
-        await Location.requestBackgroundPermissionsAsync();
-        console.log('[TRACKER] useEffect Task: permiso concedido, arrancando');
+        if (hasStarted) {
+          console.warn('[TRACKER] Task background ya estaba activa; reiniciando para reenganchar eventos');
+          await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
+          console.log('[TRACKER] Task background previa detenida');
+        }
 
+        console.log('[TRACKER] permiso background verificado, arrancando');
         await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION_TASK, {
           accuracy: Location.Accuracy.High,
           timeInterval: 1000,
