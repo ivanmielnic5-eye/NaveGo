@@ -500,3 +500,18 @@ contraste con codigo, tests y comportamiento actual.
 - Criterio de cierre: pruebas aprobadas, workflow documentado, fuentes reconciliadas y Gate READY.
 - Respaldo previo: /home/ivan/backups/LOGOS_PENDIENTE_COORD_PRE_20261019_214501
 - Decisión del Director (cierre): ACEPTO (2026-10-19): Autorizacion explicita del Director; implementacion 1f30d89, 12 pruebas aprobadas, Gate READY; raiz de confianza ausente y no resuelta
+
+### P49 — [LOGOS] Implementar Regla Dura de Intervención de IA
+- Estado: PENDIENTE (Detectado 2026-10-23).
+- Fuente: Propuesta de Luna validada por el Director tras el incidente de regresión en NaveGo (fallo de track por `git reset --hard` y scripts masivos).
+- Situación: No alcanza con pedirle a una IA que sea cuidadosa; el proceso tiene que impedir que un error evitable (desconocimiento de procesos) destruya trabajo crítico. Las herramientas actuales permiten comandos destructivos y reemplazos masivos sin fricción.
+- Acción propuesta: Formalizar y desarrollar la "Regla Dura de Intervención de IA" en los protocolos de LOGOS, que consta de 6 puntos:
+  1. Prohibición de destrucción sin autorización (nada de `git reset --hard`, `clean -fdx` sin respaldo).
+  2. Resguardo obligatorio antes de intervenir (commit de rescate previo).
+  3. Cambios acotados y auditables (prohibir scripts masivos de reemplazo en `.ts`/`.tsx`, usar diffs revisables).
+  4. Una intervención por vez (hipótesis, comprobación y criterio de éxito).
+  5. Decisión humana indelegable (silencio != autorización).
+  6. Congelamiento basado en evidencia (commit + hash del APK + logs).
+- Criterio de aceptación: El texto propuesto (guardado en el hilo del 2026-10-23) es revisado, aprobado por el Director e incorporado formalmente al protocolo de LOGOS (como R-23 o D-2026-0017).
+- Responsable: IA propone; Director aprueba y decide.
+
