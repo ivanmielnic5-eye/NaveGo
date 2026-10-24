@@ -43,3 +43,23 @@
 - Autorización de ejecución en Godot.
 
 *El silencio del Director no constituye aprobación de ninguna de estas decisiones.*
+
+---
+
+## 7. Visión a Futuro: Passthrough y Gemelos Digitales (Digital Twins)
+
+**Registrado el:** 2026-10-24
+**Contexto:** A partir del análisis de arquitecturas de videojuegos y robótica moderna (como el concepto de "Passthrough" y proyectos como SayCan), se consolida la visión a largo plazo del ecosistema.
+
+### El concepto de "Passthrough" (Frontera de Proceso)
+El sistema no debe ser un monolito. Godot (Polaris) y Python (Policy Engine + Timonel) deben vivir en procesos separados. 
+- **La Frontera:** El Sandbox (Bubblewrap) garantiza que no compartan memoria ni puedan romperse mutuamente.
+- **El Puente:** Se comunican a través de eventos estructurados (`comandos.jsonl` y `telemetria.jsonl`). Una "explosión" (evento/orden) en un lado afecta al otro de forma controlada y determinista.
+
+### Gemelo Digital (Digital Twin) Bidireccional
+El simulador (Polaris) es un laboratorio de *Ground Truth* perfecto. Habilita dos flujos:
+1. **Sim2Real:** Usar la telemetría perfecta de Godot para entrenar al copiloto LLM antes de ir al barco real.
+2. **Real2Sim:** Inyectar datos de viajes reales en el simulador para que el agente aprenda de imperfecciones en un entorno seguro.
+
+### Conclusión
+El objetivo final es un **Gemelo Digital** que permita a la IA cometer errores en la jaula de cristal antes de operar en el barco real.
