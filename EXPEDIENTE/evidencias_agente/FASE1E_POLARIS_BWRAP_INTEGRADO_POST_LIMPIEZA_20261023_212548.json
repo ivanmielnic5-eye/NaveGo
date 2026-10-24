@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-POLARIS-BWRAP-INTEGRADO-POST-LIMPIEZA-20261023-212548",
+  "fecha_registro": "2026-10-23T21:26:24.499000-03:00",
+  "estado": "PRUEBA_INTEGRADA_LIMPIA_SUPERADA; REVISION_HUMANA_PENDIENTE",
+  "commit_base": "af3ba78fbe1872a4e401653fc917ddb7b6034165",
+  "commits_relevantes": {
+    "integracion": "dccf0dd",
+    "guardrails": "af3ba78"
+  },
+  "ejecucion_integrada": {
+    "consulta_real_ollama": true,
+    "policy_engine": "CONTRATO_APROBADO",
+    "argumentos": "LISTA_EXACTA_AUTORIZADA",
+    "bubblewrap_ejecutado": true,
+    "accion": "/usr/bin/cat /workspace/informe.txt",
+    "timeout_bwrap_segundos": 5,
+    "codigo_salida": 0,
+    "lectura_sandbox": "OK"
+  },
+  "registro_integracion": {
+    "ruta": "/tmp/LOGOS_integracion_limpia_20261023_212548.log",
+    "sha256": "a7c8ba460a9cfdb328bc11a947978a90abff6ab305e25f09a9bea7bc0ed7dd95"
+  },
+  "suite_offline_posterior_a_commits": {
+    "total_tests": 22,
+    "resultado": "OK",
+    "codigo_salida": 0,
+    "ruta": "/tmp/LOGOS_validacion_final_20261023_212403.log",
+    "sha256": "ba33042563f5617be77e6775b2f21e7a8ab06d26cde65d242a9f7c4d349a345e"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b",
+    "tests/fase2/polaris_bridge.py": "8e99597a217c6496fd436296b84cf7e05369add24a1ac5228a09a820b590b619",
+    "tests/fase2/policy_engine.py": "77e1097a97dd799881ab4d5816ec7b98c6a16195c053baff9996cc04e99f620c",
+    "tests/fase2/sandbox_executor.py": "d66f22470849ac9dea3bc15f4c7b3430e02c34fca975a80e54af401ee77f9031",
+    "tests/fase2/test_sandbox_executor.py": "dc4d8143be7507caf3ca9fb17bdb436b2f01243745d0dccb6d1aa5e79cfbfdd6"
+  },
+  "limitaciones": [
+    "La prueba integrada cubre una lectura sintética específica.",
+    "La verificación del namespace PID y la denegación de lectura externa se registraron en pruebas manuales separadas.",
+    "Las 22 pruebas offline no ejecutan Bubblewrap ni consultan Ollama.",
+    "Esta evidencia no constituye una certificación general de seguridad.",
+    "La homologación del Bridge original es independiente."
+  ],
+  "aprobacion_humana": "PENDIENTE"
+}
