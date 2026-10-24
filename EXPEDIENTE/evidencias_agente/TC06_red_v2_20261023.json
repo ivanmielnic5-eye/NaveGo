@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "id": "TC-06-v2",
+  "fase": "1C",
+  "fecha_prueba_reportada": "2026-10-23",
+  "fecha_registro": "2026-10-23T18:17:25-03:00",
+  "tipo": "evidencia de ejecución aportada desde Konsole",
+  "script": "tests/fase1c/test_network_tc06_v2.sh",
+  "script_sha256": "b4ffbea464bb8f27d133c2db7cfa3d21ae4c30692546068d8de9ea5a8f15e8f1",
+  "bubblewrap_version": "0.13.1",
+  "resultado_observado": {
+    "codigo_salida": 0,
+    "control_positivo_host_antes": "SUPERADO",
+    "pre_vuelo_sandbox": "SUPERADO",
+    "control_positivo_host_despues": "SUPERADO",
+    "resultado_cliente": "BLOCKED:ConnectionRefusedError:111",
+    "servidor_host": "127.0.0.1",
+    "limpieza": "COMPLETADA_SEGUN_SALIDA",
+    "anomalia_de_presentacion": "El mensaje de control posterior imprimió literalmente \\\\n en lugar de un salto de línea.",
+    "fuente": "transcripción de terminal aportada por el Director"
+  },
+  "dictamen": "SUPERADA_PARA_EL_SERVIDOR_Y_PERFIL_PROBADOS",
+  "limitaciones": [
+    "Alcance limitado al servidor TCP temporal enlazado a 127.0.0.1.",
+    "No demuestra aislamiento universal de red.",
+    "La salida fue aportada por el Director y no observada directamente por este registro.",
+    "La anomalía de formato de salida debe corregirse en una versión futura del script."
+  ],
+  "estado": "EVIDENCIA_REGISTRADA_PENDIENTE_DE_REVISION_HUMANA"
+}

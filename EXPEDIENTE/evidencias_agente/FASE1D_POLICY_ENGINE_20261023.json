@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1D-POLICY-ENGINE",
+  "fase": "1D",
+  "fecha_prueba_reportada": "2026-10-23",
+  "fecha_registro": "2026-10-23T19:18:22-03:00",
+  "tipo": "evidencia de ejecución de suite de pruebas unitarias y validación de contrato",
+  "entorno": {
+    "python_version": "3.14.8 (main, Oct 13 2026, 10:43:33) [GCC 16.2.1 20260810]",
+    "plataforma": "linux",
+    "biblioteca_validacion": "json-schema (estricto en memoria + Pathlib is_relative_to)"
+  },
+  "artefactos_evaluados": {
+    "action_schema.json": {
+      "path": "tests/fase2/action_schema.json",
+      "sha256": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b"
+    },
+    "policy_engine.py": {
+      "path": "tests/fase2/policy_engine.py",
+      "sha256": "2faf69c9d6557cdc4e67b7512988f3a195379a7105c05fb289a643a04cd0ff88"
+    },
+    "test_policy_engine.py": {
+      "path": "tests/fase2/test_policy_engine.py",
+      "sha256": "da4abf6ce734fa73a1ebb719ea0ba0f77409e92f5e8936c87c459c9e784d0ba5"
+    }
+  },
+  "comando_ejecucion": "PYTHONPATH=tests/fase2 python3 -m unittest tests/fase2/test_policy_engine.py",
+  "resultado_observado": {
+    "tests_ejecutados": 7,
+    "tests_ok": 7,
+    "tests_fallidos": 0,
+    "tiempo_ejecucion_segundos": 0.002,
+    "salida_terminal": ".......\n----------------------------------------------------------------------\nRan 7 tests in 0.002s\n\nOK"
+  },
+  "relacion_de_pruebas": [
+    {
+      "id": "test_01",
+      "descripcion": "JSON sintácticamente malformado",
+      "comportamiento_esperado": "Rechazo con JSON_SYNTAX_ERROR",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_02",
+      "descripcion": "Tipos incorrectos en campos obligatorios (ej. action como lista)",
+      "comportamiento_esperado": "Rechazo con SCHEMA_ERROR",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_03",
+      "descripcion": "Campos adicionales no permitidos en el esquema (additionalProperties: false)",
+      "comportamiento_esperado": "Rechazo con SCHEMA_ERROR",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_04",
+      "descripcion": "Intento de inyección mediante ruta absoluta",
+      "comportamiento_esperado": "Rechazo con SECURITY_VIOLATION",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_05",
+      "descripcion": "Bypass de directorio hermano con prefijo similar (workspace vs workspace_evil)",
+      "comportamiento_esperado": "Rechazo con SECURITY_VIOLATION mediante is_relative_to()",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_06",
+      "descripcion": "Evaluación de enlaces simbólicos externos al workspace",
+      "comportamiento_esperado": "Rechazo con SECURITY_VIOLATION al resolverse fuera del workspace",
+      "resultado": "SUPERADO"
+    },
+    {
+      "id": "test_07",
+      "descripcion": "Contrato válido, aprobación de política y generación segura de argumentos bwrap",
+      "comportamiento_esperado": "CONTRACT_APPROVED y lista de argumentos list[str]",
+      "resultado": "SUPERADO"
+    }
+  ],
+  "limitaciones_conocidas": [
+    "El motor no previene completamente ataques de tipo TOCTOU (Time-of-Check to Time-of-Use) si el sistema de archivos muta post-validación.",
+    "La generación de argumentos de bwrap es una inspección estática en memoria y no implica ejecución real en sandbox.",
+    "El alcance se limita estrictamente a los casos probados en los fixtures temporales."
+  ],
+  "dictamen": "MOTOR_DE_POLITICA_DETERMINISTA_VALIDADO_EN_SIMULACION",
+  "estado": "EVIDENCIA_REGISTRADA_PENDIENTE_DE_REVISION_HUMANA"
+}

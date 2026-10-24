@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "id": "TC-12",
+  "fase": "1C",
+  "tipo": "prueba finita de límite de tareas con systemd-run y cgroups v2",
+  "fecha_prueba_reportada": "2026-10-23",
+  "fecha_registro": "2026-10-23T18:36:41-03:00",
+  "fuente": "transcripción de Konsole aportada por el Director",
+  "unidad": "logos-pids-probe-1792791180-7848.scope",
+  "invocation_id": "96c131022de84efc85c8368b78202a7d",
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/logos-pids-probe-1792791180-7848.scope",
+  "resultado_observado": {
+    "codigo_salida": 0,
+    "pids_max": 16,
+    "pids_current_inicial": 1,
+    "hijos_creados": 15,
+    "intento_siguiente": "EAGAIN",
+    "pids_current_con_hijos": 16,
+    "pids_events_max_antes": 0,
+    "pids_events_max_despues": 1,
+    "limpieza": "CORRECTA"
+  },
+  "dictamen": "LIMITE_PIDS_APLICADO_Y_RECHAZO_OBSERVADO",
+  "limitaciones": [
+    "Prueba acotada a una unidad transitoria con TasksMax=16.",
+    "No prueba límites de memoria ni CPU.",
+    "El script de prueba fue temporal y no quedó versionado; el registro conserva la salida reportada, no un hash del ejecutable de prueba."
+  ],
+  "estado": "PRUEBA_ACOTADA_SUPERADA; REVISION_HUMANA_PENDIENTE"
+}

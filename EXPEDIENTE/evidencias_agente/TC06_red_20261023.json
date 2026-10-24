@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "id": "TC-06",
+  "fase": "1C",
+  "fecha_prueba_reportada": "2026-10-23",
+  "fecha_registro": "2026-10-23T18:10:09-03:00",
+  "tipo": "evidencia de ejecución aportada desde Konsole",
+  "script": "tests/fase1c/test_network_tc06.sh",
+  "script_sha256": "5b0cd232f83e067bd4929d4890224c3b2d386db2c25d03255b3c3fde522b460b",
+  "bubblewrap_version": "0.13.1",
+  "resultado_observado": {
+    "codigo_salida": 0,
+    "control_positivo_host": "SUPERADO",
+    "pre_vuelo_sandbox": "SUPERADO",
+    "resultado_cliente": "BLOCKED:ConnectionRefusedError:111",
+    "servidor_host": "127.0.0.1",
+    "limpieza": "COMPLETADA_SEGUN_SALIDA",
+    "fuente": "transcripción de terminal aportada por el Director"
+  },
+  "dictamen": "SUPERADA_PARA_EL_SERVIDOR_Y_PERFIL_PROBADOS",
+  "limitaciones": [
+    "Prueba de alcance limitado al servidor TCP enlazado a 127.0.0.1.",
+    "No demuestra aislamiento universal de red.",
+    "No verifica todas las interfaces, rutas, servicios ni vías de comunicación.",
+    "El registro requiere revisión humana antes de incorporarse a un dictamen global."
+  ],
+  "estado": "EVIDENCIA_REGISTRADA_PENDIENTE_DE_REVISION_HUMANA"
+}

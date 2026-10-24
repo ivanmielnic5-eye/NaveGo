@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "id": "CGROUPS-PROBE-01",
+  "fase": "1C",
+  "fecha_prueba_reportada": "2026-10-23",
+  "fecha_registro": "2026-10-23T18:30:51-03:00",
+  "tipo": "sondeo inocuo de límites efectivos en cgroup v2",
+  "fuente": "transcripción de terminal aportada por el Director",
+  "systemd": "262 (262.1-1-arch)",
+  "unidad": "logos-cgroup-check-1792790965-7848.scope",
+  "invocation_id": "97143a598a9f4423a5425b4719b472d3",
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/logos-cgroup-check-1792790965-7848.scope",
+  "resultado_observado": {
+    "codigo_salida": 0,
+    "memory.high": 134217728,
+    "memory.max": 268435456,
+    "pids.max": 32,
+    "cpu.max": "20000 100000",
+    "cpu_quota_porcentaje": 20,
+    "verificaciones": "4/4 superadas"
+  },
+  "dictamen": "LIMITES_CONFIGURADOS_Y_VISIBLES_EN_EL_CGROUP_DE_PRUEBA",
+  "pendiente": [
+    "Demostrar el efecto del límite de tareas con una prueba finita y acotada.",
+    "Demostrar el efecto del límite de memoria sin comprometer al host.",
+    "Verificar comportamiento temporal de la cuota de CPU.",
+    "Evaluar si el perfil del sandbox aplicará estos límites en futuras ejecuciones."
+  ],
+  "limitaciones": [
+    "El sondeo no sometió los límites a presión.",
+    "No demuestra todavía la contención efectiva de OOM, tareas o CPU.",
+    "No implica aprobación de producción ni autorización de integración."
+  ],
+  "estado": "SONDEO_SUPERADO; CONTENCION_BAJO_CARGA_PENDIENTE"
+}

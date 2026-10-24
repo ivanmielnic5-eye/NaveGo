@@ -1,0 +1,16 @@
+{
+  "id": "TC-11",
+  "fecha": "2026-10-23T18:48:54.864867-03:00",
+  "script": "tests/fase1c/test_memory_tc11_swap0.sh",
+  "script_sha256": "c25a04d5741e11a2748e4c9c9f3ec50efdbc047c85117b19bd00bdb3db679896",
+  "limites_solicitados": {
+    "MemoryHigh": "64M",
+    "MemoryMax": "96M",
+    "MemorySwapMax": "0",
+    "TasksMax": 16,
+    "CPUQuota": "20%"
+  },
+  "codigo_systemd_run": 30,
+  "resultado_observado": "Running as unit: run-p14554-i1697.scope; invocation ID: 7a0f7ef99e0f41a2b5c1cade6e05ef26\nCgroup: /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-p14554-i1697.scope\nmemory.high=67108864\nmemory.max=100663296\nmemory.swap.max=0\npids.max=16\nIntentando asignar hasta 192 MiB; techo de memoria: 96 MiB.\nProceso de carga: código 124\nEventos max: antes=0 después=0 delta=0\nEventos oom: antes=0 después=0 delta=0\nEventos oom_kill: antes=0 después=0 delta=0\nmemory.swap.current final=0\nTC11_RESULT=NO_CONCLUYENTE\n",
+  "estado": "NO_SUPERADA_O_NO_CONCLUYENTE; REVISION_HUMANA_PENDIENTE"
+}

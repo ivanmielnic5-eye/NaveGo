@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "id": "TC-03",
+  "fase": "1C",
+  "fecha": "2026-10-23",
+  "registrado_en": "2026-10-23T17:58:12-03:00",
+  "tipo": "evidencia de ejecución aportada desde Konsole",
+  "script": "tests/fase1c/test_canary_tc03.sh",
+  "script_sha256_al_registro": "1499cb1355a150ccb7097f4612cebe3780c15b33b04a0c55a8f77f71983d9fb3",
+  "entorno": {
+    "bubblewrap_version": "0.13.1"
+  },
+  "resultado_observado": {
+    "codigo_salida": 0,
+    "prevuelo": "SUPERADO",
+    "lectura_canario": "RECHAZADA",
+    "sha256_inicial": "bf23e47d02c6987ea39d434ebafde3378d06eb786b2f52407491745e4bd4a140",
+    "sha256_inicial_y_final_iguales": true,
+    "limpieza_reportada_por_script": "sin error",
+    "fuente": "transcripción de terminal aportada por el Director"
+  },
+  "alcance": "Una ejecución, un canario aleatorio y el perfil probado.",
+  "limitaciones": [
+    "No demuestra aislamiento universal del host.",
+    "TC-06 (aislamiento de red) no fue ejecutada.",
+    "La evidencia debe revisarse antes de incorporarse a un dictamen global."
+  ],
+  "estado": "EVIDENCIA_REGISTRADA_PENDIENTE_DE_REVISION_HUMANA"
+}

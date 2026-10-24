@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "id": "TC-11",
+  "fase": "1C",
+  "tipo": "prueba de presion de memoria (OOM)",
+  "fecha": "2026-10-23T18:58:09-03:00",
+  "resultado_observado": {
+    "estado": "ABORTADO_POR_PRESION_DE_MEMORIA",
+    "limite_configurado": "memory.max=96 MiB, memory.swap.max=0",
+    "consecuencia": "El kernel termino un servicio de prueba por presion de memoria. El host no sufrio danos, pero la prueba no concluyo."
+  },
+  "dictamen": "PRUEBA_NO_CONCLUYENTE. NO SE DEBE REPETIR EN EL HOST DE DESARROLLO.",
+  "lecciones_aprendidas": [
+    "Los tests de OOM deben hacerse en entornos descartables (VMs), no en el host de trabajo.",
+    "La configuracion de cgroups se aplico correctamente (se demostro en el sondeo previo), pero la prueba de estres es inherentemente peligrosa."
+  ],
+  "decision_arquitectonica": "Se cierra la fase de pruebas de estres en el host. TC-12 (PIDs) y TC-03/06 (Aislamiento) quedan validados. Pasamos al diseno del Policy Engine en Python (sin ejecucion real).",
+  "estado": "CERRADO_CON_INCIDENTE_REGISTRADO"
+}
