@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-ADENDA-AISLAMIENTO-PID",
+  "fecha": "2026-10-23T20:38:04.218450-03:00",
+  "tipo": "rectificacion tecnica documental; inspeccion estatica",
+  "declaracion_original": "El expediente original describió aislamiento de user, net, pid y clearenv.",
+  "banderas_detectadas_en_fuente": [
+    "--clearenv",
+    "--die-with-parent",
+    "--dir",
+    "--new-session",
+    "--ro-bind",
+    "--symlink",
+    "--unshare-net",
+    "--unshare-user"
+  ],
+  "evaluacion": {
+    "unshare_user_presente": true,
+    "unshare_net_presente": true,
+    "unshare_pid_presente": false,
+    "unshare_all_presente": false,
+    "clearenv_presente": true,
+    "aislamiento_pid_respaldado_por_argumentos": false
+  },
+  "conclusion": "La fuente inspeccionada no incluye --unshare-pid ni --unshare-all. No se debe afirmar aislamiento de PID con estos argumentos. Este análisis estático no prueba el comportamiento del kernel.",
+  "artefactos_sha256_verificados": {
+    "tests/fase2/policy_engine.py": "2a2d323ae46b2b6bdf0ab88e914f749b70bdf2b5339313f7f0cf4226434edb8d",
+    "tests/fase2/polaris_bridge.py": "2f4b74be93d230620fad4fbd9c67af7a78a79634904047d2dfe47ed49b3c6658",
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b"
+  },
+  "evidencias_sha256_verificadas": {
+    "FASE1E_BRIDGE_ENGINE_20261023.json": "bf42ecc41c7a4eae6083cc6138147f70c6ea584c13f3d281371cff5f34dc6ef8",
+    "FASE1E_ADENDA_RECTIFICACION_20261023.json": "d71ecc9e0313a41032a801eda1e56e5c929d3348e133b95acad6d4e9d28d0b65",
+    "INDICE_CONSOLIDACION_FASE1D1E_20261023.json": "c62837a5c00f2bb3b1167de9e9f767dd80812b50bde6bf62ed857680c0d41550",
+    "FASE1E_OLLAMA_PATH_TRAVERSAL_20261023.json": "e97064ebfeb06c817ce3d0521d983a5985ce7645e49bc0eff1eeb3c902e21434",
+    "FASE1E_OLLAMA_RUTA_ABSOLUTA_20261023.json": "20ae9f099060b4d0ed7070319d1463fccd5b7f4baa87d2b0348d0ebe9880f4da"
+  },
+  "acciones_realizadas": {
+    "codigo_modificado": false,
+    "tests_ejecutados": false,
+    "ollama_consultado": false,
+    "bwrap_ejecutado": false,
+    "evidencias_originales_sobrescritas": false,
+    "commit_realizado": false
+  },
+  "estado": "PID_NAMESPACE_PENDIENTE_DE_DISENO_Y_VALIDACION"
+}

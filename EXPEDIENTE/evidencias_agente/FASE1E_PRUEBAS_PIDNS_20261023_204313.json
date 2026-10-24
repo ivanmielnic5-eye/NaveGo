@@ -1,0 +1,34 @@
+{
+  "evidencia": "FASE1E_PRUEBAS_PIDNS_20261023_204313",
+  "fecha_registro_utc": "2026-10-23T23:43:58.280131+00:00",
+  "estado": "PRUEBAS_OFFLINE_SUPERADAS; REVISION_HUMANA_PENDIENTE",
+  "resultado": {
+    "pruebas_totales": 17,
+    "motor_politicas": 10,
+    "puente_offline": 7,
+    "resultado_unittest": "OK",
+    "codigo_salida": 0,
+    "duracion_segundos": 0.047
+  },
+  "entorno": {
+    "interprete": "/home/ivan/navego_recuperado/.venv/bin/python",
+    "python_version": "3.14.8 (main, Oct 13 2026, 10:43:33) [GCC 16.2.1 20260810]"
+  },
+  "registro": {
+    "ruta": "/tmp/LOGOS_pruebas_pidns_venv_20261023_204313.log",
+    "sha256": "70b524c3712ae46639715e739e70616d868e6bbe9eb57fe7a0a96714634c3772"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/policy_engine.py": "6a6a0acf3a6c5ce350126f9ee0c31150623e2700bd759b6554556616b74d7ebd",
+    "tests/fase2/test_policy_engine.py": "08931a2b04958a1ad9fd614a9cd03a9e6f47ee37e627a171d4e6184052b92b93",
+    "tests/fase2/polaris_bridge.py": "2f4b74be93d230620fad4fbd9c67af7a78a79634904047d2dfe47ed49b3c6658",
+    "tests/fase2/test_bridge_offline.py": "8ce7fe8cc18fd391f32215ff83d16bf480854198e390f89dacf1703a92569921",
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b"
+  },
+  "alcance": {
+    "argumentos_pid_y_proc_verificados_por_pruebas": true,
+    "bubblewrap_ejecutado": false,
+    "ollama_consultado": false,
+    "aislamiento_pid_real_verificado": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-PRUEBAS-POST-LIMPIEZA-20261023-211542",
+  "fecha_registro": "2026-10-23T21:16:45.894209-03:00",
+  "estado": "PRUEBAS_OFFLINE_POST_LIMPIEZA_SUPERADAS; REVISION_HUMANA_PENDIENTE",
+  "resultado": {
+    "total": 17,
+    "motor_politicas": 10,
+    "puente_offline": 7,
+    "unittest": "OK",
+    "codigo_salida": 0,
+    "duracion_segundos": 0.047
+  },
+  "registro": {
+    "ruta": "/tmp/LOGOS_pruebas_limpieza_20261023_211542.log",
+    "sha256": "70b524c3712ae46639715e739e70616d868e6bbe9eb57fe7a0a96714634c3772"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b",
+    "tests/fase2/polaris_bridge.py": "8e99597a217c6496fd436296b84cf7e05369add24a1ac5228a09a820b590b619",
+    "tests/fase2/policy_engine.py": "77e1097a97dd799881ab4d5816ec7b98c6a16195c053baff9996cc04e99f620c",
+    "tests/fase2/test_bridge_offline.py": "8ce7fe8cc18fd391f32215ff83d16bf480854198e390f89dacf1703a92569921",
+    "tests/fase2/test_policy_engine.py": "08931a2b04958a1ad9fd614a9cd03a9e6f47ee37e627a171d4e6184052b92b93",
+    "tests/fase2/sandbox_executor.py": "d66f22470849ac9dea3bc15f4c7b3430e02c34fca975a80e54af401ee77f9031"
+  },
+  "alcance": {
+    "pruebas_offline_ejecutadas": true,
+    "bubblewrap_ejecutado_en_esta_suite": false,
+    "ollama_consultado_en_esta_suite": false,
+    "ejecutor_integrado": "Hash registrado; la prueba integrada real consta en una evidencia independiente.",
+    "homologacion_final": "PENDIENTE"
+  },
+  "evidencia_integrada_relacionada": {
+    "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_POLARIS_BWRAP_INTEGRADO_20261023_211318.json",
+    "sha256": "9a7765f2b639207afdc6263475bf5975497a4c9db5aa939c1189f8227682c925"
+  }
+}
