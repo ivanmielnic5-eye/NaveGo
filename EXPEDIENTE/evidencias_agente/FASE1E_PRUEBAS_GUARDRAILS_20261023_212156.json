@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-PRUEBAS-GUARDRAILS-20261023-212156",
+  "fecha_registro": "2026-10-23T21:22:31.066266-03:00",
+  "estado": "22_TESTS_OK; REVISION_HUMANA_PENDIENTE",
+  "commit_base": "dccf0dd3f5d4595bdcd686c66b8c003b311fed67",
+  "resultado": {
+    "total_tests": 22,
+    "motor_politicas": 10,
+    "puente_offline": 7,
+    "guardrails_ejecutor": 5,
+    "unittest": "OK",
+    "codigo_salida": 0,
+    "duracion_segundos": 0.059
+  },
+  "registro": {
+    "ruta": "/tmp/LOGOS_guardrails_20261023_212156.log",
+    "sha256": "67215d0bb6ef886bad2069c77bfcb0cd54c4a7c0f8151540b610a454dc32a372"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/test_sandbox_executor.py": "dc4d8143be7507caf3ca9fb17bdb436b2f01243745d0dccb6d1aa5e79cfbfdd6",
+    "tests/fase2/sandbox_executor.py": "d66f22470849ac9dea3bc15f4c7b3430e02c34fca975a80e54af401ee77f9031"
+  },
+  "alcance_guardrails": [
+    "Path traversal rechazado sin invocar subprocess.run.",
+    "Campo adicional rechazado sin invocar subprocess.run.",
+    "Acción no permitida por el ejecutor rechazada.",
+    "Objetivo diferente de informe.txt rechazado.",
+    "Argumentos alterados rechazados."
+  ],
+  "limitaciones": [
+    "Las cinco pruebas nuevas usan respuestas simuladas y subprocess.run sustituido por un mock.",
+    "Esta suite no consultó Ollama ni ejecutó Bubblewrap.",
+    "La prueba integrada real de lectura Bubblewrap está documentada por separado.",
+    "La homologación general de Polaris permanece pendiente."
+  ],
+  "evidencia_integrada_relacionada": {
+    "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_POLARIS_BWRAP_INTEGRADO_20261023_211318.json",
+    "sha256": "9a7765f2b639207afdc6263475bf5975497a4c9db5aa939c1189f8227682c925"
+  },
+  "aprobacion_humana": "PENDIENTE"
+}
