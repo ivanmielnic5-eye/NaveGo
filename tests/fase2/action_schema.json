@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LOGOSActionContract",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["read_file", "list_dir"]
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_effect": {
+      "type": "string",
+      "const": "read_only"
+    }
+  },
+  "required": [
+    "schema_version",
+    "action",
+    "target",
+    "purpose",
+    "requested_effect"
+  ],
+  "additionalProperties": false
+}

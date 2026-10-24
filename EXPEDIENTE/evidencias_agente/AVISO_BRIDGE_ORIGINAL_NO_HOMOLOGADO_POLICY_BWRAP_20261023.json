@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "LOGOS-AVISO-BRIDGE-ORIGINAL-NO-HOMOLOGADO-20261023",
+  "fecha_registro": "2026-10-23T21:03:16.604635-03:00",
+  "tipo": "AVISO_DE_HOMOLOGACION_PENDIENTE",
+  "componente": "Bridge original preexistente al desarrollo del MCP multi-IA",
+  "aviso": "NO HOMOLOGADO BAJO EL MARCO ACTUAL DE POLICY ENGINE Y AISLAMIENTO BUBBLEWRAP",
+  "estado": "REVISION_HUMANA_PENDIENTE",
+  "distinciones_obligatorias": [
+    "El Bridge original es distinto del MCP multi-IA.",
+    "El Bridge original es distinto de tests/fase2/polaris_bridge.py.",
+    "Este aviso no declara que el Bridge original sea inseguro.",
+    "No implica autorización para sustituirlo, modificarlo o retirarlo."
+  ],
+  "fundamento": [
+    "No consta en este expediente evidencia suficiente de su homologación bajo el marco actual.",
+    "Las 17 pruebas registradas corresponden al motor de políticas y al puente offline de Fase 1E.",
+    "Bubblewrap no se ha ejecutado en esta validación.",
+    "El aislamiento PID real todavía no está demostrado."
+  ],
+  "pendiente": [
+    "Identificar y revisar separadamente la implementación del Bridge original.",
+    "Definir las pruebas y los criterios de homologación que le correspondan.",
+    "Registrar resultados verificables antes de cambiar su estado."
+  ],
+  "evidencia_relacionada": {
+    "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_PRUEBAS_PIDNS_20261023_204313.json",
+    "sha256": "420c2ac0bdfc9ab1d540d9f122d96cb8e4b014074aa0e9447e727cc190e20bc8",
+    "resultado": "17 PRUEBAS OK",
+    "bubblewrap_ejecutado": false,
+    "aislamiento_pid_real_demostrado": false
+  },
+  "aprobacion_humana": "PENDIENTE"
+}

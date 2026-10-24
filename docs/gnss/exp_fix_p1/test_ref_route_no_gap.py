@@ -161,7 +161,7 @@ const wrap = {
     divergence_m: Number(divergence.toFixed(3)),
     abs_divergence_m: Number(absDiv.toFixed(3)),
     gap_advance_gt_m: gapAdvance,
-    n_points: pts.n,
+    n_points: (pts[0] || {}).n || 0,
     tolerance_m: Number(process.argv[4]),
   }));
 })();
@@ -182,6 +182,18 @@ def main():
         shutil.rmtree(tmp, ignore_errors=True)
 
     print(json.dumps(res, indent=2))
+
+    # FIX (auditoria 2026-10-22): verificar que el fixture pueda
+    # detectar el bug. Si gap_advance_gt_m <= TOLERANCE_M, incluso con
+    # el bug presente la divergencia no superaria la tolerancia, y el
+    # test daria GREEN sin haber probado nada. En ese caso, INVALID.
+    gap_threshold = res.get("gap_advance_gt_m")
+    if not isinstance(gap_threshold, (int, float)) or gap_threshold <= TOLERANCE_M:
+        print(f"\nINVALID: gap_advance_gt_m={gap_threshold} m "
+              f"<= tolerancia {TOLERANCE_M} m. "
+              f"Fixture demasiado debil para detectar el bug. "
+              f"Corregir fixture (aumentar gap) o reducir tolerancia.")
+        return 2
 
     # H3/H4: con el bug, reference supera a session en ~avance del gap.
     bug_present = res["abs_divergence_m"] > TOLERANCE_M

@@ -225,4 +225,21 @@ export async function initDatabase(db: SQLiteDatabase): Promise<void> {
       FOREIGN KEY (route_id) REFERENCES reference_routes(id) ON DELETE CASCADE
     );
   `);
+
+  // ===== TABLA DE EMBARCACIÓN (singleton, id=1) =====
+  // Patrón idempotente: CREATE IF NOT EXISTS, sin migración de versión.
+  // Todos los campos opcionales. No se precargan datos de Polaris.
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS vessel (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      nombre TEXT,
+      tipo TEXT,
+      modelo TEXT,
+      eslora REAL,
+      manga REAL,
+      calado REAL,
+      motor TEXT,
+      updated_at INTEGER NOT NULL
+    );
+  `);
 }

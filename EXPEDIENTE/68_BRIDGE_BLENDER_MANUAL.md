@@ -107,6 +107,17 @@ Tres objetos MESH separados, en castellano:
 Escala: eslora 10 m, manga 3 m, alto total 14.45 m. Coincide con la
 escala que usa Godot (`scale 0.00592` aplicado al mesh original).
 
+### Calado medido (simulado, 2026-10-22)
+
+**Calado de Polaris: 1.632 m** (medido en Godot, no declarado a mano).
+
+- **Fuente:** simulación en Godot con `main.tscn` + `float_cube.gd`, script de medición `/tmp/measure_draft_v3.gd` (2026-10-22).
+- **Condiciones:** masa 8000 kg (`main.tscn:85`), agua salada 1025 kg/m³ (`float_cube.gd`), 168 puntos de casco (`float_cube.gd`), equilibrio a los 5 s.
+- **Estado en equilibrio:** pitch 9.0 grados, roll -1.7 grados.
+- **Cálculo:** punto más bajo del casco proyectado a coordenadas mundiales. No es simplemente `Y` del centro de masa; con 9 grados de pitch, la diferencia es de 0.224 m.
+- **Alcance:** calado del modelo virtual de Polaris bajo estas condiciones. No es calado certificado de un velero real. Si cambia la masa o la distribución de puntos, cambia el calado.
+- **Reproducibilidad:** el script de medición no está versionado en el repo; vive en `/tmp/`. Para reproducir, volver a correr el script con `godot --headless` sobre `main.tscn`.
+
 ## Que falta hacer
 
 ### 1. Botavara (barra horizontal en la base de la vela mayor)

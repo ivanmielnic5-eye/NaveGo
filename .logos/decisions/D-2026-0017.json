@@ -1,0 +1,17 @@
+{
+  "id": "D-2026-0017",
+  "titulo": "Congelar Marco Arquitectónico del Copiloto Lingüístico (Polaris)",
+  "estado": "CONGELADA",
+  "fecha": "2026-10-23",
+  "contexto": "Tras el incidente de GPU, el Director aprobó la hoja de ruta para separar la inteligencia del LLM del control determinista de Polaris, priorizando la validación offline.",
+  "decision": "Se adopta el expediente 102_ARQUITECTURA_COPILOTO_POLARIS.md como referencia de trabajo prioritaria v0.1. Se congela el marco de 10 principios y la ruta P0-P5. Se prohíbe la integración directa del LLM en los actuadores y se restringe el uso de GPU hasta estabilizar el sistema.",
+  "consecuencias": [
+    "El trabajo inmediato es offline: auditoría estática (P1) y diseño de interfaces (P2).",
+    "No se consultará a Ollama ni se usará la GPU hasta nueva orden.",
+    "Se mantiene la separación estricta entre inferencia (probabilística) y ejecución (determinista).",
+    "Las decisiones técnicas específicas (modelo, TTL, controlador) quedan pendientes de aprobación explícita."
+  ],
+  "criterio_revision": "Reabrir si se autoriza el uso de GPU, si se modifica el esquema Intent, o si se propone una integración directa con Godot sin pasar por el controlador.",
+  "autor": "director",
+  "reversible": true
+}

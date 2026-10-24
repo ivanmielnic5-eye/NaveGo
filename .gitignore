@@ -151,3 +151,16 @@ android/.kotlin/
 
 # --- Logs scratch (headers "SCRATCH — NO COMMITEAR") ---
 timonel/borradores/_log_*.md
+
+# --- IGNORAR RUIDO DE EXPERIMENTOS (2026-10-23) ---
+docs/gnss/v2/obsgen/fixes/
+/eval_commands*.jsonl
+/eval_harness*.py
+/expediente_*.json
+/generar_dataset_*.py
+/harness_*.py
+/test_harness_*.py
+*accidental-*
+*.failed-restart-*
+/timonel/kaggle_lora_a3/
+/docs/gnss/

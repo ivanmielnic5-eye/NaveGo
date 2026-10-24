@@ -1,0 +1,16 @@
+{
+  "id": "TC-11",
+  "fecha": "2026-10-23T18:50:15.029680-03:00",
+  "script": "tests/fase1c/test_memory_tc11_swap0.sh",
+  "script_sha256": "de913cbfbcd035d1505d70fde4ddd2d51c68059df86308079bd82d6a54ed2897",
+  "limites_solicitados": {
+    "MemoryHigh": "infinity",
+    "MemoryMax": "96M",
+    "MemorySwapMax": "0",
+    "TasksMax": 16,
+    "CPUQuota": "20%"
+  },
+  "codigo_systemd_run": 143,
+  "resultado_observado": "Running as unit: run-p14621-i27110.scope; invocation ID: 5b495572875546158add7f2927b17453\nCgroup: /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-p14621-i27110.scope\nmemory.high=max\nmemory.max=100663296\nmemory.swap.max=0\npids.max=16\nIntentando asignar hasta 192 MiB; techo de memoria: 96 MiB.\n/home/ivan/navego_recuperado/tests/fase1c/test_memory_tc11_swap0.sh: línea 55: 14634 Terminado (killed)         timeout --signal=TERM --kill-after=2s 12s python3 -c 'import time; blocks=[bytearray(4*1024*1024) for _ in range(48)]; [b.__setitem__(p,1) for b in blocks for p in range(0,len(b),4096)]; print(\"WORKLOAD_COMPLETO: 192 MiB asignados\",flush=True); time.sleep(0.2)'\n",
+  "estado": "NO_SUPERADA_O_NO_CONCLUYENTE; REVISION_HUMANA_PENDIENTE"
+}

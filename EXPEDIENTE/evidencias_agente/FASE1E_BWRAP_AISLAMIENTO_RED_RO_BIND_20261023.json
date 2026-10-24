@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-BWRAP-AISLAMIENTO-RED-RO-BIND-20261023",
+  "fecha_registro": "2026-10-23T21:29:19.223875-03:00",
+  "metodo": "Resultados de pruebas manuales reportados desde Konsole",
+  "commit_base": "7a0d0d1ff734fd886e27fbf283d5e352add43ade",
+  "estado": "CONTROLES_MANUALES_SUPERADOS; HOMOLOGACION_GENERAL_PENDIENTE",
+  "controles": {
+    "namespace_red": {
+      "host": "net:[4026531833]",
+      "interno": "net:[4026532890]",
+      "codigo_salida": 0,
+      "resultado": "DISTINTO_DEL_HOST"
+    },
+    "montaje_solo_lectura": {
+      "operacion": "touch /workspace/informe.txt",
+      "codigo_salida": 1,
+      "mensaje": "Read-only file system",
+      "sha256_antes": "abf89a96c573768e28be4309a862fb10a0ae2fd1b5576c1c4b7824a2df6c6833",
+      "sha256_despues": "abf89a96c573768e28be4309a862fb10a0ae2fd1b5576c1c4b7824a2df6c6833",
+      "resultado": "ESCRITURA_DENEGADA_ARCHIVO_INTACTO"
+    },
+    "workspace_temporal": "ELIMINADO"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b",
+    "tests/fase2/policy_engine.py": "77e1097a97dd799881ab4d5816ec7b98c6a16195c053baff9996cc04e99f620c",
+    "tests/fase2/polaris_bridge.py": "8e99597a217c6496fd436296b84cf7e05369add24a1ac5228a09a820b590b619",
+    "tests/fase2/sandbox_executor.py": "d66f22470849ac9dea3bc15f4c7b3430e02c34fca975a80e54af401ee77f9031",
+    "tests/fase2/test_sandbox_executor.py": "dc4d8143be7507caf3ca9fb17bdb436b2f01243745d0dccb6d1aa5e79cfbfdd6"
+  },
+  "limitaciones": [
+    "Resultados registrados desde la salida reportada por el operador; no se generó un log automático de estas dos pruebas.",
+    "Namespace distinto no equivale a una auditoría integral de la política de red.",
+    "La protección de solo lectura se comprobó sobre el archivo de prueba montado.",
+    "Estos resultados no certifican la seguridad general ni todas las acciones futuras.",
+    "La homologación del Bridge original es independiente."
+  ],
+  "aprobacion_humana": "PENDIENTE"
+}

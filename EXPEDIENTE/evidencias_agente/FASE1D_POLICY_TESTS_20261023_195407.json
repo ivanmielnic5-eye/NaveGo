@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1D-POLICY-UNIT-TESTS",
+  "fecha_registro": "2026-10-23T19:55:35.196001-03:00",
+  "tipo": "evidencia de ejecución de tests unitarios offline",
+  "entorno": {
+    "python": "3.14.8",
+    "comando": "timeout 30s env PYTHONPATH=tests/fase2 python -m unittest -v test_policy_engine",
+    "codigo_salida_reportado": 0
+  },
+  "resultado": {
+    "tests_ejecutados": 10,
+    "tests_ok": 10,
+    "tests_fallidos": 0,
+    "resumen_log": "Ran 10 tests in 0.028s; OK"
+  },
+  "artefactos_sha256": {
+    "tests/fase2/policy_engine.py": "2a2d323ae46b2b6bdf0ab88e914f749b70bdf2b5339313f7f0cf4226434edb8d",
+    "tests/fase2/test_policy_engine.py": "08931a2b04958a1ad9fd614a9cd03a9e6f47ee37e627a171d4e6184052b92b93",
+    "tests/fase2/action_schema.json": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b"
+  },
+  "log": {
+    "ruta_original": "/tmp/LOGOS_fase1D_tests_20261023_195407.log",
+    "sha256": "d14e35f5dedd4e8b462f40bb487c7941928c5f79a0de5e493e93575c6fb998e7",
+    "salida_completa": "test_01_json_malformado (test_policy_engine.TestPolicyEngineComprehensive.test_01_json_malformado) ... ok\ntest_02_falta_campos_obligatorios (test_policy_engine.TestPolicyEngineComprehensive.test_02_falta_campos_obligatorios) ... ok\ntest_03_tipos_incorrectos_y_campos_adicionales (test_policy_engine.TestPolicyEngineComprehensive.test_03_tipos_incorrectos_y_campos_adicionales) ... ok\ntest_04_schema_version_o_effect_incorrectos (test_policy_engine.TestPolicyEngineComprehensive.test_04_schema_version_o_effect_incorrectos) ... ok\ntest_05_accion_fuera_lista_blanca (test_policy_engine.TestPolicyEngineComprehensive.test_05_accion_fuera_lista_blanca) ... ok\ntest_06_ruta_absoluta_o_traversal (test_policy_engine.TestPolicyEngineComprehensive.test_06_ruta_absoluta_o_traversal) ... ok\ntest_07_enlace_simbolico_externo (test_policy_engine.TestPolicyEngineComprehensive.test_07_enlace_simbolico_externo) ... ok\ntest_08_bypass_directorio_hermano (test_policy_engine.TestPolicyEngineComprehensive.test_08_bypass_directorio_hermano) ... ok\ntest_09_contrato_valido_y_argumentos_anidados (test_policy_engine.TestPolicyEngineComprehensive.test_09_contrato_valido_y_argumentos_anidados) ... ok\ntest_tuple_contract_on_all_branches (test_policy_engine.TestPolicyEngineComprehensive.test_tuple_contract_on_all_branches) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.028s\n\nOK\n"
+  },
+  "alcance": {
+    "motor_policy_engine": "SUITE_SUPERADA",
+    "puente_polaris": "NO_EVALUADO_POR_ESTA_SUITE",
+    "ollama_real": false,
+    "bwrap_ejecutado": false,
+    "aislamiento_pid_real": "NO_DEMOSTRADO"
+  },
+  "estado": "PRUEBA_OFFLINE_SUPERADA; REVISION_HUMANA_PENDIENTE"
+}

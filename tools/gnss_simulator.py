@@ -19,6 +19,8 @@ def run(gt_path, scenario_path, out_path):
     lat0 = sc["initial_state"]["lat"]
     lon0 = sc["initial_state"]["lon"]
     sigma_m = sc["gnss"]["noise_sigma_m"]
+    noise_model = sc["gnss"].get("noise_model", "IID")
+    noise_rho = sc["gnss"].get("noise_rho", 0.0)
     latency_ms = sc["gnss"]["latency_ms"]
     interval_ms = sc["report_interval_ms"]
     cuts = sc["gnss"]["cut_windows"]
@@ -41,6 +43,9 @@ def run(gt_path, scenario_path, out_path):
 
     output = []
     last_report = -1e9
+    error_dlat = 0.0
+    error_dlon = 0.0
+
     for m in gt:
         t = m["timestamp"]
         if t - last_report < interval_ms:
@@ -55,9 +60,17 @@ def run(gt_path, scenario_path, out_path):
             continue
 
         sigma_lat, sigma_lon = noise_to_latlon(sigma_m, lat0)
-        base_dlat, base_dlon = meters_to_latlon(m["pos_x"], m["pos_z"], lat0)
-        noise_dlat = rng.gauss(0, sigma_lat)
-        noise_dlon = rng.gauss(0, sigma_lon)
+        base_dlat, base_dlon = meters_to_latlon(m["pos_x"], m["pos_y"], lat0)
+        if noise_model == "AR1":
+            sigma_eta_lat = sigma_lat * math.sqrt(1.0 - noise_rho**2)
+            sigma_eta_lon = sigma_lon * math.sqrt(1.0 - noise_rho**2)
+            error_dlat = noise_rho * error_dlat + rng.gauss(0, sigma_eta_lat)
+            error_dlon = noise_rho * error_dlon + rng.gauss(0, sigma_eta_lon)
+            noise_dlat = error_dlat
+            noise_dlon = error_dlon
+        else:
+            noise_dlat = rng.gauss(0, sigma_lat)
+            noise_dlon = rng.gauss(0, sigma_lon)
         if rng.random() < spike["probability"]:
             jump_m = rng.uniform(spike["min_jump_m"], spike["max_jump_m"])
             angle = rng.uniform(0, 2 * math.pi)

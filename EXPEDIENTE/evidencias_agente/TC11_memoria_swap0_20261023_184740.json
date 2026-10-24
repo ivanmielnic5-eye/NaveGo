@@ -1,0 +1,16 @@
+{
+  "id": "TC-11",
+  "fecha": "2026-10-23T18:47:40.273726-03:00",
+  "script": "tests/fase1c/test_memory_tc11_swap0.sh",
+  "script_sha256": "c25a04d5741e11a2748e4c9c9f3ec50efdbc047c85117b19bd00bdb3db679896",
+  "limites_solicitados": {
+    "MemoryHigh": "64M",
+    "MemoryMax": "96M",
+    "MemorySwapMax": "0",
+    "TasksMax": 16,
+    "CPUQuota": "20%"
+  },
+  "codigo_systemd_run": 1,
+  "resultado_observado": "--wait may not be combined with --scope.\n",
+  "estado": "NO_SUPERADA_O_NO_CONCLUYENTE; REVISION_HUMANA_PENDIENTE"
+}

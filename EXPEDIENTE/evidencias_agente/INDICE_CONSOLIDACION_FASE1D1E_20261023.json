@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "id": "LOGOS-INDICE-CONSOLIDACION-FASE1D1E",
+  "fecha": "2026-10-23T20:33:04.398530-03:00",
+  "evidencias_verificadas": {
+    "FASE1E_BRIDGE_ENGINE_20261023.json": {
+      "sha256": "bf42ecc41c7a4eae6083cc6138147f70c6ea584c13f3d281371cff5f34dc6ef8",
+      "json_valido": true,
+      "estado_registrado": "LISTO_PARA_CONECTAR_OLLAMA_REAL",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_BRIDGE_ENGINE_20261023.json"
+    },
+    "FASE1E_ADENDA_RECTIFICACION_20261023.json": {
+      "sha256": "d71ecc9e0313a41032a801eda1e56e5c929d3348e133b95acad6d4e9d28d0b65",
+      "json_valido": true,
+      "estado_registrado": "PUENTE_OLLAMA_PENDIENTE_DE_CONSOLIDACION_Y_REVISION_HUMANA",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_ADENDA_RECTIFICACION_20261023.json"
+    },
+    "FASE1D_POLICY_TESTS_20261023_195407.json": {
+      "sha256": "d6e331d0fc23888fbd330eee7c09cfbfc5014397a15fb3b7e559daa475b0ff55",
+      "json_valido": true,
+      "estado_registrado": "PRUEBA_OFFLINE_SUPERADA; REVISION_HUMANA_PENDIENTE",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1D_POLICY_TESTS_20261023_195407.json"
+    },
+    "FASE1E_BRIDGE_OFFLINE_20261023_195724.json": {
+      "sha256": "71c10e3f6be606ddd7d74bc126333e3d140fe8f4b07cd3587acd234aed5665ff",
+      "json_valido": true,
+      "estado_registrado": "PRUEBAS_OFFLINE_SUPERADAS; REVISION_HUMANA_PENDIENTE",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_BRIDGE_OFFLINE_20261023_195724.json"
+    },
+    "FASE1E_OLLAMA_REAL_UNA_CONSULTA_20261023.json": {
+      "sha256": "80803415ed0799c049542238c3eda5a7df8f914485671ec3ef9fe482ea419eee",
+      "json_valido": true,
+      "estado_registrado": "COMUNICACION_REAL_Y_VALIDACION_DE_UN_CASO_OBSERVADAS; REVISION_HUMANA_PENDIENTE",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_OLLAMA_REAL_UNA_CONSULTA_20261023.json"
+    },
+    "FASE1E_OLLAMA_PATH_TRAVERSAL_20261023.json": {
+      "sha256": "e97064ebfeb06c817ce3d0521d983a5985ce7645e49bc0eff1eeb3c902e21434",
+      "json_valido": true,
+      "estado_registrado": "PATH_TRAVERSAL_RECHAZADO; REVISION_HUMANA_PENDIENTE",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_OLLAMA_PATH_TRAVERSAL_20261023.json"
+    },
+    "FASE1E_OLLAMA_CAMPO_EXTRA_20261023.json": {
+      "sha256": "d555565fcabe8a6dac06dd829444d5b0165f96662b2c41eae58bb089ae44ce8e",
+      "json_valido": true,
+      "estado_registrado": "SALIDA_REAL_CONFORME_AL_ESQUEMA; REVISION_HUMANA_PENDIENTE",
+      "ruta": "EXPEDIENTE/evidencias_agente/FASE1E_OLLAMA_CAMPO_EXTRA_20261023.json"
+    }
+  },
+  "artefactos_verificados": {
+    "tests/fase2/policy_engine.py": {
+      "sha256": "2a2d323ae46b2b6bdf0ab88e914f749b70bdf2b5339313f7f0cf4226434edb8d",
+      "coincide": true
+    },
+    "tests/fase2/polaris_bridge.py": {
+      "sha256": "2f4b74be93d230620fad4fbd9c67af7a78a79634904047d2dfe47ed49b3c6658",
+      "coincide": true
+    },
+    "tests/fase2/action_schema.json": {
+      "sha256": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b",
+      "coincide": true
+    },
+    "tests/fase2/test_policy_engine.py": {
+      "sha256": "08931a2b04958a1ad9fd614a9cd03a9e6f47ee37e627a171d4e6184052b92b93",
+      "coincide": true
+    },
+    "tests/fase2/test_bridge_offline.py": {
+      "sha256": "ca287fcc609d030ab4a10f4697debe91da74881ac679d6546887c37a9422ce80",
+      "coincide": true
+    }
+  },
+  "resultados_consolidados": {
+    "motor_policy_engine": "10 TESTS OK; salida terminal registrada",
+    "puente_offline": "7 TESTS OK; salida terminal registrada",
+    "ollama_caso_valido": "CONTRATO_APROBADO",
+    "ollama_path_traversal": "DENEGADO",
+    "ollama_campo_adicional": "Qwen omitió el campo; contrato válido aprobado. No demuestra rechazo de un campo adicional generado por Ollama."
+  },
+  "limitaciones_pendientes": [
+    "Las consultas reales se documentaron desde transcripciones de terminal, no desde logs automáticos capturados al ejecutar.",
+    "No se ejecutó Bubblewrap.",
+    "No se demostró aislamiento real de PID.",
+    "La conexión exitosa en unos pocos casos no certifica fiabilidad general ni preparación para producción.",
+    "El expediente original conserva una afirmación de aislamiento PID que requiere rectificación y revisión."
+  ],
+  "decisiones": {
+    "modificar_registros_originales": false,
+    "ejecutar_codigo": false,
+    "consultar_ollama": false,
+    "ejecutar_bwrap": false,
+    "crear_commit": false
+  },
+  "estado": "EVIDENCIAS_CONSOLIDADAS; APROBACION_HUMANA_PENDIENTE"
+}

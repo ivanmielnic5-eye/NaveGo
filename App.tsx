@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useRef, useState, memo } from 'react';
 import { LogBox } from 'react-native';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ActivityIndicator, InteractionManager, useWindowDimensions, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // import MapView, { Polyline } from 'react-native-maps';
@@ -17,6 +17,7 @@ import { SessionDetailScreen } from './SessionDetailScreen';
 import { ReferenceDetailScreen } from './ReferenceDetailScreen';
 import { getReferenceRoutePoints } from './db/journal';
 import { CockpitScreen } from './CockpitScreen';
+import { VesselScreen } from './VesselScreen';
 import { MapaOffline } from './components/MapaOffline';
 
 const darkMapStyle = [
@@ -107,7 +108,7 @@ function AppContent() {
   const mapRef = useRef<any>(null);
   const [mapReady, setMapReady] = useState(false);
 
-  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference' | 'cockpit'>('hud');
+  const [screen, setScreen] = useState<'hud' | 'history' | 'detail' | 'reference' | 'cockpit' | 'vessel'>('hud');
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [referencePoints, setReferencePoints] = useState<{ latitude: number; longitude: number }[]>([]);
@@ -352,6 +353,15 @@ function AppContent() {
     );
   }
 
+  if (screen === 'vessel') {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <StatusBar style="light" />
+      <VesselScreen onBack={() => setScreen('hud')} />
+      </SafeAreaView>
+    );
+  }
+
   if (isLandscape) {
     return (
       <View style={styles.landscapeContainer}>
@@ -504,10 +514,27 @@ function AppContent() {
 
     <View style={styles.dockBar}>
     {floatingActions.map((item) => (
-      <TouchableOpacity key={item.key} style={styles.dockItemTouchable} onPress={() => { if (item.key === 'history') setScreen('history'); }}>
-      <Ionicons name={item.icon} size={22} color={item.key === 'history' ? colors.navigateCyan : colors.textSecondary} />
-      <Text style={styles.dockLabel}>{item.label}</Text>
-      </TouchableOpacity>
+      <Pressable 
+        key={item.key} 
+        style={styles.dockItemTouchable} 
+        onPress={() => { 
+          if (item.key === 'history') setScreen('history'); 
+          if (item.key === 'vessel') setScreen('vessel'); 
+        }}
+      >
+        {({ pressed }) => (
+          <>
+            <Ionicons 
+              name={item.icon} 
+              size={22} 
+              color={pressed || screen === item.key ? colors.navigateCyan : 'rgba(0, 217, 255, 0.5)'} 
+            />
+            <Text style={[styles.dockLabel, { color: pressed || screen === item.key ? colors.navigateCyan : 'rgba(255, 255, 255, 0.75)' }]}>
+              {item.label}
+            </Text>
+          </>
+        )}
+      </Pressable>
     ))}
     </View>
 
@@ -527,7 +554,7 @@ function AppContent() {
       </View>
 
     <View style={styles.finalContainer}>
-    <TouchableOpacity style={[glass.actionControl, { paddingHorizontal: 24, backgroundColor: 'rgba(5,25,42,0.55)', borderColor: colors.borderSubtle }]} onPress={handleFinalize}>
+    <TouchableOpacity style={[glass.actionControl, { paddingHorizontal: 24, backgroundColor: 'rgba(0, 217, 255, 0.15)', borderColor: colors.borderSubtle }]} onPress={handleFinalize}>
     <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>FINALIZAR</Text>
     </TouchableOpacity>
     </View>
@@ -575,15 +602,24 @@ const styles = StyleSheet.create({
   },
   headerAccent: { color: colors.navigateCyan },
   headerStatus: { fontSize: 11, fontWeight: 'bold', letterSpacing: 0.8 },
-  navChip: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: colors.glassControl, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 6 },
+  navChip: { overflow: 'hidden', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: colors.glassControl, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 6 },
   navChipText: { fontSize: 12, fontWeight: 'bold', letterSpacing: 0.5 },
   navChipAge: { fontSize: 10, color: colors.textSecondary },
-  internetChip: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: colors.glassControl, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 6 },
+  internetChip: { overflow: 'hidden', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: colors.glassControl, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 6 },
   internetChipText: { fontSize: 12, fontWeight: 'bold', letterSpacing: 0.5 },
   mapWrapper: { height: 190, borderRadius: radii.md, overflow: 'hidden', marginBottom: 8, borderWidth: 1, borderColor: colors.glassBorderStrong },
   map: { ...StyleSheet.absoluteFillObject },
   mapLoading: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(3, 7, 23, 0.7)' },
-                                 centerButton: { position: 'absolute', bottom: 12, left: 12 },
+                                 centerButton: {
+    backgroundColor: 'rgba(0, 217, 255, 0.15)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 217, 255, 0.7)',
+    
+    
+    
+    
+    
+    borderRadius: 16, position: 'absolute', bottom: 12, left: 12 },
                                  centerButtonText: { color: colors.navigateCyan, fontWeight: 'bold', fontSize: 10 },
                                  actionButtonText: { fontSize: 13, fontWeight: 'bold', letterSpacing: 0.8 },
                                  row: { flexDirection: 'row', gap: 10, marginBottom: 8 },
@@ -608,7 +644,16 @@ const styles = StyleSheet.create({
                                  alertSubTextCompact: { color: colors.danger, fontSize: 10, textAlign: 'center', marginTop: 2, opacity: 0.8 },
                                  syncWarning: { marginTop: 6, color: colors.warning, fontSize: 10, textAlign: 'center' },
                                  syncOk: { marginTop: 6, color: colors.success, fontSize: 10, textAlign: 'center' },
-                                 dockBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(5, 25, 42, 0.58)', borderWidth: 1, borderColor: 'rgba(0, 217, 255, 0.30)', borderRadius: 22, paddingVertical: 14, paddingHorizontal: 10, height: 68, marginBottom: 8 },
+                                 dockBar: { overflow: 'hidden',
+    backgroundColor: 'rgba(0, 217, 255, 0.05)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 217, 255, 0.7)',
+    
+    
+    
+    
+    
+    borderRadius: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 10, height: 68, marginBottom: 8 },
                                  dockItemTouchable: { flex: 1, alignItems: 'center', justifyContent: 'center' },
                                  dockLabel: { fontSize: 9, color: colors.textSecondary, fontWeight: '600', letterSpacing: 0.5, marginTop: 4 },
                                  finalContainer: {
@@ -616,7 +661,16 @@ const styles = StyleSheet.create({
                                    marginBottom: Platform.OS === 'android' ? 18 : 10,
                                  },
                                  landscapeContainer: { flex: 1, backgroundColor: colors.background },
-                                 landscapeCenterButton: { position: 'absolute', bottom: 60, left: 12 },
+                                 landscapeCenterButton: {
+    backgroundColor: 'rgba(0, 217, 255, 0.15)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 217, 255, 0.7)',
+    
+    
+    
+    
+    
+    borderRadius: 16, position: 'absolute', bottom: 60, left: 12 },
                                  landscapeGpsBadge: { position: 'absolute', bottom: 60, right: 12 },
                                  orientationIndicator: {
                                    flexDirection: 'row',
@@ -625,7 +679,7 @@ const styles = StyleSheet.create({
                                    paddingHorizontal: 8,
                                    paddingVertical: 4,
                                    borderRadius: radii.pill,
-                                   backgroundColor: 'rgba(5, 25, 42, 0.58)',
+                                   backgroundColor: 'rgba(0, 217, 255, 0.15)',
                                  borderWidth: 1,
                                  borderColor: colors.glassBorder,
                                  },

@@ -1,0 +1,12 @@
+{
+  "traj_id": "lenta_1ms",
+  "seed": 8103,
+  "T0_ms": 1790279042897,
+  "gnss_cfg": {
+    "noise_sigma_m": 1.5,
+    "cut_windows": []
+  },
+  "events": [],
+  "fixes_sha256": "1279246a8fbec1646c84a16c72d66d56dcbce93ed4099ba2a7ace1358d7cbce1",
+  "fixes_path": "fixes/fixes_lenta_1ms_s1.5_8103.jsonl"
+}

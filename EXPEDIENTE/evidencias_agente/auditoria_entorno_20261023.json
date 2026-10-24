@@ -1,0 +1,26 @@
+{
+  "fecha": "2026-10-23",
+  "entorno": "CachyOS Mini PC (R2-D2)",
+  "auditoria_tipo": "PRELIMINAR_ESTATICA",
+  "observaciones_verificadas": {
+    "bwrap_binario": "/usr/bin/bwrap disponible",
+    "docker_binario": "/usr/bin/docker disponible",
+    "unprivileged_userns_clone": 1,
+    "max_user_namespaces": 38667,
+    "cgroups_v2_indicador": "Presente en /sys/fs/cgroup/cgroup.controllers"
+  },
+  "inferencias_razonables": {
+    "soporte_kernel": "El kernel de la Mini PC cuenta con los subsistemas básicos (namespaces y cgroups v2) necesarios para intentar un aislamiento."
+  },
+  "comprobaciones_pendientes": [
+    "Verificación de versión y capacidades soportadas de Bubblewrap.",
+    "Delegación efectiva de controladores cgroup al usuario no root actual.",
+    "Pruebas de inmutabilidad y visibilidad de filesystem mediante perfiles reales de montaje.",
+    "Pruebas de aislamiento de red (network namespaces)."
+  ],
+  "decisiones_arquitectonicas": {
+    "bubblewrap_estado": "Candidato preferido, pendiente de validación experimental.",
+    "aislamiento_efectivo": "NO DEMOSTRADO TODAVÍA."
+  },
+  "dictamen": "Inspección preliminar favorable en cuanto a prerrequisitos de kernel, pero sin pruebas de contención ejecutadas. El aislamiento estricto sigue pendiente de validación."
+}

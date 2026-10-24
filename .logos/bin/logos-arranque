@@ -19,6 +19,17 @@ GATE = REPO / ".logos/bin/logos-gate"
 BRIEF = REPO / ".logos/bin/logos-brief"
 BRIEF_MD = REPO / "EXPEDIENTE/BRIEF_NAVEGO.md"
 
+def get_branch():
+    try:
+        r = subprocess.run(
+            ['git', '-C', str(REPO), 'branch', '--show-current'],
+            capture_output=True, text=True, check=True
+        )
+        return r.stdout.strip() or None
+    except Exception:
+        return None
+
+
 def detectar_escritorio():
     for d in [Path.home()/"Escritorio", Path.home()/"Desktop", Path.home()/"desktop"]:
         if d.is_dir():
@@ -128,13 +139,22 @@ def main():
     partes.append("  Objetivo: navegacion autonoma, offline, soberana.")
     partes.append("  Repo: github.com/ivanmielnic5-eye/NaveGo")
     partes.append("  Directorio local: ~/navego_recuperado")
-    partes.append("  Rama de trabajo: experimento-v4-admin")
+    _rama = get_branch() or "(desconocida)"
+    partes.append(f"  Rama de trabajo: {_rama}")
     partes.append("")
     partes.append("GODOT (el simulador)")
     partes.append("  Laboratorio de NAVEGO. Simula el barco Polaris, el viento,")
     partes.append("  las olas, la flotabilidad. Es una FUENTE de NAVEGO.")
     partes.append("  Directorio local: ~/interfaz")
     partes.append("  Rama: experimento-godot")
+    partes.append("")
+    partes.append("TIMONEL (control y navegacion autonoma)")
+    partes.append("  Control sobre Polaris. Simulador Python + Godot.")
+    partes.append("  Tiene estado propio, experimentos (E2) y deuda abierta.")
+    partes.append("  Contexto de arranque: EXPEDIENTE/98_CONTEXTO_ARRANQUE_TIMONEL.md")
+    partes.append("  Estado consolidado: EXPEDIENTE/95_INFORME_CONSOLIDADO_TIMONEL_COPILOTO.md")
+    partes.append("  Indice de experimentos: EXPEDIENTE/96_MEMO_EXPERIMENTOS_OCTUBRE_2026-10-15_16.md")
+    partes.append("  Leer 98 ANTES de proponer cambios. No re-investigar.")
     partes.append("")
     partes.append("=" * 70)
     partes.append("2. ESTADO ACTUAL DEL GATE")
@@ -187,7 +207,7 @@ def main():
     partes.append("Hipotesis    Afirmacion falsable. ~/.logos/hypotheses/H-2026-NNNN.json")
     partes.append("Decision     Regla arquitectonica. .logos/decisions/D-2026-NNNN.json")
     partes.append("Polaris      Nombre del velero simulado en Godot.")
-    partes.append("Timonel      Agente Python que maneja Polaris.")
+    partes.append("Timonel      Control y navegacion autonoma sobre Polaris. Ver 98.")
     partes.append("")
     partes.append("=" * 70)
     partes.append("FIN DEL CONTEXTO")

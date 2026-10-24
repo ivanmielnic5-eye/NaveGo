@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "FASE1E-BRIDGE-OFFLINE-TESTS",
+  "fecha_registro": "2026-10-23T19:58:32.823370-03:00",
+  "ejecucion_reportada": {
+    "comando": "timeout 20s env PYTHONPATH=tests/fase2 python -m unittest -v test_bridge_offline",
+    "tests_ejecutados": 7,
+    "tests_ok": 7,
+    "tests_fallidos": 0,
+    "codigo_salida_reportado": 0,
+    "log": "/tmp/LOGOS_bridge_offline_20261023_195724.log",
+    "log_sha256": "3a097491547065bd98116fb88cce2b7cfcc6b175a0fe88e8adf10194c97c9472",
+    "salida_completa": "test_01_accion_valida_genera_argumentos_sin_ejecutarlos (test_bridge_offline.TestPolarisBridgeOffline.test_01_accion_valida_genera_argumentos_sin_ejecutarlos) ... ok\ntest_02_path_traversal_es_denegado (test_bridge_offline.TestPolarisBridgeOffline.test_02_path_traversal_es_denegado) ... ok\ntest_03_campo_adicional_es_denegado (test_bridge_offline.TestPolarisBridgeOffline.test_03_campo_adicional_es_denegado) ... ok\ntest_04_json_malformado_es_denegado (test_bridge_offline.TestPolarisBridgeOffline.test_04_json_malformado_es_denegado) ... ok\ntest_05_directorio_valido_list_dir (test_bridge_offline.TestPolarisBridgeOffline.test_05_directorio_valido_list_dir) ... ok\ntest_06_error_del_proveedor_no_autoriza (test_bridge_offline.TestPolarisBridgeOffline.test_06_error_del_proveedor_no_autoriza) ... ok\ntest_07_modo_offline_sin_proveedor_no_autoriza (test_bridge_offline.TestPolarisBridgeOffline.test_07_modo_offline_sin_proveedor_no_autoriza) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.022s\n\nOK\n"
+  },
+  "artefactos": {
+    "test_bridge_offline.py": {
+      "sha256_actual_al_registro": "ca287fcc609d030ab4a10f4697debe91da74881ac679d6546887c37a9422ce80",
+      "hash_mostrado_en_salida_post_test": true
+    },
+    "polaris_bridge.py": {
+      "sha256_actual_al_registro": "2f4b74be93d230620fad4fbd9c67af7a78a79634904047d2dfe47ed49b3c6658",
+      "hash_mostrado_en_salida_post_test": true
+    },
+    "policy_engine.py": {
+      "sha256_actual_al_registro": "2a2d323ae46b2b6bdf0ab88e914f749b70bdf2b5339313f7f0cf4226434edb8d",
+      "hash_mostrado_en_salida_post_test": false
+    },
+    "action_schema.json": {
+      "sha256_actual_al_registro": "4e0af02723afbca98cbacfb731b8e46ed4973691ed6478085e19033ab34ebe1b",
+      "hash_mostrado_en_salida_post_test": false
+    }
+  },
+  "ollama": {
+    "endpoint_literal_detectado": "http://localhost:11434/api/generate",
+    "endpoint_tiene_formato_esperado": true,
+    "consulta_real_realizada": false
+  },
+  "alcance": {
+    "puente_offline": "7 TESTS SUPERADOS",
+    "conexion_ollama_real": "NO PROBADA",
+    "bwrap_ejecutado": false,
+    "aislamiento_pid_real": "NO DEMOSTRADO"
+  },
+  "estado": "PRUEBAS_OFFLINE_SUPERADAS; REVISION_HUMANA_PENDIENTE"
+}
